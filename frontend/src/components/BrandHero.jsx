@@ -152,10 +152,11 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
   return (
     <section className="relative w-full bg-[#FAF8F5] text-[#2D231E] min-h-screen py-6 sm:py-10 px-4 sm:px-8 lg:px-12 flex flex-col justify-between overflow-hidden">
       
-      {/* 1. Header Title: MatchA - Clean, Grounded & Overlapping */}
-      <div className="w-full text-center z-20 relative pt-2 sm:pt-4 -mb-8 sm:-mb-12 md:-mb-16 lg:-mb-20 pointer-events-none select-none">
-        <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10.5rem] font-extrabold tracking-tighter text-[#2D5A27] uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm font-sans">
-          MatchA
+      {/* 1. Header Title: Vogue Magazine Depth (Behind Model) + Dual-Tone MATCH + A */}
+      <div className="w-full text-center z-0 relative pt-2 sm:pt-4 -mb-10 sm:-mb-16 md:-mb-20 lg:-mb-28 pointer-events-none select-none">
+        <h1 className="text-6xl sm:text-8xl md:text-9xl lg:text-[11rem] xl:text-[13rem] font-black tracking-tight uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm font-sans">
+          <span className="text-[#2D5A27]">MATCH</span>
+          <span className="text-[#BC5A36]">A</span>
         </h1>
       </div>
 
@@ -176,11 +177,11 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
           </div>
         </div>
 
-        {/* Center Column: Extra Large Sliced Model Supporting 10 Outfits */}
-        <div className="md:col-span-6 flex flex-col items-center justify-center order-1 md:order-2 z-10">
+        {/* Center Column: Extra Large Sliced Model Supporting 10 Outfits with Magazine Overlap */}
+        <div className="md:col-span-6 flex flex-col items-center justify-center order-1 md:order-2 z-20">
           
           <div 
-            className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl aspect-3/4 bg-white rounded-none overflow-hidden shadow-2xl border border-[#2D231E]/20 flex flex-col select-none group/card"
+            className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl aspect-3/4 bg-white rounded-none overflow-hidden shadow-2xl border border-[#2D231E]/20 flex flex-col select-none group/card z-20"
           >
             
             {/* Slice 1: Head & Face (Top 25%) */}
