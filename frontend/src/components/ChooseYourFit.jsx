@@ -84,8 +84,8 @@ export default function ChooseYourFit({ onSelectFit }) {
         />
       </div>
 
-      {/* 2. Independent Title & Badge (อิสระเต็มที่ ผูกติดกับจอ/ภาพโดยตรง ไม่ถูกบีบโดยการ์ด) */}
-      <div className="absolute top-8 sm:top-12 left-6 sm:left-12 lg:left-20 z-30 pointer-events-none">
+      {/* 2. Independent Title & Badge: ปรับตำแหน่งอิสระได้ที่นี่โดยตรง (ไม่มี sm: หรือ lg: มาขัดขวาง) */}
+      <div className="absolute top-10 left-[33%] z-30 pointer-events-none">
         <div className="bg-black text-white px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block">
           Choose Your Fit
         </div>
