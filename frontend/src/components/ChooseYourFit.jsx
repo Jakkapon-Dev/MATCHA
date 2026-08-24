@@ -10,32 +10,32 @@ export default function ChooseYourFit({ onSelectFit }) {
       title: 'Oversized Boxy',
       size: 'Loose Streetwear Cut',
       code: 'FIT-01',
-      image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_striped_tee_001.jpg',
-      tag: 'Matcha Striped'
+      image: '/images/location_lifestyle/urban_street/spring/location_urban_street_spring_wearing_oversized_denim_ja_001.jpeg',
+      tag: 'Oversized Denim'
     },
     {
       id: 2,
       title: 'Slim Tailored',
       size: 'Form Fitting Structure',
       code: 'FIT-02',
-      image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_aqua_blazer_001.jpeg',
-      tag: 'Aqua Tailored'
+      image: '/images/location_lifestyle/urban_street/spring/location_urban_street_spring_posing_in_trench_coat_001.jpeg',
+      tag: 'Tailored Trench'
     },
     {
       id: 3,
       title: 'Street Relaxed',
       size: 'Casual Drop Shoulder',
       code: 'FIT-03',
-      image: '/images/studio_white_bg/standing_straight/autumn/studio_straight_autumn_matcha_hoodie_terracotta_001.jpg',
-      tag: 'Hoodie & Terracotta'
+      image: '/images/location_lifestyle/urban_street/spring/location_urban_street_spring_adjusting_hoodie_001.jpeg',
+      tag: 'Bomber & Hoodie'
     },
     {
       id: 4,
       title: 'Crop Sculpt',
       size: 'Contemporary Cropped',
       code: 'FIT-04',
-      image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_crew_001.jpg',
-      tag: 'Clean Minimal'
+      image: '/images/location_lifestyle/urban_street/winter/location_urban_street_winter_wearing_black_blazer_dress_001.jpeg',
+      tag: 'Sculpted Blazer'
     },
   ];
 
