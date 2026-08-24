@@ -4,7 +4,7 @@ import { ArrowUpRight } from 'lucide-react';
 export default function ChooseYourFit({ onSelectFit }) {
   const [hoveredCard, setHoveredCard] = useState(null);
 
-  // 6 Uniform Large Fit Cards arranged along the diagonal arc matching user's red circles
+  // 6 Uniform Large Fit Cards arranged along diagonal arcs with FIT-01 right below Header
   const fitItems = [
     // --- Left Diagonal Arc (3 Cards) ---
     {
@@ -13,7 +13,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '34 Items',
       code: 'FIT-01',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_coral_polo_shirt_001.jpeg',
-      positionClass: 'top-[8%] sm:top-[10%] left-[2%] sm:left-[4%] lg:left-[6%]',
+      positionClass: 'top-[15%] sm:top-[17%] left-[2%] sm:left-[4%] lg:left-[6%]',
     },
     {
       id: 2,
@@ -21,7 +21,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '82 Tees',
       code: 'FIT-02',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_striped_tee_001.jpg',
-      positionClass: 'top-[36%] sm:top-[38%] left-[7%] sm:left-[11%] lg:left-[15%]',
+      positionClass: 'top-[40%] sm:top-[42%] left-[7%] sm:left-[11%] lg:left-[15%]',
       isFeatured: true,
     },
     {
@@ -30,7 +30,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '58 Fits',
       code: 'FIT-03',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_minimal_tee_001.jpg',
-      positionClass: 'bottom-[6%] sm:bottom-[8%] left-[13%] sm:left-[17%] lg:left-[22%]',
+      positionClass: 'bottom-[4%] sm:bottom-[6%] left-[13%] sm:left-[17%] lg:left-[22%]',
     },
 
     // --- Right Diagonal Arc (3 Cards) ---
@@ -40,7 +40,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '46 Looks',
       code: 'FIT-04',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_crew_001.jpg',
-      positionClass: 'top-[8%] sm:top-[10%] right-[2%] sm:right-[4%] lg:right-[6%]',
+      positionClass: 'top-[15%] sm:top-[17%] right-[2%] sm:right-[4%] lg:right-[6%]',
     },
     {
       id: 5,
@@ -48,7 +48,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '29 Tailored',
       code: 'FIT-05',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_green_suit_001.jpeg',
-      positionClass: 'top-[36%] sm:top-[38%] right-[7%] sm:right-[11%] lg:right-[15%]',
+      positionClass: 'top-[40%] sm:top-[42%] right-[7%] sm:right-[11%] lg:right-[15%]',
     },
     {
       id: 6,
@@ -56,7 +56,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '64 Bottoms',
       code: 'FIT-06',
       image: '/images/studio_white_bg/standing_straight/autumn/studio_straight_autumn_matcha_hoodie_terracotta_001.jpg',
-      positionClass: 'bottom-[6%] sm:bottom-[8%] right-[13%] sm:right-[17%] lg:right-[22%]',
+      positionClass: 'bottom-[4%] sm:bottom-[6%] right-[13%] sm:right-[17%] lg:right-[22%]',
     },
   ];
 
@@ -72,18 +72,20 @@ export default function ChooseYourFit({ onSelectFit }) {
         />
       </div>
 
-      {/* 2. Title & Badge: Moved to Top-Left as indicated by the red arrow */}
-      <div className="absolute top-6 sm:top-10 left-6 sm:left-12 lg:left-16 z-30 pointer-events-none">
-        <div className="bg-black text-white px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block">
-          Choose Your Fit
+      {/* 2. Main Responsive Stage Container */}
+      <div className="relative w-full max-w-[1600px] mx-auto h-[820px] sm:h-[900px] lg:h-[960px] px-2 sm:px-6">
+        
+        {/* Title & Badge: Moved to align directly above Card FIT-01 */}
+        <div className="absolute top-2 sm:top-4 left-[2%] sm:left-[4%] lg:left-[6%] z-30 pointer-events-none">
+          <div className="bg-black text-white px-5 py-2 sm:px-7 sm:py-2 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block">
+            Choose Your Fit
+          </div>
+          <p className="text-[10px] sm:text-xs font-mono text-[#6B5E55] tracking-[0.2em] uppercase mt-1.5 font-bold">
+            SIGNATURE SILHOUETTES & FIT GUIDE
+          </p>
         </div>
-        <p className="text-[10px] sm:text-xs font-mono text-[#6B5E55] tracking-[0.25em] uppercase mt-2 font-bold">
-          SIGNATURE SILHOUETTES & FIT GUIDE
-        </p>
-      </div>
 
-      {/* 3. Six Uniform Large Floating Cards following the exact Red Circles Layout */}
-      <div className="relative w-full max-w-[1600px] mx-auto h-[800px] sm:h-[880px] lg:h-[940px] px-2 sm:px-6">
+        {/* 3. Six Uniform Large Floating Cards */}
         {fitItems.map((item) => {
           const isHovered = hoveredCard === item.id;
           
@@ -136,6 +138,7 @@ export default function ChooseYourFit({ onSelectFit }) {
             </div>
           );
         })}
+
       </div>
 
     </section>
