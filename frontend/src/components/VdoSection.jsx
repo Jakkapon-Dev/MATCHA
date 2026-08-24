@@ -8,13 +8,13 @@ export default function VdoSection({ onClaimPromo }) {
   return (
     <section className="relative w-full min-h-screen bg-[#1A2218] overflow-hidden flex items-center justify-center border-y border-[#2D5A27]/30 select-none py-16 sm:py-24">
       
-      {/* 1. Full-Height Background Video (Continuous Loop, Muted, No Buttons) */}
+      {/* 1. Full-Height Background Video (Anchored to top to prevent head crop) */}
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-90 pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover object-top sm:object-[center_15%] opacity-90 pointer-events-none"
       >
         <source src="/videos/lookbook_reel.mp4" type="video/mp4" />
         <source src={videoSrc} type="video/mp4" />
