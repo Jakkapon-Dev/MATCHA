@@ -7,52 +7,52 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
     {
       id: 'LOOK-01',
       name: 'MatchA Crew & Lace Skirt',
-      src: '/images/model_full_1.jpg'
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_crew_001.jpg'
     },
     {
       id: 'LOOK-02',
       name: 'MatchA Striped Tee & Cargo Trousers',
-      src: '/images/model_full_2.jpg'
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_striped_tee_001.jpg'
     },
     {
       id: 'LOOK-03',
       name: 'MatchA Green Hoodie & Terracotta Pants',
-      src: '/images/model_full_3.jpg'
+      src: '/images/studio_white_bg/standing_straight/autumn/studio_straight_autumn_matcha_hoodie_terracotta_001.jpg'
     },
     {
       id: 'LOOK-04',
       name: 'MatchA Minimalist Tee & Wide Pants',
-      src: '/images/model_full_4.jpg'
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_minimal_tee_001.jpg'
     },
     {
       id: 'LOOK-05',
-      name: 'Vibrant Sunshine Knit & Tailored Fit',
-      src: '/images/model_full_5.jpg'
+      name: 'Aqua Tailored Blazer Look',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_aqua_blazer_001.jpeg'
     },
     {
       id: 'LOOK-06',
-      name: 'Crimson & Washed Charcoal Chic',
-      src: '/images/model_full_6.jpg'
+      name: 'Cobalt Blue Street Suit',
+      src: '/images/studio_white_bg/standing_straight/winter/studio_straight_winter_wearing_cobalt_suit_001.jpeg'
     },
     {
       id: 'LOOK-07',
-      name: 'Urban Graphic Tee & Dark Cargo',
-      src: '/images/model_full_7.jpg'
+      name: 'Urban Street Denim & Baggy Pants',
+      src: '/images/location_lifestyle/urban_street/spring/location_urban_street_spring_denim_jacket_001.jpeg'
     },
     {
       id: 'LOOK-08',
-      name: 'Warm Cream Linen & Summer Tiered',
-      src: '/images/model_full_8.jpg'
+      name: 'Lavender Field Editorial Look',
+      src: '/images/location_lifestyle/nature_outdoor/summer/location_nature_outdoor_summer_lavender_rows_001.jpeg'
     },
     {
       id: 'LOOK-09',
-      name: 'Oversized Trench & Indigo Denim',
-      src: '/images/model_full_9.jpg'
+      name: 'Oversized Trench & Urban Trousers',
+      src: '/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_trench_coat_trousers_001.jpeg'
     },
     {
       id: 'LOOK-10',
-      name: 'Retro Athleisure & White Sneakers',
-      src: '/images/model_full_10.jpg'
+      name: 'Cyber Techwear Utility Vest',
+      src: '/images/location_lifestyle/cyber_techwear/winter/location_cyber_techwear_winter_tech_wear_vest_001.jpeg'
     }
   ];
 

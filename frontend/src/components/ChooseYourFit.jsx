@@ -10,7 +10,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       title: 'Oversized Boxy',
       size: 'Loose Streetwear Cut',
       code: 'FIT-01',
-      image: '/images/model_full_2.jpg',
+      image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_striped_tee_001.jpg',
       tag: 'Matcha Striped'
     },
     {
@@ -18,15 +18,15 @@ export default function ChooseYourFit({ onSelectFit }) {
       title: 'Slim Tailored',
       size: 'Form Fitting Structure',
       code: 'FIT-02',
-      image: '/images/model_full_6.jpg',
-      tag: 'Crimson & Leather'
+      image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_aqua_blazer_001.jpeg',
+      tag: 'Aqua Tailored'
     },
     {
       id: 3,
       title: 'Street Relaxed',
       size: 'Casual Drop Shoulder',
       code: 'FIT-03',
-      image: '/images/model_full_3.jpg',
+      image: '/images/studio_white_bg/standing_straight/autumn/studio_straight_autumn_matcha_hoodie_terracotta_001.jpg',
       tag: 'Hoodie & Terracotta'
     },
     {
@@ -34,8 +34,8 @@ export default function ChooseYourFit({ onSelectFit }) {
       title: 'Crop Sculpt',
       size: 'Contemporary Cropped',
       code: 'FIT-04',
-      image: '/images/model_full_5.jpg',
-      tag: 'Sunshine Knit'
+      image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_crew_001.jpg',
+      tag: 'Clean Minimal'
     },
   ];
 
