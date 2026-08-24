@@ -5,7 +5,6 @@ import StreetFavorites from '../components/StreetFavorites';
 import VdoSection from '../components/VdoSection';
 import PulsePerks from '../components/PulsePerks';
 import JoinDropList from '../components/JoinDropList';
-import ScrollReveal from '../components/ScrollReveal';
 
 export default function HomePage({
   onSelectFit,
@@ -29,37 +28,27 @@ export default function HomePage({
 
       {/* 2. CHOOSE YOUR SILHOUETTE: 2K Studio Model with 6 Borderless Floating Cards */}
       <section id="fit-guide">
-        <ScrollReveal delay={50}>
-          <ChooseYourFit onSelectFit={onSelectFit} />
-        </ScrollReveal>
+        <ChooseYourFit onSelectFit={onSelectFit} />
       </section>
 
       {/* 3. STREET FAVORITES & ARCHIVE: Continuous Framed Carousel with Real Product Shots */}
       <section id="street-favorites">
-        <ScrollReveal delay={50}>
-          <StreetFavorites onAddToCart={onAddToCart} onQuickView={onQuickView} />
-        </ScrollReveal>
+        <StreetFavorites onAddToCart={onAddToCart} onQuickView={onQuickView} />
       </section>
 
       {/* 4. CINEMATIC TEXTURE REEL: Urban Motion Video + 15% Special Promo Glass Card */}
       <section id="cinematic-reel">
-        <ScrollReveal delay={50}>
-          <VdoSection onClaimPromo={onClaimPromo} />
-        </ScrollReveal>
+        <VdoSection onClaimPromo={onClaimPromo} />
       </section>
 
       {/* 5. THE PULSE PERKS: 3D Rotating Model Card + 3-Tier Benefit Grid */}
       <section id="pulse-perks">
-        <ScrollReveal delay={50}>
-          <PulsePerks />
-        </ScrollReveal>
+        <PulsePerks />
       </section>
 
       {/* 6. VIP METAL PASS & JOIN DROP LIST: 3D Black Card + Newsletter Access */}
       <section id="vip-drop">
-        <ScrollReveal delay={50}>
-          <JoinDropList onSubscribe={onSubscribe} />
-        </ScrollReveal>
+        <JoinDropList onSubscribe={onSubscribe} />
       </section>
 
     </div>
