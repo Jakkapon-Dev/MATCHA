@@ -2,6 +2,34 @@ import React, { useState, useEffect } from 'react';
 import { Shuffle, Play, Pause, ArrowRight } from 'lucide-react';
 
 export default function BrandHero({ onShopNow, onEnterWebsite }) {
+  const sectionRef = useRef(null);
+  const [stickyOffset, setStickyOffset] = useState(0);
+
+  // Guarantee silky-smooth sticky pinning behind model until BrandHero section ends
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (!sectionRef.current) return;
+          const rect = sectionRef.current.getBoundingClientRect();
+          if (rect.top <= 0 && rect.bottom >= 150) {
+            const maxShift = sectionRef.current.offsetHeight - window.innerHeight;
+            const shift = Math.min(Math.max(-rect.top, 0), maxShift > 0 ? maxShift : 0);
+            setStickyOffset(shift);
+          } else if (rect.top > 0) {
+            setStickyOffset(0);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   // 10 Strictly Verified Studio White Background Front-Facing Models (100% Facing Forward)
   const models = [
     {
@@ -150,10 +178,19 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
   };
 
   return (
-    <section className="relative w-full bg-[#FAF8F5] text-[#2D231E] min-h-[135vh] py-6 sm:py-10 px-4 sm:px-8 lg:px-12 flex flex-col justify-between overflow-hidden select-none border-b border-[#D9D3C7]">
+    <section 
+      ref={sectionRef}
+      className="relative w-full bg-[#FAF8F5] text-[#2D231E] min-h-[145vh] py-6 sm:py-10 px-4 sm:px-8 lg:px-12 flex flex-col justify-between select-none border-b border-[#D9D3C7]"
+    >
       
-      {/* 1. Header Title: Sticky within Hero, pinned behind model, naturally exits at next section */}
-      <div className="sticky top-14 sm:top-18 lg:top-20 w-full text-center z-0 pointer-events-none select-none pt-2">
+      {/* 1. Header Title: Glides & follows smoothly with scroll inside Hero, stops & exits at ChooseYourFit */}
+      <div 
+        className="w-full text-center z-0 pointer-events-none select-none pt-2 relative"
+        style={{
+          transform: `translateY(${stickyOffset}px)`,
+          transition: 'transform 0.04s ease-out',
+        }}
+      >
         <h1 className="text-6xl sm:text-8xl md:text-9xl lg:text-[11.5rem] xl:text-[14rem] font-black tracking-tight uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm font-sans">
           <span className="text-[#2D5A27]">MATCH</span>
           <span className="text-[#BC5A36]">A</span>
@@ -161,7 +198,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
       </div>
 
       {/* 2. Main 3-Column Layout with Magazine Depth Overlap (In Front of Sticky MATCHA) */}
-      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center my-auto -mt-10 sm:-mt-16 md:-mt-24 lg:-mt-32 pt-4 pb-16">
+      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center my-auto -mt-10 sm:-mt-16 md:-mt-24 lg:-mt-32 pt-4 pb-20">
         
         {/* Left Column: Stacked Black Badge Typography */}
         <div className="md:col-span-3 flex flex-col items-center md:items-start justify-center order-2 md:order-1 z-20">
