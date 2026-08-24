@@ -60,18 +60,8 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
   const [sliceModels, setSliceModels] = useState([0, 4, 2, 5]);
 
   // Track auto-play running state for each of the 4 slices: [slice0, slice1, slice2, slice3]
+  // Auto-run on page load by default with 1.30s interval per user request
   const [slicePlaying, setSlicePlaying] = useState([true, true, true, true]);
-
-  // 1.2s Smooth Cinematic Scale-in on Page Open
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    // Trigger smooth 1.2s expansion animation right on mount
-    const timer = setTimeout(() => {
-      setIsLoaded(true);
-    }, 50);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Randomize all 4 slices independently across 10 outfits
   const randomizeAll = () => {
@@ -83,7 +73,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
     ]);
   };
 
-  // Auto-play interval effect for active running slices (1.30 seconds)
+  // Auto-play interval effect for active running slices with randomized selection (1.30 seconds)
   useEffect(() => {
     const hasAnyPlaying = slicePlaying.some((p) => p);
     if (!hasAnyPlaying) return;
@@ -160,21 +150,17 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
   };
 
   return (
-    <section className="relative w-full bg-[#FAF8F5] text-[#2D231E] min-h-screen py-6 sm:py-10 px-4 sm:px-8 lg:px-12 flex flex-col justify-between overflow-hidden select-none">
+    <section className="relative w-full bg-[#FAF8F5] text-[#2D231E] min-h-screen py-6 sm:py-10 px-4 sm:px-8 lg:px-12 flex flex-col justify-between overflow-hidden">
       
-      {/* 1. Header Title: MATCHA - Smooth 1.2s Scale-in on Open, Fixed in Background Layer Behind Model */}
-      <div 
-        className={`w-full text-center z-0 relative pt-2 sm:pt-4 -mb-12 sm:-mb-20 md:-mb-28 lg:-mb-36 pointer-events-none select-none transition-all duration-1200 ease-out origin-center ${
-          isLoaded ? 'scale-100 opacity-100 blur-none' : 'scale-80 opacity-0 blur-xs'
-        }`}
-      >
-        <h1 className="text-7xl sm:text-9xl md:text-[12rem] lg:text-[16rem] xl:text-[19.5rem] font-black tracking-tight uppercase leading-[0.82] inline-block whitespace-nowrap drop-shadow-sm font-sans">
-          <span className="text-[#2D5A27] transition-colors">MATCH</span>
-          <span className="text-[#BC5A36] transition-colors">A</span>
+      {/* 1. Header Title: Vogue Magazine Depth (Behind Model) + Dual-Tone MATCH + A */}
+      <div className="w-full text-center z-0 relative pt-2 sm:pt-4 -mb-10 sm:-mb-16 md:-mb-20 lg:-mb-28 pointer-events-none select-none">
+        <h1 className="text-6xl sm:text-8xl md:text-9xl lg:text-[11rem] xl:text-[13rem] font-black tracking-tight uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm font-sans">
+          <span className="text-[#2D5A27]">MATCH</span>
+          <span className="text-[#BC5A36]">A</span>
         </h1>
       </div>
 
-      {/* 2. Main 3-Column Layout with Magazine Depth Overlap (Stands in front of MATCHA) */}
+      {/* 2. Main 3-Column Layout with Grounded Clean Alignment */}
       <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center my-auto pt-4 sm:pt-6">
         
         {/* Left Column: Stacked Black Badge Typography */}
@@ -191,7 +177,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
           </div>
         </div>
 
-        {/* Center Column: Extra Large Sliced Model Supporting 10 Outfits (Overlaps in front of MATCHA) */}
+        {/* Center Column: Extra Large Sliced Model Supporting 10 Outfits with Magazine Overlap */}
         <div className="md:col-span-6 flex flex-col items-center justify-center order-1 md:order-2 z-20">
           
           <div 
@@ -224,7 +210,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
               </button>
             </div>
 
-            {/* Slice 2: Torso & Tops/Jackets (25% - 50%) */}
+            {/* Slice 2: Torso & Apparel (25% - 50%) */}
             <div 
               onClick={() => cycleSingleSlice(1)}
               className="relative w-full h-[25%] overflow-hidden border-b border-[#2D231E]/15 bg-neutral-100 cursor-pointer group"
@@ -304,75 +290,72 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
 
           </div>
 
-          {/* Sub Controls: Master Play All + Shuffle Slices */}
-          <div className="mt-3 flex items-center gap-3 z-30">
-            <button
-              onClick={randomizeAll}
-              className="px-3.5 py-1.5 bg-white hover:bg-[#2D5A27] text-[#2D231E] hover:text-white border border-[#D9D3C7] text-xs font-mono font-bold tracking-wider uppercase transition-all shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95"
-              title="Shuffle All 4 Slices"
-            >
-              <Shuffle size={13} />
-              <span>Shuffle All</span>
-            </button>
-
-            <button
-              onClick={togglePlayAll}
-              className={`px-3.5 py-1.5 border text-xs font-mono font-bold tracking-wider uppercase transition-all shadow-sm flex items-center gap-1.5 cursor-pointer active:scale-95 ${
-                isAllPlaying
-                  ? 'bg-[#BC5A36] text-white border-[#A64C2B] animate-pulse'
-                  : 'bg-white hover:bg-[#BC5A36] text-[#2D231E] hover:text-white border-[#D9D3C7]'
-              }`}
-              title={isAllPlaying ? 'Pause Auto Randomization' : 'Auto-Run All 4 Slices'}
-            >
-              {isAllPlaying ? <Pause size={13} /> : <Play size={13} />}
-              <span>{isAllPlaying ? 'Auto (1.3s)' : 'Resume'}</span>
-            </button>
-          </div>
-
         </div>
 
         {/* Right Column: Code, Barcode & Action Button */}
-        <div className="md:col-span-3 flex flex-col items-center md:items-end justify-center order-3 z-20">
-          <div className="flex flex-col items-center md:items-end gap-4 max-w-xs text-center md:text-right">
-            
-            {/* Technical Code Meta */}
-            <div className="font-mono text-xs text-[#2D231E] leading-relaxed select-none">
-              <p className="font-bold tracking-wider">DROP_35 // URBAN</p>
-              <p className="text-[#6B5E55] tracking-widest text-[11px]">CODE // LIMITED RUN</p>
-            </div>
-
-            {/* Realistic Barcode Visual */}
-            <div className="flex flex-col items-center md:items-end select-none">
-              <div className="flex items-center gap-[3px] h-10 px-2 py-1 bg-white border border-[#D9D3C7]">
-                <div className="w-[2px] h-8 bg-black"></div>
-                <div className="w-[1px] h-8 bg-black"></div>
-                <div className="w-[3px] h-8 bg-black"></div>
-                <div className="w-[1px] h-8 bg-black"></div>
-                <div className="w-[4px] h-8 bg-black"></div>
-                <div className="w-[2px] h-8 bg-black"></div>
-                <div className="w-[1px] h-8 bg-black"></div>
-                <div className="w-[3px] h-8 bg-black"></div>
-                <div className="w-[2px] h-8 bg-black"></div>
-                <div className="w-[1px] h-8 bg-black"></div>
-                <div className="w-[4px] h-8 bg-black"></div>
-                <div className="w-[2px] h-8 bg-black"></div>
-                <div className="w-[1px] h-8 bg-black"></div>
-              </div>
-              <span className="text-[9px] font-mono tracking-[0.3em] text-[#6B5E55] mt-1">
-                8 859012 345678
-              </span>
-            </div>
-
-            {/* Action Button: Shop New Drops */}
-            <button
-              onClick={handleAction}
-              className="w-full sm:w-auto px-6 py-2.5 bg-[#BC5A36] hover:bg-[#9E4423] text-white font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-95 cursor-pointer flex items-center justify-center gap-2 group/btn"
-            >
-              <span>SHOP NEW DROPS</span>
-              <ArrowRight size={14} className="group-hover/btn:translate-x-1 transition-transform" />
-            </button>
-
+        <div className="md:col-span-3 flex flex-col items-center md:items-start justify-center gap-6 order-3 z-20">
+          
+          {/* Metadata Text */}
+          <div className="text-center md:text-left font-mono">
+            <p className="text-xs font-bold tracking-wider text-[#2D231E]">
+              DROP_35 &nbsp;//&nbsp; URBAN
+            </p>
+            <p className="text-xs font-bold tracking-wider text-[#6B5E55] mt-0.5">
+              CODE &nbsp;//&nbsp; LIMITED RUN
+            </p>
           </div>
+
+          {/* Barcode Graphic */}
+          <div className="w-48 py-1">
+            <svg viewBox="0 0 200 40" className="w-full h-8 text-[#2D231E] fill-current">
+              <rect x="0" y="0" width="3" height="40" />
+              <rect x="5" y="0" width="2" height="40" />
+              <rect x="9" y="0" width="4" height="40" />
+              <rect x="16" y="0" width="1" height="40" />
+              <rect x="19" y="0" width="6" height="40" />
+              <rect x="28" y="0" width="2" height="40" />
+              <rect x="32" y="0" width="3" height="40" />
+              <rect x="38" y="0" width="5" height="40" />
+              <rect x="46" y="0" width="2" height="40" />
+              <rect x="50" y="0" width="4" height="40" />
+              <rect x="57" y="0" width="1" height="40" />
+              <rect x="61" y="0" width="6" height="40" />
+              <rect x="70" y="0" width="2" height="40" />
+              <rect x="75" y="0" width="5" height="40" />
+              <rect x="83" y="0" width="3" height="40" />
+              <rect x="89" y="0" width="2" height="40" />
+              <rect x="94" y="0" width="6" height="40" />
+              <rect x="103" y="0" width="1" height="40" />
+              <rect x="107" y="0" width="4" height="40" />
+              <rect x="114" y="0" width="3" height="40" />
+              <rect x="120" y="0" width="5" height="40" />
+              <rect x="128" y="0" width="2" height="40" />
+              <rect x="133" y="0" width="4" height="40" />
+              <rect x="140" y="0" width="1" height="40" />
+              <rect x="144" y="0" width="6" height="40" />
+              <rect x="153" y="0" width="3" height="40" />
+              <rect x="159" y="0" width="2" height="40" />
+              <rect x="164" y="0" width="5" height="40" />
+              <rect x="172" y="0" width="2" height="40" />
+              <rect x="177" y="0" width="4" height="40" />
+              <rect x="184" y="0" width="1" height="40" />
+              <rect x="188" y="0" width="6" height="40" />
+              <rect x="197" y="0" width="3" height="40" />
+            </svg>
+            <p className="text-[10px] font-mono text-[#6B5E55] tracking-widest text-center mt-1">
+              8 859012 345678
+            </p>
+          </div>
+
+          {/* Action Button: SHOP NEW DROPS / ENTER WEBSITE */}
+          <button 
+            onClick={handleAction}
+            className="w-full sm:w-auto px-7 py-3.5 bg-[#BC5A36] hover:bg-[#A64C2B] text-white font-mono text-xs font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-[#BC5A36]/30 active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
+          >
+            <span>{onEnterWebsite ? 'เข้าสู่เว็บไซต์' : 'SHOP NEW DROPS'}</span>
+            <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+          </button>
+
         </div>
 
       </div>
