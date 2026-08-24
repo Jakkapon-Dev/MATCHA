@@ -1,8 +1,9 @@
-import React, { useRef } from 'react';
-import { ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { ChevronLeft, ChevronRight, ShoppingBag, Sparkles } from 'lucide-react';
 
 export default function StreetFavorites({ onAddToCart, onQuickView }) {
   const scrollRef = useRef(null);
+  const [activeCategory, setActiveCategory] = useState('ALL');
 
   // 8 High-Fashion Products sourced directly from frontend/public/images/products
   const products = [
@@ -13,7 +14,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
       priceNum: 49.99,
       tag: 'Best Seller',
       image: '/images/products/standalone/mustard_sweater.jpg',
-      category: 'Sweatshirt',
+      category: 'Tops',
       color: 'Emerald & Sage',
     },
     {
@@ -33,7 +34,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
       priceNum: 69.99,
       tag: 'Best Seller',
       image: '/images/products/winter/bottoms/jeans/color_2_cobalt.jpeg',
-      category: 'Denim',
+      category: 'Bottoms',
       color: 'Washed Cobalt',
     },
     {
@@ -53,7 +54,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
       priceNum: 45.99,
       tag: 'Best Seller',
       image: '/images/products/summer/bottoms/shorts/color_4_teal.jpeg',
-      category: 'Shorts',
+      category: 'Bottoms',
       color: 'Matcha Forest',
     },
     {
@@ -63,7 +64,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
       priceNum: 59.99,
       tag: 'Best Seller',
       image: '/images/products/standalone/peach_skirt.jpg',
-      category: 'Skirts',
+      category: 'Bottoms',
       color: 'Pure White & Peach',
     },
     {
@@ -73,7 +74,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
       priceNum: 79.99,
       tag: 'Best Seller',
       image: '/images/products/spring/tops/polo-shirts/color_1_coral.jpeg',
-      category: 'Knitwear',
+      category: 'Tops',
       color: 'Coral Gold',
     },
     {
@@ -87,6 +88,18 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
       color: 'Deep Cobalt',
     },
   ];
+
+  const categories = [
+    { key: 'ALL', label: 'ALL DROPS' },
+    { key: 'Tops', label: 'TOPS & KNIT' },
+    { key: 'Bottoms', label: 'BOTTOMS & DENIM' },
+    { key: 'Outerwear', label: 'OUTERWEAR' },
+    { key: 'Accessories', label: 'ACCESSORIES' },
+  ];
+
+  const filteredProducts = activeCategory === 'ALL' 
+    ? products 
+    : products.filter(p => p.category === activeCategory);
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -104,8 +117,8 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
     <section id="street-favorites" className="w-full bg-[#FAF8F5] text-[#2D231E] py-16 sm:py-24 px-4 sm:px-8 lg:px-12 border-b border-[#D9D3C7] overflow-hidden select-none">
       <div className="max-w-7xl mx-auto">
         
-        {/* 1. Header Title matching reference */}
-        <div className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        {/* 1. Header Title & Navigation Controls */}
+        <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <h2 className="text-4xl sm:text-6xl font-black text-[#BC5A36] tracking-tight font-sans">
               Street Favorites
@@ -129,7 +142,24 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
           </div>
         </div>
 
-        {/* 2. Main Framed Carousel Container (Continuous Orange Border + Internal Divider Lines) */}
+        {/* 2. Interactive Category Filter Pills */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-4 scrollbar-none">
+          {categories.map((cat) => (
+            <button
+              key={cat.key}
+              onClick={() => setActiveCategory(cat.key)}
+              className={`px-4 py-1.5 text-xs font-mono font-bold tracking-wider uppercase transition-all whitespace-nowrap cursor-pointer ${
+                activeCategory === cat.key
+                  ? 'bg-[#BC5A36] text-white shadow-md'
+                  : 'bg-white text-[#2D231E] border border-[#D9D3C7] hover:border-[#BC5A36]'
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
+        {/* 3. Main Framed Carousel Container (Continuous Orange Border + Internal Divider Lines) */}
         <div className="relative border-2 border-[#BC5A36] bg-white shadow-xl overflow-hidden">
           
           <div
@@ -137,7 +167,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
             className="flex overflow-x-auto scrollbar-none divide-x-2 divide-[#BC5A36] scroll-smooth"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {products.map((item) => (
+            {filteredProducts.map((item) => (
               <div
                 key={item.id}
                 onClick={() => onQuickView && onQuickView(item)}
@@ -147,6 +177,9 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
                 <div className="flex justify-between items-start mb-3">
                   <span className="text-[11px] font-sans font-medium text-[#BC5A36]">
                     {item.tag}
+                  </span>
+                  <span className="text-[10px] font-mono text-[#6B5E55] uppercase">
+                    {item.category}
                   </span>
                 </div>
 
@@ -172,7 +205,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
                   </button>
                 </div>
 
-                {/* Product Title and Price (Centered/Clean matching reference) */}
+                {/* Product Title and Price */}
                 <div className="text-center">
                   <h3 className="text-xs sm:text-sm font-medium text-[#BC5A36] line-clamp-2 leading-tight group-hover:text-[#2D231E] transition-colors">
                     {item.name}
