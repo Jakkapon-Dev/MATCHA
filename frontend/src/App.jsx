@@ -6,7 +6,6 @@ import LandingPage from './pages/LandingPage';
 import HomePage from './pages/HomePage';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
-import CartDrawer from './components/CartDrawer';
 
 export default function App() {
   // Page Routing State: 'landing' (Default editorial entry) or 'store' (Full shopping catalog)
@@ -14,7 +13,6 @@ export default function App() {
 
   const [healthStatus, setHealthStatus] = useState(null);
   const [cartItems, setCartItems] = useState([]);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -73,35 +71,9 @@ export default function App() {
   };
 
   const handleAddToCart = (product) => {
-    setCartItems((prev) => {
-      const existingIdx = prev.findIndex((item) => item.id === product.id && item.size === product.size);
-      if (existingIdx > -1) {
-        const updated = [...prev];
-        updated[existingIdx] = {
-          ...updated[existingIdx],
-          quantity: (updated[existingIdx].quantity || 1) + 1,
-        };
-        return updated;
-      }
-      return [...prev, { ...product, quantity: 1 }];
-    });
-
-    setIsCartOpen(true);
+    setCartItems((prev) => [...prev, product]);
     const details = product.size && product.color ? ` (${product.size} / ${product.color})` : '';
     showToast(`Added ${product.name}${details} to bag! 🛍️`);
-  };
-
-  const handleUpdateQuantity = (index, newQty) => {
-    setCartItems((prev) => {
-      const updated = [...prev];
-      updated[index] = { ...updated[index], quantity: newQty };
-      return updated;
-    });
-  };
-
-  const handleRemoveItem = (index) => {
-    setCartItems((prev) => prev.filter((_, i) => i !== index));
-    showToast('Removed item from bag 🗑️');
   };
 
   const handleSelectFit = (fit) => {
@@ -109,8 +81,7 @@ export default function App() {
   };
 
   const handleClaimPromo = () => {
-    setIsCartOpen(true);
-    showToast(`Use code MATCHA15 in your cart for 15% off! 🎉`);
+    showToast(`Claimed 15% discount for 2+ items! 🎉`);
   };
 
   const handleSubscribe = (email) => {
@@ -139,23 +110,13 @@ export default function App() {
         />
       )}
 
-      {/* Interactive Cart Drawer */}
-      <CartDrawer
-        isOpen={isCartOpen}
-        onClose={() => setIsCartOpen(false)}
-        items={cartItems}
-        onUpdateQuantity={handleUpdateQuantity}
-        onRemoveItem={handleRemoveItem}
-        onCheckout={() => showToast('Order processed successfully! 🎉')}
-      />
-
       {/* Conditional View: 1. Landing Lookbook Page vs 2. Main Store Catalog */}
       {currentPage === 'landing' ? (
         <LandingPage onEnterWebsite={handleEnterStore} />
       ) : (
         <Layout 
-          cartCount={cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0)}
-          onOpenCart={() => setIsCartOpen(true)}
+          cartCount={cartItems.length}
+          onOpenCart={() => showToast(`Cart contains ${cartItems.length} items! 🛍️`)}
           onGoToLanding={handleGoToLanding}
         >
           <HomePage 
