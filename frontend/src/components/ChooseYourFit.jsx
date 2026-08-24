@@ -4,7 +4,7 @@ import { ArrowUpRight } from 'lucide-react';
 export default function ChooseYourFit({ onSelectFit }) {
   const [hoveredCard, setHoveredCard] = useState(null);
 
-  // 6 Uniform Large Fit Cards arranged along diagonal arcs with FIT-01 right below Header
+  // 6 Uniform Large Fit Cards arranged along diagonal arcs with generous spacing (no overlapping)
   const fitItems = [
     // --- Left Diagonal Arc (3 Cards) ---
     {
@@ -13,7 +13,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '34 Items',
       code: 'FIT-01',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_coral_polo_shirt_001.jpeg',
-      positionClass: 'top-[15%] sm:top-[17%] left-[2%] sm:left-[4%] lg:left-[6%]',
+      positionClass: 'top-[16%] sm:top-[18%] left-[2%] sm:left-[4%] lg:left-[6%]',
     },
     {
       id: 2,
@@ -21,7 +21,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '82 Tees',
       code: 'FIT-02',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_striped_tee_001.jpg',
-      positionClass: 'top-[40%] sm:top-[42%] left-[7%] sm:left-[11%] lg:left-[15%]',
+      positionClass: 'top-[44%] sm:top-[46%] left-[7%] sm:left-[11%] lg:left-[15%]',
       isFeatured: true,
     },
     {
@@ -40,7 +40,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '46 Looks',
       code: 'FIT-04',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_crew_001.jpg',
-      positionClass: 'top-[15%] sm:top-[17%] right-[2%] sm:right-[4%] lg:right-[6%]',
+      positionClass: 'top-[16%] sm:top-[18%] right-[2%] sm:right-[4%] lg:right-[6%]',
     },
     {
       id: 5,
@@ -48,7 +48,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '29 Tailored',
       code: 'FIT-05',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_green_suit_001.jpeg',
-      positionClass: 'top-[40%] sm:top-[42%] right-[7%] sm:right-[11%] lg:right-[15%]',
+      positionClass: 'top-[44%] sm:top-[46%] right-[7%] sm:right-[11%] lg:right-[15%]',
     },
     {
       id: 6,
@@ -61,9 +61,9 @@ export default function ChooseYourFit({ onSelectFit }) {
   ];
 
   return (
-    <section className="relative w-full min-h-[920px] lg:min-h-screen bg-[#FFFFFF] overflow-hidden select-none flex items-center justify-center border-b border-[#D9D3C7] py-16">
+    <section className="relative w-full min-h-[960px] lg:min-h-screen bg-white overflow-hidden select-none flex items-center justify-center border-b border-[#D9D3C7] py-16">
       
-      {/* 1. Full-Bleed Center Model Canvas (100% Unobstructed Center View) */}
+      {/* 1. Full-Bleed Center Model Canvas */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <img
           src="/images/studio_white_bg/standing_straight/spring/studio_straight_spring_nude_beige_wide_banner_2k_001.jpeg"
@@ -73,11 +73,11 @@ export default function ChooseYourFit({ onSelectFit }) {
       </div>
 
       {/* 2. Main Responsive Stage Container */}
-      <div className="relative w-full max-w-[1600px] mx-auto h-[820px] sm:h-[900px] lg:h-[960px] px-2 sm:px-6">
+      <div className="relative w-full max-w-[1600px] mx-auto h-[840px] sm:h-[920px] lg:h-[980px] px-2 sm:px-6">
         
-        {/* Title & Badge: Moved to align directly above Card FIT-01 */}
+        {/* Title & Badge: Aligned directly above Card FIT-01 */}
         <div className="absolute top-2 sm:top-4 left-[2%] sm:left-[4%] lg:left-[6%] z-30 pointer-events-none">
-          <div className="bg-black text-white px-5 py-2 sm:px-7 sm:py-2 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block">
+          <div className="bg-black text-white px-5 py-2 sm:px-7 sm:py-2 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-md inline-block">
             Choose Your Fit
           </div>
           <p className="text-[10px] sm:text-xs font-mono text-[#6B5E55] tracking-[0.2em] uppercase mt-1.5 font-bold">
@@ -85,7 +85,7 @@ export default function ChooseYourFit({ onSelectFit }) {
           </p>
         </div>
 
-        {/* 3. Six Uniform Large Floating Cards */}
+        {/* 3. Six Seamless Borderless Floating Cards */}
         {fitItems.map((item) => {
           const isHovered = hoveredCard === item.id;
           
@@ -96,17 +96,17 @@ export default function ChooseYourFit({ onSelectFit }) {
               onMouseLeave={() => setHoveredCard(null)}
               onClick={() => onSelectFit && onSelectFit(item)}
               className={`absolute ${item.positionClass} w-32 sm:w-44 lg:w-56 xl:w-60 aspect-[3/4] z-20 cursor-pointer transition-all duration-300 transform ${
-                isHovered ? 'scale-108 z-40 shadow-2xl ring-2 ring-black -translate-y-1' : 'shadow-xl hover:shadow-2xl'
-              } rounded-xl overflow-hidden bg-white border border-[#2D231E]/15`}
+                isHovered ? 'scale-108 z-40 shadow-2xl -translate-y-1' : 'shadow-md hover:shadow-xl'
+              } overflow-hidden bg-transparent border-0`}
             >
-              {/* Outfit Photo */}
+              {/* Outfit Photo (Edge to Edge, No Border) */}
               <img
                 src={item.image}
                 alt={item.category}
                 className="w-full h-full object-cover object-top transition-transform duration-500"
               />
 
-              {/* Dark Hover Tint Overlay with Uniform Clean Typography */}
+              {/* Dark Hover Tint Overlay */}
               <div
                 className={`absolute inset-0 bg-black/80 backdrop-blur-[2px] transition-opacity duration-300 flex flex-col items-center justify-center p-3 text-center ${
                   item.isFeatured && !isHovered
@@ -130,7 +130,7 @@ export default function ChooseYourFit({ onSelectFit }) {
 
               {/* Code Label in Top Left Corner */}
               {!isHovered && !item.isFeatured && (
-                <div className="absolute top-2 left-2 px-2 py-0.5 bg-black/75 text-[9px] sm:text-[10px] font-mono text-white rounded font-bold shadow-sm">
+                <div className="absolute top-2 left-2 px-2 py-0.5 bg-black/75 text-[9px] sm:text-[10px] font-mono text-white font-bold shadow-sm">
                   {item.code}
                 </div>
               )}
