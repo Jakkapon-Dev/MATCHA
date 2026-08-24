@@ -1,51 +1,59 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export default function ScrollProgressTracker() {
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [activeFrame, setActiveFrame] = useState({ num: '01', title: 'LOOKBOOK 2026' });
+  const [activeFrame, setActiveFrame] = useState({ num: '01', title: 'EDITORIAL MIX@MATCH' });
+  const rafId = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
-      if (totalScroll <= 0) return;
-      const currentScroll = window.scrollY;
-      const progress = (currentScroll / totalScroll) * 100;
-      setScrollProgress(progress);
+      if (rafId.current) cancelAnimationFrame(rafId.current);
 
-      // Determine active section frame based on scroll position
-      const sections = [
-        { id: 'brand-hero', num: '01', title: 'EDITORIAL MIX@MATCH' },
-        { id: 'fit-guide', num: '02', title: 'CHOOSE YOUR FIT' },
-        { id: 'cinematic-reel', num: '03', title: 'CINEMATIC MOVEMENT' },
-        { id: 'pulse-perks', num: '04', title: 'THE PULSE PERKS' },
-        { id: 'street-favorites', num: '05', title: 'STREET FAVORITES' },
-        { id: 'warehouse-sale', num: '06', title: 'LAST CALL ARCHIVE' },
-      ];
+      rafId.current = requestAnimationFrame(() => {
+        const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+        if (totalScroll <= 0) return;
+        const currentScroll = window.scrollY || window.pageYOffset;
+        const progress = Math.min(100, Math.max(0, (currentScroll / totalScroll) * 100));
+        setScrollProgress(progress);
 
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const el = document.getElementById(sections[i].id);
-        if (el) {
-          const rect = el.getBoundingClientRect();
-          if (rect.top <= window.innerHeight * 0.45) {
-            setActiveFrame({ num: sections[i].num, title: sections[i].title });
-            break;
+        // Determine active section frame based on scroll position
+        const sections = [
+          { id: 'brand-hero', num: '01', title: 'EDITORIAL MIX@MATCH' },
+          { id: 'fit-guide', num: '02', title: 'CHOOSE YOUR FIT' },
+          { id: 'cinematic-reel', num: '03', title: 'CINEMATIC MOVEMENT' },
+          { id: 'pulse-perks', num: '04', title: 'THE PULSE PERKS' },
+          { id: 'street-favorites', num: '05', title: 'STREET FAVORITES' },
+          { id: 'warehouse-sale', num: '06', title: 'LAST CALL ARCHIVE' },
+        ];
+
+        for (let i = sections.length - 1; i >= 0; i--) {
+          const el = document.getElementById(sections[i].id);
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top <= window.innerHeight * 0.5) {
+              setActiveFrame({ num: sections[i].num, title: sections[i].title });
+              break;
+            }
           }
         }
-      }
+      });
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+    };
   }, []);
 
   return (
     <>
       {/* 1. Top Global Scroll Progress Bar */}
-      <div className="fixed top-0 left-0 right-0 h-[3px] bg-transparent z-50 pointer-events-none">
+      <div className="fixed top-0 left-0 right-0 h-[3px] bg-black/5 z-50 pointer-events-none">
         <div
-          className="h-full bg-linear-to-r from-[#2D5A27] via-[#BC5A36] to-[#2D5A27] transition-all duration-150 ease-out shadow-xs"
+          className="h-full bg-linear-to-r from-[#2D5A27] via-[#BC5A36] to-[#2D5A27] transition-all duration-75 ease-out shadow-xs"
           style={{ width: `${scrollProgress}%` }}
         />
       </div>
