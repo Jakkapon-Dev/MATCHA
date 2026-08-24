@@ -85,8 +85,8 @@ export default function ChooseYourFit({ onSelectFit }) {
 
       {/* 2. Main Responsive Stage Container */}
       <div className="relative w-full max-w-[1700px] mx-auto h-[860px] sm:h-[920px] lg:h-[980px] px-4 sm:px-8">
-        {/* Title & Badge: Positioned in upper left space (above left cards, away from head) */}
-        <div className="absolute top-1 left-[26%] z-30 pointer-events-none">
+        {/* Title & Badge: Positioned high up in the upper left space */}
+        <div className="absolute top-2 left-[26%] z-30 pointer-events-none">
           <div className="bg-black text-white px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block">
             Choose Your Fit
           </div>
