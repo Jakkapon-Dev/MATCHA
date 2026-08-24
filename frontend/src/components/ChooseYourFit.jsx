@@ -4,7 +4,7 @@ import { ArrowUpRight } from "lucide-react";
 export default function ChooseYourFit({ onSelectFit }) {
   const [hoveredCard, setHoveredCard] = useState(null);
 
-  // 6 Uniform Fit Cards spread widely across the left and right quadrants (ZERO overlap)
+  // 6 Uniform Large Fit Cards spread widely across the left and right quadrants (ZERO overlap)
   const fitItems = [
     // --- Left Arc (3 distinct zones) ---
     {
@@ -15,7 +15,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       image:
         "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_coral_polo_shirt_001.jpeg",
       positionClass:
-        "top-[18%] sm:top-[20%] left-[2%] sm:left-[5%] lg:left-[7%]",
+        "top-[10%] sm:top-[12%] left-[2%] sm:left-[5%] lg:left-[7%]",
     },
     {
       id: 2,
@@ -48,7 +48,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       image:
         "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_crew_001.jpg",
       positionClass:
-        "top-[8%] sm:top-[10%] right-[2%] sm:right-[5%] lg:right-[7%]",
+        "top-[10%] sm:top-[12%] right-[2%] sm:right-[5%] lg:right-[7%]",
     },
     {
       id: 5,
@@ -74,8 +74,9 @@ export default function ChooseYourFit({ onSelectFit }) {
 
   return (
     <section className="relative w-full min-h-[920px] lg:min-h-screen bg-white overflow-hidden select-none flex items-center justify-center border-b border-[#D9D3C7] py-12">
-      {/* 1. Full-Bleed Center Model Canvas */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      
+      {/* 1. Full-Bleed Center Model Canvas (เลเยอร์รูปภาพหลัก) */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
         <img
           src="/images/studio_white_bg/standing_straight/spring/studio_straight_spring_nude_beige_wide_banner_2k_001.jpeg"
           alt="MatchA Choose Your Fit"
@@ -83,19 +84,18 @@ export default function ChooseYourFit({ onSelectFit }) {
         />
       </div>
 
-      {/* 2. Main Responsive Stage Container */}
-      <div className="relative w-full max-w-[1700px] mx-auto h-[860px] sm:h-[920px] lg:h-[980px] px-4 sm:px-8">
-        {/* Title & Badge: Positioned in the Top-Left corner */}
-        <div className="absolute top-4 sm:top-6 left-4 sm:left-6 lg:left-8 z-30 pointer-events-none">
-          <div className="bg-black text-white px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block">
-            Choose Your Fit
-          </div>
-          <p className="text-[10px] sm:text-xs font-mono text-[#6B5E55] tracking-[0.25em] uppercase mt-1.5 font-bold">
-            SIGNATURE SILHOUETTES & FIT GUIDE
-          </p>
+      {/* 2. Independent Title & Badge (อิสระเต็มที่ ผูกติดกับจอ/ภาพโดยตรง ไม่ถูกบีบโดยการ์ด) */}
+      <div className="absolute top-8 sm:top-12 left-6 sm:left-12 lg:left-20 z-30 pointer-events-none">
+        <div className="bg-black text-white px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block">
+          Choose Your Fit
         </div>
+        <p className="text-[10px] sm:text-xs font-mono text-[#6B5E55] tracking-[0.25em] uppercase mt-1.5 font-bold">
+          SIGNATURE SILHOUETTES & FIT GUIDE
+        </p>
+      </div>
 
-        {/* 3. Six Seamless Floating Cards widely spaced with ZERO overlap */}
+      {/* 3. Floating Cards Layer (เลเยอร์การ์ดแยกต่างหากอย่างอิสระ) */}
+      <div className="relative w-full max-w-[1700px] mx-auto h-[860px] sm:h-[920px] lg:h-[980px] px-4 sm:px-8 z-10 pointer-events-auto">
         {fitItems.map((item) => {
           const isHovered = hoveredCard === item.id;
 
@@ -150,6 +150,7 @@ export default function ChooseYourFit({ onSelectFit }) {
           );
         })}
       </div>
+
     </section>
   );
 }
