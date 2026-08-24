@@ -19,9 +19,10 @@ export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLa
 
   const navLinks = [
     { label: 'Fit Guide', href: '#fit-guide' },
+    { label: 'Favorites', href: '#street-favorites' },
+    { label: 'Cinematic', href: '#cinematic-reel' },
     { label: 'Perks', href: '#pulse-perks' },
-    { label: 'Street Favorites', href: '#street-favorites' },
-    { label: 'Warehouse Sale', href: '#warehouse-sale' },
+    { label: 'VIP Pass', href: '#vip-drop' },
   ];
 
   const handleOpenAuth = (mode) => {

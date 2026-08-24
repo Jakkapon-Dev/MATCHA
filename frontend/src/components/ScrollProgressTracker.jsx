@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 export default function ScrollProgressTracker() {
   const [scrollProgress, setScrollProgress] = useState(0);
-  const [activeFrame, setActiveFrame] = useState({ num: '01', title: 'EDITORIAL MIX@MATCH' });
+  const [activeFrame, setActiveFrame] = useState({ num: '01', title: 'EDITORIAL LOOKBOOK' });
   const rafId = useRef(null);
 
   useEffect(() => {
@@ -16,14 +16,14 @@ export default function ScrollProgressTracker() {
         const progress = Math.min(100, Math.max(0, (currentScroll / totalScroll) * 100));
         setScrollProgress(progress);
 
-        // Determine active section frame based on scroll position
+        // Sections matching Master Lookbook Flow
         const sections = [
-          { id: 'brand-hero', num: '01', title: 'EDITORIAL MIX@MATCH' },
+          { id: 'brand-hero', num: '01', title: 'EDITORIAL LOOKBOOK' },
           { id: 'fit-guide', num: '02', title: 'CHOOSE YOUR FIT' },
-          { id: 'cinematic-reel', num: '03', title: 'CINEMATIC MOVEMENT' },
-          { id: 'pulse-perks', num: '04', title: 'THE PULSE PERKS' },
-          { id: 'street-favorites', num: '05', title: 'STREET FAVORITES' },
-          { id: 'warehouse-sale', num: '06', title: 'LAST CALL ARCHIVE' },
+          { id: 'street-favorites', num: '03', title: 'STREET FAVORITES' },
+          { id: 'cinematic-reel', num: '04', title: 'CINEMATIC TEXTURES' },
+          { id: 'pulse-perks', num: '05', title: 'THE PULSE PERKS' },
+          { id: 'vip-drop', num: '06', title: 'VIP DROP PASS' },
         ];
 
         for (let i = sections.length - 1; i >= 0; i--) {
