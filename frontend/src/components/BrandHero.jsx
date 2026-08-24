@@ -6,8 +6,8 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
   const models = [
     {
       id: 'LOOK-01',
-      name: 'Nude Beige Tank & Tailored Trousers',
-      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_nude_beige_tank_tailored_pants_001.jpeg'
+      name: 'MatchA Crew & Lace Skirt',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_crew_001.jpg'
     },
     {
       id: 'LOOK-02',
