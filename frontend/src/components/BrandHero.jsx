@@ -291,33 +291,6 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
 
           </div>
 
-          {/* Interactive Controls: Shuffle Mix across 10 Outfits & Master Auto-Run */}
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-3 z-20">
-            
-            {/* 1. Instant Shuffle Button */}
-            <button
-              onClick={randomizeAll}
-              className="px-4 py-2 rounded-full bg-[#D0DEC6] hover:bg-[#B8CBAE] text-[#2D5A27] font-mono text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 shadow-sm active:scale-95 cursor-pointer"
-            >
-              <Shuffle size={14} />
-              <span>🎲 RANDOM MIX (10 LOOKS)</span>
-            </button>
-
-            {/* 2. Auto-Run Reel Toggle Button */}
-            <button
-              onClick={togglePlayAll}
-              className={`px-5 py-2 rounded-full font-mono text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 shadow-md cursor-pointer ${
-                isAllPlaying
-                  ? 'bg-[#BC5A36] text-white hover:bg-[#A64C2B]'
-                  : 'bg-[#2D5A27] text-white hover:bg-[#23471E]'
-              }`}
-            >
-              {isAllPlaying ? <Pause size={14} /> : <Play size={14} />}
-              <span>{isAllPlaying ? 'STOP REEL' : 'AUTO-RANDOMIZE ALL'}</span>
-            </button>
-
-          </div>
-
         </div>
 
         {/* Right Column: Code, Barcode & Action Button */}
@@ -386,16 +359,6 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
 
         </div>
 
-      </div>
-
-      {/* Subtle Bottom Note */}
-      <div className="relative z-10 text-center pt-6 opacity-70">
-        <button 
-          onClick={handleAction}
-          className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#6B5E55] hover:text-[#2D5A27] transition-colors cursor-pointer"
-        >
-          {onEnterWebsite ? 'CLICK TO ENTER STORE ✦ EXPLORE DROPS' : 'SCROLL DOWN TO EXPLORE ALL PRODUCTS ↓'}
-        </button>
       </div>
 
     </section>
