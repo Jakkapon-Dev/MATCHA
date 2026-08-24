@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Shuffle, Play, Pause, ArrowRight } from 'lucide-react';
 
 export default function BrandHero({ onShopNow, onEnterWebsite }) {
-  // 10 Distinct Multi-Color Full-Body Lookbook Models
+  // 10 Distinct Studio White Background Front-Facing Models (standing_straight only)
   const models = [
     {
       id: 'LOOK-01',
@@ -36,23 +36,23 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
     },
     {
       id: 'LOOK-07',
-      name: 'Urban Street Denim & Baggy Pants',
-      src: '/images/location_lifestyle/urban_street/spring/location_urban_street_spring_denim_jacket_001.jpeg'
+      name: 'Mustard Trench Coat & Trousers',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_mustard_trench_coat_001.jpeg'
     },
     {
       id: 'LOOK-08',
-      name: 'Lavender Field Editorial Look',
-      src: '/images/location_lifestyle/nature_outdoor/summer/location_nature_outdoor_summer_lavender_rows_001.jpeg'
+      name: 'Lavender Silk Shirt & Linen Set',
+      src: '/images/studio_white_bg/standing_straight/summer/studio_straight_summer_wearing_lavender_silk_shirt_001.jpeg'
     },
     {
       id: 'LOOK-09',
-      name: 'Oversized Trench & Urban Trousers',
-      src: '/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_trench_coat_trousers_001.jpeg'
+      name: 'Charcoal Grey Minimalist Coat',
+      src: '/images/studio_white_bg/standing_straight/winter/studio_straight_winter_wearing_charcoal_grey_coat_001.jpeg'
     },
     {
       id: 'LOOK-10',
-      name: 'Cyber Techwear Utility Vest',
-      src: '/images/location_lifestyle/cyber_techwear/winter/location_cyber_techwear_winter_tech_wear_vest_001.jpeg'
+      name: 'Coral Polo & Tailored Slacks',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_coral_polo_shirt_001.jpeg'
     }
   ];
 
