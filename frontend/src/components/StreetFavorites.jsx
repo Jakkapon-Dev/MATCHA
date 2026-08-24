@@ -38,13 +38,13 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
     },
     {
       id: 'SF-04',
-      name: 'Oversized Street Biker Tee',
+      name: 'Oversized Street Hoodie Tee',
       price: '$39.99',
       priceNum: 39.99,
       tag: 'Best Seller',
-      image: '/images/products/winter/tops/t-shirts/color_1_charcoal.jpeg',
-      category: 'T-Shirts',
-      color: 'Midnight Black',
+      image: '/images/products/winter/tops/hoodies/color_1_charcoal.jpeg',
+      category: 'Tops',
+      color: 'Midnight Charcoal',
     },
     {
       id: 'SF-05',
