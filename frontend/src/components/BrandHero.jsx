@@ -152,16 +152,16 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
   return (
     <section className="relative w-full bg-[#FAF8F5] text-[#2D231E] min-h-screen py-6 sm:py-10 px-4 sm:px-8 lg:px-12 flex flex-col justify-between overflow-hidden">
       
-      {/* 1. Header Title: Vogue Magazine Depth (Behind Model) + Dual-Tone MATCH + A */}
-      <div className="w-full text-center z-0 relative pt-2 sm:pt-4 -mb-10 sm:-mb-16 md:-mb-20 lg:-mb-28 pointer-events-none select-none">
-        <h1 className="text-6xl sm:text-8xl md:text-9xl lg:text-[11rem] xl:text-[13rem] font-black tracking-tight uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm font-sans">
-          <span className="text-[#2D5A27]">MATCH</span>
-          <span className="text-[#BC5A36]">A</span>
+      {/* 1. Header Title: Giant Sticky Vogue Watermark (Behind Model on Scroll) + Dual-Tone MATCH + A */}
+      <div className="sticky top-12 sm:top-16 lg:top-14 w-full text-center z-0 pointer-events-none select-none transition-transform duration-300">
+        <h1 className="text-7xl sm:text-9xl md:text-[12rem] lg:text-[16rem] xl:text-[20rem] font-black tracking-tight uppercase leading-[0.85] inline-block whitespace-nowrap drop-shadow-sm font-sans">
+          <span className="text-[#2D5A27] opacity-90">MATCH</span>
+          <span className="text-[#BC5A36] opacity-90">A</span>
         </h1>
       </div>
 
-      {/* 2. Main 3-Column Layout with Grounded Clean Alignment */}
-      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center my-auto pt-4 sm:pt-6">
+      {/* 2. Main 3-Column Layout with Magazine Depth Overlap */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center my-auto -mt-16 sm:-mt-28 md:-mt-36 lg:-mt-48 pt-4 sm:pt-6">
         
         {/* Left Column: Stacked Black Badge Typography */}
         <div className="md:col-span-3 flex flex-col items-center md:items-start justify-center order-2 md:order-1 z-20">
