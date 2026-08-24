@@ -1,88 +1,194 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import { ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react';
 
 export default function StreetFavorites({ onAddToCart, onQuickView }) {
+  const scrollRef = useRef(null);
 
+  // 8 High-Fashion Products sourced directly from frontend/public/images/products
   const products = [
-    { id: 'SF-01', name: 'Ceremonial Oversized Tee', price: '$49.00', tag: 'Best Seller', color: 'bg-[#2D5A27]' },
-    { id: 'SF-02', name: 'Urban MatchA Hoodie', price: '$89.00', tag: 'New Drop', color: 'bg-[#2D5A27]' },
-    { id: 'SF-03', name: 'Artisan Relaxed Trousers', price: '$79.00', tag: 'Popular', color: 'bg-[#2D5A27]' }
+    {
+      id: 'SF-01',
+      name: 'MatchA Heavyweight Sweatshirt',
+      price: '$49.99',
+      priceNum: 49.99,
+      tag: 'Best Seller',
+      image: '/images/products/standalone/mustard_sweater.jpg',
+      category: 'Sweatshirt',
+      color: 'Emerald & Sage',
+    },
+    {
+      id: 'SF-02',
+      name: 'Artisan Silk Scarf & Bandana',
+      price: '$29.99',
+      priceNum: 29.99,
+      tag: 'Best Seller',
+      image: '/images/products/standalone/silk_scarf.jpg',
+      category: 'Accessories',
+      color: 'Olive Camo',
+    },
+    {
+      id: 'SF-03',
+      name: 'Wide Leg Balloon Jeans',
+      price: '$69.99',
+      priceNum: 69.99,
+      tag: 'Best Seller',
+      image: '/images/products/winter/bottoms/jeans/color_2_cobalt.jpeg',
+      category: 'Denim',
+      color: 'Washed Cobalt',
+    },
+    {
+      id: 'SF-04',
+      name: 'Oversized Street Biker Tee',
+      price: '$39.99',
+      priceNum: 39.99,
+      tag: 'Best Seller',
+      image: '/images/products/winter/tops/t-shirts/color_1_charcoal.jpeg',
+      category: 'T-Shirts',
+      color: 'Midnight Black',
+    },
+    {
+      id: 'SF-05',
+      name: 'Forest Relaxed Bermuda Shorts',
+      price: '$45.99',
+      priceNum: 45.99,
+      tag: 'Best Seller',
+      image: '/images/products/summer/bottoms/shorts/color_4_teal.jpeg',
+      category: 'Shorts',
+      color: 'Matcha Forest',
+    },
+    {
+      id: 'SF-06',
+      name: 'Tiered Asymmetrical Skirt',
+      price: '$59.99',
+      priceNum: 59.99,
+      tag: 'Best Seller',
+      image: '/images/products/standalone/peach_skirt.jpg',
+      category: 'Skirts',
+      color: 'Pure White & Peach',
+    },
+    {
+      id: 'SF-07',
+      name: 'Vintage Mockneck Knit Sweater',
+      price: '$79.99',
+      priceNum: 79.99,
+      tag: 'Best Seller',
+      image: '/images/products/spring/tops/polo-shirts/color_1_coral.jpeg',
+      category: 'Knitwear',
+      color: 'Coral Gold',
+    },
+    {
+      id: 'SF-08',
+      name: 'Ceremonial Wool Overcoat',
+      price: '$129.99',
+      priceNum: 129.99,
+      tag: 'Best Seller',
+      image: '/images/products/standalone/cobalt_coat.jpg',
+      category: 'Outerwear',
+      color: 'Deep Cobalt',
+    },
   ];
 
-  const marqueeText = [
-    'NEW ARRIVALS ✦ FREE EXPRESS SHIPPING ON ORDERS OVER $100 ✦ MATCHA STREETWEAR ✦ LIMITED QUANTITY DROP ✦ ',
-    'BUY 2 GET 15% OFF TOTAL ✦ EXPRESS YOUR AUTHENTIC STYLE ✦ 2026 EDITION ✦ '
-  ].join('');
+  const scrollLeft = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: -320, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: 320, behavior: 'smooth' });
+    }
+  };
 
   return (
-    <section className="w-full bg-[#D0DEC6]/40 text-[#2D231E] py-20 border-b border-[#D9D3C7] overflow-hidden">
-      
-      {/* Frame 7 Header */}
-      <div className="max-w-6xl mx-auto px-6 md:px-12 mb-12 flex flex-col sm:flex-row items-start sm:items-end justify-between">
-        <div>
-          <span className="text-xs uppercase tracking-widest text-[#2D5A27] font-bold">Trending Collection</span>
-          <h2 className="text-3xl sm:text-5xl font-extrabold text-[#2D231E] tracking-tight mt-1">
-            Street favorites
-          </h2>
-        </div>
-        <p className="text-xs text-[#6B5E55] font-mono mt-2 sm:mt-0">
-          Handpicked top performers loved by our community.
-        </p>
-      </div>
-
-      {/* Product Cards Grid matching Frame 7 Wireframe */}
-      <div className="max-w-6xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-        {products.map((item) => (
-          <div 
-            key={item.id}
-            onClick={() => onQuickView(item)}
-            className="p-6 bg-[#FAF8F5] rounded-3xl border border-[#D9D3C7] shadow-md flex flex-col justify-between hover:border-[#2D5A27] transition-all hover:shadow-xl group cursor-pointer"
-          >
-            <div>
-              {/* Product Image Box */}
-              <div className={`w-full aspect-square ${item.color} rounded-2xl shadow-lg flex flex-col items-center justify-center text-white relative overflow-hidden group-hover:bg-[#23471E] transition-colors`}>
-                <span className="absolute top-3 left-3 px-2.5 py-1 bg-black/40 backdrop-blur-md text-white text-[10px] font-mono font-bold rounded-full">
-                  {item.tag}
-                </span>
-                <span className="text-5xl mb-2 group-hover:scale-125 transition-transform duration-300">🍵</span>
-                <span className="text-xs font-mono font-bold tracking-widest text-[#D0DEC6]">{item.id}</span>
-                <span className="absolute bottom-3 text-[10px] font-mono font-semibold bg-white/20 backdrop-blur-md px-2.5 py-0.5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
-                  Click to Customize →
-                </span>
-              </div>
-
-              <div className="mt-5">
-                <h3 className="text-lg font-bold text-[#2D231E] group-hover:text-[#2D5A27] transition-colors">
-                  {item.name}
-                </h3>
-                <p className="text-sm font-bold text-[#BC5A36] mt-1">{item.price}</p>
-              </div>
-            </div>
-
-            {/* Add to Cart Button (Accent Color CTA) */}
-            <div className="flex gap-2 mt-6">
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onAddToCart(item);
-                }}
-                className="flex-1 py-3 bg-[#BC5A36] hover:bg-[#A64C2B] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 cursor-pointer"
-              >
-                Add to cart 🛍️
-              </button>
-            </div>
+    <section id="street-favorites" className="w-full bg-[#FAF8F5] text-[#2D231E] py-16 sm:py-24 px-4 sm:px-8 lg:px-12 border-b border-[#D9D3C7] overflow-hidden select-none">
+      <div className="max-w-7xl mx-auto">
+        
+        {/* 1. Header Title matching reference */}
+        <div className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+          <div>
+            <h2 className="text-4xl sm:text-6xl font-black text-[#BC5A36] tracking-tight font-sans">
+              Street Favorites
+            </h2>
           </div>
-        ))}
-      </div>
-
-
-      {/* Marquee Ticker Bar */}
-      <div className="w-full bg-[#2D231E] text-white py-3.5 border-y border-[#3D312A] relative flex overflow-hidden">
-        <div className="animate-marquee text-xs font-bold font-mono tracking-widest uppercase text-[#D0DEC6]">
-          <span className="mr-8 text-[#BC5A36]">{marqueeText}</span>
-          <span className="mr-8 text-[#BC5A36]">{marqueeText}</span>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={scrollLeft}
+              aria-label="Previous Products"
+              className="w-10 h-10 border-2 border-[#BC5A36] text-[#BC5A36] hover:bg-[#BC5A36] hover:text-white flex items-center justify-center transition-colors shadow-sm cursor-pointer active:scale-95"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              onClick={scrollRight}
+              aria-label="Next Products"
+              className="w-10 h-10 border-2 border-[#BC5A36] text-[#BC5A36] hover:bg-[#BC5A36] hover:text-white flex items-center justify-center transition-colors shadow-sm cursor-pointer active:scale-95"
+            >
+              <ChevronRight size={20} />
+            </button>
+          </div>
         </div>
-      </div>
 
+        {/* 2. Main Framed Carousel Container (Continuous Orange Border + Internal Divider Lines) */}
+        <div className="relative border-2 border-[#BC5A36] bg-white shadow-xl overflow-hidden">
+          
+          <div
+            ref={scrollRef}
+            className="flex overflow-x-auto scrollbar-none divide-x-2 divide-[#BC5A36] scroll-smooth"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {products.map((item) => (
+              <div
+                key={item.id}
+                onClick={() => onQuickView && onQuickView(item)}
+                className="w-60 sm:w-72 lg:w-80 shrink-0 p-5 sm:p-6 flex flex-col justify-between hover:bg-[#FAF8F5]/60 transition-colors duration-200 cursor-pointer group relative"
+              >
+                {/* Top Tag */}
+                <div className="flex justify-between items-start mb-3">
+                  <span className="text-[11px] font-sans font-medium text-[#BC5A36]">
+                    {item.tag}
+                  </span>
+                </div>
+
+                {/* Product Image Container */}
+                <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden mb-4 p-2 bg-[#FAF8F5]/40">
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+
+                {/* Solid Orange ADD TO CART Button (Centered under image) */}
+                <div className="mb-4">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onAddToCart && onAddToCart(item);
+                    }}
+                    className="w-full py-2.5 bg-[#BC5A36] hover:bg-[#9E4423] text-white font-sans font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-1.5"
+                  >
+                    <span>ADD TO CART</span>
+                  </button>
+                </div>
+
+                {/* Product Title and Price (Centered/Clean matching reference) */}
+                <div className="text-center">
+                  <h3 className="text-xs sm:text-sm font-medium text-[#BC5A36] line-clamp-2 leading-tight group-hover:text-[#2D231E] transition-colors">
+                    {item.name}
+                  </h3>
+                  <p className="text-xs font-mono font-bold text-[#BC5A36] mt-1.5">
+                    {item.price}
+                  </p>
+                </div>
+
+              </div>
+            ))}
+          </div>
+
+        </div>
+
+      </div>
     </section>
   );
 }
