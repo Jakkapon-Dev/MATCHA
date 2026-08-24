@@ -183,22 +183,22 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
       className="relative w-full bg-[#FAF8F5] text-[#2D231E] min-h-[145vh] pt-2 pb-12 px-4 sm:px-8 lg:px-12 flex flex-col justify-between select-none border-b border-[#D9D3C7]"
     >
       
-      {/* 1. Header Title: Lifted high near top navbar, follows smoothly with scroll, exits at ChooseYourFit */}
+      {/* 1. Header Title: Positioned high near top navbar, elegant size, follows smoothly with scroll */}
       <div 
-        className="w-full text-center z-0 pointer-events-none select-none -mt-2 sm:-mt-4 relative"
+        className="w-full text-center z-0 pointer-events-none select-none pt-1 sm:pt-3 -mb-4 sm:-mb-6 md:-mb-8 relative"
         style={{
           transform: `translateY(${stickyOffset}px)`,
           transition: 'transform 0.04s ease-out',
         }}
       >
-        <h1 className="text-8xl sm:text-[11rem] md:text-[15rem] lg:text-[19rem] xl:text-[22.5rem] font-black tracking-tighter uppercase leading-[0.78] inline-block whitespace-nowrap drop-shadow-sm font-sans">
+        <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10.5rem] font-black tracking-tight uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm font-sans">
           <span className="text-[#2D5A27]">MATCH</span>
           <span className="text-[#BC5A36]">A</span>
         </h1>
       </div>
 
-      {/* 2. Main 3-Column Layout: Positioned cleanly beneath lifted MATCHA title */}
-      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center my-auto mt-2 sm:mt-4 md:mt-6 pb-20">
+      {/* 2. Main 3-Column Layout: Cleanly spaced under the lifted MATCHA title */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center my-auto pt-2 pb-20">
         
         {/* Left Column: Stacked Black Badge Typography */}
         <div className="md:col-span-3 flex flex-col items-center md:items-start justify-center order-2 md:order-1 z-20">
