@@ -70,7 +70,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       {/* 1. Full-Bleed Center Model Canvas (เต็มจอ 100% ไร้กรอบขอบ) */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <img
-          src="/images/studio_white_bg/standing_straight/spring/studio_straight_spring_nude_beige_tank_tailored_pants_001.jpeg"
+          src="/images/studio_white_bg/standing_straight/spring/studio_straight_spring_nude_beige_wide_banner_2k_001.jpeg"
           alt="MatchA Choose Your Fit"
           className="w-full h-full object-cover sm:object-contain object-top opacity-95 transition-opacity"
         />
