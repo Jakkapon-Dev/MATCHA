@@ -6,7 +6,7 @@ export default function ChooseYourFit({ onSelectFit }) {
 
   // 6 Uniform Large Fit Cards spread widely across the left and right quadrants (ZERO overlap)
   const fitItems = [
-    // --- Left Arc (3 distinct zones) ---
+    // --- ฝั่งซ้าย (3 ใบ) ---
     {
       id: 1,
       category: "Tanks & Polos",
@@ -14,8 +14,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       code: "FIT-01",
       image:
         "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_coral_polo_shirt_001.jpeg",
-      positionClass:
-        "top-[10%] sm:top-[12%] left-[2%] sm:left-[5%] lg:left-[7%]",
+      positionClass: "top-[10%] left-[6%]", // 👈 ปรับตำแหน่งใบที่ 1 (บนซ้าย)
     },
     {
       id: 2,
@@ -24,8 +23,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       code: "FIT-02",
       image:
         "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_striped_tee_001.jpg",
-      positionClass:
-        "top-[42%] sm:top-[44%] left-[8%] sm:left-[12%] lg:left-[16%]",
+      positionClass: "top-[42%] left-[14%]", // 👈 ปรับตำแหน่งใบที่ 2 (กลางซ้าย)
       isFeatured: true,
     },
     {
@@ -35,11 +33,10 @@ export default function ChooseYourFit({ onSelectFit }) {
       code: "FIT-03",
       image:
         "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_minimal_tee_001.jpg",
-      positionClass:
-        "bottom-[6%] sm:bottom-[8%] left-[16%] sm:left-[20%] lg:left-[25%]",
+      positionClass: "bottom-[8%] left-[22%]", // 👈 ปรับตำแหน่งใบที่ 3 (ล่างซ้าย)
     },
 
-    // --- Right Arc (3 distinct zones) ---
+    // --- ฝั่งขวา (3 ใบ) ---
     {
       id: 4,
       category: "Statement Sweats",
@@ -47,8 +44,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       code: "FIT-04",
       image:
         "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_crew_001.jpg",
-      positionClass:
-        "top-[10%] sm:top-[12%] right-[2%] sm:right-[5%] lg:right-[7%]",
+      positionClass: "top-[10%] right-[6%]", // 👈 ปรับตำแหน่งใบที่ 4 (บนขวา)
     },
     {
       id: 5,
@@ -57,8 +53,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       code: "FIT-05",
       image:
         "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_green_suit_001.jpeg",
-      positionClass:
-        "top-[42%] sm:top-[44%] right-[8%] sm:right-[12%] lg:right-[16%]",
+      positionClass: "top-[42%] right-[14%]", // 👈 ปรับตำแหน่งใบที่ 5 (กลางขวา)
     },
     {
       id: 6,
@@ -67,8 +62,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       code: "FIT-06",
       image:
         "/images/studio_white_bg/standing_straight/autumn/studio_straight_autumn_matcha_hoodie_terracotta_001.jpg",
-      positionClass:
-        "bottom-[6%] sm:bottom-[8%] right-[16%] sm:right-[20%] lg:right-[25%]",
+      positionClass: "bottom-[8%] right-[22%]", // 👈 ปรับตำแหน่งใบที่ 6 (ล่างขวา)
     },
   ];
 
@@ -85,7 +79,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       </div>
 
       {/* 2. Independent Title & Badge: ปรับตำแหน่งอิสระได้ที่นี่โดยตรง (ไม่มี sm: หรือ lg: มาขัดขวาง) */}
-      <div className="absolute top-10 left-[33%] z-30 pointer-events-none">
+      <div className="absolute top-35 left-[33%] z-30 pointer-events-none">
         <div className="bg-black text-white px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block">
           Choose Your Fit
         </div>
