@@ -99,7 +99,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Alex Mercer"
-                      className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#D9D3C7] rounded-xl text-sm text-[#2D231E] focus:outline-hidden focus:border-[#2D5A27] transition-colors"
+                      className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#D9D3C7] rounded-xl text-sm text-[#2D231E] focus:outline-hidden focus:ring-2 focus:ring-[#2D5A27] transition-colors"
                     />
                   </div>
                 </div>
@@ -117,7 +117,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="alex@matcha.style"
-                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#D9D3C7] rounded-xl text-sm text-[#2D231E] focus:outline-hidden focus:border-[#2D5A27] transition-colors"
+                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#D9D3C7] rounded-xl text-sm text-[#2D231E] focus:outline-hidden focus:ring-2 focus:ring-[#2D5A27] transition-colors"
                   />
                 </div>
               </div>
@@ -141,7 +141,7 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#D9D3C7] rounded-xl text-sm text-[#2D231E] focus:outline-hidden focus:border-[#2D5A27] transition-colors"
+                    className="w-full pl-10 pr-4 py-2.5 bg-white border border-[#D9D3C7] rounded-xl text-sm text-[#2D231E] focus:outline-hidden focus:ring-2 focus:ring-[#2D5A27] transition-colors"
                   />
                 </div>
               </div>

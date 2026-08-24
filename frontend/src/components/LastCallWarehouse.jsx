@@ -60,7 +60,7 @@ export default function LastCallWarehouse({ onAddToCart, onQuickView, onExploreW
                   className="flex flex-col group cursor-pointer"
                 >
                   {/* Clean White Image Box with Bottom-Right '+' Button */}
-                  <div className="relative w-full aspect-[4/5] bg-white border border-[#D9D3C7] overflow-hidden p-3 flex items-center justify-center shadow-xs group-hover:border-[#BC5A36] transition-colors">
+                  <div className="relative w-full aspect-4/5 bg-white border border-[#D9D3C7] overflow-hidden p-3 flex items-center justify-center shadow-xs group-hover:border-[#BC5A36] transition-colors">
                     <img
                       src={item.image}
                       alt={item.name}
@@ -92,7 +92,7 @@ export default function LastCallWarehouse({ onAddToCart, onQuickView, onExploreW
           </div>
 
           {/* Right Column (Col 8-12): Impactful Lookbook Model with Stacked Black Highlight Cutout Typography */}
-          <div className="lg:col-span-6 relative aspect-4/5 sm:aspect-square lg:aspect-[4/5] max-h-[640px] rounded-none overflow-hidden bg-[#FAF8F5] flex items-center justify-center">
+          <div className="lg:col-span-6 relative aspect-4/5 sm:aspect-square lg:aspect-4/5 max-h-160 rounded-none overflow-hidden bg-[#FAF8F5] flex items-center justify-center">
             
             {/* Background Model Image */}
             <img

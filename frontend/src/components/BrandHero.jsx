@@ -182,7 +182,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
         <div className="md:col-span-6 flex flex-col items-center justify-center order-1 md:order-2 z-10">
           
           <div 
-            className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl aspect-[3/4] bg-white rounded-none overflow-hidden shadow-2xl border border-[#2D231E]/20 flex flex-col select-none group/card"
+            className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl aspect-3/4 bg-white rounded-none overflow-hidden shadow-2xl border border-[#2D231E]/20 flex flex-col select-none group/card"
           >
             
             {/* Slice 1: Head & Face (Top 25%) */}
@@ -220,7 +220,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
               <img 
                 src={models[sliceModels[1]].src} 
                 alt="MatchA Torso Slice" 
-                className="absolute inset-x-0 w-full h-[400%] top-[-100%] object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
+                className="absolute inset-x-0 w-full h-[400%] -top-full object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
               />
               {/* Slice 2 Play / Stop Button */}
               <button 
@@ -246,7 +246,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
               <img 
                 src={models[sliceModels[2]].src} 
                 alt="MatchA Pants/Skirt Slice" 
-                className="absolute inset-x-0 w-full h-[400%] top-[-200%] object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
+                className="absolute inset-x-0 w-full h-[400%] -top-[200%] object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
               />
               {/* Slice 3 Play / Stop Button */}
               <button 
@@ -272,7 +272,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
               <img 
                 src={models[sliceModels[3]].src} 
                 alt="MatchA Footwear Slice" 
-                className="absolute inset-x-0 w-full h-[400%] top-[-300%] object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
+                className="absolute inset-x-0 w-full h-[400%] -top-[300%] object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
               />
               {/* Slice 4 Play / Stop Button */}
               <button 

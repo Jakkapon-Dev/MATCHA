@@ -23,7 +23,7 @@ export default function JoinDropList({ onSubscribe }) {
           
           {/* Left Side: 3D VIP Metal Black Card Showcase */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center">
-            <div className="relative w-full max-w-sm aspect-[1.58/1] bg-gradient-to-br from-[#2D231E] via-[#1A1513] to-black rounded-2xl p-6 text-white shadow-2xl border border-white/20 holographic-sheen transform hover:scale-105 hover:-rotate-1 transition-all duration-300 group">
+            <div className="relative w-full max-w-sm aspect-[1.58/1] bg-linear-to-br from-[#2D231E] via-[#1A1513] to-black rounded-2xl p-6 text-white shadow-2xl border border-white/20 holographic-sheen transform hover:scale-105 hover:-rotate-1 transition-all duration-300 group">
               
               {/* Card Chip & Brand */}
               <div className="flex items-center justify-between">
@@ -42,7 +42,7 @@ export default function JoinDropList({ onSubscribe }) {
 
               {/* Metallic Chip Visual */}
               <div className="mt-5 flex items-center gap-3">
-                <div className="w-9 h-7 rounded-md bg-gradient-to-tr from-amber-300 via-amber-100 to-amber-400 border border-amber-500/50 shadow-inner flex items-center justify-center">
+                <div className="w-9 h-7 rounded-md bg-linear-to-tr from-amber-300 via-amber-100 to-amber-400 border border-amber-500/50 shadow-inner flex items-center justify-center">
                   <div className="w-5 h-4 border border-amber-600/40 rounded-xs" />
                 </div>
                 <span className="text-[10px] font-mono tracking-widest text-[#D0DEC6] opacity-80">
@@ -100,7 +100,7 @@ export default function JoinDropList({ onSubscribe }) {
                   placeholder="Enter your email address..."
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 px-4 py-3 bg-[#FAF8F5] border border-[#D9D3C7] text-xs sm:text-sm text-[#2D231E] focus:outline-none focus:border-[#BC5A36] font-mono transition-colors"
+                  className="flex-1 px-4 py-3 bg-[#FAF8F5] border border-[#D9D3C7] text-xs sm:text-sm text-[#2D231E] focus:outline-hidden focus:ring-2 focus:ring-[#BC5A36] font-mono transition-colors"
                 />
                 <button
                   type="submit"

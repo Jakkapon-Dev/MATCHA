@@ -21,8 +21,8 @@ export default function VdoSection({ onClaimPromo }) {
       </video>
 
       {/* 2. Film Gradient Overlays for Readability & Depth */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-black/65 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#1A2218] via-transparent to-[#1A2218]/90 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/40 to-black/65 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-t from-[#1A2218] via-transparent to-[#1A2218]/90 pointer-events-none" />
 
       {/* 3. Main Content Container: Left Headline + Right Floating Glass Card */}
       <div className="relative z-10 max-w-7xl mx-auto w-full px-6 sm:px-8 lg:px-12 flex flex-col lg:flex-row items-center justify-between gap-10 sm:gap-14">

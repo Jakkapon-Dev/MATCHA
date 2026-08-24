@@ -6,7 +6,7 @@ export default function WelcomeIntro({ onEnterWebsite }) {
     <section className="relative min-h-screen w-full flex flex-col items-center justify-between bg-[#1A2218] text-[#FAF8F5] overflow-hidden px-4 py-12 select-none">
       
       {/* 1. Ambient Glow Aura Background */}
-      <div className="absolute w-96 h-96 sm:w-[36rem] sm:h-[36rem] bg-[#2D5A27]/30 rounded-full blur-[140px] pointer-events-none" />
+      <div className="absolute w-96 h-96 sm:w-144 sm:h-144 bg-[#2D5A27]/30 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute -top-20 -left-20 w-80 h-80 bg-[#BC5A36]/15 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-[#D0DEC6]/10 rounded-full blur-[120px] pointer-events-none" />
 

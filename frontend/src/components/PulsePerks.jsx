@@ -77,7 +77,7 @@ export default function PulsePerks() {
 
             {/* 3D Rotating Showcase Card */}
             <div
-              className="relative w-64 sm:w-80 lg:w-96 aspect-[3/4] shadow-2xl transition-transform duration-200 ease-out preserve-3d group"
+              className="relative w-64 sm:w-80 lg:w-96 aspect-3/4 shadow-2xl transition-transform duration-200 ease-out preserve-3d group"
               style={{
                 transform: `rotateX(${rotate.x}deg) rotateY(${rotate.y}deg) scale(${isHovered ? 1.05 : 1})`,
                 transformStyle: 'preserve-3d',

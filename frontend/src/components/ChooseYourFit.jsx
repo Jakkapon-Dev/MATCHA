@@ -98,7 +98,7 @@ export default function ChooseYourFit({ onSelectFit }) {
               onMouseEnter={() => setHoveredCard(item.id)}
               onMouseLeave={() => setHoveredCard(null)}
               onClick={() => onSelectFit && onSelectFit(item)}
-              className={`absolute ${item.positionClass} ${!isHovered ? floatClass : ''} w-36 sm:w-48 lg:w-56 xl:w-60 aspect-[3/4] z-20 cursor-pointer transition-all duration-300 transform ${
+              className={`absolute ${item.positionClass} ${!isHovered ? floatClass : ''} w-36 sm:w-48 lg:w-56 xl:w-60 aspect-3/4 z-20 cursor-pointer transition-all duration-300 transform ${
                 isHovered
                   ? "scale-108 z-40 shadow-2xl -translate-y-1.5 ring-2 ring-[#BC5A36]"
                   : "shadow-md hover:shadow-xl"
