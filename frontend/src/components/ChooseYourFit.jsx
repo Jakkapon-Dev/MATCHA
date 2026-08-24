@@ -4,16 +4,16 @@ import { ArrowUpRight } from 'lucide-react';
 export default function ChooseYourFit({ onSelectFit }) {
   const [hoveredCard, setHoveredCard] = useState(null);
 
-  // 6 Uniform Large Fit Cards positioned symmetrically in the spacious white space on Left and Right
+  // 6 Uniform Large Fit Cards arranged along the diagonal arc matching user's red circles
   const fitItems = [
-    // --- Left Side (3 Cards) ---
+    // --- Left Diagonal Arc (3 Cards) ---
     {
       id: 1,
       category: 'Tanks & Polos',
       count: '34 Items',
       code: 'FIT-01',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_coral_polo_shirt_001.jpeg',
-      positionClass: 'top-[14%] left-[2%] sm:left-[5%] lg:left-[8%]',
+      positionClass: 'top-[8%] sm:top-[10%] left-[2%] sm:left-[4%] lg:left-[6%]',
     },
     {
       id: 2,
@@ -21,7 +21,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '82 Tees',
       code: 'FIT-02',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_striped_tee_001.jpg',
-      positionClass: 'top-[44%] left-[1%] sm:left-[3%] lg:left-[5%]',
+      positionClass: 'top-[36%] sm:top-[38%] left-[7%] sm:left-[11%] lg:left-[15%]',
       isFeatured: true,
     },
     {
@@ -30,17 +30,17 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '58 Fits',
       code: 'FIT-03',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_minimal_tee_001.jpg',
-      positionClass: 'bottom-[10%] left-[2%] sm:left-[5%] lg:left-[8%]',
+      positionClass: 'bottom-[6%] sm:bottom-[8%] left-[13%] sm:left-[17%] lg:left-[22%]',
     },
 
-    // --- Right Side (3 Cards) ---
+    // --- Right Diagonal Arc (3 Cards) ---
     {
       id: 4,
       category: 'Statement Sweats',
       count: '46 Looks',
       code: 'FIT-04',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_crew_001.jpg',
-      positionClass: 'top-[14%] right-[2%] sm:right-[5%] lg:right-[8%]',
+      positionClass: 'top-[8%] sm:top-[10%] right-[2%] sm:right-[4%] lg:right-[6%]',
     },
     {
       id: 5,
@@ -48,7 +48,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '29 Tailored',
       code: 'FIT-05',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_green_suit_001.jpeg',
-      positionClass: 'top-[44%] right-[1%] sm:right-[3%] lg:right-[5%]',
+      positionClass: 'top-[36%] sm:top-[38%] right-[7%] sm:right-[11%] lg:right-[15%]',
     },
     {
       id: 6,
@@ -56,14 +56,14 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '64 Bottoms',
       code: 'FIT-06',
       image: '/images/studio_white_bg/standing_straight/autumn/studio_straight_autumn_matcha_hoodie_terracotta_001.jpg',
-      positionClass: 'bottom-[10%] right-[2%] sm:right-[5%] lg:right-[8%]',
+      positionClass: 'bottom-[6%] sm:bottom-[8%] right-[13%] sm:right-[17%] lg:right-[22%]',
     },
   ];
 
   return (
-    <section className="relative w-full min-h-[900px] lg:min-h-screen bg-[#FFFFFF] overflow-hidden select-none flex items-center justify-center border-b border-[#D9D3C7] py-20">
+    <section className="relative w-full min-h-[920px] lg:min-h-screen bg-[#FFFFFF] overflow-hidden select-none flex items-center justify-center border-b border-[#D9D3C7] py-16">
       
-      {/* 1. Full-Bleed Center Model Canvas (Unobstructed in Center) */}
+      {/* 1. Full-Bleed Center Model Canvas (100% Unobstructed Center View) */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <img
           src="/images/studio_white_bg/standing_straight/spring/studio_straight_spring_nude_beige_wide_banner_2k_001.jpeg"
@@ -72,18 +72,18 @@ export default function ChooseYourFit({ onSelectFit }) {
         />
       </div>
 
-      {/* 2. Black Badge Header: Positioned high above head in clear white space */}
-      <div className="absolute top-6 sm:top-10 left-1/2 transform -translate-x-1/2 z-30 pointer-events-none text-center">
-        <div className="bg-black text-white px-6 py-2 sm:px-10 sm:py-2.5 text-lg sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block">
+      {/* 2. Title & Badge: Moved to Top-Left as indicated by the red arrow */}
+      <div className="absolute top-6 sm:top-10 left-6 sm:left-12 lg:left-16 z-30 pointer-events-none">
+        <div className="bg-black text-white px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block">
           Choose Your Fit
         </div>
         <p className="text-[10px] sm:text-xs font-mono text-[#6B5E55] tracking-[0.25em] uppercase mt-2 font-bold">
-          SIGNATURE SILHOUETTES & FIT MATRIX
+          SIGNATURE SILHOUETTES & FIT GUIDE
         </p>
       </div>
 
-      {/* 3. Six Uniform Large Floating Cards Framed around Left & Right */}
-      <div className="relative w-full max-w-[1550px] mx-auto h-[780px] sm:h-[860px] lg:h-[920px] px-4">
+      {/* 3. Six Uniform Large Floating Cards following the exact Red Circles Layout */}
+      <div className="relative w-full max-w-[1600px] mx-auto h-[800px] sm:h-[880px] lg:h-[940px] px-2 sm:px-6">
         {fitItems.map((item) => {
           const isHovered = hoveredCard === item.id;
           
