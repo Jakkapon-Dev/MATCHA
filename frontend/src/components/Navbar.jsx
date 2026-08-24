@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Menu, X, Sparkles, User, LogIn } from 'lucide-react';
 import AuthModal from './AuthModal';
 
@@ -6,6 +6,16 @@ export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLa
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login');
+  const [cartAnimated, setCartAnimated] = useState(false);
+
+  // Trigger bouncy pop animation on cart icon when items are added
+  useEffect(() => {
+    if (cartCount > 0) {
+      setCartAnimated(true);
+      const timer = setTimeout(() => setCartAnimated(false), 650);
+      return () => clearTimeout(timer);
+    }
+  }, [cartCount]);
 
   const navLinks = [
     { label: 'Fit Guide', href: '#fit-guide' },
@@ -101,7 +111,9 @@ export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLa
             <button
               onClick={onOpenCart}
               aria-label="View Cart"
-              className="relative p-2.5 rounded-xl bg-[#D0DEC6]/60 hover:bg-[#D0DEC6] text-[#2D231E] hover:text-[#2D5A27] border border-[#B8CBAE] transition-all cursor-pointer"
+              className={`relative p-2.5 rounded-xl bg-[#D0DEC6]/60 hover:bg-[#D0DEC6] text-[#2D231E] hover:text-[#2D5A27] border border-[#B8CBAE] transition-all cursor-pointer ${
+                cartAnimated ? 'animate-cart-pop ring-3 ring-[#BC5A36] bg-[#D0DEC6]' : ''
+              }`}
             >
               <ShoppingBag size={20} />
               {cartCount > 0 && (

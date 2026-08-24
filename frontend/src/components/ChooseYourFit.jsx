@@ -67,12 +67,12 @@ export default function ChooseYourFit({ onSelectFit }) {
 
   return (
     <section className="relative w-full min-h-[960px] lg:min-h-screen bg-white overflow-hidden select-none flex items-center justify-center border-b border-[#D9D3C7] py-12">
-      {/* 1. Full-Bleed Center Model Canvas (เต็มจอ 100% เป็นพื้นหลังเต็มๆ) */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+      {/* 1. Full-Bleed Center Model Canvas (เห็นครบทั้งตัว 100% ไม่ขาด) */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none z-0 flex items-center justify-center p-2 sm:p-6">
         <img
           src="/images/studio_white_bg/standing_straight/spring/studio_straight_spring_nude_beige_wide_banner_2k_001.jpeg"
           alt="MatchA Choose Your Fit"
-          className="w-full h-full object-cover object-center opacity-100"
+          className="w-full h-full object-contain object-center opacity-100"
         />
       </div>
 
@@ -86,10 +86,11 @@ export default function ChooseYourFit({ onSelectFit }) {
         </p>
       </div>
 
-      {/* 3. Floating Cards Layer (ขนาดใหญ่ขึ้น สวยงามเท่ากันทุกใบ) */}
+      {/* 3. Floating Cards Layer (แอนิเมชันลอย 3 มิติ Ambient Floating) */}
       <div className="relative w-full max-w-[1700px] mx-auto h-[860px] sm:h-[920px] lg:h-[980px] px-4 sm:px-8 z-10 pointer-events-auto">
-        {fitItems.map((item) => {
+        {fitItems.map((item, index) => {
           const isHovered = hoveredCard === item.id;
+          const floatClass = index % 3 === 0 ? 'animate-card-float-1' : index % 3 === 1 ? 'animate-card-float-2' : 'animate-card-float-3';
 
           return (
             <div
@@ -97,7 +98,7 @@ export default function ChooseYourFit({ onSelectFit }) {
               onMouseEnter={() => setHoveredCard(item.id)}
               onMouseLeave={() => setHoveredCard(null)}
               onClick={() => onSelectFit && onSelectFit(item)}
-              className={`absolute ${item.positionClass} w-36 sm:w-48 lg:w-56 xl:w-60 aspect-[3/4] z-20 cursor-pointer transition-all duration-300 transform ${
+              className={`absolute ${item.positionClass} ${!isHovered ? floatClass : ''} w-36 sm:w-48 lg:w-56 xl:w-60 aspect-[3/4] z-20 cursor-pointer transition-all duration-300 transform ${
                 isHovered
                   ? "scale-108 z-40 shadow-2xl -translate-y-1.5 ring-2 ring-black"
                   : "shadow-md hover:shadow-xl"

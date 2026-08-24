@@ -150,12 +150,12 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
                   </span>
                 </div>
 
-                {/* Product Image Container */}
-                <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden mb-4 p-2 bg-[#FAF8F5]/40">
+                {/* Product Image Container with Holographic Glare */}
+                <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden mb-4 p-3 bg-[#FAF8F5]/50 holographic-sheen rounded-xs group-hover:bg-[#FAF8F5] transition-colors">
                   <img
                     src={item.image}
                     alt={item.name}
-                    className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-contain object-center group-hover:scale-108 transition-transform duration-500 ease-out"
                   />
                 </div>
 
