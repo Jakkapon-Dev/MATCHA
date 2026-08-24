@@ -185,20 +185,20 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
       
       {/* 1. Header Title: Glides & follows smoothly with scroll inside Hero, stops & exits at ChooseYourFit */}
       <div 
-        className="w-full text-center z-0 pointer-events-none select-none pt-2 relative"
+        className="w-full text-center z-0 pointer-events-none select-none pt-0 sm:pt-2 relative"
         style={{
           transform: `translateY(${stickyOffset}px)`,
           transition: 'transform 0.04s ease-out',
         }}
       >
-        <h1 className="text-6xl sm:text-8xl md:text-9xl lg:text-[11.5rem] xl:text-[14rem] font-black tracking-tight uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm font-sans">
+        <h1 className="text-7xl sm:text-9xl md:text-[13rem] lg:text-[16.5rem] xl:text-[19.5rem] font-black tracking-tighter uppercase leading-[0.82] inline-block whitespace-nowrap drop-shadow-sm font-sans">
           <span className="text-[#2D5A27]">MATCH</span>
           <span className="text-[#BC5A36]">A</span>
         </h1>
       </div>
 
-      {/* 2. Main 3-Column Layout with Magazine Depth Overlap (In Front of Sticky MATCHA) */}
-      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center my-auto -mt-10 sm:-mt-16 md:-mt-24 lg:-mt-32 pt-4 pb-20">
+      {/* 2. Main 3-Column Layout with Magazine Depth Overlap (Model stands slightly under MATCHA) */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center my-auto -mt-4 sm:-mt-6 md:-mt-10 lg:-mt-12 pt-2 pb-20">
         
         {/* Left Column: Stacked Black Badge Typography */}
         <div className="md:col-span-3 flex flex-col items-center md:items-start justify-center order-2 md:order-1 z-20">
