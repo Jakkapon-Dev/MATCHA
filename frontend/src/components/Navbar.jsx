@@ -45,48 +45,24 @@ export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLa
         {/* 2. Main Navigation Bar */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
           
-          {/* Left: Auth Buttons (ซ้ายสุด) + Brand Logo */}
-          <div className="flex items-center gap-4 sm:gap-6">
-            
-            {/* Far Left: Desktop Auth Buttons (LOG IN / SIGN UP) */}
-            <div className="hidden lg:flex items-center gap-1.5 font-mono">
-              <button
-                onClick={() => handleOpenAuth('login')}
-                className="px-3 py-1.5 text-xs font-bold text-[#2D231E] hover:text-[#2D5A27] hover:bg-[#D0DEC6]/40 rounded-lg transition-colors cursor-pointer flex items-center gap-1"
-              >
-                <User size={13} />
-                <span>LOG IN</span>
-              </button>
-              <span className="text-[#D9D3C7]">/</span>
-              <button
-                onClick={() => handleOpenAuth('signup')}
-                className="px-3 py-1.5 text-xs font-bold text-[#BC5A36] hover:text-[#9E4423] hover:bg-[#BC5A36]/10 rounded-lg transition-colors cursor-pointer"
-              >
-                SIGN UP
-              </button>
+          {/* Left: Brand Logo (Click to go back to Landing Lookbook) */}
+          <button 
+            onClick={onGoToLanding}
+            className="flex items-center gap-2.5 group cursor-pointer text-left"
+            title="Back to Landing Page"
+          >
+            <div className="w-10 h-10 rounded-xl bg-[#2D5A27] flex items-center justify-center text-white text-xl shadow-md group-hover:scale-105 transition-transform">
+              🍵
             </div>
-
-            <div className="hidden lg:block h-6 w-px bg-[#D9D3C7]" />
-
-            {/* Brand Logo (Click to go back to Landing Lookbook) */}
-            <button 
-              onClick={onGoToLanding}
-              className="flex items-center gap-2.5 group cursor-pointer text-left"
-              title="Back to Landing Page"
-            >
-              <div className="w-10 h-10 rounded-xl bg-[#2D5A27] flex items-center justify-center text-white text-xl shadow-md group-hover:scale-105 transition-transform">
-                🍵
-              </div>
-              <div>
-                <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#2D5A27] uppercase">
-                  MatchA
-                </span>
-                <span className="hidden sm:block text-[9px] font-mono tracking-widest text-[#6B5E55] -mt-1">
-                  ARTISAN APPAREL
-                </span>
-              </div>
-            </button>
-          </div>
+            <div>
+              <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#2D5A27] uppercase">
+                MatchA
+              </span>
+              <span className="hidden sm:block text-[9px] font-mono tracking-widest text-[#6B5E55] -mt-1">
+                ARTISAN APPAREL
+              </span>
+            </div>
+          </button>
 
           {/* Center: Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-6 lg:gap-8">
@@ -109,7 +85,7 @@ export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLa
             ))}
           </nav>
 
-          {/* Right: MIX@MATCH & Cart */}
+          {/* Right: MIX@MATCH, Cart & Far Right Auth Buttons */}
           <div className="flex items-center gap-2.5 sm:gap-3">
             
             {/* Main Feature Action: MIX@MATCH Button */}
@@ -134,6 +110,27 @@ export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLa
                 </span>
               )}
             </button>
+
+            {/* Divider */}
+            <div className="hidden lg:block h-6 w-px bg-[#D9D3C7] mx-1" />
+
+            {/* Far Right: Desktop Auth Buttons (LOG IN / SIGN UP) */}
+            <div className="hidden lg:flex items-center gap-1.5 font-mono">
+              <button
+                onClick={() => handleOpenAuth('login')}
+                className="px-3 py-1.5 text-xs font-bold text-[#2D231E] hover:text-[#2D5A27] hover:bg-[#D0DEC6]/40 rounded-lg transition-colors cursor-pointer flex items-center gap-1"
+              >
+                <User size={13} />
+                <span>LOG IN</span>
+              </button>
+              <span className="text-[#D9D3C7]">/</span>
+              <button
+                onClick={() => handleOpenAuth('signup')}
+                className="px-3 py-1.5 text-xs font-bold text-[#BC5A36] hover:text-[#9E4423] hover:bg-[#BC5A36]/10 rounded-lg transition-colors cursor-pointer"
+              >
+                SIGN UP
+              </button>
+            </div>
 
             {/* Mobile Menu Toggle */}
             <button
