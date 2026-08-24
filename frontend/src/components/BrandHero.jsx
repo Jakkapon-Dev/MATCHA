@@ -60,7 +60,8 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
   const [sliceModels, setSliceModels] = useState([0, 4, 2, 5]);
 
   // Track auto-play running state for each of the 4 slices: [slice0, slice1, slice2, slice3]
-  const [slicePlaying, setSlicePlaying] = useState([false, false, false, false]);
+  // Auto-run on page load by default with 1.30s interval per user request
+  const [slicePlaying, setSlicePlaying] = useState([true, true, true, true]);
 
   // Randomize all 4 slices independently across 10 outfits
   const randomizeAll = () => {
@@ -72,7 +73,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
     ]);
   };
 
-  // Auto-play interval effect for any active running slices with randomized selection
+  // Auto-play interval effect for active running slices with randomized selection (1.30 seconds)
   useEffect(() => {
     const hasAnyPlaying = slicePlaying.some((p) => p);
     if (!hasAnyPlaying) return;
@@ -90,7 +91,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
           return currentIdx;
         });
       });
-    }, 1400);
+    }, 1300);
 
     return () => clearInterval(interval);
   }, [slicePlaying, models.length]);
