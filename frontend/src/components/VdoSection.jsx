@@ -29,10 +29,6 @@ export default function VdoSection({ onClaimPromo }) {
         
         {/* Left Side: Editorial Cinematic Title */}
         <div className="max-w-xl text-center lg:text-left">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[#D0DEC6] text-xs font-mono tracking-widest uppercase mb-5 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-[#BC5A36] animate-pulse" />
-            <span>SEASON 01 // CINEMATIC REEL</span>
-          </div>
           <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-[#FAF8F5] tracking-tight uppercase leading-[0.95] drop-shadow-xl">
             MOVEMENT <br />
             <span className="text-[#D0DEC6] font-light">& EXPRESSION</span>
