@@ -4,7 +4,7 @@ import { ArrowUpRight } from 'lucide-react';
 export default function ChooseYourFit({ onSelectFit }) {
   const [hoveredCard, setHoveredCard] = useState(null);
 
-  // 6 Uniform Large Fit Cards arranged along diagonal arcs with generous spacing (no overlapping)
+  // 6 Uniform Large Fit Cards arranged along diagonal arcs with generous spacing
   const fitItems = [
     // --- Left Diagonal Arc (3 Cards) ---
     {
@@ -75,8 +75,8 @@ export default function ChooseYourFit({ onSelectFit }) {
       {/* 2. Main Responsive Stage Container */}
       <div className="relative w-full max-w-[1600px] mx-auto h-[840px] sm:h-[920px] lg:h-[980px] px-2 sm:px-6">
         
-        {/* Title & Badge: Aligned directly above Card FIT-01 */}
-        <div className="absolute top-2 sm:top-4 left-[2%] sm:left-[4%] lg:left-[6%] z-30 pointer-events-none">
+        {/* Title & Badge: Moved to the exact circled spot (upper-left of head) */}
+        <div className="absolute top-4 sm:top-6 lg:top-8 left-[20%] sm:left-[26%] lg:left-[30%] z-30 pointer-events-none">
           <div className="bg-black text-white px-5 py-2 sm:px-7 sm:py-2 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-md inline-block">
             Choose Your Fit
           </div>
