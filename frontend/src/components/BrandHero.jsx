@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Shuffle, Play, Pause, ArrowRight } from 'lucide-react';
 
 export default function BrandHero({ onShopNow, onEnterWebsite }) {
-  // 10 Distinct Studio White Background Front-Facing Models (standing_straight only)
+  // 10 Strictly Verified Studio White Background Front-Facing Models (100% Facing Forward)
   const models = [
     {
       id: 'LOOK-01',
@@ -26,33 +26,33 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
     },
     {
       id: 'LOOK-05',
-      name: 'Aqua Tailored Blazer Look',
-      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_aqua_blazer_001.jpeg'
+      name: 'Emerald Green Velvet Suit',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_green_suit_001.jpeg'
     },
     {
       id: 'LOOK-06',
-      name: 'Cobalt Blue Street Suit',
-      src: '/images/studio_white_bg/standing_straight/winter/studio_straight_winter_wearing_cobalt_suit_001.jpeg'
+      name: 'Geometric Colorblock Knitwear Set',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_knitwear_set_001.jpeg'
     },
     {
       id: 'LOOK-07',
-      name: 'Mustard Trench Coat & Trousers',
-      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_mustard_trench_coat_001.jpeg'
+      name: 'Charcoal Tailored Suit & Tie',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_tailored_suit_001.jpeg'
     },
     {
       id: 'LOOK-08',
-      name: 'Lavender Silk Shirt & Linen Set',
-      src: '/images/studio_white_bg/standing_straight/summer/studio_straight_summer_wearing_lavender_silk_shirt_001.jpeg'
+      name: 'Royal Blue Street Suit',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_royal_blue_suit_001.jpeg'
     },
     {
       id: 'LOOK-09',
-      name: 'Charcoal Grey Minimalist Coat',
-      src: '/images/studio_white_bg/standing_straight/winter/studio_straight_winter_wearing_charcoal_grey_coat_001.jpeg'
+      name: 'Peach Linen Blazer & Slacks',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_peach_linen_suit_001.jpeg'
     },
     {
       id: 'LOOK-10',
-      name: 'Coral Polo & Tailored Slacks',
-      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_coral_polo_shirt_001.jpeg'
+      name: 'Mint Green Summer Suit & Sneakers',
+      src: '/images/studio_white_bg/standing_straight/summer/studio_straight_summer_wearing_mint_green_suit_001.jpeg'
     }
   ];
 
