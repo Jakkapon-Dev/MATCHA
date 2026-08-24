@@ -32,3 +32,22 @@ Thumbs.db
 # AI Agent Customizations & Private Skills (Do not upload to Git)
 .agents/
 .agents/*
+
+# Backend environment variables (prevent secret key leaks)
+backend/.env
+backend/.env.*
+backend/.env.local
+backend/.env.production
+
+# Vite cache
+.vite/
+
+# Test & coverage output
+coverage/
+*.lcov
+
+# Temp & cache files
+*.log
+*.tmp
+*.cache
+.cache/
