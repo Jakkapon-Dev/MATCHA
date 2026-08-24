@@ -69,7 +69,7 @@ export default function PulsePerks() {
             onMouseEnter={() => setIsHovered(true)}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className="lg:col-span-7 p-8 sm:p-12 lg:p-16 flex items-center justify-center border-b lg:border-b-0 lg:border-r-2 border-[#BC5A36]/80 bg-linear-to-b from-[#FAF8F5] to-white relative cursor-grab active:cursor-grabbing perspective-1000"
+            className="lg:col-span-7 p-8 sm:p-12 lg:p-16 flex items-center justify-center border-b lg:border-b-0 lg:border-r-2 border-[#BC5A36]/80 bg-linear-to-b from-[#FAF8F5] to-white relative cursor-grab perspective-1000"
             style={{ perspective: '1200px' }}
           >
             {/* Subtle background glow effect */}

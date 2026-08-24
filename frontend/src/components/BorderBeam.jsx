@@ -25,10 +25,10 @@ export default function BorderBeam({
         '--color-to': colorTo,
         '--delay': `-${delay}s`,
       }}
-      className={`pointer-events-none absolute inset-0 rounded-[inherit] border-[calc(var(--border-width))] border-transparent [mask-clip:padding-box,border-box] [mask-composite:intersect] [mask-image:linear-gradient(transparent,transparent),linear-gradient(#000,#000)] ${className}`}
+      className={`pointer-events-none absolute inset-0 rounded-[inherit] border-[calc(var(--border-width))] border-transparent [mask-clip:padding-box,border-box] mask-intersect mask-[linear-gradient(transparent,transparent),linear-gradient(#000,#000)] ${className}`}
     >
       <div
-        className="absolute aspect-square w-[calc(var(--size))] bg-gradient-to-l from-[var(--color-from)] via-[var(--color-to)] to-transparent animate-border-beam"
+        className="absolute aspect-square w-[calc(var(--size))] bg-linear-to-l from-(--color-from) via-(--color-to) to-transparent animate-border-beam"
         style={{
           offsetAnchor: 'calc(var(--anchor)) 50%',
           offsetPath: 'rect(0 auto auto 0 round calc(var(--size)))',

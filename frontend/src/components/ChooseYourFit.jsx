@@ -66,7 +66,7 @@ export default function ChooseYourFit({ onSelectFit }) {
   ];
 
   return (
-    <section className="relative w-full min-h-[960px] lg:min-h-screen bg-white overflow-hidden select-none flex items-center justify-center border-b border-[#D9D3C7] py-12">
+    <section className="relative w-full min-h-240 lg:min-h-screen bg-white overflow-hidden select-none flex items-center justify-center border-b border-[#D9D3C7] py-12">
       {/* 1. Full-Bleed Center Model Canvas (เห็นครบทั้งตัว 100% ไม่ขาด) */}
       <div className="absolute inset-0 w-full h-full pointer-events-none z-0 flex items-center justify-center p-2 sm:p-6">
         <img
@@ -89,7 +89,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       </div>
 
       {/* 3. Floating Cards Layer (แอนิเมชันลอย 3 มิติ Ambient Floating) */}
-      <div className="relative w-full max-w-[1700px] mx-auto h-[860px] sm:h-[920px] lg:h-[980px] px-4 sm:px-8 z-10 pointer-events-auto">
+      <div className="relative w-full max-w-[1700px] mx-auto h-215 sm:h-230 lg:h-245 px-4 sm:px-8 z-10 pointer-events-auto">
         {fitItems.map((item, index) => {
           const isHovered = hoveredCard === item.id;
           const floatClass = index % 3 === 0 ? 'animate-card-float-1' : index % 3 === 1 ? 'animate-card-float-2' : 'animate-card-float-3';

@@ -113,7 +113,7 @@ export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLa
             >
               <ShoppingBag size={20} />
               {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 px-1.5 py-0.5 min-w-[18px] text-center bg-[#BC5A36] text-white text-[10px] font-mono font-bold rounded-full shadow-md animate-bounce">
+                <span className="absolute -top-1.5 -right-1.5 px-1.5 py-0.5 min-w-4.5 text-center bg-[#BC5A36] text-white text-[10px] font-mono font-bold rounded-full shadow-md animate-bounce">
                   {cartCount}
                 </span>
               )}
