@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, ShieldCheck, ArrowRight, CreditCard, CheckCircle2 } from 'lucide-react';
+import BorderBeam from './BorderBeam';
 
 export default function JoinDropList({ onSubscribe }) {
   const [email, setEmail] = useState('');
@@ -21,12 +22,15 @@ export default function JoinDropList({ onSubscribe }) {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
           
-          {/* Left Side: 3D VIP Metal Black Card Showcase */}
+          {/* Left Side: 3D VIP Metal Black Card Showcase with Orbiting Border Beam */}
           <div className="lg:col-span-5 flex flex-col items-center justify-center">
-            <div className="relative w-full max-w-sm aspect-[1.58/1] bg-linear-to-br from-[#2D231E] via-[#1A1513] to-black rounded-2xl p-6 text-white shadow-2xl border border-white/20 holographic-sheen transform hover:scale-105 hover:-rotate-1 transition-all duration-300 group">
+            <div className="relative w-full max-w-sm aspect-[1.58/1] bg-linear-to-br from-[#2D231E] via-[#1A1513] to-black rounded-2xl p-6 text-white shadow-2xl border border-white/20 holographic-sheen transform hover:scale-105 hover:-rotate-1 transition-all duration-300 group overflow-hidden">
               
+              {/* ReactVibe Orbiting Border Beam */}
+              <BorderBeam size={160} duration={8} colorFrom="#BC5A36" colorTo="#D0DEC6" />
+
               {/* Card Chip & Brand */}
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between relative z-10">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-lg bg-[#2D5A27] flex items-center justify-center text-sm shadow-md">
                     🍵
@@ -41,7 +45,7 @@ export default function JoinDropList({ onSubscribe }) {
               </div>
 
               {/* Metallic Chip Visual */}
-              <div className="mt-5 flex items-center gap-3">
+              <div className="mt-5 flex items-center gap-3 relative z-10">
                 <div className="w-9 h-7 rounded-md bg-linear-to-tr from-amber-300 via-amber-100 to-amber-400 border border-amber-500/50 shadow-inner flex items-center justify-center">
                   <div className="w-5 h-4 border border-amber-600/40 rounded-xs" />
                 </div>
@@ -51,7 +55,7 @@ export default function JoinDropList({ onSubscribe }) {
               </div>
 
               {/* Cardholder & Pass Details */}
-              <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between font-mono text-[10px] text-[#D0DEC6]">
+              <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between font-mono text-[10px] text-[#D0DEC6] relative z-10">
                 <div>
                   <span className="block text-[8px] text-[#6B5E55] uppercase">Member Access</span>
                   <span className="font-bold text-white tracking-wider">MATCHA COLLECTIVE</span>

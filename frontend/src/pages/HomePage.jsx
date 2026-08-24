@@ -2,6 +2,7 @@ import React from 'react';
 import BrandHero from '../components/BrandHero';
 import ChooseYourFit from '../components/ChooseYourFit';
 import StreetFavorites from '../components/StreetFavorites';
+import BrandLoop from '../components/BrandLoop';
 import VdoSection from '../components/VdoSection';
 import PulsePerks from '../components/PulsePerks';
 import JoinDropList from '../components/JoinDropList';
@@ -35,6 +36,9 @@ export default function HomePage({
       <section id="street-favorites">
         <StreetFavorites onAddToCart={onAddToCart} onQuickView={onQuickView} />
       </section>
+
+      {/* ReactVibe Infinite Brand Loop Ticker */}
+      <BrandLoop />
 
       {/* 4. CINEMATIC TEXTURE REEL: Urban Motion Video + 15% Special Promo Glass Card */}
       <section id="cinematic-reel">

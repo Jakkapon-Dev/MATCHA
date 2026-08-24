@@ -123,7 +123,6 @@ h1, h2, h3, h4, h5, h6 {
   animation: float-3 5s ease-in-out 1.5s infinite;
 }
 
-/* Pause float on hover so users can click effortlessly */
 .group:hover .animate-card-float-1,
 .group:hover .animate-card-float-2,
 .group:hover .animate-card-float-3,
@@ -174,7 +173,60 @@ h1, h2, h3, h4, h5, h6 {
   animation: sheen-sweep 1.2s ease-in-out;
 }
 
-/* 3. Infinite Marquee Ticker */
+/* 3. Orbiting Border Beam (ReactVibe Inspired) */
+@keyframes border-beam {
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+.animate-border-beam {
+  animation: border-beam 6s linear infinite;
+}
+
+/* 4. Text Shimmer Reveal (ReactVibe Inspired) */
+@keyframes text-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.animate-text-shimmer {
+  background: linear-gradient(
+    90deg,
+    #2D231E 0%,
+    #BC5A36 30%,
+    #2D5A27 50%,
+    #BC5A36 70%,
+    #2D231E 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: text-shimmer 6s linear infinite;
+}
+
+.animate-text-shimmer-light {
+  background: linear-gradient(
+    90deg,
+    #FAF8F5 0%,
+    #D0DEC6 30%,
+    #BC5A36 50%,
+    #D0DEC6 70%,
+    #FAF8F5 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: text-shimmer 6s linear infinite;
+}
+
+/* 5. Infinite Marquee Ticker */
 @keyframes marquee {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-50%); }
@@ -190,7 +242,7 @@ h1, h2, h3, h4, h5, h6 {
   animation-play-state: paused;
 }
 
-/* 4. Cart Bounce & Ring Ripple */
+/* 6. Cart Bounce & Ring Ripple */
 @keyframes cartBounce {
   0%, 100% { transform: scale(1); }
   30% { transform: scale(1.35) rotate(-6deg); }
@@ -202,23 +254,7 @@ h1, h2, h3, h4, h5, h6 {
   animation: cartBounce 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* 5. Flying Add-to-Cart Particle Animation */
-@keyframes flyToCart {
-  0% {
-    opacity: 1;
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    opacity: 0.9;
-    transform: translate(calc(100vw - 120px), -40vh) scale(0.7);
-  }
-  100% {
-    opacity: 0;
-    transform: translate(calc(100vw - 60px), -80vh) scale(0.2);
-  }
-}
-
-/* 6. General FadeIn & Pop Animations */
+/* 7. General FadeIn & Pop Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(14px); }
   to { opacity: 1; transform: translateY(0); }

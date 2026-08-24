@@ -78,8 +78,10 @@ export default function ChooseYourFit({ onSelectFit }) {
 
       {/* 2. Independent Title & Badge: คุมโทนสี MatchA Espresso & Terracotta */}
       <div className="absolute top-12 left-[24%] z-30 pointer-events-none">
-        <div className="bg-[#2D231E] text-[#FAF8F5] px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block border-l-4 border-[#BC5A36]">
-          Choose Your Fit
+        <div className="bg-[#2D231E] px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block border-l-4 border-[#BC5A36]">
+          <span className="animate-text-shimmer-light inline-block">
+            Choose Your Fit
+          </span>
         </div>
         <p className="text-[10px] sm:text-xs font-mono text-[#BC5A36] tracking-[0.25em] uppercase mt-1.5 font-bold">
           SIGNATURE SILHOUETTES & FIT GUIDE

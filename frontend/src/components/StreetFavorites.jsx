@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight, ShoppingBag, Sparkles } from 'lucide-react';
+import SpotlightCard from './SpotlightCard';
 
 export default function StreetFavorites({ onAddToCart, onQuickView }) {
   const scrollRef = useRef(null);
@@ -159,7 +160,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
           ))}
         </div>
 
-        {/* 3. Main Framed Carousel Container (Continuous Orange Border + Internal Divider Lines) */}
+        {/* 3. Main Framed Carousel Container with Spotlight Tracking */}
         <div className="relative border-2 border-[#BC5A36] bg-white shadow-xl overflow-hidden">
           
           <div
@@ -168,13 +169,14 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {filteredProducts.map((item) => (
-              <div
+              <SpotlightCard
                 key={item.id}
                 onClick={() => onQuickView && onQuickView(item)}
-                className="w-60 sm:w-72 lg:w-80 shrink-0 p-5 sm:p-6 flex flex-col justify-between hover:bg-[#FAF8F5]/60 transition-colors duration-200 cursor-pointer group relative"
+                spotlightColor="rgba(188, 90, 54, 0.15)"
+                className="w-60 sm:w-72 lg:w-80 shrink-0 p-5 sm:p-6 flex flex-col justify-between hover:bg-[#FAF8F5]/60 transition-colors duration-200 cursor-pointer group relative rounded-none border-0"
               >
                 {/* Top Tag */}
-                <div className="flex justify-between items-start mb-3">
+                <div className="flex justify-between items-start mb-3 relative z-10">
                   <span className="text-[11px] font-sans font-medium text-[#BC5A36]">
                     {item.tag}
                   </span>
@@ -184,7 +186,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
                 </div>
 
                 {/* Product Image Container with Holographic Glare */}
-                <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden mb-4 p-3 bg-[#FAF8F5]/50 holographic-sheen rounded-xs group-hover:bg-[#FAF8F5] transition-colors">
+                <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden mb-4 p-3 bg-[#FAF8F5]/50 holographic-sheen rounded-xs group-hover:bg-[#FAF8F5] transition-colors z-10">
                   <img
                     src={item.image}
                     alt={item.name}
@@ -193,7 +195,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
                 </div>
 
                 {/* Solid Orange ADD TO CART Button (Centered under image) */}
-                <div className="mb-4">
+                <div className="mb-4 relative z-10">
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
@@ -206,7 +208,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
                 </div>
 
                 {/* Product Title and Price */}
-                <div className="text-center">
+                <div className="text-center relative z-10">
                   <h3 className="text-xs sm:text-sm font-medium text-[#BC5A36] line-clamp-2 leading-tight group-hover:text-[#2D231E] transition-colors">
                     {item.name}
                   </h3>
@@ -215,7 +217,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
                   </p>
                 </div>
 
-              </div>
+              </SpotlightCard>
             ))}
           </div>
 
@@ -225,3 +227,4 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
     </section>
   );
 }
+

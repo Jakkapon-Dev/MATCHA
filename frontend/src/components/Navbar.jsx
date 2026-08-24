@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Menu, X, Sparkles, User, LogIn } from 'lucide-react';
 import AuthModal from './AuthModal';
+import BorderBeam from './BorderBeam';
 
 export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLanding }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -99,13 +100,14 @@ export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLa
           {/* Right: MIX@MATCH, Cart & Far Right Auth Buttons */}
           <div className="flex items-center gap-2.5 sm:gap-3">
             
-            {/* Main Feature Action: MIX@MATCH Button */}
+            {/* Main Feature Action: MIX@MATCH Button with Border Beam */}
             <button
               onClick={() => handleLinkClick('#fit-guide')}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:shadow-[#2D5A27]/25 transition-all active:scale-95 cursor-pointer"
+              className="relative overflow-hidden hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:shadow-[#2D5A27]/25 transition-all active:scale-95 cursor-pointer"
             >
-              <Sparkles size={14} className="text-[#D0DEC6]" />
-              <span>MIX@MATCH</span>
+              <BorderBeam size={80} duration={6} colorFrom="#D0DEC6" colorTo="#BC5A36" />
+              <Sparkles size={14} className="text-[#D0DEC6] relative z-10" />
+              <span className="relative z-10">MIX@MATCH</span>
             </button>
 
             {/* Cart Trigger Button */}
