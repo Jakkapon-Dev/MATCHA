@@ -4,17 +4,16 @@ import { ArrowUpRight } from 'lucide-react';
 export default function ChooseYourFit({ onSelectFit }) {
   const [hoveredCard, setHoveredCard] = useState(null);
 
-  // All 6 Signature Fit Cards combined into the main Choose Your Fit Canvas
+  // 6 Floating Outfit Cards distributed around the Full-Body Model
   const allFits = [
-    // Top Row: Tops & Sweats
     {
       id: 1,
       category: 'Tanks & Polos',
       count: '34 Items',
       code: 'FIT-01',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_coral_polo_shirt_001.jpeg',
-      positionClass: 'top-[16%] left-[4%] sm:left-[8%] lg:left-[10%]',
-      sizeClass: 'w-24 sm:w-36 lg:w-44 aspect-[3/4]',
+      positionClass: 'top-[14%] left-[6%] sm:left-[10%] lg:left-[14%]',
+      sizeClass: 'w-24 sm:w-34 lg:w-44 aspect-[3/4]',
     },
     {
       id: 2,
@@ -22,8 +21,8 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '82 Tees',
       code: 'FIT-02',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_striped_tee_001.jpg',
-      positionClass: 'top-[20%] left-[38%] sm:left-[41%] lg:left-[43%]',
-      sizeClass: 'w-28 sm:w-40 lg:w-52 aspect-[3/4]',
+      positionClass: 'top-[18%] left-[40%] sm:left-[42%] lg:left-[44%]',
+      sizeClass: 'w-28 sm:w-38 lg:w-48 aspect-[3/4]',
       isFeatured: true,
     },
     {
@@ -32,19 +31,17 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '46 Looks',
       code: 'FIT-03',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_crew_001.jpg',
-      positionClass: 'top-[16%] right-[4%] sm:right-[8%] lg:right-[10%]',
-      sizeClass: 'w-24 sm:w-36 lg:w-44 aspect-[3/4]',
+      positionClass: 'top-[16%] right-[6%] sm:right-[10%] lg:right-[14%]',
+      sizeClass: 'w-24 sm:w-34 lg:w-44 aspect-[3/4]',
     },
-
-    // Bottom Row: Denim, Tailored & Cargo
     {
       id: 4,
       category: 'Baggy Denim',
       count: '58 Fits',
       code: 'FIT-04',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_minimal_tee_001.jpg',
-      positionClass: 'bottom-[8%] left-[6%] sm:left-[10%] lg:left-[14%]',
-      sizeClass: 'w-24 sm:w-36 lg:w-44 aspect-[3/4]',
+      positionClass: 'bottom-[12%] left-[8%] sm:left-[12%] lg:left-[16%]',
+      sizeClass: 'w-24 sm:w-34 lg:w-44 aspect-[3/4]',
     },
     {
       id: 5,
@@ -52,8 +49,8 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '29 Tailored',
       code: 'FIT-05',
       image: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_green_suit_001.jpeg',
-      positionClass: 'bottom-[6%] left-[39%] sm:left-[42%] lg:left-[44%]',
-      sizeClass: 'w-26 sm:w-38 lg:w-48 aspect-[3/4]',
+      positionClass: 'bottom-[10%] left-[42%] sm:left-[44%] lg:left-[46%]',
+      sizeClass: 'w-26 sm:w-36 lg:w-44 aspect-[3/4]',
     },
     {
       id: 6,
@@ -61,37 +58,37 @@ export default function ChooseYourFit({ onSelectFit }) {
       count: '64 Bottoms',
       code: 'FIT-06',
       image: '/images/studio_white_bg/standing_straight/autumn/studio_straight_autumn_matcha_hoodie_terracotta_001.jpg',
-      positionClass: 'bottom-[8%] right-[6%] sm:right-[10%] lg:right-[14%]',
-      sizeClass: 'w-24 sm:w-36 lg:w-44 aspect-[3/4]',
+      positionClass: 'bottom-[12%] right-[8%] sm:right-[12%] lg:right-[16%]',
+      sizeClass: 'w-24 sm:w-34 lg:w-44 aspect-[3/4]',
     },
   ];
 
   return (
-    <section className="relative w-full bg-[#FAF8F5] text-[#2D231E] border-b border-[#D9D3C7] overflow-hidden select-none py-10 sm:py-16">
+    <section className="relative w-full bg-[#FAF8F5] text-[#2D231E] border-b border-[#D9D3C7] overflow-hidden select-none py-12 sm:py-20">
       
-      {/* Main Large Canvas Stage (ครึ่งตัวบน-กลางตัว พร้อมการ์ดทั้ง 6 ใบ) */}
-      <div className="relative max-w-6xl mx-auto w-full h-[680px] sm:h-[820px] lg:h-[950px] flex items-center justify-center rounded-3xl overflow-hidden bg-white border border-[#2D231E]/15 shadow-2xl">
+      {/* 1. Main Large Canvas Stage: Full-Body Model Canvas (รูปเต็มตัว ไม่แบ่งท่อน) */}
+      <div className="relative max-w-6xl mx-auto w-full h-[720px] sm:h-[860px] lg:h-[980px] flex items-center justify-center rounded-3xl overflow-hidden bg-white border border-[#2D231E]/15 shadow-2xl">
         
-        {/* Background Canvas: Female Nude Model (ครึ่งตัวถึงช่วงเอวเด่นชัดเต็มเฟรม) */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        {/* Full-Body Nude Beige Background Model (เห็นเต็มตัวตั้งแต่หัวจรดรองเท้า) */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-4 sm:p-8">
           <img
             src="/images/studio_white_bg/standing_straight/spring/studio_straight_spring_nude_beige_tank_tailored_pants_001.jpeg"
-            alt="MatchA Fit Canvas"
-            className="w-full h-full object-cover sm:object-contain object-top opacity-95 transition-opacity"
+            alt="MatchA Full-Body Fit Canvas"
+            className="w-full h-full object-contain object-center opacity-95 transition-opacity"
           />
         </div>
 
-        {/* Iconic Header Badge: [Choose Your Fit] centered over the head */}
-        <div className="absolute top-[8%] sm:top-[10%] left-1/2 transform -translate-x-1/2 z-30 pointer-events-none text-center">
+        {/* 2. Iconic Header Badge: [Choose Your Fit] over the head */}
+        <div className="absolute top-[6%] sm:top-[8%] left-1/2 transform -translate-x-1/2 z-30 pointer-events-none text-center">
           <div className="bg-[#2D231E] text-[#FAF8F5] px-6 py-2 sm:px-10 sm:py-3 text-xl sm:text-3xl lg:text-4xl font-extrabold font-sans tracking-tight uppercase shadow-2xl inline-block">
             Choose Your Fit
           </div>
-          <p className="text-[10px] sm:text-xs font-mono text-[#6B5E55] tracking-[0.2em] uppercase mt-2 font-bold">
-            SIGNATURE SILHOUETTES & APPAREL FITS
+          <p className="text-[10px] sm:text-xs font-mono text-[#6B5E55] tracking-[0.25em] uppercase mt-2 font-bold">
+            SIGNATURE SILHOUETTES & FIT GUIDE
           </p>
         </div>
 
-        {/* 6 Floating Full-Body Outfit Cards (Tops, Denim, Tailored & Cargo) */}
+        {/* 3. Six Floating Full-Body Outfit Cards Scattered around the Body */}
         {allFits.map((item) => {
           const isHovered = hoveredCard === item.id;
           
@@ -118,15 +115,15 @@ export default function ChooseYourFit({ onSelectFit }) {
                   item.isFeatured || isHovered ? 'opacity-90' : 'opacity-0 hover:opacity-90'
                 }`}
               >
-                <span className="text-[9px] sm:text-xs font-mono text-[#D0DEC6] tracking-wider uppercase font-bold">
+                <span className="text-[9px] sm:text-[10px] font-mono text-[#D0DEC6] tracking-wider uppercase font-bold">
                   {item.count}
                 </span>
-                <h4 className="text-xs sm:text-base font-extrabold text-[#FAF8F5] uppercase tracking-tight mt-0.5 leading-tight">
+                <h4 className="text-xs sm:text-sm font-extrabold text-[#FAF8F5] uppercase tracking-tight mt-0.5 leading-tight">
                   {item.category}
                 </h4>
-                <span className="mt-2 inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-mono text-[#BC5A36] font-bold uppercase bg-white px-2.5 py-0.5 rounded shadow-sm">
+                <span className="mt-2 inline-flex items-center gap-1 text-[9px] font-mono text-[#BC5A36] font-bold uppercase bg-white px-2.5 py-0.5 rounded shadow-sm">
                   <span>Explore Fit</span>
-                  <ArrowUpRight size={11} />
+                  <ArrowUpRight size={10} />
                 </span>
               </div>
 
