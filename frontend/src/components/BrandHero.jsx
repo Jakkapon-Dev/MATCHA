@@ -1,8 +1,43 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Shuffle, Play, Pause, ArrowRight } from 'lucide-react';
 
 export default function BrandHero({ onShopNow, onEnterWebsite }) {
-  // 10 Distinct Studio White Background Front-Facing Models (standing_straight only)
+  const sectionRef = useRef(null);
+  const [stickyOffset, setStickyOffset] = useState(0);
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Guarantee silky-smooth sticky pinning and dynamic scale-down on scroll
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          if (!sectionRef.current) return;
+          const rect = sectionRef.current.getBoundingClientRect();
+          const maxShift = sectionRef.current.offsetHeight - window.innerHeight;
+
+          if (rect.top <= 0 && rect.bottom >= 150) {
+            const shift = Math.min(Math.max(-rect.top, 0), maxShift > 0 ? maxShift : 0);
+            setStickyOffset(shift);
+            if (maxShift > 0) {
+              const progress = Math.min(Math.max(-rect.top / maxShift, 0), 1);
+              setScrollProgress(progress);
+            }
+          } else if (rect.top > 0) {
+            setStickyOffset(0);
+            setScrollProgress(0);
+          }
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  // 10 Strictly Verified Studio White Background Front-Facing Models (100% Facing Forward)
   const models = [
     {
       id: 'LOOK-01',
@@ -26,33 +61,33 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
     },
     {
       id: 'LOOK-05',
-      name: 'Aqua Tailored Blazer Look',
-      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_aqua_blazer_001.jpeg'
+      name: 'Emerald Green Velvet Suit',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_green_suit_001.jpeg'
     },
     {
       id: 'LOOK-06',
-      name: 'Cobalt Blue Street Suit',
-      src: '/images/studio_white_bg/standing_straight/winter/studio_straight_winter_wearing_cobalt_suit_001.jpeg'
+      name: 'Geometric Colorblock Knitwear Set',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_knitwear_set_001.jpeg'
     },
     {
       id: 'LOOK-07',
-      name: 'Mustard Trench Coat & Trousers',
-      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_mustard_trench_coat_001.jpeg'
+      name: 'Charcoal Tailored Suit & Tie',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_tailored_suit_001.jpeg'
     },
     {
       id: 'LOOK-08',
-      name: 'Lavender Silk Shirt & Linen Set',
-      src: '/images/studio_white_bg/standing_straight/summer/studio_straight_summer_wearing_lavender_silk_shirt_001.jpeg'
+      name: 'Royal Blue Street Suit',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_royal_blue_suit_001.jpeg'
     },
     {
       id: 'LOOK-09',
-      name: 'Charcoal Grey Minimalist Coat',
-      src: '/images/studio_white_bg/standing_straight/winter/studio_straight_winter_wearing_charcoal_grey_coat_001.jpeg'
+      name: 'Peach Linen Blazer & Slacks',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_peach_linen_suit_001.jpeg'
     },
     {
       id: 'LOOK-10',
-      name: 'Coral Polo & Tailored Slacks',
-      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_coral_polo_shirt_001.jpeg'
+      name: 'Mint Green Summer Suit & Sneakers',
+      src: '/images/studio_white_bg/standing_straight/summer/studio_straight_summer_wearing_mint_green_suit_001.jpeg'
     }
   ];
 
@@ -60,7 +95,8 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
   const [sliceModels, setSliceModels] = useState([0, 4, 2, 5]);
 
   // Track auto-play running state for each of the 4 slices: [slice0, slice1, slice2, slice3]
-  const [slicePlaying, setSlicePlaying] = useState([false, false, false, false]);
+  // Auto-run on page load by default with 1.30s interval per user request
+  const [slicePlaying, setSlicePlaying] = useState([true, true, true, true]);
 
   // Randomize all 4 slices independently across 10 outfits
   const randomizeAll = () => {
@@ -72,7 +108,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
     ]);
   };
 
-  // Auto-play interval effect for any active running slices with randomized selection
+  // Auto-play interval effect for active running slices with randomized selection (1.30 seconds)
   useEffect(() => {
     const hasAnyPlaying = slicePlaying.some((p) => p);
     if (!hasAnyPlaying) return;
@@ -90,7 +126,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
           return currentIdx;
         });
       });
-    }, 1400);
+    }, 1300);
 
     return () => clearInterval(interval);
   }, [slicePlaying, models.length]);
@@ -148,20 +184,33 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
     }
   };
 
+  // Dynamic Scale-Down on Scroll: Starts at full 1.0 size, smoothly scales down to 0.65x as user scrolls down
+  const titleScale = Math.max(1 - scrollProgress * 0.35, 0.65);
+  const titleOpacity = Math.max(1 - scrollProgress * 0.2, 0.8);
+
   return (
-    <section className="relative w-full bg-[#FAF8F5] text-[#2D231E] min-h-screen py-6 sm:py-10 px-4 sm:px-8 lg:px-12 flex flex-col justify-between overflow-hidden">
+    <section 
+      ref={sectionRef}
+      className="relative w-full bg-[#FAF8F5] text-[#2D231E] min-h-[145vh] pt-2 pb-12 px-4 sm:px-8 lg:px-12 flex flex-col justify-between select-none border-b border-[#D9D3C7]"
+    >
       
-      {/* 1. Header Title: [MatchA] - Clean, Grounded & Overlapping */}
-      <div className="w-full text-center z-20 relative pt-2 sm:pt-4 -mb-8 sm:-mb-12 md:-mb-16 lg:-mb-20 pointer-events-none select-none">
-        <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10.5rem] font-extrabold tracking-tighter text-[#2D5A27] uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm">
-          <span className="font-light text-[#2D5A27]/90">[</span>
-          <span className="mx-1 sm:mx-3">MatchA</span>
-          <span className="font-light text-[#2D5A27]/90">]</span>
+      {/* 1. Header Title: Positioned high near top navbar, scales down smoothly as user scrolls */}
+      <div 
+        className="w-full text-center z-0 pointer-events-none select-none pt-1 sm:pt-3 -mb-4 sm:-mb-6 md:-mb-8 relative origin-top"
+        style={{
+          transform: `translateY(${stickyOffset}px) scale(${titleScale})`,
+          opacity: titleOpacity,
+          transition: 'transform 0.04s ease-out, opacity 0.04s ease-out',
+        }}
+      >
+        <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10.5rem] font-black tracking-tight uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm font-sans">
+          <span className="text-[#2D5A27]">MATCH</span>
+          <span className="text-[#BC5A36]">A</span>
         </h1>
       </div>
 
-      {/* 2. Main 3-Column Layout with Grounded Clean Alignment */}
-      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center my-auto pt-4 sm:pt-6">
+      {/* 2. Main 3-Column Layout: Cleanly spaced under the lifted MATCHA title */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center my-auto pt-2 pb-20">
         
         {/* Left Column: Stacked Black Badge Typography */}
         <div className="md:col-span-3 flex flex-col items-center md:items-start justify-center order-2 md:order-1 z-20">
@@ -177,11 +226,11 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
           </div>
         </div>
 
-        {/* Center Column: Extra Large Sliced Model Supporting 10 Outfits */}
-        <div className="md:col-span-6 flex flex-col items-center justify-center order-1 md:order-2 z-10">
+        {/* Center Column: Extra Large Sliced Model Supporting 10 Outfits with Magazine Overlap */}
+        <div className="md:col-span-6 flex flex-col items-center justify-center order-1 md:order-2 z-20">
           
           <div 
-            className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl aspect-[3/4] bg-white rounded-none overflow-hidden shadow-2xl border border-[#2D231E]/20 flex flex-col select-none group/card"
+            className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl aspect-3/4 bg-white rounded-none overflow-hidden shadow-2xl border border-[#2D231E]/20 flex flex-col select-none group/card z-20"
           >
             
             {/* Slice 1: Head & Face (Top 25%) */}
@@ -219,7 +268,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
               <img 
                 src={models[sliceModels[1]].src} 
                 alt="MatchA Torso Slice" 
-                className="absolute inset-x-0 w-full h-[400%] top-[-100%] object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
+                className="absolute inset-x-0 w-full h-[400%] -top-full object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
               />
               {/* Slice 2 Play / Stop Button */}
               <button 
@@ -287,33 +336,6 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
                 {slicePlaying[3] ? '⏸' : '▷'}
               </button>
             </div>
-
-          </div>
-
-          {/* Interactive Controls: Shuffle Mix across 10 Outfits & Master Auto-Run */}
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-3 z-20">
-            
-            {/* 1. Instant Shuffle Button */}
-            <button
-              onClick={randomizeAll}
-              className="px-4 py-2 rounded-full bg-[#D0DEC6] hover:bg-[#B8CBAE] text-[#2D5A27] font-mono text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 shadow-sm active:scale-95 cursor-pointer"
-            >
-              <Shuffle size={14} />
-              <span>🎲 RANDOM MIX (10 LOOKS)</span>
-            </button>
-
-            {/* 2. Auto-Run Reel Toggle Button */}
-            <button
-              onClick={togglePlayAll}
-              className={`px-5 py-2 rounded-full font-mono text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 shadow-md cursor-pointer ${
-                isAllPlaying
-                  ? 'bg-[#BC5A36] text-white hover:bg-[#A64C2B]'
-                  : 'bg-[#2D5A27] text-white hover:bg-[#23471E]'
-              }`}
-            >
-              {isAllPlaying ? <Pause size={14} /> : <Play size={14} />}
-              <span>{isAllPlaying ? 'STOP REEL' : 'AUTO-RANDOMIZE ALL'}</span>
-            </button>
 
           </div>
 
@@ -385,16 +407,6 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
 
         </div>
 
-      </div>
-
-      {/* Subtle Bottom Note */}
-      <div className="relative z-10 text-center pt-6 opacity-70">
-        <button 
-          onClick={handleAction}
-          className="text-[10px] font-mono uppercase tracking-[0.25em] text-[#6B5E55] hover:text-[#2D5A27] transition-colors cursor-pointer"
-        >
-          {onEnterWebsite ? 'CLICK TO ENTER STORE ✦ EXPLORE DROPS' : 'SCROLL DOWN TO EXPLORE ALL PRODUCTS ↓'}
-        </button>
       </div>
 
     </section>
