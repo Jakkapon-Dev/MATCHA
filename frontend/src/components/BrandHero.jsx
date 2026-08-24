@@ -152,12 +152,10 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
   return (
     <section className="relative w-full bg-[#FAF8F5] text-[#2D231E] min-h-screen py-6 sm:py-10 px-4 sm:px-8 lg:px-12 flex flex-col justify-between overflow-hidden">
       
-      {/* 1. Header Title: [MatchA] - Clean, Grounded & Overlapping */}
+      {/* 1. Header Title: MatchA - Clean, Grounded & Overlapping */}
       <div className="w-full text-center z-20 relative pt-2 sm:pt-4 -mb-8 sm:-mb-12 md:-mb-16 lg:-mb-20 pointer-events-none select-none">
-        <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10.5rem] font-extrabold tracking-tighter text-[#2D5A27] uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm">
-          <span className="font-light text-[#2D5A27]/90">[</span>
-          <span className="mx-1 sm:mx-3">MatchA</span>
-          <span className="font-light text-[#2D5A27]/90">]</span>
+        <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10.5rem] font-extrabold tracking-tighter text-[#2D5A27] uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm font-sans">
+          MatchA
         </h1>
       </div>
 
