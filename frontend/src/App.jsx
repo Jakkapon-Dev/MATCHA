@@ -2,15 +2,11 @@ import React, { useState, useEffect } from 'react';
 import Lenis from 'lenis';
 import { api } from './services/api';
 
-import LandingPage from './pages/LandingPage';
 import HomePage from './pages/HomePage';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
 
 export default function App() {
-  // Page Routing State: 'landing' (Default editorial entry) or 'store' (Full shopping catalog)
-  const [currentPage, setCurrentPage] = useState('landing');
-
   const [healthStatus, setHealthStatus] = useState(null);
   const [cartItems, setCartItems] = useState([]);
   const [toast, setToast] = useState(null);
@@ -53,17 +49,6 @@ export default function App() {
     }
     loadHealth();
   }, []);
-
-  // Scroll to top when changing pages
-  const handleEnterStore = () => {
-    setCurrentPage('store');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleGoToLanding = () => {
-    setCurrentPage('landing');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
 
   const showToast = (message) => {
     setToast(message);
@@ -110,25 +95,20 @@ export default function App() {
         />
       )}
 
-      {/* Conditional View: 1. Landing Lookbook Page vs 2. Main Store Catalog */}
-      {currentPage === 'landing' ? (
-        <LandingPage onEnterWebsite={handleEnterStore} />
-      ) : (
-        <Layout 
-          cartCount={cartItems.length}
-          onOpenCart={() => showToast(`Cart contains ${cartItems.length} items! 🛍️`)}
-          onGoToLanding={handleGoToLanding}
-        >
-          <HomePage 
-            onSelectFit={handleSelectFit}
-            onClaimPromo={handleClaimPromo}
-            onAddToCart={handleAddToCart}
-            onQuickView={(prod) => setSelectedProduct(prod)}
-            onExploreWarehouse={() => showToast('Opening Warehouse Archive! 📦')}
-            onSubscribe={handleSubscribe}
-          />
-        </Layout>
-      )}
+      {/* Main Experience: Direct Master Lookbook & Store Catalog */}
+      <Layout 
+        cartCount={cartItems.length}
+        onOpenCart={() => showToast(`Cart contains ${cartItems.length} items! 🛍️`)}
+      >
+        <HomePage 
+          onSelectFit={handleSelectFit}
+          onClaimPromo={handleClaimPromo}
+          onAddToCart={handleAddToCart}
+          onQuickView={(prod) => setSelectedProduct(prod)}
+          onExploreWarehouse={() => showToast('Opening Warehouse Archive! 📦')}
+          onSubscribe={handleSubscribe}
+        />
+      </Layout>
 
     </div>
   );

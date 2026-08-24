@@ -57,11 +57,11 @@ export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLa
         {/* 2. Main Navigation Bar */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
           
-          {/* Left: Brand Logo (Click to go back to Landing Lookbook) */}
+          {/* Left: Brand Logo (Scroll to Top) */}
           <button 
-            onClick={onGoToLanding}
+            onClick={() => handleLinkClick('#brand-hero')}
             className="flex items-center gap-2.5 group cursor-pointer text-left"
-            title="Back to Landing Page"
+            title="Scroll to Top"
           >
             <div className="w-10 h-10 rounded-xl bg-[#2D5A27] flex items-center justify-center text-white text-xl shadow-md group-hover:scale-105 transition-transform">
               🍵
@@ -78,13 +78,6 @@ export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLa
 
           {/* Center: Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-6 lg:gap-8">
-            <button
-              onClick={onGoToLanding}
-              className="text-xs font-semibold text-[#6B5E55] hover:text-[#2D5A27] transition-colors tracking-wider uppercase font-mono cursor-pointer flex items-center gap-1"
-            >
-              <span>✦ LOOKBOOK</span>
-            </button>
-            
             {navLinks.map((link) => (
               <a
                 key={link.label}
