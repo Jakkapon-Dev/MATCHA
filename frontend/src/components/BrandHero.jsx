@@ -139,6 +139,28 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
     '☺'
   ];
 
+  // Kinetic Scroll Zoom & Parallax for Editorial MATCHA Header
+  const [scrollRatio, setScrollRatio] = useState(0);
+
+  useEffect(() => {
+    let ticking = false;
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrolled = window.scrollY;
+          const heroHeight = window.innerHeight || 800;
+          const ratio = Math.min(Math.max(scrolled / heroHeight, 0), 1);
+          setScrollRatio(ratio);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const isAllPlaying = slicePlaying.every((p) => p);
 
   const handleAction = () => {
@@ -152,16 +174,26 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
   return (
     <section className="relative w-full bg-[#FAF8F5] text-[#2D231E] min-h-screen py-6 sm:py-10 px-4 sm:px-8 lg:px-12 flex flex-col justify-between overflow-hidden">
       
-      {/* 1. Header Title: Giant Sticky Vogue Watermark (Behind Model on Scroll) + Dual-Tone MATCH + A */}
-      <div className="sticky top-12 sm:top-16 lg:top-14 w-full text-center z-0 pointer-events-none select-none transition-transform duration-300">
+      {/* 1. Header Title: Kinetic Zooming MATCHA Title (Gradually expands as you scroll) */}
+      <div 
+        className="sticky top-12 sm:top-16 lg:top-14 w-full text-center z-0 pointer-events-none select-none transition-transform duration-100 ease-out origin-center"
+        style={{
+          transform: `scale(${1 + scrollRatio * 0.4}) translateY(${scrollRatio * -25}px)`,
+        }}
+      >
         <h1 className="text-7xl sm:text-9xl md:text-[12rem] lg:text-[16rem] xl:text-[20rem] font-black tracking-tight uppercase leading-[0.85] inline-block whitespace-nowrap drop-shadow-sm font-sans">
           <span className="text-[#2D5A27] opacity-90">MATCH</span>
           <span className="text-[#BC5A36] opacity-90">A</span>
         </h1>
       </div>
 
-      {/* 2. Main 3-Column Layout with Magazine Depth Overlap */}
-      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center my-auto -mt-16 sm:-mt-28 md:-mt-36 lg:-mt-48 pt-4 sm:pt-6">
+      {/* 2. Main 3-Column Layout with Magazine Depth Overlap & Smooth Glide */}
+      <div 
+        className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center my-auto -mt-16 sm:-mt-28 md:-mt-36 lg:-mt-48 pt-4 sm:pt-6 transition-transform duration-100 ease-out"
+        style={{
+          transform: `translateY(${scrollRatio * -30}px)`,
+        }}
+      >
         
         {/* Left Column: Stacked Black Badge Typography */}
         <div className="md:col-span-3 flex flex-col items-center md:items-start justify-center order-2 md:order-1 z-20">
