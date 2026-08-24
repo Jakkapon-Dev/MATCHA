@@ -68,12 +68,12 @@ export default function ChooseYourFit({ onSelectFit }) {
   return (
     <section className="relative w-full min-h-[960px] lg:min-h-screen bg-white overflow-hidden select-none flex items-center justify-center border-b border-[#D9D3C7] py-12">
       
-      {/* 1. Full-Bleed Center Model Canvas (เต็มจอ 100% เป็นพื้นหลังเต็มๆ) */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none z-0 overflow-hidden">
+      {/* 1. Full-Bleed Center Model Canvas (เห็นหัวและเท้าครบ 100% ไม่ขาด) */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none z-0 flex items-center justify-center p-2 sm:p-6">
         <img
           src="/images/studio_white_bg/standing_straight/spring/studio_straight_spring_nude_beige_wide_banner_2k_001.jpeg"
           alt="MatchA Choose Your Fit"
-          className="w-full h-full object-cover object-center opacity-100"
+          className="w-full h-full object-contain object-center opacity-100"
         />
       </div>
 
