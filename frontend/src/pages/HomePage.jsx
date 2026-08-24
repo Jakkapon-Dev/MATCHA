@@ -1,4 +1,5 @@
 import React from 'react';
+import BrandCover from '../components/BrandCover';
 import BrandHero from '../components/BrandHero';
 import ChooseYourFit from '../components/ChooseYourFit';
 import StreetFavorites from '../components/StreetFavorites';
@@ -14,6 +15,11 @@ export default function HomePage({
   onQuickView,
   onSubscribe,
 }) {
+  const handleScrollToHero = () => {
+    const el = document.getElementById('brand-hero');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
   const handleScrollToFit = () => {
     const el = document.getElementById('fit-guide');
     if (el) el.scrollIntoView({ behavior: 'smooth' });
@@ -22,6 +28,11 @@ export default function HomePage({
   return (
     <div className="w-full bg-[#FAF8F5]">
       
+      {/* 0. BRAND COVER: Dedicated 100vh Fullscreen Minimalist MATCHA Display */}
+      <section id="brand-cover">
+        <BrandCover onScrollDown={handleScrollToHero} />
+      </section>
+
       {/* 1. MASTER HERO: Editorial 4-Slice Interactive Lookbook Cover */}
       <section id="brand-hero">
         <BrandHero onShopNow={handleScrollToFit} />
