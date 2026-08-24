@@ -246,7 +246,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
               <img 
                 src={models[sliceModels[2]].src} 
                 alt="MatchA Pants/Skirt Slice" 
-                className="absolute inset-x-0 w-full h-[400%] -top-[200%] object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
+                className="absolute inset-x-0 w-full h-[400%] top-[-200%] object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
               />
               {/* Slice 3 Play / Stop Button */}
               <button 
@@ -272,7 +272,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
               <img 
                 src={models[sliceModels[3]].src} 
                 alt="MatchA Footwear Slice" 
-                className="absolute inset-x-0 w-full h-[400%] -top-[300%] object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
+                className="absolute inset-x-0 w-full h-[400%] top-[-300%] object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
               />
               {/* Slice 4 Play / Stop Button */}
               <button 
