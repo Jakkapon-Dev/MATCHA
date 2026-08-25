@@ -10,6 +10,18 @@ import SignUpPage from './pages/SignUpPage';
 import Payment from './pages/Payment';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
+import Payment from './pages/Payment';
+
+const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color || 'default'}`;
+
+const loadCart = () => {
+  try {
+    const saved = localStorage.getItem('matcha_cart');
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+};
 
 const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color || 'default'}`;
 
@@ -212,27 +224,36 @@ export default function App() {
     showToast(`Subscribed ${email} to VIP Drop List! 📩`);
   };
 
-  return (
-    <div className="min-h-screen bg-[#FAF8F5] text-[#2D231E] font-sans selection:bg-[#2D5A27] selection:text-white relative">
-      
-      {/* Interactive Toast Notification */}
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-50 animate-bounce pointer-events-none">
-          <div className="py-3 px-5 rounded-2xl bg-[#2D231E] text-[#FAF8F5] border border-[#3D312A] font-bold text-xs shadow-2xl flex items-center gap-2">
-            <span className="text-[#BC5A36]">✨</span>
-            {toast}
-          </div>
-        </div>
-      )}
+  const handleNavigateToPayment = () => {
+    if (cartItems.length === 0) {
+      showToast('Your cart is empty! Add some items first. 🛍️');
+      return;
+    }
+    window.location.href = '/payment';
+  };
 
-      {/* Product Customizer & Quick View Modal */}
-      {selectedProduct && (
-        <ProductModal 
-          product={selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          onAddToCart={handleAddToCart}
-        />
-      )}
+  return (
+    <BrowserRouter>
+      <div className="min-h-screen bg-[#FAF8F5] text-[#2D231E] font-sans selection:bg-[#2D5A27] selection:text-white relative">
+        
+        {/* Interactive Toast Notification */}
+        {toast && (
+          <div className="fixed bottom-6 right-6 z-50 animate-bounce pointer-events-none">
+            <div className="py-3 px-5 rounded-2xl bg-[#2D231E] text-[#FAF8F5] border border-[#3D312A] font-bold text-xs shadow-2xl flex items-center gap-2">
+              <span className="text-[#BC5A36]">✨</span>
+              {toast}
+            </div>
+          </div>
+        )}
+
+        {/* Product Customizer & Quick View Modal */}
+        {selectedProduct && (
+          <ProductModal 
+            product={selectedProduct}
+            onClose={() => setSelectedProduct(null)}
+            onAddToCart={handleAddToCart}
+          />
+        )}
 
       {/* Main Experience Layout */}
       <Layout 
@@ -317,6 +338,7 @@ export default function App() {
         </Routes>
       </Layout>
 
-    </div>
+      </div>
+    </BrowserRouter>
   );
 }
