@@ -1,118 +1,146 @@
-import React, { useState } from 'react';
-import { ArrowRight } from 'lucide-react';
+import React, { useState } from "react";
+import { ArrowUpRight } from "lucide-react";
 
 export default function ChooseYourFit({ onSelectFit }) {
-  const [activeFit, setActiveFit] = useState(null);
+  const [hoveredCard, setHoveredCard] = useState(null);
 
-  const fits = [
+  // 6 Uniform Large Fit Cards spread widely across the left and right quadrants (ZERO overlap)
+  const fitItems = [
+    // --- ฝั่งซ้าย (3 ใบ) ---
     {
       id: 1,
-      title: 'Oversized Boxy',
-      size: 'Loose Streetwear Cut',
-      code: 'FIT-01',
-      image: '/images/model_full_2.jpg',
-      tag: 'Matcha Striped'
+      category: "Tanks & Polos",
+      count: "34 Items",
+      code: "FIT-01",
+      image:
+        "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_coral_polo_shirt_001.jpeg",
+      positionClass: "top-[8%] left-[4%]",
     },
     {
       id: 2,
-      title: 'Slim Tailored',
-      size: 'Form Fitting Structure',
-      code: 'FIT-02',
-      image: '/images/model_full_6.jpg',
-      tag: 'Crimson & Leather'
+      category: "Oversized Tees",
+      count: "82 Tees",
+      code: "FIT-02",
+      image:
+        "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_striped_tee_001.jpg",
+      positionClass: "top-[40%] left-[12%]",
     },
     {
       id: 3,
-      title: 'Street Relaxed',
-      size: 'Casual Drop Shoulder',
-      code: 'FIT-03',
-      image: '/images/model_full_3.jpg',
-      tag: 'Hoodie & Terracotta'
+      category: "Baggy Denim",
+      count: "58 Fits",
+      code: "FIT-03",
+      image:
+        "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_minimal_tee_001.jpg",
+      positionClass: "bottom-[6%] left-[20%]",
     },
+
+    // --- ฝั่งขวา (3 ใบ) ---
     {
       id: 4,
-      title: 'Crop Sculpt',
-      size: 'Contemporary Cropped',
-      code: 'FIT-04',
-      image: '/images/model_full_5.jpg',
-      tag: 'Sunshine Knit'
+      category: "Statement Sweats",
+      count: "46 Looks",
+      code: "FIT-04",
+      image:
+        "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_crew_001.jpg",
+      positionClass: "top-[8%] right-[4%]",
+    },
+    {
+      id: 5,
+      category: "Tailored Suits",
+      count: "29 Tailored",
+      code: "FIT-05",
+      image:
+        "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_green_suit_001.jpeg",
+      positionClass: "top-[40%] right-[12%]",
+    },
+    {
+      id: 6,
+      category: "Utility Outerwear",
+      count: "64 Bottoms",
+      code: "FIT-06",
+      image:
+        "/images/studio_white_bg/standing_straight/autumn/studio_straight_autumn_matcha_hoodie_terracotta_001.jpg",
+      positionClass: "bottom-[6%] right-[20%]",
     },
   ];
 
   return (
-    <section className="w-full bg-[#FAF8F5] text-[#2D231E] py-20 px-4 sm:px-8 lg:px-12 border-b border-[#D9D3C7] relative">
-      
-      {/* Title Header */}
-      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-start sm:items-end justify-between mb-14">
-        <div>
-          <span className="text-xs font-mono font-bold tracking-[0.2em] text-[#BC5A36] uppercase">
-            SIGNATURE SILHOUETTES
-          </span>
-          <h2 className="text-3xl sm:text-5xl font-extrabold text-[#2D231E] tracking-tight mt-1">
+    <section className="relative w-full min-h-240 lg:min-h-screen bg-white overflow-hidden select-none flex items-center justify-center border-b border-[#D9D3C7] py-12">
+      {/* 1. Full-Bleed Center Model Canvas (เห็นครบทั้งตัว 100% ไม่ขาด) */}
+      <div className="absolute inset-0 w-full h-full pointer-events-none z-0 flex items-center justify-center p-2 sm:p-6">
+        <img
+          src="/images/studio_white_bg/standing_straight/spring/studio_straight_spring_nude_beige_wide_banner_2k_001.jpeg"
+          alt="MatchA Choose Your Fit"
+          className="w-full h-full object-contain object-center opacity-100"
+        />
+      </div>
+
+      {/* 2. Independent Title & Badge: คุมโทนสี MatchA Espresso & Terracotta */}
+      <div className="absolute top-12 left-[24%] z-30 pointer-events-none">
+        <div className="bg-[#2D231E] px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block border-l-4 border-[#BC5A36]">
+          <span className="animate-text-shimmer-light inline-block">
             Choose Your Fit
-          </h2>
+          </span>
         </div>
-        <p className="text-xs text-[#6B5E55] max-w-xs mt-3 sm:mt-0 font-mono leading-relaxed">
-          Crafted in premium Japanese & organic fabrics, tailored for every individual aesthetic and colorway.
+        <p className="text-[10px] sm:text-xs font-mono text-[#BC5A36] tracking-[0.25em] uppercase mt-1.5 font-bold">
+          SIGNATURE SILHOUETTES & FIT GUIDE
         </p>
       </div>
 
-      {/* Grid of 4 Multi-Color Fit Showcase Cards */}
-      <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-        {fits.map((fit) => (
-          <div
-            key={fit.id}
-            onMouseEnter={() => setActiveFit(fit.id)}
-            onMouseLeave={() => setActiveFit(null)}
-            onClick={() => onSelectFit(fit)}
-            className="cursor-pointer flex flex-col bg-white rounded-2xl border border-[#D9D3C7] shadow-md hover:shadow-xl hover:border-[#2D5A27] transition-all duration-300 overflow-hidden group relative"
-          >
-            {/* Image Container with Zoom & Badge */}
-            <div className="relative w-full aspect-[4/5] bg-[#D0DEC6]/30 overflow-hidden">
+      {/* 3. Floating Cards Layer (แอนิเมชันลอย 3 มิติ Ambient Floating) */}
+      <div className="relative w-full max-w-[1700px] mx-auto h-215 sm:h-230 lg:h-245 px-4 sm:px-8 z-10 pointer-events-auto">
+        {fitItems.map((item, index) => {
+          const isHovered = hoveredCard === item.id;
+          const floatClass = index % 3 === 0 ? 'animate-card-float-1' : index % 3 === 1 ? 'animate-card-float-2' : 'animate-card-float-3';
+
+          return (
+            <div
+              key={item.id}
+              onMouseEnter={() => setHoveredCard(item.id)}
+              onMouseLeave={() => setHoveredCard(null)}
+              onClick={() => onSelectFit && onSelectFit(item)}
+              className={`absolute ${item.positionClass} ${!isHovered ? floatClass : ''} w-36 sm:w-48 lg:w-56 xl:w-60 aspect-3/4 z-20 cursor-pointer transition-all duration-300 transform ${
+                isHovered
+                  ? "scale-108 z-40 shadow-2xl -translate-y-1.5 ring-2 ring-[#BC5A36]"
+                  : "shadow-md hover:shadow-xl"
+              } overflow-hidden bg-transparent border-0`}
+            >
+              {/* Outfit Photo */}
               <img
-                src={fit.image}
-                alt={fit.title}
-                className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-500"
+                src={item.image}
+                alt={item.category}
+                className="w-full h-full object-cover object-top transition-transform duration-500"
               />
-              
-              {/* Top Code Badge */}
-              <div className="absolute top-3 left-3 px-2.5 py-1 bg-[#2D231E]/80 backdrop-blur-md text-[#FAF8F5] text-[10px] font-mono font-bold rounded-md tracking-wider">
-                {fit.code}
-              </div>
 
-              {/* Top Tag Badge */}
-              <div className="absolute top-3 right-3 px-2.5 py-1 bg-[#2D5A27] text-white text-[10px] font-mono font-bold rounded-md tracking-wider">
-                {fit.tag}
-              </div>
-
-              {/* Hover overlay indicator */}
-              <div className="absolute inset-0 bg-[#2D5A27]/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                <span className="px-4 py-2 bg-[#2D5A27] text-white text-xs font-bold uppercase rounded-full tracking-wider shadow-lg flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                  <span>Select Fit</span>
-                  <ArrowRight size={13} />
+              {/* Dark Hover Tint Overlay (คุมโทนสี MatchA Espresso & Terracotta) */}
+              <div
+                className={`absolute inset-0 bg-[#2D231E]/90 backdrop-blur-[2px] transition-opacity duration-300 flex flex-col items-center justify-center p-3 text-center ${
+                  isHovered ? "opacity-95" : "opacity-0"
+                }`}
+              >
+                <span className="text-[10px] sm:text-xs font-mono text-[#D0DEC6] tracking-wider uppercase font-bold">
+                  {item.count}
+                </span>
+                <h4 className="text-xs sm:text-base font-extrabold text-[#FAF8F5] uppercase tracking-tight mt-1 leading-tight">
+                  {item.category}
+                </h4>
+                <span className="mt-2.5 inline-flex items-center gap-1 text-[10px] font-mono text-white font-bold uppercase bg-[#BC5A36] hover:bg-[#9E4423] px-3 py-1 rounded shadow-sm transition-colors">
+                  <span>Explore Fit</span>
+                  <ArrowUpRight size={11} />
                 </span>
               </div>
+
+              {/* Code Label in Top Left Corner */}
+              {!isHovered && (
+                <div className="absolute top-2 left-2 px-2 py-0.5 bg-[#2D231E]/90 text-[9px] sm:text-[10px] font-mono text-[#D0DEC6] font-bold shadow-sm">
+                  {item.code}
+                </div>
+              )}
             </div>
-
-            {/* Card Content & Details */}
-            <div className="p-5 flex flex-col flex-1 justify-between bg-white">
-              <div>
-                <h3 className="text-base font-bold text-[#2D231E] group-hover:text-[#2D5A27] transition-colors">
-                  {fit.title}
-                </h3>
-                <p className="text-xs text-[#6B5E55] mt-1 font-mono">{fit.size}</p>
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-[#D9D3C7]/40 flex items-center justify-between text-xs text-[#2D5A27] font-bold font-mono">
-                <span>EXPLORE FIT</span>
-                <span className="group-hover:translate-x-1 transition-transform">→</span>
-              </div>
-            </div>
-
-          </div>
-        ))}
+          );
+        })}
       </div>
-
     </section>
   );
 }

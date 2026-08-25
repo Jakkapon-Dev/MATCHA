@@ -1,10 +1,10 @@
 import React from 'react';
 import BrandHero from '../components/BrandHero';
 import ChooseYourFit from '../components/ChooseYourFit';
+import StreetFavorites from '../components/StreetFavorites';
+import BrandLoop from '../components/BrandLoop';
 import VdoSection from '../components/VdoSection';
 import PulsePerks from '../components/PulsePerks';
-import StreetFavorites from '../components/StreetFavorites';
-import LastCallWarehouse from '../components/LastCallWarehouse';
 import JoinDropList from '../components/JoinDropList';
 
 export default function HomePage({
@@ -12,7 +12,6 @@ export default function HomePage({
   onClaimPromo,
   onAddToCart,
   onQuickView,
-  onExploreWarehouse,
   onSubscribe,
 }) {
   const handleScrollToFit = () => {
@@ -21,32 +20,41 @@ export default function HomePage({
   };
 
   return (
-    <div className="w-full">
-      {/* Frame 2 & 3: MatchA Brand Hero Editorial Lookbook */}
-      <div id="brand-hero" />
-      <BrandHero onShopNow={handleScrollToFit} />
+    <div className="w-full bg-[#FAF8F5]">
+      
+      {/* 1. MASTER HERO: Editorial 4-Slice Interactive Lookbook Cover */}
+      <section id="brand-hero">
+        <BrandHero onShopNow={handleScrollToFit} />
+      </section>
 
-      {/* Frame 4: Choose Your Fit / Mix & Match */}
-      <div id="fit-guide" />
-      <ChooseYourFit onSelectFit={onSelectFit} />
+      {/* 2. CHOOSE YOUR SILHOUETTE: 2K Studio Model with 6 Borderless Floating Cards */}
+      <section id="fit-guide">
+        <ChooseYourFit onSelectFit={onSelectFit} />
+      </section>
 
-      {/* Frame 5: VDO & Promo Banner */}
-      <VdoSection onClaimPromo={onClaimPromo} />
+      {/* 3. STREET FAVORITES & ARCHIVE: Continuous Framed Carousel with Real Product Shots */}
+      <section id="street-favorites">
+        <StreetFavorites onAddToCart={onAddToCart} onQuickView={onQuickView} />
+      </section>
 
-      {/* Frame 6: The Pulse Perks */}
-      <div id="pulse-perks" />
-      <PulsePerks />
+      {/* ReactVibe Infinite Brand Loop Ticker */}
+      <BrandLoop />
 
-      {/* Frame 7: Street Favorites */}
-      <div id="street-favorites" />
-      <StreetFavorites onAddToCart={onAddToCart} onQuickView={onQuickView} />
+      {/* 4. CINEMATIC TEXTURE REEL: Urban Motion Video + 15% Special Promo Glass Card */}
+      <section id="cinematic-reel">
+        <VdoSection onClaimPromo={onClaimPromo} />
+      </section>
 
-      {/* Frame 8: Last Call Warehouse */}
-      <div id="warehouse-sale" />
-      <LastCallWarehouse onExploreWarehouse={onExploreWarehouse} />
+      {/* 5. THE PULSE PERKS: 3D Rotating Model Card + 3-Tier Benefit Grid */}
+      <section id="pulse-perks">
+        <PulsePerks />
+      </section>
 
-      {/* Frame 9: Join The Drop List */}
-      <JoinDropList onSubscribe={onSubscribe} />
+      {/* 6. VIP METAL PASS & JOIN DROP LIST: 3D Black Card + Newsletter Access */}
+      <section id="vip-drop">
+        <JoinDropList onSubscribe={onSubscribe} />
+      </section>
+
     </div>
   );
 }
