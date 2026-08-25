@@ -8,31 +8,27 @@ export default function VdoSection({ onClaimPromo }) {
   return (
     <section className="relative w-full min-h-screen bg-[#1A2218] overflow-hidden flex items-center justify-center border-y border-[#2D5A27]/30 select-none py-16 sm:py-24">
       
-      {/* 1. Full-Height Background Video (Continuous Loop, Muted, No Buttons) */}
+      {/* 1. Full-Height Background Video (Anchored to top to prevent head crop) */}
       <video
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 w-full h-full object-cover opacity-90 pointer-events-none"
+        className="absolute inset-0 w-full h-full object-cover object-top sm:object-[center_15%] opacity-90 pointer-events-none"
       >
         <source src="/videos/lookbook_reel.mp4" type="video/mp4" />
         <source src={videoSrc} type="video/mp4" />
       </video>
 
       {/* 2. Film Gradient Overlays for Readability & Depth */}
-      <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-black/65 pointer-events-none" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#1A2218] via-transparent to-[#1A2218]/90 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/40 to-black/65 pointer-events-none" />
+      <div className="absolute inset-0 bg-linear-to-t from-[#1A2218] via-transparent to-[#1A2218]/90 pointer-events-none" />
 
       {/* 3. Main Content Container: Left Headline + Right Floating Glass Card */}
       <div className="relative z-10 max-w-7xl mx-auto w-full px-6 sm:px-8 lg:px-12 flex flex-col lg:flex-row items-center justify-between gap-10 sm:gap-14">
         
         {/* Left Side: Editorial Cinematic Title */}
         <div className="max-w-xl text-center lg:text-left">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-[#D0DEC6] text-xs font-mono tracking-widest uppercase mb-5 shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-[#BC5A36] animate-pulse" />
-            <span>SEASON 01 // CINEMATIC REEL</span>
-          </div>
           <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-[#FAF8F5] tracking-tight uppercase leading-[0.95] drop-shadow-xl">
             MOVEMENT <br />
             <span className="text-[#D0DEC6] font-light">& EXPRESSION</span>

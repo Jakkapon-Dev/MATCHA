@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Lenis from 'lenis';
 import { api } from './services/api';
 
-import LandingPage from './pages/LandingPage';
 import HomePage from './pages/HomePage';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
@@ -11,9 +10,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react me-router-dom';
 import SignupPage from './pages/SignUpPage';
 
 export default function App() {
-  // Page Routing State: 'landing' (Default editorial entry) or 'store' (Full shopping catalog)
-  const [currentPage, setCurrentPage] = useState('landing');
-
   const [healthStatus, setHealthStatus] = useState(null);
   const [cartItems, setCartItems] = useState([]);
   const [toast, setToast] = useState(null);
@@ -57,17 +53,6 @@ export default function App() {
     loadHealth();
   }, []);
 
-  // Scroll to top when changing pages
-  const handleEnterStore = () => {
-    setCurrentPage('store');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleGoToLanding = () => {
-    setCurrentPage('landing');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   const showToast = (message) => {
     setToast(message);
     setTimeout(() => setToast(null), 3500);
@@ -76,11 +61,11 @@ export default function App() {
   const handleAddToCart = (product) => {
     setCartItems((prev) => [...prev, product]);
     const details = product.size && product.color ? ` (${product.size} / ${product.color})` : '';
-    showToast(`Added ${product.name}${details} to cart! 🛍️`);
+    showToast(`Added ${product.name}${details} to bag! 🛍️`);
   };
 
   const handleSelectFit = (fit) => {
-    showToast(`Selected ${fit.title} (${fit.size})! 🎨`);
+    showToast(`Selected ${fit.category || fit.title}! 🎨`);
   };
 
   const handleClaimPromo = () => {
@@ -96,7 +81,7 @@ export default function App() {
       
       {/* Interactive Toast Notification */}
       {toast && (
-        <div className="fixed bottom-6 right-6 z-50 animate-bounce">
+        <div className="fixed bottom-6 right-6 z-50 animate-bounce pointer-events-none">
           <div className="py-3 px-5 rounded-2xl bg-[#2D231E] text-[#FAF8F5] border border-[#3D312A] font-bold text-xs shadow-2xl flex items-center gap-2">
             <span className="text-[#BC5A36]">✨</span>
             {toast}
@@ -113,25 +98,20 @@ export default function App() {
         />
       )}
 
-      {/* Conditional View: 1. Landing Lookbook Page vs 2. Main Store Catalog */}
-      {currentPage === 'landing' ? (
-        <LandingPage onEnterWebsite={handleEnterStore} />
-      ) : (
-        <Layout 
-          cartCount={cartItems.length}
-          onOpenCart={() => showToast(`Opening cart with ${cartItems.length} items! 🛍️`)}
-          onGoToLanding={handleGoToLanding}
-        >
-          <HomePage 
-            onSelectFit={handleSelectFit}
-            onClaimPromo={handleClaimPromo}
-            onAddToCart={handleAddToCart}
-            onQuickView={(prod) => setSelectedProduct(prod)}
-            onExploreWarehouse={() => showToast('Opening Warehouse Archive! 📦')}
-            onSubscribe={handleSubscribe}
-          />
-        </Layout>
-      )}
+      {/* Main Experience: Direct Master Lookbook & Store Catalog */}
+      <Layout 
+        cartCount={cartItems.length}
+        onOpenCart={() => showToast(`Cart contains ${cartItems.length} items! 🛍️`)}
+      >
+        <HomePage 
+          onSelectFit={handleSelectFit}
+          onClaimPromo={handleClaimPromo}
+          onAddToCart={handleAddToCart}
+          onQuickView={(prod) => setSelectedProduct(prod)}
+          onExploreWarehouse={() => showToast('Opening Warehouse Archive! 📦')}
+          onSubscribe={handleSubscribe}
+        />
+      </Layout>
 
     </div>
   );

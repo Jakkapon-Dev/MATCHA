@@ -43,7 +43,7 @@ export default function ProductModal({ product, onClose, onAddToCart }) {
         <div className="grid grid-cols-1 sm:grid-cols-12">
           
           {/* Image & Swatch Preview Left */}
-          <div className="sm:col-span-5 bg-[#2D231E] p-8 flex flex-col justify-between text-white relative min-h-[300px]">
+          <div className="sm:col-span-5 bg-[#2D231E] p-8 flex flex-col justify-between text-white relative min-h-75">
             <div className="z-10">
               <span className="text-[10px] uppercase font-bold tracking-widest text-[#D0DEC6] font-mono">
                 {product.tag || 'LIMITED RELEASE'}
