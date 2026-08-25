@@ -5,6 +5,7 @@ import {
   ChevronRight, RefreshCw, ArrowLeft, ArrowUpRight, RotateCcw
 } from 'lucide-react';
 import { api } from '../services/api';
+import ProductCard from '../components/ProductCard';
 
 export default function CatalogPage({ 
   initialCategory = 'ALL',
@@ -548,123 +549,14 @@ export default function CatalogPage({
                 gridCols === 4 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' :
                 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
               }`}>
-                {paginatedProducts.map((product) => {
-                  const isHovered = hoveredCardId === product.id;
-                  return (
-                    <div
-                      key={product.id}
-                      onMouseEnter={() => setHoveredCardId(product.id)}
-                      onMouseLeave={() => setHoveredCardId(null)}
-                      className="group relative bg-white border border-[#D9D3C7] hover:border-[#2D5A27] rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col"
-                    >
-                      {/* Image Container with Dynamic Hover Swap */}
-                      <div className="relative aspect-3/4 w-full bg-[#FAF8F5] overflow-hidden">
-                        <img
-                          src={isHovered && product.secondaryImage ? product.secondaryImage : product.image}
-                          alt={product.name}
-                          className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
-                        />
-
-                        {/* Badge */}
-                        <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
-                          {product.tag && (
-                            <span className={`px-2.5 py-1 text-[10px] font-mono font-bold rounded-lg shadow-sm uppercase ${
-                              product.tag.includes('Best') ? 'bg-[#BC5A36] text-white' :
-                              product.tag.includes('New') ? 'bg-[#2D5A27] text-white' :
-                              'bg-[#2D231E] text-[#D0DEC6]'
-                            }`}>
-                              {product.tag}
-                            </span>
-                          )}
-                          <span className="px-2 py-0.5 text-[9px] font-mono font-bold bg-[#FAF8F5]/90 text-[#6B5E55] rounded backdrop-blur-xs shadow-2xs self-start">
-                            {product.season}
-                          </span>
-                        </div>
-
-                        {/* Quick View Floating Overlay on Hover */}
-                        <div className={`absolute inset-x-3 bottom-3 z-20 flex gap-2 transition-all duration-300 transform ${
-                          isHovered ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'
-                        }`}>
-                          <button
-                            onClick={() => onQuickView && onQuickView(product)}
-                            className="flex-1 py-2 bg-white/95 hover:bg-white text-[#2D231E] text-xs font-mono font-bold uppercase rounded-xl backdrop-blur-md shadow-md flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                          >
-                            <Eye size={13} />
-                            <span>Quick View</span>
-                          </button>
-                          <button
-                            onClick={() => onAddToCart && onAddToCart(product)}
-                            title="Quick Add"
-                            className="p-2 bg-[#2D5A27] hover:bg-[#23471E] text-white rounded-xl shadow-md transition-colors active:scale-90 cursor-pointer"
-                          >
-                            <ShoppingBag size={15} />
-                          </button>
-                        </div>
-
-                        {/* Stock Indicator */}
-                        {!product.inStock && (
-                          <div className="absolute inset-0 bg-[#2D231E]/60 backdrop-blur-[1px] flex items-center justify-center z-15">
-                            <span className="px-3 py-1 bg-white text-[#2D231E] text-xs font-mono font-bold uppercase tracking-wider rounded-lg shadow-md">
-                              Sold Out
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Card Content & Details */}
-                      <div className="p-4 flex-1 flex flex-col justify-between">
-                        <div>
-                          <div className="flex items-center justify-between text-[10px] font-mono text-[#6B5E55] mb-1">
-                            <span className="text-[#2D5A27] font-bold uppercase">{product.category}</span>
-                            <span className="flex items-center gap-0.5 text-amber-600 font-bold">
-                              <Star size={10} className="fill-amber-500 text-amber-500" />
-                              {product.rating}
-                            </span>
-                          </div>
-
-                          <h3 
-                            onClick={() => onQuickView && onQuickView(product)}
-                            className="text-sm font-extrabold text-[#2D231E] uppercase tracking-tight line-clamp-1 group-hover:text-[#2D5A27] transition-colors cursor-pointer"
-                          >
-                            {product.name}
-                          </h3>
-
-                          <div className="flex items-center gap-2 mt-1.5 text-[11px] text-[#6B5E55]">
-                            <span 
-                              className="w-2.5 h-2.5 rounded-full border border-black/10 shrink-0"
-                              style={{ backgroundColor: product.colorHex }}
-                            />
-                            <span className="truncate">{product.color}</span>
-                            <span>•</span>
-                            <span>{product.fit}</span>
-                          </div>
-                        </div>
-
-                        <div className="mt-4 pt-3 border-t border-[#D9D3C7]/60 flex items-center justify-between">
-                          <div className="flex items-baseline gap-1.5 font-mono">
-                            <span className="text-sm font-bold text-[#2D231E]">
-                              ${product.price.toFixed(2)}
-                            </span>
-                            {product.originalPrice && (
-                              <span className="text-[11px] line-through text-[#6B5E55]">
-                                ${product.originalPrice.toFixed(2)}
-                              </span>
-                            )}
-                          </div>
-
-                          <button
-                            onClick={() => onAddToCart && onAddToCart(product)}
-                            disabled={!product.inStock}
-                            className="px-3 py-1.5 bg-[#D0DEC6]/50 hover:bg-[#2D5A27] text-[#2D5A27] hover:text-white rounded-lg text-xs font-mono font-bold uppercase tracking-wider transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                          >
-                            + Add
-                          </button>
-                        </div>
-                      </div>
-
-                    </div>
-                  );
-                })}
+                {paginatedProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onAddToCart={onAddToCart}
+                    onQuickView={onQuickView}
+                  />
+                ))}
               </div>
             )}
 
