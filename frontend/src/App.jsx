@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage';
 import CatalogPage from './pages/CatalogPage';
 import CartPage from './pages/CartPage';
 import SignUpPage from './pages/SignUpPage';
+import LoginPage from './pages/LoginPage';
 import Payment from './pages/Payment';
 import Layout from './components/layout/Layout';
 import ProductModal from './components/product/ProductModal';
@@ -22,13 +23,22 @@ const loadCart = () => {
   }
 };
 
+const loadUser = () => {
+  try {
+    const saved = localStorage.getItem('matcha_user') || sessionStorage.getItem('matcha_user');
+    return saved ? JSON.parse(saved) : null;
+  } catch {
+    return null;
+  }
+};
+
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
   const [healthStatus, setHealthStatus] = useState(null);
   const [cartItems, setCartItems] = useState(loadCart);
-  const [toast, setToast] = useState(null);
+  const [currentUser, setCurrentUser] = useState(loadUser);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [catalogCategory, setCatalogCategory] = useState('ALL');
 
@@ -41,7 +51,7 @@ export default function App() {
     }
   }, [cartItems]);
 
-  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup, #payment -> /payment)
+  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup, #login -> /login, #payment -> /payment)
   useEffect(() => {
     const hash = window.location.hash.toLowerCase();
     if (hash === '#catalog' && location.pathname !== '/catalog') {
@@ -50,6 +60,8 @@ export default function App() {
       navigate('/cart', { replace: true });
     } else if (hash === '#signup' && location.pathname !== '/signup') {
       navigate('/signup', { replace: true });
+    } else if (hash === '#login' && location.pathname !== '/login') {
+      navigate('/login', { replace: true });
     } else if (hash === '#payment' && location.pathname !== '/payment') {
       navigate('/payment', { replace: true });
     }
@@ -93,11 +105,6 @@ export default function App() {
     loadHealth();
   }, []);
 
-  const showToast = (message) => {
-    setToast(message);
-    setTimeout(() => setToast(null), 3500);
-  };
-
   const handleAddToCart = (product) => {
     const amount = product.quantity || 1;
     setCartItems((prev) => {
@@ -110,8 +117,6 @@ export default function App() {
       }
       return [...prev, { ...product, quantity: amount }];
     });
-    const details = product.size && product.color ? ` (${product.size} / ${product.color})` : '';
-    showToast(`Added ${product.name}${details} to bag! 🛍️`);
   };
 
   const handleUpdateQty = (key, delta) => {
@@ -128,14 +133,10 @@ export default function App() {
 
   const handleRemoveItem = (key) => {
     setCartItems((prev) => prev.filter((item) => getCartKey(item) !== key));
-    showToast('Removed item from cart 🗑️');
   };
 
   const handleProceedToPayment = () => {
-    if (cartItems.length === 0) {
-      showToast('Your cart is empty! Add items first. 🛍️');
-      return;
-    }
+    if (cartItems.length === 0) return;
     navigate('/payment');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -146,6 +147,14 @@ export default function App() {
   };
 
   const handleGoToHome = () => {
+    navigate('/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('matcha_user');
+    sessionStorage.removeItem('matcha_user');
+    setCurrentUser(null);
     navigate('/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -162,6 +171,11 @@ export default function App() {
     }
     if (pathOrHash === '/signup' || pathOrHash === '#signup') {
       navigate('/signup');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (pathOrHash === '/login' || pathOrHash === '#login') {
+      navigate('/login');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
@@ -189,7 +203,6 @@ export default function App() {
   };
 
   const handleSelectFit = (fit) => {
-    showToast(`Exploring ${fit.category || fit.title} in Catalog! 🎨`);
     const cat = fit.category || '';
     if (cat.toLowerCase().includes('tank') || cat.toLowerCase().includes('tee') || cat.toLowerCase().includes('sweat')) {
       setCatalogCategory('Tops');
@@ -202,14 +215,6 @@ export default function App() {
     }
     navigate('/catalog');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleClaimPromo = () => {
-    showToast(`Claimed 15% discount code MATCHA15 applied at checkout! 🎉`);
-  };
-
-  const handleSubscribe = (email) => {
-    showToast(`Subscribed ${email} to VIP Drop List! 📩`);
   };
 
   return (
@@ -227,10 +232,13 @@ export default function App() {
       {/* Main Experience Layout */}
       <Layout 
         cartCount={cartItems.length}
+        currentUser={currentUser}
+        onLogout={handleLogout}
         currentPage={
           location.pathname === '/catalog' ? 'catalog' : 
           location.pathname === '/cart' ? 'cart' : 
           location.pathname === '/signup' ? 'signup' : 
+          location.pathname === '/login' ? 'login' : 
           location.pathname === '/payment' ? 'payment' : 
           'home'
         }
@@ -245,14 +253,14 @@ export default function App() {
             element={
               <HomePage 
                 onSelectFit={handleSelectFit}
-                onClaimPromo={handleClaimPromo}
+                onClaimPromo={() => {}}
                 onAddToCart={handleAddToCart}
                 onQuickView={(prod) => setSelectedProduct(prod)}
                 onExploreWarehouse={() => {
                   navigate('/catalog');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                onSubscribe={handleSubscribe}
+                onSubscribe={() => {}}
               />
             } 
           />
@@ -285,7 +293,7 @@ export default function App() {
             } 
           />
 
-          {/* 4. Payment / Checkout Page (From Pete) */}
+          {/* 4. Payment / Checkout Page */}
           <Route 
             path="/payment" 
             element={
@@ -296,7 +304,13 @@ export default function App() {
             } 
           />
 
-          {/* 5. Sign Up Page */}
+          {/* 5. Log In Page */}
+          <Route 
+            path="/login" 
+            element={<LoginPage onLoginSuccess={(user) => setCurrentUser(user)} />} 
+          />
+
+          {/* 6. Sign Up Page */}
           <Route 
             path="/signup" 
             element={<SignUpPage onBackToStore={handleGoToHome} />} 
