@@ -185,36 +185,34 @@ export default function ProductCard({
           </div>
 
           {/* 3. PROMINENT COLOR BUTTONS BAR (Click to switch outfit photo) */}
-          {variants.length > 1 && (
-            <div className="bg-[#FAF8F5] p-2 rounded-2xl border border-[#D9D3C7]/80 my-2">
-              <div className="flex items-center justify-between text-[10px] font-mono text-[#6B5E55] mb-1.5 px-0.5">
-                <span className="font-bold text-[#2D231E] uppercase">Select Color:</span>
-                <span className="text-[#2D5A27] font-bold">{activeVariant.color}</span>
-              </div>
-              <div className="flex items-center gap-2 flex-wrap">
-                {variants.map((v, i) => {
-                  const isSelected = activeVariant.image === v.image;
-                  return (
-                    <button
-                      key={i}
-                      onClick={(e) => handleColorSelect(e, v)}
-                      title={`Switch to ${v.color}`}
-                      className={`w-6.5 h-6.5 rounded-full border-2 transition-all cursor-pointer flex items-center justify-center relative ${
-                        isSelected 
-                          ? 'border-[#2D5A27] scale-110 ring-2 ring-[#2D5A27]/30 shadow-sm' 
-                          : 'border-white/80 opacity-80 hover:opacity-100 hover:scale-110 shadow-2xs'
-                      }`}
-                      style={{ backgroundColor: v.colorHex }}
-                    >
-                      {isSelected && (
-                        <Check size={11} className={['white', 'cream', 'Ecru'].some(c => v.color.includes(c)) ? 'text-black font-bold' : 'text-white font-bold'} />
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
+          <div className="bg-[#FAF8F5] p-2.5 rounded-2xl border border-[#D9D3C7] my-2">
+            <div className="flex items-center justify-between text-[11px] font-mono mb-2 px-0.5">
+              <span className="font-bold text-[#2D231E] uppercase">Color Tone:</span>
+              <span className="text-[#2D5A27] font-bold truncate max-w-[120px]">{activeVariant.color}</span>
             </div>
-          )}
+            <div className="flex items-center gap-2 flex-wrap">
+              {variants.map((v, i) => {
+                const isSelected = activeVariant.image === v.image;
+                return (
+                  <button
+                    key={i}
+                    onClick={(e) => handleColorSelect(e, v)}
+                    title={`Select ${v.color}`}
+                    className={`w-7 h-7 rounded-full border-2 transition-all cursor-pointer flex items-center justify-center relative shadow-2xs ${
+                      isSelected 
+                        ? 'border-[#2D5A27] scale-115 ring-2 ring-[#2D5A27]/40 shadow-sm' 
+                        : 'border-white/90 opacity-80 hover:opacity-100 hover:scale-110 hover:border-black/20'
+                    }`}
+                    style={{ backgroundColor: v.colorHex }}
+                  >
+                    {isSelected && (
+                      <Check size={12} className={['white', 'cream', 'Ecru', 'Sand'].some(c => v.color.toLowerCase().includes(c.toLowerCase())) ? 'text-black font-bold' : 'text-white font-bold'} />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           {/* 4. INTERACTIVE SIZE SELECTOR PILLS */}
           <div className="mt-2.5 mb-1">
