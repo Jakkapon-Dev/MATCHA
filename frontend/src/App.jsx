@@ -3,6 +3,7 @@ import Lenis from 'lenis';
 import { api } from './services/api';
 
 import HomePage from './pages/HomePage';
+import CartPage from './pages/CartPage';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
 
@@ -11,7 +12,7 @@ import SignupPage from './pages/SignUpPage';
 
 export default function App() {
   const [healthStatus, setHealthStatus] = useState(null);
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(loadCart);
   const [toast, setToast] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -59,9 +60,42 @@ export default function App() {
   };
 
   const handleAddToCart = (product) => {
-    setCartItems((prev) => [...prev, product]);
+    const amount = product.quantity || 1;
+    setCartItems((prev) => {
+      const key = getCartKey(product);
+      const idx = prev.findIndex((item) => getCartKey(item) === key);
+      if (idx > -1) {
+        const next = [...prev];
+        next[idx] = { ...next[idx], quantity: (next[idx].quantity || 1) + amount };
+        return next;
+      }
+      return [...prev, { ...product, quantity: amount }];
+    });
     const details = product.size && product.color ? ` (${product.size} / ${product.color})` : '';
     showToast(`Added ${product.name}${details} to bag! 🛍️`);
+  };
+
+  const handleUpdateQty = (key, delta) => {
+    setCartItems((prev) =>
+      prev
+        .map((item) =>
+          getCartKey(item) === key
+            ? { ...item, quantity: (item.quantity || 1) + delta }
+            : item
+        )
+        .filter((item) => (item.quantity || 1) > 0)
+    );
+  };
+
+  const handleRemoveItem = (key) => {
+    setCartItems((prev) => prev.filter((item) => getCartKey(item) !== key));
+    showToast('Removed item from cart 🗑️');
+  };
+
+  const handleCheckout = () => {
+    const count = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    setCartItems([]);
+    showToast(`Order placed! ${count} items on the way ✨`);
   };
 
   const handleSelectFit = (fit) => {
