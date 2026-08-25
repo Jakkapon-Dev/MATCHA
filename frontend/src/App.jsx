@@ -6,7 +6,7 @@ import HomePage from './pages/HomePage';
 import CartPage from './pages/CartPage';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
-import SignupForm from './components/SignUpForm';
+import SignUpPage from './pages/SignUpPage';
 
 const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color || 'default'}`;
 
@@ -220,9 +220,7 @@ export default function App() {
             onCheckout={handleCheckout}
           />
         ) : currentPage === 'signup' ? (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
-            <SignupForm onBackToStore={handleBackToStore} />
-          </div>
+          <SignUpPage onBackToStore={handleBackToStore} />
         ) : (
           <HomePage 
             onSelectFit={handleSelectFit}
