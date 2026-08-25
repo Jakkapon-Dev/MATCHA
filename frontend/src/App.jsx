@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import Lenis from 'lenis';
 import { api } from './services/api';
 
@@ -7,9 +7,21 @@ import HomePage from './pages/HomePage';
 import CatalogPage from './pages/CatalogPage';
 import CartPage from './pages/CartPage';
 import SignUpPage from './pages/SignUpPage';
+import Payment from './pages/Payment';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
 import Payment from './pages/Payment';
+
+const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color || 'default'}`;
+
+const loadCart = () => {
+  try {
+    const saved = localStorage.getItem('matcha_cart');
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+};
 
 const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color || 'default'}`;
 
@@ -41,7 +53,7 @@ export default function App() {
     }
   }, [cartItems]);
 
-  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup)
+  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup, #payment -> /payment)
   useEffect(() => {
     const hash = window.location.hash.toLowerCase();
     if (hash === '#catalog' && location.pathname !== '/catalog') {
@@ -50,6 +62,8 @@ export default function App() {
       navigate('/cart', { replace: true });
     } else if (hash === '#signup' && location.pathname !== '/signup') {
       navigate('/signup', { replace: true });
+    } else if (hash === '#payment' && location.pathname !== '/payment') {
+      navigate('/payment', { replace: true });
     }
   }, [location.pathname, navigate]);
 
@@ -129,10 +143,13 @@ export default function App() {
     showToast('Removed item from cart 🗑️');
   };
 
-  const handleCheckout = () => {
-    const count = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
-    setCartItems([]);
-    showToast(`Order placed! ${count} items on the way ✨`);
+  const handleProceedToPayment = () => {
+    if (cartItems.length === 0) {
+      showToast('Your cart is empty! Add items first. 🛍️');
+      return;
+    }
+    navigate('/payment');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleOpenCart = () => {
@@ -158,6 +175,10 @@ export default function App() {
     if (pathOrHash === '/signup' || pathOrHash === '#signup') {
       navigate('/signup');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (pathOrHash === '/payment' || pathOrHash === '#payment') {
+      handleProceedToPayment();
       return;
     }
 
@@ -234,41 +255,88 @@ export default function App() {
           />
         )}
 
+      {/* Main Experience Layout */}
+      <Layout 
+        cartCount={cartItems.length}
+        currentPage={
+          location.pathname === '/catalog' ? 'catalog' : 
+          location.pathname === '/cart' ? 'cart' : 
+          location.pathname === '/signup' ? 'signup' : 
+          location.pathname === '/payment' ? 'payment' : 
+          'home'
+        }
+        onOpenCart={handleOpenCart}
+        onNavigate={handleNavigate}
+        onGoToLanding={handleGoToHome}
+      >
         <Routes>
+          {/* 1. Home Page */}
           <Route 
             path="/" 
             element={
-              <Layout 
-                cartCount={cartItems.length}
-                onOpenCart={handleNavigateToPayment}
-              >
-                <HomePage 
-                  onSelectFit={handleSelectFit}
-                  onClaimPromo={handleClaimPromo}
-                  onAddToCart={handleAddToCart}
-                  onQuickView={(prod) => setSelectedProduct(prod)}
-                  onExploreWarehouse={() => showToast('Opening Warehouse Archive! 📦')}
-                  onSubscribe={handleSubscribe}
-                />
-              </Layout>
+              <HomePage 
+                onSelectFit={handleSelectFit}
+                onClaimPromo={handleClaimPromo}
+                onAddToCart={handleAddToCart}
+                onQuickView={(prod) => setSelectedProduct(prod)}
+                onExploreWarehouse={() => {
+                  navigate('/catalog');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onSubscribe={handleSubscribe}
+              />
             } 
           />
+
+          {/* 2. Catalog Grid Page */}
+          <Route 
+            path="/catalog" 
+            element={
+              <CatalogPage 
+                initialCategory={catalogCategory}
+                onBackToHome={handleGoToHome}
+                onAddToCart={handleAddToCart}
+                onQuickView={(prod) => setSelectedProduct(prod)}
+                onSelectFit={handleSelectFit}
+              />
+            } 
+          />
+
+          {/* 3. Shopping Cart Page */}
+          <Route 
+            path="/cart" 
+            element={
+              <CartPage 
+                cartItems={cartItems}
+                onUpdateQty={handleUpdateQty}
+                onRemove={handleRemoveItem}
+                onBackToStore={handleGoToHome}
+                onCheckout={handleProceedToPayment}
+              />
+            } 
+          />
+
+          {/* 4. Payment / Checkout Page (From Pete) */}
           <Route 
             path="/payment" 
             element={
-              <Layout 
-                cartCount={cartItems.length}
-                onOpenCart={handleNavigateToPayment}
-              >
-                <Payment 
-                  cartItems={cartItems}
-                  onUpdateCart={setCartItems}
-                />
-              </Layout>
+              <Payment 
+                cartItems={cartItems}
+                onUpdateCart={setCartItems}
+              />
             } 
           />
+
+          {/* 5. Sign Up Page */}
+          <Route 
+            path="/signup" 
+            element={<SignUpPage onBackToStore={handleGoToHome} />} 
+          />
+
+          {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+      </Layout>
 
       </div>
     </BrowserRouter>
