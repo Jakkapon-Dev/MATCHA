@@ -4,20 +4,62 @@ import { api } from './services/api';
 
 import HomePage from './pages/HomePage';
 import CatalogPage from './pages/CatalogPage';
+import CartPage from './pages/CartPage';
+import SignUpPage from './pages/SignUpPage';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
 
+const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color || 'default'}`;
+
+const loadCart = () => {
+  try {
+    const saved = localStorage.getItem('matcha_cart');
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+};
+
 export default function App() {
   const [healthStatus, setHealthStatus] = useState(null);
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(loadCart);
   const [toast, setToast] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
-  
-  // Page Routing State ('home' | 'catalog')
+
+  // Page Routing State ('home' | 'catalog' | 'cart' | 'signup')
   const [currentPage, setCurrentPage] = useState(() => {
-    return window.location.hash === '#catalog' ? 'catalog' : 'home';
+    const hash = window.location.hash.toLowerCase();
+    if (hash === '#catalog') return 'catalog';
+    if (hash === '#cart') return 'cart';
+    if (hash === '#signup') return 'signup';
+    return 'home';
   });
   const [catalogCategory, setCatalogCategory] = useState('ALL');
+
+  // Sync cart to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('matcha_cart', JSON.stringify(cartItems));
+    } catch (e) {
+      console.error('Failed to save cart to localStorage', e);
+    }
+  }, [cartItems]);
+
+  // Sync hash routing
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash.toLowerCase();
+      if (hash === '#catalog') setCurrentPage('catalog');
+      else if (hash === '#cart') setCurrentPage('cart');
+      else if (hash === '#signup') setCurrentPage('signup');
+      else if (hash === '' || hash === '#brand-hero' || hash.startsWith('#')) {
+        if (hash === '#catalog' || hash === '#cart' || hash === '#signup') return;
+        setCurrentPage('home');
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
 
   // Initialize Lenis Smooth Scroll
   useEffect(() => {
@@ -45,20 +87,6 @@ export default function App() {
     };
   }, []);
 
-  // Sync hash changes with page state
-  useEffect(() => {
-    const handleHashChange = () => {
-      if (window.location.hash === '#catalog') {
-        setCurrentPage('catalog');
-      } else if (window.location.hash === '#brand-hero' || window.location.hash === '') {
-        setCurrentPage('home');
-      }
-    };
-
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, []);
-
   useEffect(() => {
     async function loadHealth() {
       try {
@@ -77,14 +105,90 @@ export default function App() {
   };
 
   const handleAddToCart = (product) => {
-    setCartItems((prev) => [...prev, product]);
+    const amount = product.quantity || 1;
+    setCartItems((prev) => {
+      const key = getCartKey(product);
+      const idx = prev.findIndex((item) => getCartKey(item) === key);
+      if (idx > -1) {
+        const next = [...prev];
+        next[idx] = { ...next[idx], quantity: (next[idx].quantity || 1) + amount };
+        return next;
+      }
+      return [...prev, { ...product, quantity: amount }];
+    });
     const details = product.size && product.color ? ` (${product.size} / ${product.color})` : '';
     showToast(`Added ${product.name}${details} to bag! 🛍️`);
   };
 
+  const handleUpdateQty = (key, delta) => {
+    setCartItems((prev) =>
+      prev
+        .map((item) =>
+          getCartKey(item) === key
+            ? { ...item, quantity: (item.quantity || 1) + delta }
+            : item
+        )
+        .filter((item) => (item.quantity || 1) > 0)
+    );
+  };
+
+  const handleRemoveItem = (key) => {
+    setCartItems((prev) => prev.filter((item) => getCartKey(item) !== key));
+    showToast('Removed item from cart 🗑️');
+  };
+
+  const handleCheckout = () => {
+    const count = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    setCartItems([]);
+    showToast(`Order placed! ${count} items on the way ✨`);
+  };
+
+  const handleOpenCart = () => {
+    setCurrentPage('cart');
+    window.location.hash = '#cart';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleGoToHome = () => {
+    setCurrentPage('home');
+    window.location.hash = '#brand-hero';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleNavigate = (href) => {
+    if (href === '#catalog') {
+      setCurrentPage('catalog');
+      window.location.hash = '#catalog';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (href === '#cart') {
+      handleOpenCart();
+      return;
+    }
+    if (href === '#signup') {
+      setCurrentPage('signup');
+      window.location.hash = '#signup';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (currentPage !== 'home') {
+      setCurrentPage('home');
+      window.location.hash = href;
+      setTimeout(() => {
+        const el = document.querySelector(href);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+      return;
+    }
+
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
+  };
+
   const handleSelectFit = (fit) => {
     showToast(`Exploring ${fit.category || fit.title} in Catalog! 🎨`);
-    // Map fit category to Catalog category filter
     const cat = fit.category || '';
     if (cat.toLowerCase().includes('tank') || cat.toLowerCase().includes('tee') || cat.toLowerCase().includes('sweat')) {
       setCatalogCategory('Tops');
@@ -101,38 +205,11 @@ export default function App() {
   };
 
   const handleClaimPromo = () => {
-    showToast(`Claimed 15% discount code MATCHA15 applied at checkout! 🎉`);
+    showToast(`Claimed 15% discount for 2+ items! 🎉`);
   };
 
   const handleSubscribe = (email) => {
     showToast(`Subscribed ${email} to VIP Drop List! 📩`);
-  };
-
-  const handleNavigate = (href) => {
-    if (href === '#catalog') {
-      setCurrentPage('catalog');
-      window.location.hash = '#catalog';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    if (currentPage !== 'home') {
-      setCurrentPage('home');
-      window.location.hash = href;
-      setTimeout(() => {
-        const el = document.querySelector(href);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    } else {
-      const el = document.querySelector(href);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleGoToHome = () => {
-    setCurrentPage('home');
-    window.location.hash = '#brand-hero';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -161,7 +238,7 @@ export default function App() {
       <Layout 
         cartCount={cartItems.length}
         currentPage={currentPage}
-        onOpenCart={() => showToast(`Cart contains ${cartItems.length} items! 🛍️`)}
+        onOpenCart={handleOpenCart}
         onNavigate={handleNavigate}
         onGoToLanding={handleGoToHome}
       >
@@ -173,6 +250,16 @@ export default function App() {
             onQuickView={(prod) => setSelectedProduct(prod)}
             onSelectFit={handleSelectFit}
           />
+        ) : currentPage === 'cart' ? (
+          <CartPage 
+            cartItems={cartItems}
+            onUpdateQty={handleUpdateQty}
+            onRemove={handleRemoveItem}
+            onBackToStore={handleGoToHome}
+            onCheckout={handleCheckout}
+          />
+        ) : currentPage === 'signup' ? (
+          <SignUpPage onBackToStore={handleGoToHome} />
         ) : (
           <HomePage 
             onSelectFit={handleSelectFit}

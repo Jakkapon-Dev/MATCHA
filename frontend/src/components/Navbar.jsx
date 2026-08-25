@@ -147,7 +147,7 @@ export default function Navbar({
               </button>
               <span className="text-[#D9D3C7]">/</span>
               <button
-                onClick={() => handleOpenAuth('signup')}
+                onClick={() => handleLinkClick('#signup')}
                 className="px-3 py-1.5 text-xs font-bold text-[#BC5A36] hover:text-[#9E4423] hover:bg-[#BC5A36]/10 rounded-lg transition-colors cursor-pointer"
               >
                 SIGN UP
@@ -182,7 +182,7 @@ export default function Navbar({
                   <span>LOG IN</span>
                 </button>
                 <button
-                  onClick={() => handleOpenAuth('signup')}
+                  onClick={() => handleLinkClick('#signup')}
                   className="py-2 px-3 bg-[#BC5A36] text-white rounded-xl text-xs font-mono font-bold hover:bg-[#9E4423] flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
                 >
                   <span>SIGN UP</span>
