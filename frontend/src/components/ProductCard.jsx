@@ -23,10 +23,17 @@ export default function ProductCard({
   const [isHovered, setIsHovered] = useState(false);
   const [wishlistActive, setWishlistActive] = useState(isWishlisted);
   const [justAdded, setJustAdded] = useState(false);
+  const [imageFade, setImageFade] = useState(false);
 
   const handleColorSelect = (e, variant) => {
     e.stopPropagation();
-    setActiveVariant(variant);
+    if (variant.image === activeVariant.image) return;
+
+    setImageFade(true);
+    setTimeout(() => {
+      setActiveVariant(variant);
+      setImageFade(false);
+    }, 150);
   };
 
   const handleSizeSelect = (e, size) => {
@@ -63,7 +70,7 @@ export default function ProductCard({
     <div
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative bg-white border border-[#D9D3C7] hover:border-[#2D5A27] rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl flex flex-col justify-between select-none"
+      className="group relative bg-white border border-[#D9D3C7] hover:border-[#2D5A27] rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-2xl flex flex-col justify-between select-none"
     >
       {/* 1. PRODUCT PHOTO CONTAINER */}
       <div 
@@ -73,7 +80,9 @@ export default function ProductCard({
         <img
           src={activeVariant.image}
           alt={`${product.name} - ${activeVariant.color}`}
-          className="w-full h-full object-cover object-top transition-transform duration-700 group-hover:scale-105"
+          className={`w-full h-full object-cover object-top transition-all duration-500 group-hover:scale-105 ${
+            imageFade ? 'opacity-40 scale-98' : 'opacity-100 scale-100'
+          }`}
         />
 
         {/* Top Badges (Left) & Wishlist Button (Right) */}
@@ -89,7 +98,7 @@ export default function ProductCard({
               </span>
             )}
             <span className="px-2 py-0.5 text-[9px] font-mono font-bold bg-white/90 text-[#6B5E55] rounded backdrop-blur-xs shadow-2xs">
-              {product.season}
+              {product.season} Drop
             </span>
           </div>
 
@@ -105,6 +114,17 @@ export default function ProductCard({
           >
             <Heart size={15} className={wishlistActive ? 'fill-rose-500 text-rose-500' : ''} />
           </button>
+        </div>
+
+        {/* Live Active Tone Floating Pill at Bottom of Image */}
+        <div className="absolute bottom-3 left-3 z-10 pointer-events-none">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#2D231E]/85 backdrop-blur-xs text-white text-[10px] font-mono shadow-md">
+            <span 
+              className="w-2.5 h-2.5 rounded-full border border-white/50" 
+              style={{ backgroundColor: activeVariant.colorHex }}
+            />
+            <span>{activeVariant.color}</span>
+          </span>
         </div>
 
         {/* Quick View Hover Floating Overlay */}
@@ -134,7 +154,7 @@ export default function ProductCard({
       </div>
 
       {/* 2. CARD CONTENT & DETAILS */}
-      <div className="p-4 flex-1 flex flex-col justify-between">
+      <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
         <div>
           
           {/* Category & Star Rating */}
@@ -149,76 +169,88 @@ export default function ProductCard({
           {/* Product Title */}
           <h3 
             onClick={() => onQuickView && onQuickView({ ...product, initialVariant: activeVariant, activeImage: activeVariant.image })}
-            className="text-sm font-extrabold text-[#2D231E] uppercase tracking-tight line-clamp-1 group-hover:text-[#2D5A27] transition-colors cursor-pointer"
+            className="text-sm sm:text-base font-extrabold text-[#2D231E] uppercase tracking-tight line-clamp-1 group-hover:text-[#2D5A27] transition-colors cursor-pointer"
           >
             {product.name}
           </h3>
 
-          {/* Active Color Name & Fit */}
-          <div className="flex items-center justify-between text-[11px] text-[#6B5E55] mt-1 mb-2.5">
-            <span className="font-medium text-[#2D231E]">
-              Tone: <strong>{activeVariant.color}</strong>
+          {/* Fit & Silhouette Tag */}
+          <div className="flex items-center justify-between text-[11px] text-[#6B5E55] mt-1 mb-3">
+            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#FAF8F5] border border-[#D9D3C7] text-[#2D231E] font-medium">
+              {product.fit} Cut
             </span>
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#FAF8F5] border border-[#D9D3C7]">
-              {product.fit}
+            <span className="text-[10px] font-mono text-[#6B5E55]">
+              {variants.length} Tones
             </span>
           </div>
 
-          {/* 3. INTERACTIVE COLOR SWATCHES (Click to change card photo) */}
+          {/* 3. PROMINENT COLOR BUTTONS BAR (Click to switch outfit photo) */}
           {variants.length > 1 && (
-            <div className="flex items-center gap-1.5 my-2">
-              {variants.map((v, i) => {
-                const isSelected = activeVariant.image === v.image;
-                return (
-                  <button
-                    key={i}
-                    onClick={(e) => handleColorSelect(e, v)}
-                    title={v.color}
-                    className={`w-5 h-5 rounded-full border-2 transition-all cursor-pointer shrink-0 ${
-                      isSelected 
-                        ? 'border-[#2D5A27] scale-120 ring-2 ring-[#2D5A27]/30 shadow-xs' 
-                        : 'border-transparent opacity-75 hover:opacity-100 hover:scale-110'
-                    }`}
-                    style={{ backgroundColor: v.colorHex }}
-                  />
-                );
-              })}
-              <span className="text-[10px] font-mono text-[#6B5E55] ml-1">
-                ({variants.length})
-              </span>
+            <div className="bg-[#FAF8F5] p-2 rounded-2xl border border-[#D9D3C7]/80 my-2">
+              <div className="flex items-center justify-between text-[10px] font-mono text-[#6B5E55] mb-1.5 px-0.5">
+                <span className="font-bold text-[#2D231E] uppercase">Select Color:</span>
+                <span className="text-[#2D5A27] font-bold">{activeVariant.color}</span>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                {variants.map((v, i) => {
+                  const isSelected = activeVariant.image === v.image;
+                  return (
+                    <button
+                      key={i}
+                      onClick={(e) => handleColorSelect(e, v)}
+                      title={`Switch to ${v.color}`}
+                      className={`w-6.5 h-6.5 rounded-full border-2 transition-all cursor-pointer flex items-center justify-center relative ${
+                        isSelected 
+                          ? 'border-[#2D5A27] scale-110 ring-2 ring-[#2D5A27]/30 shadow-sm' 
+                          : 'border-white/80 opacity-80 hover:opacity-100 hover:scale-110 shadow-2xs'
+                      }`}
+                      style={{ backgroundColor: v.colorHex }}
+                    >
+                      {isSelected && (
+                        <Check size={11} className={['white', 'cream', 'Ecru'].some(c => v.color.includes(c)) ? 'text-black font-bold' : 'text-white font-bold'} />
+                      )}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           )}
 
           {/* 4. INTERACTIVE SIZE SELECTOR PILLS */}
-          <div className="flex items-center gap-1 my-2 flex-wrap">
-            {(product.sizes || ['S', 'M', 'L', 'XL', 'XXL']).map((sz) => {
-              const isSelected = selectedSize === sz;
-              return (
-                <button
-                  key={sz}
-                  onClick={(e) => handleSizeSelect(e, sz)}
-                  className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase transition-all cursor-pointer ${
-                    isSelected
-                      ? 'bg-[#2D231E] text-white shadow-2xs'
-                      : 'bg-[#FAF8F5] text-[#6B5E55] border border-[#D9D3C7]/80 hover:border-[#2D5A27] hover:text-[#2D231E]'
-                  }`}
-                >
-                  {sz}
-                </button>
-              );
-            })}
+          <div className="mt-2.5 mb-1">
+            <span className="text-[10px] font-mono font-bold uppercase text-[#6B5E55] block mb-1">
+              Select Size: <strong className="text-[#2D231E]">{selectedSize}</strong>
+            </span>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {(product.sizes || ['S', 'M', 'L', 'XL', 'XXL']).map((sz) => {
+                const isSelected = selectedSize === sz;
+                return (
+                  <button
+                    key={sz}
+                    onClick={(e) => handleSizeSelect(e, sz)}
+                    className={`min-w-7 h-7 px-1.5 rounded-lg text-[10px] font-mono font-bold uppercase transition-all cursor-pointer flex items-center justify-center ${
+                      isSelected
+                        ? 'bg-[#2D231E] text-white shadow-xs scale-105'
+                        : 'bg-white text-[#6B5E55] border border-[#D9D3C7] hover:border-[#2D5A27] hover:text-[#2D231E]'
+                    }`}
+                  >
+                    {sz}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
         </div>
 
         {/* 5. BOTTOM BAR: Price & Quick Add Button */}
-        <div className="mt-3 pt-3 border-t border-[#D9D3C7]/60 flex items-center justify-between">
+        <div className="mt-3.5 pt-3 border-t border-[#D9D3C7]/60 flex items-center justify-between">
           <div className="flex items-baseline gap-1.5 font-mono">
-            <span className="text-sm sm:text-base font-bold text-[#2D231E]">
+            <span className="text-base sm:text-lg font-black text-[#2D231E]">
               ${product.price.toFixed(2)}
             </span>
             {product.originalPrice && (
-              <span className="text-[11px] line-through text-[#6B5E55]">
+              <span className="text-xs line-through text-[#6B5E55]">
                 ${product.originalPrice.toFixed(2)}
               </span>
             )}
@@ -227,23 +259,23 @@ export default function ProductCard({
           <button
             onClick={handleQuickAdd}
             disabled={!product.inStock}
-            className={`px-3 py-1.5 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-1 shadow-2xs active:scale-95 cursor-pointer ${
+            className={`px-3.5 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-xs active:scale-95 cursor-pointer ${
               justAdded
-                ? 'bg-emerald-600 text-white'
+                ? 'bg-emerald-600 text-white shadow-md'
                 : product.inStock
-                  ? 'bg-[#2D5A27] hover:bg-[#23471E] text-white'
+                  ? 'bg-[#2D5A27] hover:bg-[#23471E] text-white shadow-xs'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
             }`}
           >
             {justAdded ? (
               <>
-                <Check size={12} />
-                <span>Added</span>
+                <Check size={13} />
+                <span>Added ✓</span>
               </>
             ) : (
               <>
-                <ShoppingBag size={12} />
-                <span>+ Add</span>
+                <ShoppingBag size={13} />
+                <span>Add Bag</span>
               </>
             )}
           </button>
