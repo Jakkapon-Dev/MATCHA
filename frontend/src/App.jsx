@@ -4,15 +4,29 @@ import { api } from './services/api';
 
 import LandingPage from './pages/LandingPage';
 import HomePage from './pages/HomePage';
+import CartPage from './pages/CartPage';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
 
+const CART_STORAGE_KEY = 'matcha-cart';
+
+function loadCart() {
+  try {
+    const stored = localStorage.getItem(CART_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
+const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color || 'default'}`;
+
 export default function App() {
-  // Page Routing State: 'landing' (Default editorial entry) or 'store' (Full shopping catalog)
+  // Page Routing State: 'landing' | 'store' | 'cart'
   const [currentPage, setCurrentPage] = useState('landing');
 
   const [healthStatus, setHealthStatus] = useState(null);
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(loadCart);
   const [toast, setToast] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
@@ -54,6 +68,14 @@ export default function App() {
     loadHealth();
   }, []);
 
+  useEffect(() => {
+    try {
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
+    } catch (err) {
+      console.error('Failed to persist cart:', err);
+    }
+  }, [cartItems]);
+
   // Scroll to top when changing pages
   const handleEnterStore = () => {
     setCurrentPage('store');
@@ -65,15 +87,53 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleOpenCart = () => {
+    setCurrentPage('cart');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const showToast = (message) => {
     setToast(message);
     setTimeout(() => setToast(null), 3500);
   };
 
   const handleAddToCart = (product) => {
-    setCartItems((prev) => [...prev, product]);
+    const amount = product.quantity || 1;
+    setCartItems((prev) => {
+      const key = getCartKey(product);
+      const idx = prev.findIndex((item) => getCartKey(item) === key);
+      if (idx > -1) {
+        const next = [...prev];
+        next[idx] = { ...next[idx], quantity: (next[idx].quantity || 1) + amount };
+        return next;
+      }
+      return [...prev, { ...product, quantity: amount }];
+    });
     const details = product.size && product.color ? ` (${product.size} / ${product.color})` : '';
     showToast(`Added ${product.name}${details} to cart! 🛍️`);
+  };
+
+  const handleUpdateQty = (key, delta) => {
+    setCartItems((prev) =>
+      prev
+        .map((item) =>
+          getCartKey(item) === key
+            ? { ...item, quantity: (item.quantity || 1) + delta }
+            : item
+        )
+        .filter((item) => (item.quantity || 1) > 0)
+    );
+  };
+
+  const handleRemoveItem = (key) => {
+    setCartItems((prev) => prev.filter((item) => getCartKey(item) !== key));
+    showToast('Removed item from cart 🗑️');
+  };
+
+  const handleCheckout = () => {
+    const count = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    setCartItems([]);
+    showToast(`Order placed! ${count} items on the way ✨`);
   };
 
   const handleSelectFit = (fit) => {
@@ -110,23 +170,33 @@ export default function App() {
         />
       )}
 
-      {/* Conditional View: 1. Landing Lookbook Page vs 2. Main Store Catalog */}
+      {/* Conditional View: 1. Landing Lookbook Page vs 2. Main Store Catalog vs 3. Cart Page */}
       {currentPage === 'landing' ? (
         <LandingPage onEnterWebsite={handleEnterStore} />
       ) : (
         <Layout 
-          cartCount={cartItems.length}
-          onOpenCart={() => showToast(`Opening cart with ${cartItems.length} items! 🛍️`)}
+          cartCount={cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0)}
+          onOpenCart={handleOpenCart}
           onGoToLanding={handleGoToLanding}
         >
-          <HomePage 
-            onSelectFit={handleSelectFit}
-            onClaimPromo={handleClaimPromo}
-            onAddToCart={handleAddToCart}
-            onQuickView={(prod) => setSelectedProduct(prod)}
-            onExploreWarehouse={() => showToast('Opening Warehouse Archive! 📦')}
-            onSubscribe={handleSubscribe}
-          />
+          {currentPage === 'cart' ? (
+            <CartPage
+              cartItems={cartItems}
+              onUpdateQty={handleUpdateQty}
+              onRemove={handleRemoveItem}
+              onBackToStore={handleEnterStore}
+              onCheckout={handleCheckout}
+            />
+          ) : (
+            <HomePage 
+              onSelectFit={handleSelectFit}
+              onClaimPromo={handleClaimPromo}
+              onAddToCart={handleAddToCart}
+              onQuickView={(prod) => setSelectedProduct(prod)}
+              onExploreWarehouse={() => showToast('Opening Warehouse Archive! 📦')}
+              onSubscribe={handleSubscribe}
+            />
+          )}
         </Layout>
       )}
 
