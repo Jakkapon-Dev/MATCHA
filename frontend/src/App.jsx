@@ -6,15 +6,54 @@ import HomePage from './pages/HomePage';
 import CartPage from './pages/CartPage';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
+import SignupForm from './components/SignUpForm';
 
-import { BrowserRouter as Router, Routes, Route } from 'react me-router-dom';
-import SignupPage from './pages/SignUpPage';
+const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color || 'default'}`;
+
+const loadCart = () => {
+  try {
+    const saved = localStorage.getItem('matcha_cart');
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+};
 
 export default function App() {
   const [healthStatus, setHealthStatus] = useState(null);
   const [cartItems, setCartItems] = useState(loadCart);
   const [toast, setToast] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [currentPage, setCurrentPage] = useState(() => {
+    const hash = window.location.hash.toLowerCase();
+    if (hash === '#cart') return 'cart';
+    if (hash === '#signup') return 'signup';
+    return 'home';
+  });
+
+  // Sync cart to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('matcha_cart', JSON.stringify(cartItems));
+    } catch (e) {
+      console.error('Failed to save cart to localStorage', e);
+    }
+  }, [cartItems]);
+
+  // Sync hash routing
+  useEffect(() => {
+    const handleHash = () => {
+      const hash = window.location.hash.toLowerCase();
+      if (hash === '#cart') setCurrentPage('cart');
+      else if (hash === '#signup') setCurrentPage('signup');
+      else if (hash === '' || hash === '#brand-hero' || hash.startsWith('#')) {
+        if (hash === '#cart' || hash === '#signup') return;
+        setCurrentPage('home');
+      }
+    };
+    window.addEventListener('hashchange', handleHash);
+    return () => window.removeEventListener('hashchange', handleHash);
+  }, []);
 
   // Initialize Lenis Smooth Scroll
   useEffect(() => {
@@ -98,6 +137,39 @@ export default function App() {
     showToast(`Order placed! ${count} items on the way ✨`);
   };
 
+  const handleOpenCart = () => {
+    setCurrentPage('cart');
+    window.location.hash = '#cart';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleBackToStore = () => {
+    setCurrentPage('home');
+    window.location.hash = '#brand-hero';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleNavigate = (href) => {
+    if (href === '#cart') {
+      handleOpenCart();
+      return;
+    }
+    if (href === '#signup') {
+      setCurrentPage('signup');
+      window.location.hash = '#signup';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (currentPage !== 'home') {
+      setCurrentPage('home');
+    }
+    window.location.hash = href;
+    setTimeout(() => {
+      const el = document.querySelector(href);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+
   const handleSelectFit = (fit) => {
     showToast(`Selected ${fit.category || fit.title}! 🎨`);
   };
@@ -135,16 +207,32 @@ export default function App() {
       {/* Main Experience: Direct Master Lookbook & Store Catalog */}
       <Layout 
         cartCount={cartItems.length}
-        onOpenCart={() => showToast(`Cart contains ${cartItems.length} items! 🛍️`)}
+        onOpenCart={handleOpenCart}
+        onNavigate={handleNavigate}
+        onGoToLanding={handleBackToStore}
       >
-        <HomePage 
-          onSelectFit={handleSelectFit}
-          onClaimPromo={handleClaimPromo}
-          onAddToCart={handleAddToCart}
-          onQuickView={(prod) => setSelectedProduct(prod)}
-          onExploreWarehouse={() => showToast('Opening Warehouse Archive! 📦')}
-          onSubscribe={handleSubscribe}
-        />
+        {currentPage === 'cart' ? (
+          <CartPage 
+            cartItems={cartItems}
+            onUpdateQty={handleUpdateQty}
+            onRemove={handleRemoveItem}
+            onBackToStore={handleBackToStore}
+            onCheckout={handleCheckout}
+          />
+        ) : currentPage === 'signup' ? (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-16">
+            <SignupForm onBackToStore={handleBackToStore} />
+          </div>
+        ) : (
+          <HomePage 
+            onSelectFit={handleSelectFit}
+            onClaimPromo={handleClaimPromo}
+            onAddToCart={handleAddToCart}
+            onQuickView={(prod) => setSelectedProduct(prod)}
+            onExploreWarehouse={() => showToast('Opening Warehouse Archive! 📦')}
+            onSubscribe={handleSubscribe}
+          />
+        )}
       </Layout>
 
     </div>
