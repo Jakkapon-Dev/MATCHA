@@ -6,6 +6,9 @@ import HomePage from './pages/HomePage';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
 
+import { BrowserRouter as Router, Routes, Route } from 'react me-router-dom';
+import SignupPage from './pages/SignUpPage';
+
 export default function App() {
   const [healthStatus, setHealthStatus] = useState(null);
   const [cartItems, setCartItems] = useState([]);
