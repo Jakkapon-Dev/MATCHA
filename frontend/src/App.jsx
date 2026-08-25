@@ -9,6 +9,7 @@ import CartPage from './pages/CartPage';
 import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
 import Payment from './pages/Payment';
+import UserAccount from './pages/UserAccount';
 import Layout from './components/layout/Layout';
 import ProductModal from './components/product/ProductModal';
 
@@ -41,6 +42,12 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(loadUser);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [catalogCategory, setCatalogCategory] = useState('ALL');
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message) => {
+    setToast(message);
+    setTimeout(() => setToast(null), 3500);
+  };
 
   // Sync cart to localStorage
   useEffect(() => {
@@ -51,7 +58,7 @@ export default function App() {
     }
   }, [cartItems]);
 
-  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup, #login -> /login, #payment -> /payment)
+  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup, #login -> /login, #payment -> /payment, #account -> /account)
   useEffect(() => {
     const hash = window.location.hash.toLowerCase();
     if (hash === '#catalog' && location.pathname !== '/catalog') {
@@ -64,6 +71,8 @@ export default function App() {
       navigate('/login', { replace: true });
     } else if (hash === '#payment' && location.pathname !== '/payment') {
       navigate('/payment', { replace: true });
+    } else if (hash === '#account' && location.pathname !== '/account') {
+      navigate('/account', { replace: true });
     }
   }, [location.pathname, navigate]);
 
@@ -220,9 +229,19 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#2D231E] font-sans selection:bg-[#2D5A27] selection:text-white relative">
       
+      {/* Interactive Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 animate-bounce pointer-events-none">
+          <div className="py-3 px-5 rounded-2xl bg-[#2D231E] text-[#FAF8F5] border border-[#3D312A] font-bold text-xs shadow-2xl flex items-center gap-2">
+            <span className="text-[#BC5A36]">✨</span>
+            {toast}
+          </div>
+        </div>
+      )}
+
       {/* Product Customizer & Quick View Modal */}
       {selectedProduct && (
-        <ProductModal 
+        <ProductModal
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
           onAddToCart={handleAddToCart}
@@ -230,7 +249,7 @@ export default function App() {
       )}
 
       {/* Main Experience Layout */}
-      <Layout 
+      <Layout
         cartCount={cartItems.length}
         currentUser={currentUser}
         onLogout={handleLogout}
@@ -240,6 +259,7 @@ export default function App() {
           location.pathname === '/signup' ? 'signup' : 
           location.pathname === '/login' ? 'login' : 
           location.pathname === '/payment' ? 'payment' : 
+          location.pathname === '/account' ? 'account' : 
           'home'
         }
         onOpenCart={handleOpenCart}
@@ -248,49 +268,49 @@ export default function App() {
       >
         <Routes>
           {/* 1. Home Page */}
-          <Route 
-            path="/" 
+          <Route
+            path="/"
             element={
-              <HomePage 
+              <HomePage
                 onSelectFit={handleSelectFit}
-                onClaimPromo={() => {}}
+                onClaimPromo={() => showToast('Claimed 15% discount code MATCHA15! 🎉')}
                 onAddToCart={handleAddToCart}
                 onQuickView={(prod) => setSelectedProduct(prod)}
                 onExploreWarehouse={() => {
                   navigate('/catalog');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                onSubscribe={() => {}}
+                onSubscribe={(email) => showToast(`Subscribed ${email} to VIP Drop List! 📩`)}
               />
-            } 
+            }
           />
 
           {/* 2. Catalog Grid Page */}
-          <Route 
-            path="/catalog" 
+          <Route
+            path="/catalog"
             element={
-              <CatalogPage 
+              <CatalogPage
                 initialCategory={catalogCategory}
                 onBackToHome={handleGoToHome}
                 onAddToCart={handleAddToCart}
                 onQuickView={(prod) => setSelectedProduct(prod)}
                 onSelectFit={handleSelectFit}
               />
-            } 
+            }
           />
 
           {/* 3. Shopping Cart Page */}
-          <Route 
-            path="/cart" 
+          <Route
+            path="/cart"
             element={
-              <CartPage 
+              <CartPage
                 cartItems={cartItems}
                 onUpdateQty={handleUpdateQty}
                 onRemove={handleRemoveItem}
                 onBackToStore={handleGoToHome}
                 onCheckout={handleProceedToPayment}
               />
-            } 
+            }
           />
 
           {/* 4. Payment / Checkout Page */}
@@ -304,16 +324,38 @@ export default function App() {
             } 
           />
 
-          {/* 5. Log In Page */}
+          {/* 5. Login Page */}
           <Route 
             path="/login" 
-            element={<LoginPage onLoginSuccess={(user) => setCurrentUser(user)} />} 
+            element={
+              <LoginPage 
+                onLoginSuccess={(user) => {
+                  setCurrentUser(user);
+                  showToast(`Welcome back, ${user.name || user.email}! 👋`);
+                }} 
+              />
+            } 
           />
 
           {/* 6. Sign Up Page */}
           <Route 
             path="/signup" 
             element={<SignUpPage onBackToStore={handleGoToHome} />} 
+          />
+
+          {/* 7. User Account Page */}
+          <Route
+            path="/account"
+            element={
+              <UserAccount
+                cartCount={cartItems.length}
+                onOpenCart={handleOpenCart}
+                onNavigate={handleNavigate}
+                onGoToLanding={handleGoToHome}
+                user={currentUser}
+                onAddToCart={handleAddToCart}
+              />
+            }
           />
 
           {/* Fallback */}
