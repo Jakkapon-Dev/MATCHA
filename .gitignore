@@ -29,9 +29,15 @@ Thumbs.db
 .vscode/
 .idea/
 
-# AI Agent Customizations & Private Skills (Do not upload to Git)
+# AI Agent Customizations, Skills & Knowledge Graphs (Do not upload to Git)
 .agents/
 .agents/*
+.claude/
+.claude/*
+.gemini/
+.gemini/*
+graft/
+graft/*
 
 # Backend environment variables (prevent secret key leaks)
 backend/.env

@@ -4,15 +4,54 @@ import Lenis from 'lenis';
 import { api } from './services/api';
 
 import HomePage from './pages/HomePage';
+import CatalogPage from './pages/CatalogPage';
+import CartPage from './pages/CartPage';
+import SignUpPage from './pages/SignUpPage';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
 import Payment from './pages/Payment';
 
+const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color || 'default'}`;
+
+const loadCart = () => {
+  try {
+    const saved = localStorage.getItem('matcha_cart');
+    return saved ? JSON.parse(saved) : [];
+  } catch {
+    return [];
+  }
+};
+
 export default function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [healthStatus, setHealthStatus] = useState(null);
-  const [cartItems, setCartItems] = useState([]);
+  const [cartItems, setCartItems] = useState(loadCart);
   const [toast, setToast] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const [catalogCategory, setCatalogCategory] = useState('ALL');
+
+  // Sync cart to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('matcha_cart', JSON.stringify(cartItems));
+    } catch (e) {
+      console.error('Failed to save cart to localStorage', e);
+    }
+  }, [cartItems]);
+
+  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup)
+  useEffect(() => {
+    const hash = window.location.hash.toLowerCase();
+    if (hash === '#catalog' && location.pathname !== '/catalog') {
+      navigate('/catalog', { replace: true });
+    } else if (hash === '#cart' && location.pathname !== '/cart') {
+      navigate('/cart', { replace: true });
+    } else if (hash === '#signup' && location.pathname !== '/signup') {
+      navigate('/signup', { replace: true });
+    }
+  }, [location.pathname, navigate]);
 
   // Initialize Lenis Smooth Scroll
   useEffect(() => {
@@ -58,17 +97,106 @@ export default function App() {
   };
 
   const handleAddToCart = (product) => {
-    setCartItems((prev) => [...prev, product]);
+    const amount = product.quantity || 1;
+    setCartItems((prev) => {
+      const key = getCartKey(product);
+      const idx = prev.findIndex((item) => getCartKey(item) === key);
+      if (idx > -1) {
+        const next = [...prev];
+        next[idx] = { ...next[idx], quantity: (next[idx].quantity || 1) + amount };
+        return next;
+      }
+      return [...prev, { ...product, quantity: amount }];
+    });
     const details = product.size && product.color ? ` (${product.size} / ${product.color})` : '';
     showToast(`Added ${product.name}${details} to bag! 🛍️`);
   };
 
+  const handleUpdateQty = (key, delta) => {
+    setCartItems((prev) =>
+      prev
+        .map((item) =>
+          getCartKey(item) === key
+            ? { ...item, quantity: (item.quantity || 1) + delta }
+            : item
+        )
+        .filter((item) => (item.quantity || 1) > 0)
+    );
+  };
+
+  const handleRemoveItem = (key) => {
+    setCartItems((prev) => prev.filter((item) => getCartKey(item) !== key));
+    showToast('Removed item from cart 🗑️');
+  };
+
+  const handleCheckout = () => {
+    const count = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    setCartItems([]);
+    showToast(`Order placed! ${count} items on the way ✨`);
+  };
+
+  const handleOpenCart = () => {
+    navigate('/cart');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleGoToHome = () => {
+    navigate('/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleNavigate = (pathOrHash) => {
+    if (pathOrHash === '/catalog' || pathOrHash === '#catalog') {
+      navigate('/catalog');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (pathOrHash === '/cart' || pathOrHash === '#cart') {
+      handleOpenCart();
+      return;
+    }
+    if (pathOrHash === '/signup' || pathOrHash === '#signup') {
+      navigate('/signup');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // Anchor hash links like #fit-guide or #street-favorites
+    if (pathOrHash.startsWith('#')) {
+      if (location.pathname !== '/') {
+        navigate('/' + pathOrHash);
+        setTimeout(() => {
+          const el = document.querySelector(pathOrHash);
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
+        return;
+      }
+      const el = document.querySelector(pathOrHash);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+      return;
+    }
+
+    navigate(pathOrHash);
+  };
+
   const handleSelectFit = (fit) => {
-    showToast(`Selected ${fit.category || fit.title}! 🎨`);
+    showToast(`Exploring ${fit.category || fit.title} in Catalog! 🎨`);
+    const cat = fit.category || '';
+    if (cat.toLowerCase().includes('tank') || cat.toLowerCase().includes('tee') || cat.toLowerCase().includes('sweat')) {
+      setCatalogCategory('Tops');
+    } else if (cat.toLowerCase().includes('denim') || cat.toLowerCase().includes('bottom') || cat.toLowerCase().includes('suit')) {
+      setCatalogCategory('Bottoms');
+    } else if (cat.toLowerCase().includes('outerwear')) {
+      setCatalogCategory('Outerwear');
+    } else {
+      setCatalogCategory('ALL');
+    }
+    navigate('/catalog');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleClaimPromo = () => {
-    showToast(`Claimed 15% discount for 2+ items! 🎉`);
+    showToast(`Claimed 15% discount code MATCHA15 applied at checkout! 🎉`);
   };
 
   const handleSubscribe = (email) => {

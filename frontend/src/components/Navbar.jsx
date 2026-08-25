@@ -3,7 +3,13 @@ import { ShoppingBag, Menu, X, Sparkles, User, LogIn } from 'lucide-react';
 import AuthModal from './AuthModal';
 import BorderBeam from './BorderBeam';
 
-export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLanding }) {
+export default function Navbar({ 
+  cartCount = 0, 
+  onOpenCart, 
+  onNavigate, 
+  onGoToLanding, 
+  currentPage = 'home' 
+}) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login');
@@ -19,11 +25,11 @@ export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLa
   }, [cartCount]);
 
   const navLinks = [
-    { label: 'Fit Guide', href: '#fit-guide' },
-    { label: 'Favorites', href: '#street-favorites' },
-    { label: 'Cinematic', href: '#cinematic-reel' },
-    { label: 'Perks', href: '#pulse-perks' },
-    { label: 'VIP Pass', href: '#vip-drop' },
+    { label: 'Collections', href: '#catalog' },
+    { label: 'Mix & Match', href: '#fit-guide' },
+    { label: 'Editorial', href: '#cinematic-reel' },
+    { label: 'Benefits', href: '#pulse-perks' },
+    { label: 'VIP Access', href: '#vip-drop' },
   ];
 
   const handleOpenAuth = (mode) => {
@@ -78,16 +84,24 @@ export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLa
 
           {/* Center: Desktop Nav Links */}
           <nav className="hidden md:flex items-center gap-6 lg:gap-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                onClick={(e) => { e.preventDefault(); handleLinkClick(link.href); }}
-                className="text-xs font-semibold text-[#2D231E] hover:text-[#2D5A27] transition-colors tracking-wider uppercase font-mono"
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = (link.href === '#catalog' && currentPage === 'catalog') || (link.href === '#brand-hero' && currentPage === 'home');
+              return (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  onClick={(e) => { e.preventDefault(); handleLinkClick(link.href); }}
+                  className={`text-xs font-semibold tracking-wider uppercase font-mono transition-colors relative py-1 ${
+                    isActive ? 'text-[#2D5A27] font-bold' : 'text-[#2D231E] hover:text-[#2D5A27]'
+                  }`}
+                >
+                  {link.label}
+                  {isActive && (
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#2D5A27] rounded-full" />
+                  )}
+                </a>
+              );
+            })}
           </nav>
 
           {/* Right: MIX@MATCH, Cart & Far Right Auth Buttons */}
@@ -133,7 +147,7 @@ export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLa
               </button>
               <span className="text-[#D9D3C7]">/</span>
               <button
-                onClick={() => handleOpenAuth('signup')}
+                onClick={() => handleLinkClick('#signup')}
                 className="px-3 py-1.5 text-xs font-bold text-[#BC5A36] hover:text-[#9E4423] hover:bg-[#BC5A36]/10 rounded-lg transition-colors cursor-pointer"
               >
                 SIGN UP
@@ -168,7 +182,7 @@ export default function Navbar({ cartCount = 0, onOpenCart, onNavigate, onGoToLa
                   <span>LOG IN</span>
                 </button>
                 <button
-                  onClick={() => handleOpenAuth('signup')}
+                  onClick={() => handleLinkClick('#signup')}
                   className="py-2 px-3 bg-[#BC5A36] text-white rounded-xl text-xs font-mono font-bold hover:bg-[#9E4423] flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
                 >
                   <span>SIGN UP</span>
