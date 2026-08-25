@@ -7,6 +7,9 @@ import HomePage from './pages/HomePage';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
 
+import { BrowserRouter as Router, Routes, Route } from 'react me-router-dom';
+import SignupPage from './pages/SignUpPage';
+
 export default function App() {
   // Page Routing State: 'landing' (Default editorial entry) or 'store' (Full shopping catalog)
   const [currentPage, setCurrentPage] = useState('landing');
