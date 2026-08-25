@@ -3,10 +3,11 @@ import Lenis from 'lenis';
 import { api } from './services/api';
 
 import HomePage from './pages/HomePage';
+import CatalogPage from './pages/CatalogPage';
 import CartPage from './pages/CartPage';
+import SignUpPage from './pages/SignUpPage';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
-import SignUpPage from './pages/SignUpPage';
 
 const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color || 'default'}`;
 
@@ -24,12 +25,16 @@ export default function App() {
   const [cartItems, setCartItems] = useState(loadCart);
   const [toast, setToast] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
+
+  // Page Routing State ('home' | 'catalog' | 'cart' | 'signup')
   const [currentPage, setCurrentPage] = useState(() => {
     const hash = window.location.hash.toLowerCase();
+    if (hash === '#catalog') return 'catalog';
     if (hash === '#cart') return 'cart';
     if (hash === '#signup') return 'signup';
     return 'home';
   });
+  const [catalogCategory, setCatalogCategory] = useState('ALL');
 
   // Sync cart to localStorage
   useEffect(() => {
@@ -44,10 +49,11 @@ export default function App() {
   useEffect(() => {
     const handleHash = () => {
       const hash = window.location.hash.toLowerCase();
-      if (hash === '#cart') setCurrentPage('cart');
+      if (hash === '#catalog') setCurrentPage('catalog');
+      else if (hash === '#cart') setCurrentPage('cart');
       else if (hash === '#signup') setCurrentPage('signup');
       else if (hash === '' || hash === '#brand-hero' || hash.startsWith('#')) {
-        if (hash === '#cart' || hash === '#signup') return;
+        if (hash === '#catalog' || hash === '#cart' || hash === '#signup') return;
         setCurrentPage('home');
       }
     };
@@ -79,20 +85,6 @@ export default function App() {
       cancelAnimationFrame(rafId);
       lenis.destroy();
     };
-  }, []);
-
-  // Sync hash changes with page state
-  useEffect(() => {
-    const handleHashChange = () => {
-      if (window.location.hash === '#catalog') {
-        setCurrentPage('catalog');
-      } else if (window.location.hash === '#brand-hero' || window.location.hash === '') {
-        setCurrentPage('home');
-      }
-    };
-
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
   useEffect(() => {
@@ -157,13 +149,19 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleBackToStore = () => {
+  const handleGoToHome = () => {
     setCurrentPage('home');
     window.location.hash = '#brand-hero';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleNavigate = (href) => {
+    if (href === '#catalog') {
+      setCurrentPage('catalog');
+      window.location.hash = '#catalog';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     if (href === '#cart') {
       handleOpenCart();
       return;
@@ -174,19 +172,23 @@ export default function App() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
+
     if (currentPage !== 'home') {
       setCurrentPage('home');
+      window.location.hash = href;
+      setTimeout(() => {
+        const el = document.querySelector(href);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+      return;
     }
-    window.location.hash = href;
-    setTimeout(() => {
-      const el = document.querySelector(href);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
+
+    const el = document.querySelector(href);
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleSelectFit = (fit) => {
     showToast(`Exploring ${fit.category || fit.title} in Catalog! 🎨`);
-    // Map fit category to Catalog category filter
     const cat = fit.category || '';
     if (cat.toLowerCase().includes('tank') || cat.toLowerCase().includes('tee') || cat.toLowerCase().includes('sweat')) {
       setCatalogCategory('Tops');
@@ -203,38 +205,11 @@ export default function App() {
   };
 
   const handleClaimPromo = () => {
-    showToast(`Claimed 15% discount code MATCHA15 applied at checkout! 🎉`);
+    showToast(`Claimed 15% discount for 2+ items! 🎉`);
   };
 
   const handleSubscribe = (email) => {
     showToast(`Subscribed ${email} to VIP Drop List! 📩`);
-  };
-
-  const handleNavigate = (href) => {
-    if (href === '#catalog') {
-      setCurrentPage('catalog');
-      window.location.hash = '#catalog';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      return;
-    }
-
-    if (currentPage !== 'home') {
-      setCurrentPage('home');
-      window.location.hash = href;
-      setTimeout(() => {
-        const el = document.querySelector(href);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    } else {
-      const el = document.querySelector(href);
-      if (el) el.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  const handleGoToHome = () => {
-    setCurrentPage('home');
-    window.location.hash = '#brand-hero';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -262,27 +237,40 @@ export default function App() {
       {/* Main Experience: Direct Master Lookbook & Store Catalog */}
       <Layout 
         cartCount={cartItems.length}
+        currentPage={currentPage}
         onOpenCart={handleOpenCart}
         onNavigate={handleNavigate}
-        onGoToLanding={handleBackToStore}
+        onGoToLanding={handleGoToHome}
       >
-        {currentPage === 'cart' ? (
+        {currentPage === 'catalog' ? (
+          <CatalogPage 
+            initialCategory={catalogCategory}
+            onBackToHome={handleGoToHome}
+            onAddToCart={handleAddToCart}
+            onQuickView={(prod) => setSelectedProduct(prod)}
+            onSelectFit={handleSelectFit}
+          />
+        ) : currentPage === 'cart' ? (
           <CartPage 
             cartItems={cartItems}
             onUpdateQty={handleUpdateQty}
             onRemove={handleRemoveItem}
-            onBackToStore={handleBackToStore}
+            onBackToStore={handleGoToHome}
             onCheckout={handleCheckout}
           />
         ) : currentPage === 'signup' ? (
-          <SignUpPage onBackToStore={handleBackToStore} />
+          <SignUpPage onBackToStore={handleGoToHome} />
         ) : (
           <HomePage 
             onSelectFit={handleSelectFit}
             onClaimPromo={handleClaimPromo}
             onAddToCart={handleAddToCart}
             onQuickView={(prod) => setSelectedProduct(prod)}
-            onExploreWarehouse={() => showToast('Opening Warehouse Archive! 📦')}
+            onExploreWarehouse={() => {
+              setCurrentPage('catalog');
+              window.location.hash = '#catalog';
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
             onSubscribe={handleSubscribe}
           />
         )}
