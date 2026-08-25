@@ -3,12 +3,12 @@ import { ShoppingBag, Menu, X, Sparkles, User, LogIn } from 'lucide-react';
 import AuthModal from './AuthModal';
 import BorderBeam from './BorderBeam';
 
-export default function Navbar({ 
-  cartCount = 0, 
-  onOpenCart, 
-  onNavigate, 
-  onGoToLanding, 
-  currentPage = 'home' 
+export default function Navbar({
+  cartCount = 0,
+  onOpenCart,
+  onNavigate,
+  onGoToLanding,
+  currentPage = 'home'
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -51,7 +51,7 @@ export default function Navbar({
   return (
     <>
       <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-[#FAF8F5]/90 border-b border-[#D9D3C7] transition-all">
-        
+
         {/* 1. Top Announcement Bar */}
         <div className="bg-[#2D231E] text-[#D0DEC6] text-[11px] py-1.5 px-4 text-center font-mono flex items-center justify-center gap-2">
           <span className="text-[#BC5A36]">✦</span>
@@ -62,9 +62,9 @@ export default function Navbar({
 
         {/* 2. Main Navigation Bar */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
-          
+
           {/* Left: Brand Logo (Scroll to Top) */}
-          <button 
+          <button
             onClick={() => handleLinkClick('#brand-hero')}
             className="flex items-center gap-2.5 group cursor-pointer text-left"
             title="Scroll to Top"
@@ -91,9 +91,8 @@ export default function Navbar({
                   key={link.label}
                   href={link.href}
                   onClick={(e) => { e.preventDefault(); handleLinkClick(link.href); }}
-                  className={`text-xs font-semibold tracking-wider uppercase font-mono transition-colors relative py-1 ${
-                    isActive ? 'text-[#2D5A27] font-bold' : 'text-[#2D231E] hover:text-[#2D5A27]'
-                  }`}
+                  className={`text-xs font-semibold tracking-wider uppercase font-mono transition-colors relative py-1 ${isActive ? 'text-[#2D5A27] font-bold' : 'text-[#2D231E] hover:text-[#2D5A27]'
+                    }`}
                 >
                   {link.label}
                   {isActive && (
@@ -106,7 +105,7 @@ export default function Navbar({
 
           {/* Right: MIX@MATCH, Cart & Far Right Auth Buttons */}
           <div className="flex items-center gap-2.5 sm:gap-3">
-            
+
             {/* Main Feature Action: MIX@MATCH Button with Border Beam */}
             <button
               onClick={() => handleLinkClick('#fit-guide')}
@@ -121,9 +120,8 @@ export default function Navbar({
             <button
               onClick={onOpenCart}
               aria-label="View Cart"
-              className={`relative p-2.5 rounded-xl bg-[#D0DEC6]/60 hover:bg-[#D0DEC6] text-[#2D231E] hover:text-[#2D5A27] border border-[#B8CBAE] transition-all cursor-pointer ${
-                cartAnimated ? 'animate-cart-pop ring-3 ring-[#BC5A36] bg-[#D0DEC6]' : ''
-              }`}
+              className={`relative p-2.5 rounded-xl bg-[#D0DEC6]/60 hover:bg-[#D0DEC6] text-[#2D231E] hover:text-[#2D5A27] border border-[#B8CBAE] transition-all cursor-pointer ${cartAnimated ? 'animate-cart-pop ring-3 ring-[#BC5A36] bg-[#D0DEC6]' : ''
+                }`}
             >
               <ShoppingBag size={20} />
               {cartCount > 0 && (
@@ -171,7 +169,7 @@ export default function Navbar({
         {mobileMenuOpen && (
           <div className="md:hidden bg-[#FAF8F5] border-b border-[#D9D3C7] px-6 py-5 shadow-xl animate-fade-in">
             <nav className="flex flex-col gap-4">
-              
+
               {/* Mobile Auth Quick Buttons */}
               <div className="grid grid-cols-2 gap-2 pb-3 border-b border-[#D9D3C7]">
                 <button
@@ -195,7 +193,7 @@ export default function Navbar({
               >
                 ✦ RETURN TO LANDING LOOKBOOK
               </button>
-              
+
               {navLinks.map((link) => (
                 <a
                   key={link.label}
@@ -206,7 +204,7 @@ export default function Navbar({
                   {link.label}
                 </a>
               ))}
-              
+
               <button
                 onClick={() => handleLinkClick('#fit-guide')}
                 className="mt-2 w-full py-2.5 bg-[#2D5A27] text-white text-xs font-bold uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 shadow-md cursor-pointer"
