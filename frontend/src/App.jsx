@@ -3,6 +3,7 @@ import Lenis from 'lenis';
 import { api } from './services/api';
 
 import HomePage from './pages/HomePage';
+import CatalogPage from './pages/CatalogPage';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
 
@@ -11,6 +12,12 @@ export default function App() {
   const [cartItems, setCartItems] = useState([]);
   const [toast, setToast] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
+  
+  // Page Routing State ('home' | 'catalog')
+  const [currentPage, setCurrentPage] = useState(() => {
+    return window.location.hash === '#catalog' ? 'catalog' : 'home';
+  });
+  const [catalogCategory, setCatalogCategory] = useState('ALL');
 
   // Initialize Lenis Smooth Scroll
   useEffect(() => {
@@ -38,6 +45,20 @@ export default function App() {
     };
   }, []);
 
+  // Sync hash changes with page state
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash === '#catalog') {
+        setCurrentPage('catalog');
+      } else if (window.location.hash === '#brand-hero' || window.location.hash === '') {
+        setCurrentPage('home');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
   useEffect(() => {
     async function loadHealth() {
       try {
@@ -62,15 +83,56 @@ export default function App() {
   };
 
   const handleSelectFit = (fit) => {
-    showToast(`Selected ${fit.category || fit.title}! 🎨`);
+    showToast(`Exploring ${fit.category || fit.title} in Catalog! 🎨`);
+    // Map fit category to Catalog category filter
+    const cat = fit.category || '';
+    if (cat.toLowerCase().includes('tank') || cat.toLowerCase().includes('tee') || cat.toLowerCase().includes('sweat')) {
+      setCatalogCategory('Tops');
+    } else if (cat.toLowerCase().includes('denim') || cat.toLowerCase().includes('bottom') || cat.toLowerCase().includes('suit')) {
+      setCatalogCategory('Bottoms');
+    } else if (cat.toLowerCase().includes('outerwear')) {
+      setCatalogCategory('Outerwear');
+    } else {
+      setCatalogCategory('ALL');
+    }
+    setCurrentPage('catalog');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.location.hash = '#catalog';
   };
 
   const handleClaimPromo = () => {
-    showToast(`Claimed 15% discount for 2+ items! 🎉`);
+    showToast(`Claimed 15% discount code MATCHA15 applied at checkout! 🎉`);
   };
 
   const handleSubscribe = (email) => {
     showToast(`Subscribed ${email} to VIP Drop List! 📩`);
+  };
+
+  const handleNavigate = (href) => {
+    if (href === '#catalog') {
+      setCurrentPage('catalog');
+      window.location.hash = '#catalog';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    if (currentPage !== 'home') {
+      setCurrentPage('home');
+      window.location.hash = href;
+      setTimeout(() => {
+        const el = document.querySelector(href);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      const el = document.querySelector(href);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleGoToHome = () => {
+    setCurrentPage('home');
+    window.location.hash = '#brand-hero';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -98,16 +160,33 @@ export default function App() {
       {/* Main Experience: Direct Master Lookbook & Store Catalog */}
       <Layout 
         cartCount={cartItems.length}
+        currentPage={currentPage}
         onOpenCart={() => showToast(`Cart contains ${cartItems.length} items! 🛍️`)}
+        onNavigate={handleNavigate}
+        onGoToLanding={handleGoToHome}
       >
-        <HomePage 
-          onSelectFit={handleSelectFit}
-          onClaimPromo={handleClaimPromo}
-          onAddToCart={handleAddToCart}
-          onQuickView={(prod) => setSelectedProduct(prod)}
-          onExploreWarehouse={() => showToast('Opening Warehouse Archive! 📦')}
-          onSubscribe={handleSubscribe}
-        />
+        {currentPage === 'catalog' ? (
+          <CatalogPage 
+            initialCategory={catalogCategory}
+            onBackToHome={handleGoToHome}
+            onAddToCart={handleAddToCart}
+            onQuickView={(prod) => setSelectedProduct(prod)}
+            onSelectFit={handleSelectFit}
+          />
+        ) : (
+          <HomePage 
+            onSelectFit={handleSelectFit}
+            onClaimPromo={handleClaimPromo}
+            onAddToCart={handleAddToCart}
+            onQuickView={(prod) => setSelectedProduct(prod)}
+            onExploreWarehouse={() => {
+              setCurrentPage('catalog');
+              window.location.hash = '#catalog';
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onSubscribe={handleSubscribe}
+          />
+        )}
       </Layout>
 
     </div>

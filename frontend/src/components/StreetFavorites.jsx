@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight, ShoppingBag, Sparkles } from 'lucide-react';
 import SpotlightCard from './SpotlightCard';
 
-export default function StreetFavorites({ onAddToCart, onQuickView }) {
+export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCatalog }) {
   const scrollRef = useRef(null);
   const [activeCategory, setActiveCategory] = useState('ALL');
 
@@ -293,6 +293,15 @@ export default function StreetFavorites({ onAddToCart, onQuickView }) {
             </h2>
           </div>
           <div className="flex items-center gap-2">
+            {onExploreCatalog && (
+              <button
+                onClick={onExploreCatalog}
+                className="px-4 py-2 bg-[#2D5A27] hover:bg-[#23471E] text-white font-mono font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm transition-all flex items-center gap-1.5 cursor-pointer mr-2"
+              >
+                <Sparkles size={13} className="text-[#D0DEC6]" />
+                <span>VIEW FULL CATALOG (24)</span>
+              </button>
+            )}
             <button
               onClick={scrollLeft}
               aria-label="Previous Products"

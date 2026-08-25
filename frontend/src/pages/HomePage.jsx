@@ -12,6 +12,7 @@ export default function HomePage({
   onClaimPromo,
   onAddToCart,
   onQuickView,
+  onExploreWarehouse,
   onSubscribe,
 }) {
   const handleScrollToFit = () => {
@@ -34,7 +35,11 @@ export default function HomePage({
 
       {/* 3. STREET FAVORITES & ARCHIVE: Continuous Framed Carousel with Real Product Shots */}
       <section id="street-favorites">
-        <StreetFavorites onAddToCart={onAddToCart} onQuickView={onQuickView} />
+        <StreetFavorites 
+          onAddToCart={onAddToCart} 
+          onQuickView={onQuickView}
+          onExploreCatalog={onExploreWarehouse}
+        />
       </section>
 
       {/* ReactVibe Infinite Brand Loop Ticker */}
