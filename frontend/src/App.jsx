@@ -214,7 +214,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#2D231E] font-sans selection:bg-[#2D5A27] selection:text-white relative">
-      
+
       {/* Interactive Toast Notification */}
       {toast && (
         <div className="fixed bottom-6 right-6 z-50 animate-bounce pointer-events-none">
@@ -227,7 +227,7 @@ export default function App() {
 
       {/* Product Customizer & Quick View Modal */}
       {selectedProduct && (
-        <ProductModal 
+        <ProductModal
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
           onAddToCart={handleAddToCart}
@@ -235,7 +235,7 @@ export default function App() {
       )}
 
       {/* Main Experience Layout */}
-      <Layout 
+      <Layout
         cartCount={cartItems.length}
         currentPage={
           location.pathname === '/catalog' ? 'catalog' : 
@@ -250,10 +250,10 @@ export default function App() {
       >
         <Routes>
           {/* 1. Home Page */}
-          <Route 
-            path="/" 
+          <Route
+            path="/"
             element={
-              <HomePage 
+              <HomePage
                 onSelectFit={handleSelectFit}
                 onClaimPromo={handleClaimPromo}
                 onAddToCart={handleAddToCart}
@@ -264,35 +264,35 @@ export default function App() {
                 }}
                 onSubscribe={handleSubscribe}
               />
-            } 
+            }
           />
 
           {/* 2. Catalog Grid Page */}
-          <Route 
-            path="/catalog" 
+          <Route
+            path="/catalog"
             element={
-              <CatalogPage 
+              <CatalogPage
                 initialCategory={catalogCategory}
                 onBackToHome={handleGoToHome}
                 onAddToCart={handleAddToCart}
                 onQuickView={(prod) => setSelectedProduct(prod)}
                 onSelectFit={handleSelectFit}
               />
-            } 
+            }
           />
 
           {/* 3. Shopping Cart Page */}
-          <Route 
-            path="/cart" 
+          <Route
+            path="/cart"
             element={
-              <CartPage 
+              <CartPage
                 cartItems={cartItems}
                 onUpdateQty={handleUpdateQty}
                 onRemove={handleRemoveItem}
                 onBackToStore={handleGoToHome}
                 onCheckout={handleProceedToPayment}
               />
-            } 
+            }
           />
 
           {/* 4. Payment / Checkout Page (From Pete) */}
@@ -307,7 +307,7 @@ export default function App() {
           />
 
           {/* 5. Sign Up Page */}
-          <Route 
+          <Route
             path="/signup" 
             element={<SignUpPage onBackToStore={handleGoToHome} />} 
           />
