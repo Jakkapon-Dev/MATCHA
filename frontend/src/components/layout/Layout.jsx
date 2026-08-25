@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import ScrollProgressTracker from './ScrollProgressTracker';
+import ScrollProgressTracker from '../ui/ScrollProgressTracker';
 
 export default function Layout({ 
   children, 

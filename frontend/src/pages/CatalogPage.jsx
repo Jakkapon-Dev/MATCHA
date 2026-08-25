@@ -5,7 +5,7 @@ import {
   ChevronRight, RefreshCw, ArrowLeft, ArrowUpRight, RotateCcw
 } from 'lucide-react';
 import { api } from '../services/api';
-import ProductCard from '../components/ProductCard';
+import ProductCard from '../components/product/ProductCard';
 
 export default function CatalogPage({ 
   initialCategory = 'ALL',

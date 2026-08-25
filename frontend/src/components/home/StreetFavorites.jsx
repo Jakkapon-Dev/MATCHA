@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { ChevronLeft, ChevronRight, ShoppingBag, Sparkles, Star, Check } from 'lucide-react';
-import SpotlightCard from './SpotlightCard';
-import { productsData } from '../data/productsData';
+import SpotlightCard from '../ui/SpotlightCard';
+import { productsData } from '../../data/productsData';
 
 function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
   const variants = item?.variants && item.variants.length > 0

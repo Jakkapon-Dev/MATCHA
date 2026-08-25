@@ -46,10 +46,13 @@ export default function Payment({ cartItems = [], onUpdateCart }) {
   const [couponError, setCouponError] = useState('');
 
   const COUPONS = {
-    'MATCHA15': { discount: 15, type: 'percent' },
-    'WELCOME10': { discount: 10, type: 'percent' },
-    'FREESHIP': { discount: 0, type: 'free_shipping' },
-    'SAVE20': { discount: 20, type: 'percent', minAmount: 100 },
+    '01': { discount: 10, type: 'percent', label: '10% OFF' },
+    '02': { discount: 20, type: 'percent', label: '20% OFF' },
+    '03': { discount: 50, type: 'percent', label: '50% OFF' },
+    'MATCHA15': { discount: 15, type: 'percent', label: '15% OFF' },
+    'WELCOME10': { discount: 10, type: 'percent', label: '10% OFF' },
+    'FREESHIP': { discount: 0, type: 'free_shipping', label: 'Free Shipping' },
+    'SAVE20': { discount: 20, type: 'percent', minAmount: 100, label: '20% OFF' },
   };
 
   useEffect(() => {
@@ -58,8 +61,18 @@ export default function Payment({ cartItems = [], onUpdateCart }) {
     }
   }, [cartItems]);
 
+  const getItemPrice = (item) => {
+    if (typeof item.price === 'number') return item.price;
+    if (typeof item.priceNum === 'number') return item.priceNum;
+    if (typeof item.price === 'string') {
+      const parsed = parseFloat(item.price.replace(/[^0-9.]/g, ''));
+      return isNaN(parsed) ? 0 : parsed;
+    }
+    return 0;
+  };
+
   const calculateSubtotal = () => {
-    return cartItems.reduce((sum, item) => sum + (item.priceNum || 0) * (item.quantity || 1), 0);
+    return cartItems.reduce((sum, item) => sum + getItemPrice(item) * (item.quantity || 1), 0);
   };
 
   const calculateShipping = () => {
@@ -278,6 +291,9 @@ export default function Payment({ cartItems = [], onUpdateCart }) {
                             <p className="text-xs text-[#6B5E55] mt-0.5 font-mono">
                               {item.color || 'Default'} / {item.size || 'M'}
                             </p>
+                            <p className="text-xs text-[#BC5A36] font-bold font-mono mt-1">
+                              {formatPrice(getItemPrice(item))}
+                            </p>
                           </div>
                           <button
                             onClick={() => handleRemoveItem(item.id)}
@@ -304,7 +320,7 @@ export default function Payment({ cartItems = [], onUpdateCart }) {
                             </button>
                           </div>
                           <span className="font-bold text-[#2D5A27]">
-                            {formatPrice((item.priceNum || 0) * (item.quantity || 1))}
+                            {formatPrice(getItemPrice(item) * (item.quantity || 1))}
                           </span>
                         </div>
                       </div>
@@ -350,7 +366,7 @@ export default function Payment({ cartItems = [], onUpdateCart }) {
                       <button
                         onClick={applyCoupon}
                         disabled={!couponCode.trim()}
-                        className="px-6 py-3 bg-[#BC5A36] hover:bg-[#9E4423] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-6 py-3 bg-[#BC5A36] hover:bg-[#9E4423] text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                       >
                         Apply
                       </button>

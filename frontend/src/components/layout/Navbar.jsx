@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Menu, X, Sparkles, User, LogIn } from 'lucide-react';
-import AuthModal from './AuthModal';
-import BorderBeam from './BorderBeam';
+import AuthModal from '../auth/AuthModal';
+import BorderBeam from '../ui/BorderBeam';
 
 export default function Navbar({ 
   cartCount = 0, 
