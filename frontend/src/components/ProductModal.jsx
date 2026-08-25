@@ -1,154 +1,303 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { X, Heart, Star, ShoppingBag, Check, Sparkles, ShieldCheck, Truck, RefreshCw } from 'lucide-react';
 
-export default function ProductModal({ product, onClose, onAddToCart }) {
-  const [selectedColor, setSelectedColor] = useState('Matcha Green');
-  const [selectedSize, setSelectedSize] = useState('M');
+export default function ProductModal({ product, onClose, onAddToCart, onToggleWishlist, isWishlisted = false }) {
+  // Extract variants from product
+  const variants = product?.variants && product.variants.length > 0
+    ? product.variants
+    : [
+        { 
+          color: product?.color || 'Matcha Sage', 
+          colorHex: product?.colorHex || '#8F9779', 
+          image: product?.image || '/images/products/standalone/mustard_sweater.jpg' 
+        }
+      ];
+
+  const [activeVariant, setActiveVariant] = useState(variants[0]);
+  const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || 'M');
   const [quantity, setQuantity] = useState(1);
+  const [wishlistActive, setWishlistActive] = useState(isWishlisted);
+  const [addedAnimation, setAddedAnimation] = useState(false);
+  const [imageFade, setImageFade] = useState(false);
+
+  // Sync when product changes
+  useEffect(() => {
+    if (product) {
+      const initialVariant = product.initialVariant || (product.variants && product.variants.length > 0
+        ? product.variants[0]
+        : { color: product.color || 'Signature', colorHex: product.colorHex || '#2D5A27', image: product.image });
+      setActiveVariant(initialVariant);
+      setSelectedSize(product.sizes?.[0] || (product.category === 'Accessories' ? 'OS' : 'M'));
+      setQuantity(1);
+    }
+  }, [product]);
 
   if (!product) return null;
 
-  const colors = [
-    { name: 'Matcha Green', hex: '#2D5A27' },
-    { name: 'Warm Terracotta', hex: '#BC5A36' },
-    { name: 'Soft Sage', hex: '#D0DEC6' },
-    { name: 'Espresso Roast', hex: '#2D231E' },
-  ];
-
-  const sizes = ['S', 'M', 'L', 'XL', 'Oversized'];
+  const handleVariantChange = (v) => {
+    if (v.image === activeVariant.image) return;
+    setImageFade(true);
+    setTimeout(() => {
+      setActiveVariant(v);
+      setImageFade(false);
+    }, 150);
+  };
 
   const handleAdd = () => {
+    setAddedAnimation(true);
+    setTimeout(() => setAddedAnimation(false), 600);
+
     onAddToCart({
       ...product,
-      color: selectedColor,
+      image: activeVariant.image,
+      color: activeVariant.color,
+      colorHex: activeVariant.colorHex,
       size: selectedSize,
-      quantity
+      quantity: Number(quantity)
     });
-    onClose();
+  };
+
+  const handleWishlist = (e) => {
+    e.stopPropagation();
+    setWishlistActive(!wishlistActive);
+    if (onToggleWishlist) onToggleWishlist(product);
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md animate-fade-in">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 md:p-6 bg-black/80 backdrop-blur-md animate-fade-in select-none"
+      onClick={onClose}
+    >
       <div 
-        className="bg-[#FAF8F5] text-[#2D231E] rounded-3xl max-w-2xl w-full overflow-hidden shadow-2xl border border-[#D9D3C7] relative animate-modal-pop"
+        className="bg-[#FAF8F5] text-[#2D231E] rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-[#D9D3C7] relative animate-modal-pop flex flex-col md:flex-row overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button 
           onClick={onClose}
-          className="absolute top-4 right-4 z-10 w-9 h-9 rounded-full bg-[#D0DEC6] hover:bg-[#BC5A36] hover:text-white flex items-center justify-center text-xs font-bold text-[#2D231E] transition-all cursor-pointer"
+          aria-label="Close modal"
+          className="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-white/90 hover:bg-[#2D231E] hover:text-white border border-[#D9D3C7] flex items-center justify-center text-sm font-bold text-[#2D231E] transition-all cursor-pointer shadow-md"
         >
-          ✕
+          <X size={18} />
         </button>
 
-        <div className="grid grid-cols-1 sm:grid-cols-12">
+        {/* LEFT COLUMN: Clean Framed Product Card (ขยายเต็มกรอบเส้นแดง) */}
+        <div className="md:w-1/2 bg-[#FAF8F5] p-3 sm:p-4 flex flex-col justify-between items-center relative border-b md:border-b-0 md:border-r border-[#D9D3C7]">
           
-          {/* Image & Swatch Preview Left */}
-          <div className="sm:col-span-5 bg-[#2D231E] p-8 flex flex-col justify-between text-white relative min-h-75">
-            <div className="z-10">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-[#D0DEC6] font-mono">
-                {product.tag || 'LIMITED RELEASE'}
-              </span>
-              <h3 className="text-2xl font-bold mt-1 leading-tight text-[#FAF8F5]">{product.name}</h3>
-              <p className="text-sm font-mono text-[#BC5A36] font-bold mt-1">{product.price || '$69.00'}</p>
-            </div>
+          {/* Top Bar inside Left Column: Tag & Wishlist */}
+          <div className="w-full flex items-center justify-between z-10 mb-2.5 px-1">
+            <span className="px-3 py-1 bg-[#2D231E] text-[#D0DEC6] text-[10px] font-mono font-bold tracking-widest uppercase rounded-lg shadow-2xs">
+              {product.tag || `${product.season} COLLECTION`}
+            </span>
+            <button
+              onClick={handleWishlist}
+              className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all cursor-pointer shadow-xs ${
+                wishlistActive 
+                  ? 'bg-rose-50 border-rose-300 text-rose-600' 
+                  : 'bg-white border-[#D9D3C7] text-[#6B5E55] hover:text-rose-500 hover:border-rose-300'
+              }`}
+            >
+              <Heart size={16} className={wishlistActive ? 'fill-rose-500 text-rose-500' : ''} />
+            </button>
+          </div>
 
-            {/* Visual Color Preview Box */}
-            <div className="my-6 flex flex-col items-center justify-center py-8 rounded-2xl bg-[#1A1512] border border-[#3D312A] relative group">
-              <div 
-                className="w-24 h-24 rounded-2xl shadow-xl transition-all duration-300 transform group-hover:scale-105 flex items-center justify-center text-3xl"
-                style={{ backgroundColor: colors.find(c => c.name === selectedColor)?.hex || '#2D5A27' }}
-              >
-                👕
-              </div>
-              <span className="text-xs font-mono text-[#D0DEC6] mt-3">Tone: {selectedColor}</span>
-            </div>
-
-            <div className="text-[10px] text-[#D0DEC6]/70 font-mono">
-              <span>MATCHA ARCHIVE • 2026</span>
+          {/* MAIN PRODUCT PHOTO FRAME: Stretches to fill the entire red box */}
+          <div className="w-full flex-1 aspect-3/4 min-h-[380px] sm:min-h-[460px] md:min-h-[500px] rounded-2xl overflow-hidden bg-white border border-[#D9D3C7] shadow-sm flex items-center justify-center relative group">
+            <img 
+              src={activeVariant.image} 
+              alt={`${product.name} - ${activeVariant.color}`}
+              className={`w-full h-full object-cover object-center transition-all duration-300 group-hover:scale-105 ${
+                imageFade ? 'opacity-30 scale-95' : 'opacity-100 scale-100'
+              }`}
+            />
+            
+            {/* Color Overlay Badge on Image */}
+            <div className="absolute bottom-3 left-3 px-2.5 py-1 bg-[#2D231E]/85 backdrop-blur-xs text-white text-[10px] font-mono rounded-lg flex items-center gap-1.5 shadow-sm">
+              <span 
+                className="w-2.5 h-2.5 rounded-full border border-white/50"
+                style={{ backgroundColor: activeVariant.colorHex }}
+              />
+              <span>{activeVariant.color}</span>
             </div>
           </div>
 
-          {/* Configuration Right */}
-          <div className="sm:col-span-7 p-6 sm:p-8 flex flex-col justify-between">
+          {/* COLOR VARIANT THUMBNAILS (Click to switch image in modal) */}
+          {variants.length > 1 && (
+            <div className="w-full flex items-center justify-center gap-2 pt-2.5 overflow-x-auto pb-0.5">
+              {variants.map((v, i) => {
+                const isActive = activeVariant.image === v.image;
+                return (
+                  <button
+                    key={i}
+                    onClick={() => handleVariantChange(v)}
+                    title={v.color}
+                    className={`w-11 h-13 rounded-lg overflow-hidden border-2 transition-all cursor-pointer relative shrink-0 ${
+                      isActive 
+                        ? 'border-[#2D5A27] scale-105 shadow-md ring-2 ring-[#2D5A27]/30' 
+                        : 'border-[#D9D3C7] opacity-70 hover:opacity-100 hover:scale-105'
+                    }`}
+                  >
+                    <img src={v.image} alt={v.color} className="w-full h-full object-cover" />
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+        </div>
+
+        {/* RIGHT COLUMN: Product Specifications & Add to Cart Controls */}
+        <div className="md:w-1/2 p-6 sm:p-8 md:p-9 flex flex-col justify-between">
+          <div className="space-y-4 sm:space-y-5">
+            
+            {/* Header: Title, Category, Rating, Price */}
             <div>
-              <span className="text-xs font-bold text-[#2D5A27] uppercase tracking-widest">Personalize Fit & Tone</span>
-              <h4 className="text-xl font-extrabold text-[#2D231E] mt-1">Select Custom Options</h4>
-              
-              {/* Color Swatch Picker */}
-              <div className="mt-5">
-                <label className="text-xs font-bold text-[#2D231E] uppercase tracking-wider block mb-2">
-                  MatchA Undertone Palette:
-                </label>
-                <div className="flex items-center gap-3">
-                  {colors.map((c) => (
-                    <button
-                      key={c.name}
-                      onClick={() => setSelectedColor(c.name)}
-                      title={c.name}
-                      className={`w-8 h-8 rounded-full border-2 transition-all cursor-pointer ${
-                        selectedColor === c.name ? 'border-[#2D5A27] scale-110 shadow-md ring-2 ring-[#2D5A27]/30' : 'border-transparent opacity-80 hover:opacity-100'
-                      }`}
-                      style={{ backgroundColor: c.hex }}
-                    />
-                  ))}
-                </div>
+              <div className="flex items-center gap-2 text-xs font-mono text-[#6B5E55] mb-1.5">
+                <span className="text-[#2D5A27] font-bold uppercase">{product.season} Drop</span>
+                <span>•</span>
+                <span className="uppercase">{product.category}</span>
+                <span>•</span>
+                <span>{product.id}</span>
               </div>
 
-              {/* Size Selector */}
-              <div className="mt-5">
-                <label className="text-xs font-bold text-[#2D231E] uppercase tracking-wider block mb-2">
-                  Choose Fit Size:
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {sizes.map((s) => (
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2D231E] uppercase tracking-tight leading-tight">
+                {product.name}
+              </h2>
+
+              <div className="flex items-center gap-4 mt-2">
+                <div className="flex items-baseline gap-2 font-mono">
+                  <span className="text-2xl sm:text-3xl font-black text-[#2D231E]">
+                    ${typeof product.price === 'number' ? product.price.toFixed(2) : product.price}
+                  </span>
+                  {product.originalPrice && (
+                    <span className="text-sm line-through text-[#6B5E55]">
+                      ${typeof product.originalPrice === 'number' ? product.originalPrice.toFixed(2) : product.originalPrice}
+                    </span>
+                  )}
+                </div>
+
+                <div className="flex items-center gap-1 text-xs font-mono text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg font-bold">
+                  <Star size={13} className="fill-amber-500 text-amber-500" />
+                  <span>{product.rating || '4.9'} ({product.reviewsCount || 88} reviews)</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Description */}
+            <p className="text-xs sm:text-sm text-[#6B5E55] leading-relaxed">
+              {product.description}
+            </p>
+
+            {/* 1. Interactive Color Swatches */}
+            <div>
+              <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-2">
+                <span>Color: <strong className="text-[#2D5A27]">{activeVariant.color}</strong></span>
+                <span className="text-[10px] font-mono text-[#6B5E55]">{variants.length} Tones Available</span>
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                {variants.map((v, idx) => {
+                  const isSelected = activeVariant.image === v.image;
+                  return (
                     <button
-                      key={s}
-                      onClick={() => setSelectedSize(s)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold font-mono transition-all cursor-pointer border ${
-                        selectedSize === s 
-                          ? 'bg-[#2D5A27] text-white border-[#2D5A27] shadow-md' 
-                          : 'bg-white text-[#2D231E] border-[#D9D3C7] hover:border-[#2D5A27]'
+                      key={idx}
+                      onClick={() => handleVariantChange(v)}
+                      title={v.color}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-mono transition-all cursor-pointer ${
+                        isSelected
+                          ? 'border-[#2D5A27] bg-[#2D5A27]/10 text-[#2D5A27] font-bold shadow-2xs ring-1 ring-[#2D5A27]'
+                          : 'border-[#D9D3C7] bg-white text-[#2D231E] hover:border-[#6B5E55]'
                       }`}
                     >
-                      {s}
+                      <span 
+                        className="w-3 h-3 rounded-full border border-black/15 shrink-0" 
+                        style={{ backgroundColor: v.colorHex }}
+                      />
+                      <span>{v.color}</span>
                     </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Quantity Counter */}
-              <div className="mt-5">
-                <label className="text-xs font-bold text-[#2D231E] uppercase tracking-wider block mb-2">
-                  Quantity:
-                </label>
-                <div className="inline-flex items-center border border-[#D9D3C7] rounded-xl bg-white p-1">
-                  <button 
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-7 h-7 flex items-center justify-center text-xs font-bold hover:bg-[#D0DEC6] rounded-lg cursor-pointer"
-                  >
-                    -
-                  </button>
-                  <span className="px-4 text-xs font-mono font-bold text-[#2D231E]">{quantity}</span>
-                  <button 
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="w-7 h-7 flex items-center justify-center text-xs font-bold hover:bg-[#D0DEC6] rounded-lg cursor-pointer"
-                  >
-                    +
-                  </button>
-                </div>
+                  );
+                })}
               </div>
             </div>
 
-            {/* Action Buttons (Accent Color CTA) */}
-            <div className="mt-8 pt-4 border-t border-[#D9D3C7] flex items-center gap-3">
-              <button
-                onClick={handleAdd}
-                className="flex-1 py-3.5 bg-[#BC5A36] hover:bg-[#A64C2B] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-[#BC5A36]/30 active:scale-95 cursor-pointer"
-              >
-                Add To Cart • {selectedSize} / {selectedColor} →
-              </button>
+            {/* 2. Interactive Size Selector */}
+            <div>
+              <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-2">
+                <span>Size: <strong className="text-[#2D5A27]">{selectedSize}</strong></span>
+                <span className="text-[10px] font-mono text-[#BC5A36] cursor-pointer hover:underline">Fit Guide</span>
+              </div>
+              <div className="flex items-center gap-2">
+                {(product.sizes || ['S', 'M', 'L', 'XL', 'XXL']).map((sz) => (
+                  <button
+                    key={sz}
+                    onClick={() => setSelectedSize(sz)}
+                    className={`min-w-10 h-10 px-2 rounded-xl text-xs font-mono font-bold uppercase transition-all cursor-pointer ${
+                      selectedSize === sz
+                        ? 'bg-[#2D231E] text-white shadow-sm scale-105'
+                        : 'bg-white border border-[#D9D3C7] text-[#2D231E] hover:border-[#2D5A27]'
+                    }`}
+                  >
+                    {sz}
+                  </button>
+                ))}
+              </div>
             </div>
 
+            {/* 3. Quantity Selector */}
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-bold uppercase tracking-wider">Quantity:</span>
+              <div className="flex items-center border border-[#D9D3C7] bg-white rounded-xl overflow-hidden font-mono text-xs shadow-2xs">
+                <button 
+                  onClick={() => setQuantity(q => Math.max(1, q - 1))}
+                  className="px-3 py-1.5 hover:bg-[#FAF8F5] text-[#2D231E] font-bold cursor-pointer transition-colors"
+                >
+                  -
+                </button>
+                <span className="px-3.5 py-1.5 font-bold min-w-8 text-center">{quantity}</span>
+                <button 
+                  onClick={() => setQuantity(q => q + 1)}
+                  className="px-3 py-1.5 hover:bg-[#FAF8F5] text-[#2D231E] font-bold cursor-pointer transition-colors"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          {/* Bottom Actions: Add to Bag Button & Trust Badges */}
+          <div className="mt-6 pt-5 border-t border-[#D9D3C7] space-y-3">
+            <button
+              onClick={handleAdd}
+              disabled={!product.inStock}
+              className={`w-full py-4 rounded-2xl font-mono font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer ${
+                product.inStock 
+                  ? addedAnimation 
+                    ? 'bg-emerald-600 text-white' 
+                    : 'bg-[#2D5A27] hover:bg-[#23471E] text-white shadow-[#2D5A27]/25'
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
+            >
+              <ShoppingBag size={16} />
+              <span>
+                {product.inStock 
+                  ? addedAnimation 
+                    ? 'Added to Bag! ✓' 
+                    : `Add to Bag • $${(((typeof product.price === 'number' ? product.price : 59.99)) * quantity).toFixed(2)}`
+                  : 'Sold Out'}
+              </span>
+            </button>
+
+            {/* Micro Trust Perks */}
+            <div className="grid grid-cols-2 gap-2 text-[10px] font-mono text-[#6B5E55] pt-1">
+              <div className="flex items-center gap-1.5">
+                <Truck size={12} className="text-[#2D5A27]" />
+                <span>Free Express Shipping</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <ShieldCheck size={12} className="text-[#2D5A27]" />
+                <span>Authentic MatchA Garment</span>
+              </div>
+            </div>
           </div>
 
         </div>

@@ -3,7 +3,14 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import ScrollProgressTracker from './ScrollProgressTracker';
 
-export default function Layout({ children, cartCount = 0, onOpenCart, onNavigate, onGoToLanding }) {
+export default function Layout({ 
+  children, 
+  cartCount = 0, 
+  onOpenCart, 
+  onNavigate, 
+  onGoToLanding,
+  currentPage = 'home'
+}) {
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#2D231E] flex flex-col font-sans selection:bg-[#2D5A27] selection:text-white relative">
       
@@ -16,6 +23,7 @@ export default function Layout({ children, cartCount = 0, onOpenCart, onNavigate
         onOpenCart={onOpenCart} 
         onNavigate={onNavigate}
         onGoToLanding={onGoToLanding}
+        currentPage={currentPage}
       />
 
       {/* Main Page Content */}
