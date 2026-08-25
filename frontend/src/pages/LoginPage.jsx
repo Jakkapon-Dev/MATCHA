@@ -1,6 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, Sparkles, ShieldCheck, ArrowRight, UserCheck, CheckCircle2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Sparkles, ShieldCheck, ArrowRight, Shield, User, CheckCircle2, KeyRound } from 'lucide-react';
+
+const DEMO_ACCOUNTS = {
+  admin: {
+    name: 'MatchA Admin',
+    email: 'admin@matcha.vip',
+    password: 'admin1234',
+    role: 'Admin',
+    badge: '👑 ADMIN',
+  },
+  member: {
+    name: 'Alex Collector',
+    email: 'member@matcha.vip',
+    password: 'user1234',
+    role: 'Member',
+    badge: '🟢 VIP MEMBER',
+  },
+};
 
 export default function LoginPage({ onLoginSuccess }) {
   const navigate = useNavigate();
@@ -30,10 +47,19 @@ export default function LoginPage({ onLoginSuccess }) {
 
     setTimeout(() => {
       setIsLoading(false);
+
+      let userRole = 'Member';
+      let userName = email.split('@')[0].replace(/[._-]/g, ' ') || 'MatchA Collector';
+
+      if (email.toLowerCase().includes('admin')) {
+        userRole = 'Admin';
+        userName = 'MatchA Admin';
+      }
+
       const user = {
-        name: email.split('@')[0].replace(/[._-]/g, ' ') || 'MatchA Member',
+        name: userName,
         email: email.trim(),
-        role: 'VIP Collector',
+        role: userRole,
         avatar: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80`,
       };
 
@@ -43,7 +69,7 @@ export default function LoginPage({ onLoginSuccess }) {
         sessionStorage.setItem('matcha_user', JSON.stringify(user));
       }
 
-      setSuccessMsg('Welcome back to MatchA Archive! ✨');
+      setSuccessMsg(`Welcome back, ${user.name}! (${user.role}) ✨`);
 
       if (onLoginSuccess) {
         onLoginSuccess(user);
@@ -53,12 +79,16 @@ export default function LoginPage({ onLoginSuccess }) {
         navigate('/');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 1000);
-    }, 900);
+    }, 850);
   };
 
-  const handleQuickDemoLogin = () => {
-    setEmail('alex.matcha@vip.com');
-    setPassword('Matcha2026!');
+  const handleFillDemo = (type) => {
+    const acc = DEMO_ACCOUNTS[type];
+    if (acc) {
+      setEmail(acc.email);
+      setPassword(acc.password);
+      setErrorMsg('');
+    }
   };
 
   const handleSendReset = (e) => {
@@ -85,7 +115,7 @@ export default function LoginPage({ onLoginSuccess }) {
         <div className="bg-white border border-[#D9D3C7] rounded-3xl p-6 sm:p-8 shadow-xl shadow-[#2D231E]/5 transition-all">
           
           {/* Header Branding */}
-          <div className="text-center mb-7">
+          <div className="text-center mb-6">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#2D231E] text-[#D0DEC6] text-[10px] font-mono font-bold tracking-widest uppercase rounded-full shadow-xs mb-3">
               <Sparkles size={11} className="text-[#BC5A36]" />
               <span>MatchA Collective • VIP Portal</span>
@@ -97,6 +127,47 @@ export default function LoginPage({ onLoginSuccess }) {
             <p className="text-xs text-[#6B5E55] mt-1.5 font-mono">
               Sign in to access your seasonal drops, orders & VIP perks.
             </p>
+          </div>
+
+          {/* Quick Demo Credentials Box */}
+          <div className="mb-6 p-4 rounded-2xl bg-[#FAF8F5] border border-[#D9D3C7] space-y-2.5">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#2D5A27] flex items-center gap-1">
+                <KeyRound size={12} />
+                Quick Demo Logins
+              </span>
+              <span className="text-[10px] font-mono text-[#6B5E55]">Click to auto-fill:</span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              {/* Admin Demo Button */}
+              <button
+                type="button"
+                onClick={() => handleFillDemo('admin')}
+                className="p-2.5 rounded-xl border border-[#D9D3C7] hover:border-[#BC5A36] bg-white hover:bg-[#BC5A36]/5 text-left transition-all cursor-pointer shadow-2xs group"
+              >
+                <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#BC5A36]">
+                  <span>👑</span>
+                  <span>Admin</span>
+                </div>
+                <p className="text-[10px] font-mono text-[#6B5E55] mt-0.5 truncate">admin@matcha.vip</p>
+                <p className="text-[9px] font-mono text-[#2D231E]/60">pass: admin1234</p>
+              </button>
+
+              {/* Member Demo Button */}
+              <button
+                type="button"
+                onClick={() => handleFillDemo('member')}
+                className="p-2.5 rounded-xl border border-[#D9D3C7] hover:border-[#2D5A27] bg-white hover:bg-[#2D5A27]/5 text-left transition-all cursor-pointer shadow-2xs group"
+              >
+                <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#2D5A27]">
+                  <span>👤</span>
+                  <span>Member</span>
+                </div>
+                <p className="text-[10px] font-mono text-[#6B5E55] mt-0.5 truncate">member@matcha.vip</p>
+                <p className="text-[9px] font-mono text-[#2D231E]/60">pass: user1234</p>
+              </button>
+            </div>
           </div>
 
           {/* Error / Success Notifications */}
@@ -174,7 +245,7 @@ export default function LoginPage({ onLoginSuccess }) {
               </div>
             </div>
 
-            {/* Remember Me & Quick Demo Fill */}
+            {/* Remember Me Checkbox */}
             <div className="flex items-center justify-between pt-1">
               <label className="flex items-center gap-2 text-xs font-mono text-[#2D231E] cursor-pointer select-none">
                 <input
@@ -185,15 +256,6 @@ export default function LoginPage({ onLoginSuccess }) {
                 />
                 <span>Remember me</span>
               </label>
-
-              <button
-                type="button"
-                onClick={handleQuickDemoLogin}
-                className="text-[11px] font-mono text-[#2D5A27] hover:text-[#1F3D1A] underline cursor-pointer"
-                title="Auto-fill demo test credentials"
-              >
-                Auto-fill Demo
-              </button>
             </div>
 
             {/* Submit Button */}
