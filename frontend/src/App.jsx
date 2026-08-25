@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
 import Lenis from 'lenis';
 import { api } from './services/api';
 
@@ -21,19 +22,13 @@ const loadCart = () => {
 };
 
 export default function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [healthStatus, setHealthStatus] = useState(null);
   const [cartItems, setCartItems] = useState(loadCart);
   const [toast, setToast] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
-
-  // Page Routing State ('home' | 'catalog' | 'cart' | 'signup')
-  const [currentPage, setCurrentPage] = useState(() => {
-    const hash = window.location.hash.toLowerCase();
-    if (hash === '#catalog') return 'catalog';
-    if (hash === '#cart') return 'cart';
-    if (hash === '#signup') return 'signup';
-    return 'home';
-  });
   const [catalogCategory, setCatalogCategory] = useState('ALL');
 
   // Sync cart to localStorage
@@ -45,21 +40,17 @@ export default function App() {
     }
   }, [cartItems]);
 
-  // Sync hash routing
+  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup)
   useEffect(() => {
-    const handleHash = () => {
-      const hash = window.location.hash.toLowerCase();
-      if (hash === '#catalog') setCurrentPage('catalog');
-      else if (hash === '#cart') setCurrentPage('cart');
-      else if (hash === '#signup') setCurrentPage('signup');
-      else if (hash === '' || hash === '#brand-hero' || hash.startsWith('#')) {
-        if (hash === '#catalog' || hash === '#cart' || hash === '#signup') return;
-        setCurrentPage('home');
-      }
-    };
-    window.addEventListener('hashchange', handleHash);
-    return () => window.removeEventListener('hashchange', handleHash);
-  }, []);
+    const hash = window.location.hash.toLowerCase();
+    if (hash === '#catalog' && location.pathname !== '/catalog') {
+      navigate('/catalog', { replace: true });
+    } else if (hash === '#cart' && location.pathname !== '/cart') {
+      navigate('/cart', { replace: true });
+    } else if (hash === '#signup' && location.pathname !== '/signup') {
+      navigate('/signup', { replace: true });
+    }
+  }, [location.pathname, navigate]);
 
   // Initialize Lenis Smooth Scroll
   useEffect(() => {
@@ -144,47 +135,47 @@ export default function App() {
   };
 
   const handleOpenCart = () => {
-    setCurrentPage('cart');
-    window.location.hash = '#cart';
+    navigate('/cart');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleGoToHome = () => {
-    setCurrentPage('home');
-    window.location.hash = '#brand-hero';
+    navigate('/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleNavigate = (href) => {
-    if (href === '#catalog') {
-      setCurrentPage('catalog');
-      window.location.hash = '#catalog';
+  const handleNavigate = (pathOrHash) => {
+    if (pathOrHash === '/catalog' || pathOrHash === '#catalog') {
+      navigate('/catalog');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
-    if (href === '#cart') {
+    if (pathOrHash === '/cart' || pathOrHash === '#cart') {
       handleOpenCart();
       return;
     }
-    if (href === '#signup') {
-      setCurrentPage('signup');
-      window.location.hash = '#signup';
+    if (pathOrHash === '/signup' || pathOrHash === '#signup') {
+      navigate('/signup');
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
-    if (currentPage !== 'home') {
-      setCurrentPage('home');
-      window.location.hash = href;
-      setTimeout(() => {
-        const el = document.querySelector(href);
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+    // Anchor hash links like #fit-guide or #street-favorites
+    if (pathOrHash.startsWith('#')) {
+      if (location.pathname !== '/') {
+        navigate('/' + pathOrHash);
+        setTimeout(() => {
+          const el = document.querySelector(pathOrHash);
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 150);
+        return;
+      }
+      const el = document.querySelector(pathOrHash);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
       return;
     }
 
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: 'smooth' });
+    navigate(pathOrHash);
   };
 
   const handleSelectFit = (fit) => {
@@ -199,13 +190,12 @@ export default function App() {
     } else {
       setCatalogCategory('ALL');
     }
-    setCurrentPage('catalog');
+    navigate('/catalog');
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    window.location.hash = '#catalog';
   };
 
   const handleClaimPromo = () => {
-    showToast(`Claimed 15% discount for 2+ items! 🎉`);
+    showToast(`Claimed 15% discount code MATCHA15 applied at checkout! 🎉`);
   };
 
   const handleSubscribe = (email) => {
@@ -234,46 +224,70 @@ export default function App() {
         />
       )}
 
-      {/* Main Experience: Direct Master Lookbook & Store Catalog */}
+      {/* Main Experience Layout */}
       <Layout 
         cartCount={cartItems.length}
-        currentPage={currentPage}
+        currentPage={location.pathname === '/catalog' ? 'catalog' : location.pathname === '/cart' ? 'cart' : location.pathname === '/signup' ? 'signup' : 'home'}
         onOpenCart={handleOpenCart}
         onNavigate={handleNavigate}
         onGoToLanding={handleGoToHome}
       >
-        {currentPage === 'catalog' ? (
-          <CatalogPage 
-            initialCategory={catalogCategory}
-            onBackToHome={handleGoToHome}
-            onAddToCart={handleAddToCart}
-            onQuickView={(prod) => setSelectedProduct(prod)}
-            onSelectFit={handleSelectFit}
+        <Routes>
+          {/* 1. Home Page */}
+          <Route 
+            path="/" 
+            element={
+              <HomePage 
+                onSelectFit={handleSelectFit}
+                onClaimPromo={handleClaimPromo}
+                onAddToCart={handleAddToCart}
+                onQuickView={(prod) => setSelectedProduct(prod)}
+                onExploreWarehouse={() => {
+                  navigate('/catalog');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                onSubscribe={handleSubscribe}
+              />
+            } 
           />
-        ) : currentPage === 'cart' ? (
-          <CartPage 
-            cartItems={cartItems}
-            onUpdateQty={handleUpdateQty}
-            onRemove={handleRemoveItem}
-            onBackToStore={handleGoToHome}
-            onCheckout={handleCheckout}
+
+          {/* 2. Catalog Grid Page */}
+          <Route 
+            path="/catalog" 
+            element={
+              <CatalogPage 
+                initialCategory={catalogCategory}
+                onBackToHome={handleGoToHome}
+                onAddToCart={handleAddToCart}
+                onQuickView={(prod) => setSelectedProduct(prod)}
+                onSelectFit={handleSelectFit}
+              />
+            } 
           />
-        ) : currentPage === 'signup' ? (
-          <SignUpPage onBackToStore={handleGoToHome} />
-        ) : (
-          <HomePage 
-            onSelectFit={handleSelectFit}
-            onClaimPromo={handleClaimPromo}
-            onAddToCart={handleAddToCart}
-            onQuickView={(prod) => setSelectedProduct(prod)}
-            onExploreWarehouse={() => {
-              setCurrentPage('catalog');
-              window.location.hash = '#catalog';
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
-            onSubscribe={handleSubscribe}
+
+          {/* 3. Shopping Cart Page */}
+          <Route 
+            path="/cart" 
+            element={
+              <CartPage 
+                cartItems={cartItems}
+                onUpdateQty={handleUpdateQty}
+                onRemove={handleRemoveItem}
+                onBackToStore={handleGoToHome}
+                onCheckout={handleCheckout}
+              />
+            } 
           />
-        )}
+
+          {/* 4. Sign Up Page */}
+          <Route 
+            path="/signup" 
+            element={<SignUpPage onBackToStore={handleGoToHome} />} 
+          />
+
+          {/* Fallback */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </Layout>
 
     </div>
