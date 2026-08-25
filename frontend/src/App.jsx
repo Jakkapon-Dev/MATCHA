@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage';
 import CatalogPage from './pages/CatalogPage';
 import CartPage from './pages/CartPage';
 import SignUpPage from './pages/SignUpPage';
+import Payment from './pages/Payment';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
 
@@ -40,7 +41,7 @@ export default function App() {
     }
   }, [cartItems]);
 
-  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup)
+  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup, #payment -> /payment)
   useEffect(() => {
     const hash = window.location.hash.toLowerCase();
     if (hash === '#catalog' && location.pathname !== '/catalog') {
@@ -49,6 +50,8 @@ export default function App() {
       navigate('/cart', { replace: true });
     } else if (hash === '#signup' && location.pathname !== '/signup') {
       navigate('/signup', { replace: true });
+    } else if (hash === '#payment' && location.pathname !== '/payment') {
+      navigate('/payment', { replace: true });
     }
   }, [location.pathname, navigate]);
 
@@ -128,10 +131,13 @@ export default function App() {
     showToast('Removed item from cart 🗑️');
   };
 
-  const handleCheckout = () => {
-    const count = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
-    setCartItems([]);
-    showToast(`Order placed! ${count} items on the way ✨`);
+  const handleProceedToPayment = () => {
+    if (cartItems.length === 0) {
+      showToast('Your cart is empty! Add items first. 🛍️');
+      return;
+    }
+    navigate('/payment');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleOpenCart = () => {
@@ -157,6 +163,10 @@ export default function App() {
     if (pathOrHash === '/signup' || pathOrHash === '#signup') {
       navigate('/signup');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (pathOrHash === '/payment' || pathOrHash === '#payment') {
+      handleProceedToPayment();
       return;
     }
 
@@ -227,7 +237,13 @@ export default function App() {
       {/* Main Experience Layout */}
       <Layout 
         cartCount={cartItems.length}
-        currentPage={location.pathname === '/catalog' ? 'catalog' : location.pathname === '/cart' ? 'cart' : location.pathname === '/signup' ? 'signup' : 'home'}
+        currentPage={
+          location.pathname === '/catalog' ? 'catalog' : 
+          location.pathname === '/cart' ? 'cart' : 
+          location.pathname === '/signup' ? 'signup' : 
+          location.pathname === '/payment' ? 'payment' : 
+          'home'
+        }
         onOpenCart={handleOpenCart}
         onNavigate={handleNavigate}
         onGoToLanding={handleGoToHome}
@@ -274,12 +290,23 @@ export default function App() {
                 onUpdateQty={handleUpdateQty}
                 onRemove={handleRemoveItem}
                 onBackToStore={handleGoToHome}
-                onCheckout={handleCheckout}
+                onCheckout={handleProceedToPayment}
               />
             } 
           />
 
-          {/* 4. Sign Up Page */}
+          {/* 4. Payment / Checkout Page (From Pete) */}
+          <Route 
+            path="/payment" 
+            element={
+              <Payment 
+                cartItems={cartItems}
+                onUpdateCart={setCartItems}
+              />
+            } 
+          />
+
+          {/* 5. Sign Up Page */}
           <Route 
             path="/signup" 
             element={<SignUpPage onBackToStore={handleGoToHome} />} 
