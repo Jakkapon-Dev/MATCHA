@@ -202,7 +202,7 @@ export default function LoginPage({ onLoginSuccess }) {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@domain.com"
-                  className="w-full pl-10 pr-4 py-3 bg-[#FAF8F5] border border-[#D9D3C7] rounded-xl text-sm text-[#2D231E] placeholder-[#6B5E55]/60 focus:bg-white focus:border-[#2D5A27] focus:ring-2 focus:ring-[#2D5A27]/20 focus:outline-none transition-all font-mono"
+                  className="w-full pl-10 pr-4 py-3 bg-matcha-bg border border-matcha-border rounded-xl text-sm text-matcha-text placeholder-matcha-muted/60 focus:bg-white focus:border-matcha-primary focus:ring-2 focus:ring-matcha-primary/20 focus:outline-none transition-all font-mono"
                   required
                 />
               </div>
@@ -231,7 +231,7 @@ export default function LoginPage({ onLoginSuccess }) {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full pl-10 pr-11 py-3 bg-[#FAF8F5] border border-[#D9D3C7] rounded-xl text-sm text-[#2D231E] placeholder-[#6B5E55]/60 focus:bg-white focus:border-[#2D5A27] focus:ring-2 focus:ring-[#2D5A27]/20 focus:outline-none transition-all font-mono"
+                  className="w-full pl-10 pr-11 py-3 bg-matcha-bg border border-matcha-border rounded-xl text-sm text-matcha-text placeholder-matcha-muted/60 focus:bg-white focus:border-matcha-primary focus:ring-2 focus:ring-matcha-primary/20 focus:outline-none transition-all font-mono"
                   required
                 />
                 <button
@@ -262,7 +262,7 @@ export default function LoginPage({ onLoginSuccess }) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-3 py-3.5 bg-[#2D5A27] hover:bg-[#23471E] active:scale-[0.98] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-[#2D5A27]/25 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full mt-3 py-3.5 bg-[#2D5A27] hover:bg-[#23471E] active:scale-[0.98] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-[#2D5A27]/25 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
             >
               {isLoading ? (
                 <>
@@ -354,7 +354,7 @@ export default function LoginPage({ onLoginSuccess }) {
                   value={forgotEmail}
                   onChange={(e) => setForgotEmail(e.target.value)}
                   placeholder="name@domain.com"
-                  className="w-full px-3.5 py-2.5 bg-[#FAF8F5] border border-[#D9D3C7] rounded-xl text-xs font-mono focus:outline-none focus:border-[#2D5A27]"
+                  className="w-full px-3.5 py-2.5 bg-matcha-bg border border-matcha-border rounded-xl text-xs font-mono focus:outline-none focus:border-matcha-primary focus:ring-1 focus:ring-matcha-primary"
                   required
                 />
                 <div className="flex gap-2 pt-2">

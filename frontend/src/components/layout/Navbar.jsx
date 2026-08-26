@@ -141,7 +141,7 @@ export default function Navbar({
               <div className="hidden lg:flex items-center gap-2 font-mono">
                 <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#D0DEC6]/50 border border-[#2D5A27]/30 rounded-xl text-xs font-bold text-[#2D5A27]">
                   <span className="w-2 h-2 rounded-full bg-[#2D5A27] animate-pulse" />
-                  <span className="truncate max-w-[120px]">{currentUser.name}</span>
+                  <span className="truncate max-w-30">{currentUser.name}</span>
                 </div>
                 <button
                   onClick={onLogout}

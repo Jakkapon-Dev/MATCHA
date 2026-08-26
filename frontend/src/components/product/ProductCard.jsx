@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Heart, ShoppingBag, Eye, Star, Check } from 'lucide-react';
+import { handleImageError } from '../../utils/imageFallback';
+import { useCart } from '../../context/CartContext';
 
 export default function ProductCard({ 
   product, 
@@ -18,6 +20,7 @@ export default function ProductCard({
         }
       ];
 
+  const { addToCart: contextAddToCart } = useCart();
   const [activeVariant, setActiveVariant] = useState(variants[0]);
   const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || 'M');
   const [isHovered, setIsHovered] = useState(false);
@@ -48,15 +51,19 @@ export default function ProductCard({
     setJustAdded(true);
     setTimeout(() => setJustAdded(false), 800);
 
+    const itemToAdd = {
+      ...product,
+      image: activeVariant.image,
+      color: activeVariant.color,
+      colorHex: activeVariant.colorHex,
+      size: selectedSize,
+      quantity: 1
+    };
+
     if (onAddToCart) {
-      onAddToCart({
-        ...product,
-        image: activeVariant.image,
-        color: activeVariant.color,
-        colorHex: activeVariant.colorHex,
-        size: selectedSize,
-        quantity: 1
-      });
+      onAddToCart(itemToAdd);
+    } else if (contextAddToCart) {
+      contextAddToCart(itemToAdd);
     }
   };
 
@@ -80,6 +87,7 @@ export default function ProductCard({
         <img
           src={activeVariant.image}
           alt={`${product.name} - ${activeVariant.color}`}
+          onError={handleImageError}
           className={`w-full h-full object-cover object-top transition-all duration-500 group-hover:scale-105 ${
             imageFade ? 'opacity-40 scale-98' : 'opacity-100 scale-100'
           }`}
@@ -188,7 +196,7 @@ export default function ProductCard({
           <div className="bg-[#FAF8F5] p-2.5 rounded-2xl border border-[#D9D3C7] my-2">
             <div className="flex items-center justify-between text-[11px] font-mono mb-2 px-0.5">
               <span className="font-bold text-[#2D231E] uppercase">Color Tone:</span>
-              <span className="text-[#2D5A27] font-bold truncate max-w-[120px]">{activeVariant.color}</span>
+              <span className="text-[#2D5A27] font-bold truncate max-w-30">{activeVariant.color}</span>
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               {variants.map((v, i) => {

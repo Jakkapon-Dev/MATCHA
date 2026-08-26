@@ -13,52 +13,24 @@ import UserAccount from './pages/UserAccount';
 import Layout from './components/layout/Layout';
 import ProductModal from './components/product/ProductModal';
 
-const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color || 'default'}`;
+// Context Providers and Hooks
+import { ToastProvider, useToast, AuthProvider, useAuth, CartProvider, useCart } from './context';
 
-const loadCart = () => {
-  try {
-    const saved = localStorage.getItem('matcha_cart');
-    return saved ? JSON.parse(saved) : [];
-  } catch {
-    return [];
-  }
-};
-
-const loadUser = () => {
-  try {
-    const saved = localStorage.getItem('matcha_user') || sessionStorage.getItem('matcha_user');
-    return saved ? JSON.parse(saved) : null;
-  } catch {
-    return null;
-  }
-};
-
-export default function App() {
+function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Context Hooks
+  const { cartItems, setCartItems, addToCart, updateQty, removeItem, cartCount } = useCart();
+  const { currentUser, login, logout } = useAuth();
+  const { showToast } = useToast();
+
+  // Local UI States
   const [healthStatus, setHealthStatus] = useState(null);
-  const [cartItems, setCartItems] = useState(loadCart);
-  const [currentUser, setCurrentUser] = useState(loadUser);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [catalogCategory, setCatalogCategory] = useState('ALL');
-  const [toast, setToast] = useState(null);
 
-  const showToast = (message) => {
-    setToast(message);
-    setTimeout(() => setToast(null), 3500);
-  };
-
-  // Sync cart to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem('matcha_cart', JSON.stringify(cartItems));
-    } catch (e) {
-      console.error('Failed to save cart to localStorage', e);
-    }
-  }, [cartItems]);
-
-  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup, #login -> /login, #payment -> /payment, #account -> /account)
+  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup, etc.)
   useEffect(() => {
     const hash = window.location.hash.toLowerCase();
     if (hash === '#catalog' && location.pathname !== '/catalog') {
@@ -102,6 +74,7 @@ export default function App() {
     };
   }, []);
 
+  // Health check
   useEffect(() => {
     async function loadHealth() {
       try {
@@ -113,36 +86,6 @@ export default function App() {
     }
     loadHealth();
   }, []);
-
-  const handleAddToCart = (product) => {
-    const amount = product.quantity || 1;
-    setCartItems((prev) => {
-      const key = getCartKey(product);
-      const idx = prev.findIndex((item) => getCartKey(item) === key);
-      if (idx > -1) {
-        const next = [...prev];
-        next[idx] = { ...next[idx], quantity: (next[idx].quantity || 1) + amount };
-        return next;
-      }
-      return [...prev, { ...product, quantity: amount }];
-    });
-  };
-
-  const handleUpdateQty = (key, delta) => {
-    setCartItems((prev) =>
-      prev
-        .map((item) =>
-          getCartKey(item) === key
-            ? { ...item, quantity: (item.quantity || 1) + delta }
-            : item
-        )
-        .filter((item) => (item.quantity || 1) > 0)
-    );
-  };
-
-  const handleRemoveItem = (key) => {
-    setCartItems((prev) => prev.filter((item) => getCartKey(item) !== key));
-  };
 
   const handleProceedToPayment = () => {
     if (cartItems.length === 0) return;
@@ -156,14 +99,6 @@ export default function App() {
   };
 
   const handleGoToHome = () => {
-    navigate('/');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('matcha_user');
-    sessionStorage.removeItem('matcha_user');
-    setCurrentUser(null);
     navigate('/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -190,6 +125,11 @@ export default function App() {
     }
     if (pathOrHash === '/payment' || pathOrHash === '#payment') {
       handleProceedToPayment();
+      return;
+    }
+    if (pathOrHash === '/account' || pathOrHash === '#account') {
+      navigate('/account');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
@@ -229,30 +169,20 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#2D231E] font-sans selection:bg-[#2D5A27] selection:text-white relative">
       
-      {/* Interactive Toast Notification */}
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-50 animate-bounce pointer-events-none">
-          <div className="py-3 px-5 rounded-2xl bg-[#2D231E] text-[#FAF8F5] border border-[#3D312A] font-bold text-xs shadow-2xl flex items-center gap-2">
-            <span className="text-[#BC5A36]">✨</span>
-            {toast}
-          </div>
-        </div>
-      )}
-
       {/* Product Customizer & Quick View Modal */}
       {selectedProduct && (
         <ProductModal
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
-          onAddToCart={handleAddToCart}
+          onAddToCart={addToCart}
         />
       )}
 
       {/* Main Experience Layout */}
       <Layout
-        cartCount={cartItems.length}
+        cartCount={cartCount}
         currentUser={currentUser}
-        onLogout={handleLogout}
+        onLogout={logout}
         currentPage={
           location.pathname === '/catalog' ? 'catalog' : 
           location.pathname === '/cart' ? 'cart' : 
@@ -274,7 +204,7 @@ export default function App() {
               <HomePage
                 onSelectFit={handleSelectFit}
                 onClaimPromo={() => showToast('Claimed 15% discount code MATCHA15! 🎉')}
-                onAddToCart={handleAddToCart}
+                onAddToCart={addToCart}
                 onQuickView={(prod) => setSelectedProduct(prod)}
                 onExploreWarehouse={() => {
                   navigate('/catalog');
@@ -292,7 +222,7 @@ export default function App() {
               <CatalogPage
                 initialCategory={catalogCategory}
                 onBackToHome={handleGoToHome}
-                onAddToCart={handleAddToCart}
+                onAddToCart={addToCart}
                 onQuickView={(prod) => setSelectedProduct(prod)}
                 onSelectFit={handleSelectFit}
               />
@@ -305,8 +235,8 @@ export default function App() {
             element={
               <CartPage
                 cartItems={cartItems}
-                onUpdateQty={handleUpdateQty}
-                onRemove={handleRemoveItem}
+                onUpdateQty={updateQty}
+                onRemove={removeItem}
                 onBackToStore={handleGoToHome}
                 onCheckout={handleProceedToPayment}
               />
@@ -330,8 +260,7 @@ export default function App() {
             element={
               <LoginPage 
                 onLoginSuccess={(user) => {
-                  setCurrentUser(user);
-                  showToast(`Welcome back, ${user.name || user.email}! 👋`);
+                  login(user);
                 }} 
               />
             } 
@@ -348,12 +277,13 @@ export default function App() {
             path="/account"
             element={
               <UserAccount
-                cartCount={cartItems.length}
+                cartCount={cartCount}
                 onOpenCart={handleOpenCart}
                 onNavigate={handleNavigate}
                 onGoToLanding={handleGoToHome}
                 user={currentUser}
-                onAddToCart={handleAddToCart}
+                onAddToCart={addToCart}
+                onLogout={logout}
               />
             }
           />
@@ -364,5 +294,17 @@ export default function App() {
       </Layout>
 
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ToastProvider>
+      <AuthProvider>
+        <CartProvider>
+          <AppContent />
+        </CartProvider>
+      </AuthProvider>
+    </ToastProvider>
   );
 }
