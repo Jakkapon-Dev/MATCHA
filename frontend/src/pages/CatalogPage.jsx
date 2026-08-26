@@ -4,7 +4,7 @@ import { api } from '../services/api';
 import ProductCard from '../components/product/ProductCard';
 import ProductCardSkeleton from '../components/ui/ProductCardSkeleton';
 import EmptyState from '../components/ui/EmptyState';
-import CatalogFilterDrawer from '../components/catalog/CatalogFilterDrawer';
+import TopFilterBar from '../components/catalog/TopFilterBar';
 import CatalogToolbar from '../components/catalog/CatalogToolbar';
 import CatalogPagination from '../components/catalog/CatalogPagination';
 
@@ -32,7 +32,6 @@ export default function CatalogPage({
   const [sortBy, setSortBy] = useState('featured');
 
   // UI States
-  const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [gridCols, setGridCols] = useState(3); // 2, 3, 4, or 'list'
 
   // Pagination State
@@ -189,12 +188,31 @@ export default function CatalogPage({
           categories={categories}
           selectedCategory={selectedCategory}
           onSelectCategory={setSelectedCategory}
-          onOpenFilterDrawer={() => setFilterDrawerOpen(true)}
           activeFilterCount={activeFilterCount}
           sortBy={sortBy}
           onSortChange={setSortBy}
           gridCols={gridCols}
           onGridChange={setGridCols}
+          totalResults={totalItems}
+        />
+
+        {/* Top Horizontal Pill Dropdowns Filter Bar (Apple / COS style) */}
+        <TopFilterBar
+          seasonOptions={seasonOptions}
+          selectedSeason={selectedSeason}
+          onSelectSeason={setSelectedSeason}
+          colorOptions={colorOptions}
+          selectedColor={selectedColor}
+          onSelectColor={setSelectedColor}
+          fitOptions={fitOptions}
+          selectedFit={selectedFit}
+          onSelectFit={setSelectedFit}
+          priceRange={priceRange}
+          onChangePrice={setPriceRange}
+          inStockOnly={inStockOnly}
+          onToggleInStock={() => setInStockOnly(!inStockOnly)}
+          onResetFilters={handleResetFilters}
+          activeFilterCount={activeFilterCount}
           totalResults={totalItems}
         />
 
@@ -204,28 +222,33 @@ export default function CatalogPage({
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-bold text-[#2D5A27]">Active Filters ({activeFilterCount}):</span>
               {selectedSeason !== 'ALL' && (
-                <span className="px-2 py-0.5 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E]">
-                  Season: {selectedSeason}
+                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E] flex items-center gap-1.5 shadow-2xs">
+                  <span>Season: {selectedSeason}</span>
+                  <button onClick={() => setSelectedSeason('ALL')} className="text-[#BC5A36] hover:text-[#2D231E] cursor-pointer">×</button>
                 </span>
               )}
               {selectedColor !== 'ALL' && (
-                <span className="px-2 py-0.5 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E]">
-                  Color: {selectedColor}
+                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E] flex items-center gap-1.5 shadow-2xs">
+                  <span>Color: {selectedColor}</span>
+                  <button onClick={() => setSelectedColor('ALL')} className="text-[#BC5A36] hover:text-[#2D231E] cursor-pointer">×</button>
                 </span>
               )}
               {selectedFit !== 'ALL' && (
-                <span className="px-2 py-0.5 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E]">
-                  Fit: {selectedFit}
+                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E] flex items-center gap-1.5 shadow-2xs">
+                  <span>Fit: {selectedFit}</span>
+                  <button onClick={() => setSelectedFit('ALL')} className="text-[#BC5A36] hover:text-[#2D231E] cursor-pointer">×</button>
                 </span>
               )}
               {priceRange < 200 && (
-                <span className="px-2 py-0.5 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E]">
-                  Max: ${priceRange}
+                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E] flex items-center gap-1.5 shadow-2xs">
+                  <span>Max: ${priceRange}</span>
+                  <button onClick={() => setPriceRange(200)} className="text-[#BC5A36] hover:text-[#2D231E] cursor-pointer">×</button>
                 </span>
               )}
               {inStockOnly && (
-                <span className="px-2 py-0.5 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E]">
-                  In Stock Only
+                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E] flex items-center gap-1.5 shadow-2xs">
+                  <span>In Stock Only</span>
+                  <button onClick={() => setInStockOnly(false)} className="text-[#BC5A36] hover:text-[#2D231E] cursor-pointer">×</button>
                 </span>
               )}
             </div>
@@ -280,28 +303,6 @@ export default function CatalogPage({
             endIndex={endIndex}
           />
         )}
-
-        {/* Slide-out Facet Filter Drawer */}
-        <CatalogFilterDrawer
-          isOpen={filterDrawerOpen}
-          onClose={() => setFilterDrawerOpen(false)}
-          seasonOptions={seasonOptions}
-          selectedSeason={selectedSeason}
-          onSelectSeason={setSelectedSeason}
-          colorOptions={colorOptions}
-          selectedColor={selectedColor}
-          onSelectColor={setSelectedColor}
-          fitOptions={fitOptions}
-          selectedFit={selectedFit}
-          onSelectFit={setSelectedFit}
-          priceRange={priceRange}
-          onChangePrice={setPriceRange}
-          inStockOnly={inStockOnly}
-          onToggleInStock={() => setInStockOnly(!inStockOnly)}
-          onResetFilters={handleResetFilters}
-          activeFilterCount={activeFilterCount}
-          totalResults={totalItems}
-        />
 
       </div>
     </div>
