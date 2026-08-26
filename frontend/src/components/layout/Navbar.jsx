@@ -36,9 +36,9 @@ export default function Navbar({
 
   const navLinks = [
     { label: 'Catalog', href: '/catalog' },
-    { label: 'Color Lab ✨', href: '/personal-color' },
+    { label: 'Color Lab', href: '/personal-color' },
     { label: 'Mix & Match', href: '/mix-match' },
-    { label: 'Lookbook 📸', href: '/lookbook' },
+    { label: 'Lookbook', href: '/lookbook' },
     { label: 'VIP Access', href: '#vip-drop' },
   ];
 
