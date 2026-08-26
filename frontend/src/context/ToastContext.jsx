@@ -18,18 +18,8 @@ export function ToastProvider({ children }) {
   }, []);
 
   return (
-    <ToastContext.Provider value={{ toast, showToast, hideToast }}>
+    <ToastContext.Provider value={{ toast: null, showToast: () => {}, hideToast: () => {} }}>
       {children}
-      
-      {/* Global Interactive Toast Notification */}
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-50 animate-bounce pointer-events-none">
-          <div className="py-3 px-5 rounded-2xl bg-[#2D231E] text-[#FAF8F5] border border-[#3D312A] font-bold text-xs shadow-2xl flex items-center gap-2">
-            <span className="text-[#BC5A36]">✨</span>
-            <span>{toast.message}</span>
-          </div>
-        </div>
-      )}
     </ToastContext.Provider>
   );
 }
