@@ -139,10 +139,16 @@ export default function Navbar({
             {/* Far Right: Desktop Auth Buttons or User Avatar */}
             {currentUser ? (
               <div className="hidden lg:flex items-center gap-2 font-mono">
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#D0DEC6]/50 border border-[#2D5A27]/30 rounded-xl text-xs font-bold text-[#2D5A27]">
-                  <span className="w-2 h-2 rounded-full bg-[#2D5A27] animate-pulse" />
-                  <span className="truncate max-w-30">{currentUser.name}</span>
-                </div>
+                <button
+                  onClick={() => handleLinkClick('/account')}
+                  className="flex items-center gap-2 px-3.5 py-2 bg-[#D0DEC6]/50 hover:bg-[#D0DEC6] border border-[#2D5A27]/30 hover:border-[#2D5A27] rounded-xl text-xs font-bold text-[#2D5A27] transition-all cursor-pointer shadow-2xs group"
+                  title="Go to My Account"
+                >
+                  <User size={14} className="text-[#2D5A27]" />
+                  <span className="font-mono text-xs font-bold tracking-wide uppercase">
+                    {currentUser.role === 'Admin' ? '👑 Admin Dashboard' : 'My Account'}
+                  </span>
+                </button>
                 <button
                   onClick={onLogout}
                   className="px-2.5 py-1.5 text-xs font-bold text-[#BC5A36] hover:bg-[#BC5A36]/10 rounded-lg transition-colors cursor-pointer"
@@ -191,15 +197,18 @@ export default function Navbar({
               {/* Mobile Auth Quick Buttons */}
               {currentUser ? (
                 <div className="flex items-center justify-between pb-3 border-b border-[#D9D3C7]">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-[#2D5A27] text-white flex items-center justify-center text-xs font-bold font-mono">
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); handleLinkClick('/account'); }}
+                    className="flex items-center gap-2 text-left cursor-pointer group"
+                  >
+                    <div className="w-8 h-8 rounded-full bg-[#2D5A27] text-white flex items-center justify-center text-xs font-bold font-mono group-hover:scale-105 transition-transform">
                       {currentUser.name?.charAt(0)?.toUpperCase() || 'M'}
                     </div>
                     <div>
-                      <p className="text-xs font-mono font-bold text-[#2D231E]">{currentUser.name}</p>
-                      <p className="text-[10px] font-mono text-[#6B5E55]">{currentUser.role || 'VIP Member'}</p>
+                      <p className="text-xs font-mono font-bold text-[#2D231E] group-hover:text-[#2D5A27]">{currentUser.name}</p>
+                      <p className="text-[10px] font-mono text-[#6B5E55]">{currentUser.role === 'Admin' ? '👑 Admin Dashboard' : '👤 My Account'}</p>
                     </div>
-                  </div>
+                  </button>
                   <button
                     onClick={() => { setMobileMenuOpen(false); onLogout(); }}
                     className="text-xs font-mono font-bold text-[#BC5A36] hover:underline cursor-pointer"
