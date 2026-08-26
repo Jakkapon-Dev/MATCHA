@@ -1,202 +1,612 @@
-# MatchA Full-Stack Codebase Reference Manual (Alldata.md)
+# MatchA Full-Stack Codebase Master Blueprint (Alldata.md)
 
-> **คู่มือรวบรวมตัวแปร, State, Context, Props, Data Models และโมดูลการทำงานหลักทุกหน้าของโปรเจกต์ MatchA**  
-> สถาปัตยกรรม: React 18 (Vite) + React Context API + Tailwind CSS v4 + Express.js + Lenis Smooth Scroll + Lucide Icons
+> **คู่มือรหัสโค้ด, ตารางตัวแปร, State, Props, Data Flow & Variable Traceability ฉบับสมบูรณ์**  
+> สถาปัตยกรรม: React 18 (Vite) · Tailwind CSS v4 · React Context API · Express.js · Lenis Smooth Scroll · Lucide Icons
 
 ---
 
 ## 📌 สารบัญ (Table of Contents)
-1. [สถาปัตยกรรมและ Data Flow รวม (System Overview)](#1-สถาปัตยกรรมและ-data-flow-รวม)
-2. [Global Context Architecture (`CartContext`, `AuthContext`, `ToastContext`)](#2-global-context-architecture)
-3. [Global Routing & Root (`App.jsx`)](#3-global-routing--root-appjsx)
-4. [หน้าหลัก Landing Page (`HomePage.jsx` & Sub-Components)](#4-หน้าหลัก-landing-page-homepagejsx)
-5. [หน้าแคตตาล็อกสินค้า (`CatalogPage.jsx` & `TopFilterBar.jsx`)](#5-หน้าแคตตาล็อกสินค้า-catalogpagejsx)
-6. [คอมโพเนนต์การ์ดและป๊อปอัปสินค้า (`ProductCard.jsx` & `ProductModal.jsx`)](#6-คอมโพเนนต์การ์ดและป๊อปอัปสินค้า)
-7. [หน้าตะกร้าสินค้า (`CartPage.jsx`)](#7-หน้าตะกร้าสินค้า-cartpagejsx)
-8. [หน้าชำระเงิน & เช็คเอาต์ (`Payment.jsx` & Sub-Components)](#8-หน้าชำระเงิน--เช็คเอาต์-paymentjsx)
-9. [หน้าระบบสมาชิก (`LoginPage.jsx` & `SignUpPage.jsx`)](#9-หน้าระบบสมาชิก-loginpagejsx--signuppagejsx)
-10. [หน้าโปรไฟล์ผู้ใช้ (`UserAccount.jsx` & Modular Tabs)](#10-หน้าโปรไฟล์ผู้ใช้-useraccountjsx)
-11. [หน้าผู้ดูแลระบบระดับสูง (`AdminPage.jsx` — Executive Dashboard)](#11-หน้าผู้ดูแลระบบระดับสูง-adminpagejsx)
-12. [โครงสร้าง Layout & Navigation (`Navbar.jsx`, `Footer.jsx`, `Layout.jsx`)](#12-โครงสร้าง-layout--navigation)
-13. [Service Layer, API Pipeline & Data Persistence](#13-service-layer-api-pipeline--data-persistence)
+1. [ภาพรวมสถาปัตยกรรม & แผนผัง Variable Data Flow](#1-ภาพรวมสถาปัตยกรรม--แผนผัง-variable-data-flow)
+2. [Global Context Layer (State ส่วนกลางของทั้งระบบ)](#2-global-context-layer)
+   - 2.1 [`CartContext.jsx`](#21-cartcontextjsx--ระบบจัดการตะกร้าสินค้าและคำนวณราคา) (ระบบตะกร้า, Compound Key & ราคารวม)
+   - 2.2 [`AuthContext.jsx`](#22-authcontextjsx--ระบบจัดการสถานะผู้ใช้และสิทธิ์-rbac) (ระบบยืนยันตัวตน, บทบาท Admin/VIP & Session)
+   - 2.3 [`ToastContext.jsx`](#23-toastcontextjsx--ระบบป๊อปอัปแจ้งเตือนส่วนกลาง) (ระบบป๊อปอัปแจ้งเตือนส่วนกลาง)
+3. [Root & Global Routing (`App.jsx` & `Layout.jsx`)](#3-root--global-routing-appjsx--layoutjsx)
+4. [หน้าแคตตาล็อกสินค้า & ตัวกรองแนวนอน (`CatalogPage.jsx` & `TopFilterBar.jsx`)](#4-หน้าแคตตาล็อกสินค้า--ตัวกรองแนวนอน)
+5. [คอมโพเนนต์การ์ดสินค้า & หน้าต่างพรีวิว (`ProductCard.jsx` & `ProductModal.jsx`)](#5-คอมโพเนนต์การ์ดสินค้า--หน้าต่างพรีวิว)
+6. [หน้าตะกร้าสินค้า & ตัววัดยอดส่งฟรี (`CartPage.jsx`)](#6-หน้าตะกร้าสินค้า--ตัววัดยอดส่งฟรี)
+7. [ระบบชำระเงิน & คำนวณส่วนลด (`Payment.jsx` & Sub-Components)](#7-ระบบชำระเงิน--คำนวณส่วนลด)
+8. [ระบบสมาชิก & โปรไฟล์ผู้ใช้ (`LoginPage.jsx` & `UserAccount.jsx`)](#8-ระบบสมาชิก--โปรไฟล์ผู้ใช้)
+9. [หน้าผู้ดูแลระบบระดับสูง (`AdminPage.jsx` — Executive Command Dashboard)](#9-หน้าผู้ดูแลระบบระดับสูง-adminpagejsx)
+10. [Service Layer & API Resilience (`api.js` & `productsData.js`)](#10-service-layer--api-resilience)
 
 ---
 
-## 1. สถาปัตยกรรมและ Data Flow รวม
+## 1. ภาพรวมสถาปัตยกรรม & แผนผัง Variable Data Flow
 
 ```mermaid
 graph TD
-    A[main.jsx: BrowserRouter] --> B[ToastProvider]
-    B --> C[AuthProvider]
-    C --> D[CartProvider]
-    D --> E[AppContent: Layout + Routes]
-    
-    E --> F1[HomePage.jsx: Hero + Lookbook + StreetFavorites + Perks]
-    E --> F2[CatalogPage.jsx: TopFilterBar + ProductGrid 4-Cols]
-    E --> F3[CartPage.jsx: Cart Table + Free Shipping Meter]
-    E --> F4[Payment.jsx: Multi-Step Checkout + Discount Engine]
-    E --> F5[LoginPage.jsx & SignUpPage.jsx]
-    E --> F6[UserAccount.jsx: Profile + Orders + Wishlist]
-    E --> F7[AdminPage.jsx: Left Sidebar + KPIs + Full CRUD + Export Center]
-    
-    D --> G[(LocalStorage: matcha_cart)]
-    C --> H[(LocalStorage / SessionStorage: matcha_user)]
-    F7 --> I[(LocalStorage: matcha_admin_*)]
-    E --> J[services/api.js]
-    J --> K[Express REST Server :5000]
-    J -.Fallback.-> L[Local productsData.js 60 Items]
+    subgraph Global Context Pipeline
+        A[ToastContext] --> B[AuthContext: currentUser, isAdmin]
+        B --> C[CartContext: cartItems, subtotal, shipping, total]
+    end
+
+    subgraph Catalog & Product Flow
+        D[TopFilterBar: season, color, fit, price] --> E[CatalogPage: filteredProducts]
+        E --> F[ProductCard: activeVariant, selectedSize]
+        F -->|onClick Heart & Check currentUser| G[Toast: กรุณาล็อกอิน / Wishlist Update]
+        F -->|onClick Quick View| H[ProductModal: Global Preview]
+        F -->|onClick Add to Cart| I[CartContext.addToCart: getCartKey]
+    end
+
+    subgraph Cart & Checkout Flow
+        I --> J[LocalStorage: matcha_cart]
+        J --> K[CartPage: cartItems Table]
+        K --> L[Payment.jsx: shippingStep + paymentStep]
+        L --> M[OrderSummarySidebar: subtotal - couponDiscount + shipping]
+        M --> N[OrderSuccessModal: clearCart]
+    end
+
+    subgraph Admin Management
+        B -->|Check isAdmin| O[AdminPage: Executive Dashboard]
+        O --> P[Inventory State + Orders State + VIP Members State]
+        P --> Q[Export Center: CSV UTF-8 BOM / JSON Backup]
+    end
 ```
 
 ---
 
-## 2. Global Context Architecture
-
-### 2.1 `ToastContext.jsx` (`useToast()`)
-* **หน้าที่:** แสดงผลป๊อปอัปแจ้งเตือน Toast สไตล์มินิมอลมุมขวาล่าง พร้อม Auto-Dismiss 3.5 วินาที
-* **API:** `showToast(message, type = 'info' | 'success' | 'warning' | 'error')`, `hideToast()`
-
-### 2.2 `CartContext.jsx` (`useCart()`)
-* **หน้าที่:** จัดการ State ตะกร้าสินค้าและการคำนวณราคาทั้งหมด (ผูกกับ `localStorage: matcha_cart`)
-* **State & Methods:**
-  * `cartItems`: รายการสินค้าทั้งหมด
-  * `getCartKey(item)`: สร้าง Unique Key `${id}-${size}-${color}` ป้องกันสินค้าทับกัน
-  * `addToCart(product, quantity)`: เพิ่มสินค้าเข้าตะกร้าพร้อม Trigger แจ้งเตือน Toast
-  * `updateQty(key, delta)`: ปรับจำนวนสินค้า (+1 / -1) พร้อมลบออกอัตโนมัติหากเหลือ 0
-  * `removeItem(key)`: ลบสินค้าออกจากตะกร้า
-  * `clearCart()`: ล้างตะกร้าหลังการชำระเงินสำเร็จ
-  * `cartCount`: จำนวนชิ้นรวมทั้งหมด
-  * `subtotal`: ยอดรวมราคาสินค้า
-  * `shipping`: $0 เมื่อยอดถึง $100 หรือตะกร้าว่าง (นอกนั้น $10)
-  * `total`: `subtotal + shipping`
-  * `awayFromFreeShipping`: ยอดคงเหลือที่ต้องซื้อเพิ่มเพื่อให้ได้ส่งฟรี
-
-### 2.3 `AuthContext.jsx` (`useAuth()`)
-* **หน้าที่:** จัดการ Session ผู้ใช้งานและการเข้าสู่ระบบ
-* **State & Methods:**
-  * `currentUser`: Object ผู้ใช้ (`id`, `name`, `email`, `role`, `tier`)
-  * `login(userData, rememberMe)`: เข้าสู่ระบบและบันทึก Storage
-  * `logout()`: ล้างข้อมูลผู้ใช้และพากลับสู่หน้าหลัก
-  * `updateProfile(updates)`: อัปเดตข้อมูลโปรไฟล์ผู้ใช้
-  * `isAuthenticated`: `Boolean(currentUser)`
-  * `isAdmin`: `currentUser?.role === 'Admin' || currentUser?.email === 'admin@matcha.com'`
+## 2. Global Context Layer
 
 ---
 
-## 3. Global Routing & Root (`App.jsx`)
+### 2.1 `CartContext.jsx` — ระบบจัดการตะกร้าสินค้าและคำนวณราคา
 
-* **Providers Wrapper:** `ToastProvider` $\to$ `AuthProvider` $\to$ `CartProvider` $\to$ `Layout`
-* **Scroll Engine:** ติดตั้ง **Lenis Smooth Scroll** เพื่อประสบการณ์เลื่อนจอที่นุ่มนวล
-* **Modal Orchestration:** ควบคุม `ProductModal.jsx` (Quick View) แบบ Global ดักฟังปุ่ม `Escape` และล็อกการเลื่อนของ `document.body`
+#### 💻 โค้ดหลัก (Source Code):
+```javascript
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useToast } from './ToastContext';
+
+const CartContext = createContext(null);
+
+export const CartProvider = ({ children }) => {
+  const { showToast } = useToast();
+
+  // ดึงตะกร้าเดิมจาก LocalStorage (Initial State)
+  const [cartItems, setCartItems] = useState(() => {
+    try {
+      const saved = localStorage.getItem('matcha_cart');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  // ซิงก์ลง LocalStorage ทุกครั้งที่ cartItems มีการเปลี่ยนแปลง
+  useEffect(() => {
+    try {
+      localStorage.setItem('matcha_cart', JSON.stringify(cartItems));
+    } catch (err) {
+      console.error('Failed to persist cart:', err);
+    }
+  }, [cartItems]);
+
+  // ฟังก์ชันสร้าง Compound Key: id-size-color
+  const getCartKey = (item) => {
+    const id = item?.id || 'unknown';
+    const size = item?.size || 'M';
+    const color = item?.color || 'Signature';
+    return `${id}-${size}-${color}`;
+  };
+
+  // เพิ่มสินค้าลงตะกร้า
+  const addToCart = (product, customQty = null) => {
+    const qtyToAdd = customQty !== null ? Number(customQty) : (product?.quantity ? Number(product.quantity) : 1);
+    
+    setCartItems((prev) => {
+      const targetKey = getCartKey(product);
+      const existingIndex = prev.findIndex((item) => getCartKey(item) === targetKey);
+
+      if (existingIndex > -1) {
+        const updated = [...prev];
+        updated[existingIndex] = {
+          ...updated[existingIndex],
+          quantity: updated[existingIndex].quantity + qtyToAdd
+        };
+        return updated;
+      }
+
+      return [...prev, { ...product, quantity: qtyToAdd }];
+    });
+
+    showToast(`Added "${product?.name || 'Garment'}" to bag!`, 'success');
+  };
+
+  // ปรับจำนวน (+1 / -1) และลบอัตโนมัติหากเหลือ 0
+  const updateQty = (key, delta) => {
+    setCartItems((prev) =>
+      prev
+        .map((item) => {
+          if (getCartKey(item) === key) {
+            return { ...item, quantity: item.quantity + delta };
+          }
+          return item;
+        })
+        .filter((item) => item.quantity > 0)
+    );
+  };
+
+  // ลบสินค้า
+  const removeItem = (key) => {
+    setCartItems((prev) => prev.filter((item) => getCartKey(item) !== key));
+    showToast('Item removed from bag', 'info');
+  };
+
+  // ล้างตะกร้า
+  const clearCart = () => setCartItems([]);
+
+  // ตัวแปรคำนวณราคา
+  const cartCount = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
+  const subtotal = cartItems.reduce((sum, item) => sum + (Number(item.price) || 0) * (item.quantity || 1), 0);
+  const shipping = subtotal >= 100 || cartItems.length === 0 ? 0 : 10;
+  const total = subtotal + shipping;
+  const awayFromFreeShipping = Math.max(0, 100 - subtotal);
+
+  return (
+    <CartContext.Provider value={{
+      cartItems, addToCart, updateQty, removeItem, clearCart,
+      getCartKey, cartCount, subtotal, shipping, total, awayFromFreeShipping
+    }}>
+      {children}
+    </CartContext.Provider>
+  );
+};
+
+export const useCart = () => useContext(CartContext);
+```
+
+#### 📊 ตารางแจกแจงตัวแปร (Variable Traceability):
+| ชื่อตัวแปร / ฟังก์ชัน | ชนิดข้อมูล | หน้าที่การทำงาน | ผลกระทบและการเชื่อมต่อ (Variable Connections) |
+| :--- | :--- | :--- | :--- |
+| `cartItems` | `Array<Object>` | เก็บรายการสินค้าทั้งหมดในตะกร้า | ส่งต่อให้ `Navbar` (แสดงตัวเลขนับ), `CartPage` (แสดงตาราง), และ `Payment` (สรุปยอด) |
+| `getCartKey(item)` | `Function` | รวม `${id}-${size}-${color}` เป็น Unique Key | ป้องกันสินค้า SKU เดียวกันแต่คนละสี/ไซส์ ทับกันใน `addToCart` และ `updateQty` |
+| `addToCart(prod, qty)`| `Function` | บวกจำนวนในรายการเดิม หรือต่อท้าย Array | อัปเดต `cartItems` $\to$ ซิงก์ `localStorage` $\to$ สั่งแสดง `Toast` แจ้งเตือน |
+| `updateQty(key, delta)`| `Function` | บวก/ลบจำนวนสินค้าทีละ 1 | หาก `quantity + delta === 0` จะถูก `.filter()` ลบออกจาก `cartItems` ทันที |
+| `cartCount` | `Number` | คำนวณจำนวนชิ้นรวม | ส่งให้ `Navbar.jsx` เพื่อเด้งแสดง Bubble Badge สีเขียวมัทฉะ |
+| `subtotal` | `Number` | คำนวณราคาสินค้ารวม | ใช้กำหนดเงื่อนไขโปรโมชันส่งฟรี `shipping` ($100 ขึ้นไปส่งฟรี) |
+| `awayFromFreeShipping`| `Number` | ยอดคงเหลือที่ต้องซื้อเพิ่ม | ส่งให้ `Free Shipping Progress Bar` บนหน้า `CartPage.jsx` |
 
 ---
 
-## 4. หน้าหลัก Landing Page (`HomePage.jsx`)
+### 2.2 `AuthContext.jsx` — ระบบจัดการสถานะผู้ใช้และสิทธิ์ RBAC
 
-| Component | รายละเอียดและการทำงาน |
-| :--- | :--- |
-| **`BrandHero`** | Cover 4-Slice Interactive Lookbook แบนเนอร์สลับภาพตาม Hover/Click |
-| **`ChooseYourFit`** | โมเดลสตูดิโอ 2K ให้กดเลือกดู Silhouette ทรงเสื้อผ้า 6 สไตล์ |
-| **`StreetFavorites`** | คารูเซลสินค้ายอดนิยม กรองหมวดหมู่จากฐานข้อมูลสินค้าครบทั้ง 60 ชิ้น พร้อมสลับเฉดสีเรียลไทม์ |
-| **`BrandLoop`** | ตัววิ่ง Infinite Ticker สไตล์สตรีทแฟชั่นไฮเอนด์ |
-| **`VdoSection`** | วิดีโอ Cinematic Motion พร้อมปุ่มกดรับโค้ดส่วนลด 15% (`MATCHA15`) |
-| **`PulsePerks`** | การ์ด 3D Interactive แสดงจุดเด่น (Free Shipping, Eco Tea-dye, 14-day Exchange) |
-| **`JoinDropList`** | ฟอร์มกรอกอีเมลรับสิทธิ์ Early VIP Drops |
+#### 💻 โค้ดหลัก (Source Code):
+```javascript
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
----
+const AuthContext = createContext(null);
 
-## 5. หน้าแคตตาล็อกสินค้า (`CatalogPage.jsx`)
+export const AuthProvider = ({ children }) => {
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const local = localStorage.getItem('matcha_user');
+      if (local) return JSON.parse(local);
+      const session = sessionStorage.getItem('matcha_user');
+      if (session) return JSON.parse(session);
+      return null;
+    } catch {
+      return null;
+    }
+  });
 
-* **Top Horizontal Pill Filter Bar ([`TopFilterBar.jsx`](file:///c:/coding/MatchA/app/frontend/src/components/catalog/TopFilterBar.jsx)):**
-  * **Season Dropdown:** All, Autumn, Spring, Summer, Winter, Artisan
-  * **Color Swatches Popover:** ขยายกริด 3 คอลัมน์ มองเห็นครบ 13 เฉดสีในพริบตา ไม่ต้องเลื่อนจอ พร้อมระบบ Backdrop Click-Away
-  * **Silhouette & Fit Dropdown:** All, Boxy Oversized, Relaxed, Wide Leg, Standard
-  * **Price Range Slider:** สไลเดอร์ช่วงราคา $30 – $200
-  * **In Stock Only Toggle:** สวิตช์กรองเฉพาะสินค้าที่มีสต็อก
-* **Layout Grid:** ค่าเริ่มต้นแสดงผล **4 คอลัมน์** สำหรับเดสก์ท็อป, 3 บนแท็บเล็ต, 2 บนมือถือ และปุ่มสลับมุมมอง List View
-* **Pagination & Skeleton:** แบ่งหน้าละ 12 ชิ้น พร้อม Loading Skeleton รองรับช่วงเปลี่ยนผ่าน
+  const login = (userData, rememberMe = true) => {
+    setCurrentUser(userData);
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem('matcha_user', JSON.stringify(userData));
+  };
 
----
+  const logout = () => {
+    setCurrentUser(null);
+    localStorage.removeItem('matcha_user');
+    sessionStorage.removeItem('matcha_user');
+  };
 
-## 6. คอมโพเนนต์การ์ดและป๊อปอัปสินค้า
+  const isAuthenticated = Boolean(currentUser);
+  const isAdmin = currentUser?.role === 'Admin' || currentUser?.email === 'admin@matcha.com';
 
-### 6.1 `ProductCard.jsx`
-* **อัตราส่วนภาพ:** `aspect-4/5` พร้อม Padding ขอบใน ป้องกันภาพล้นหรือถูกตัดหัวตัดท้าย (`object-contain object-center`)
-* **Hover Effect & Centered Quick View:** เมื่อเอาเมาส์ชี้ ภาพจะมืดลงอย่างนุ่มนวล (`bg-black/35 backdrop-blur-[1px]`) และปุ่ม **`QUICK VIEW`** จะลอยเด่นขึ้นมากึ่งกลางภาพ
-* **Wishlist Auth Guard:** หากยังไม่ล็อกอิน เมื่อกดไอคอนหัวใจ ระบบจะขึ้น Toast แจ้งเตือน *"กรุณาเข้าสู่ระบบก่อนเพื่อบันทึกรายการสินค้าที่ชอบ"*
+  return (
+    <AuthContext.Provider value={{ currentUser, login, logout, isAuthenticated, isAdmin }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
 
-### 6.2 `ProductModal.jsx` (Quick View Modal)
-* กรอบภาพขนาดใหญ่ทรง `aspect-4/5` พร้อมพื้นที่เว้นระยะรอบข้าง `p-4 sm:p-6`
-* ควบคุมการซูมด้วย `group-hover:scale-102` อยู่ในกรอบ ไม่ล้นหน้าจอ
-* ตัวเลือกปรับไซส์ (S, M, L, XL, XXL) และจำนวนสินค้าก่อนกด `ADD TO BAG`
+export const useAuth = () => useContext(AuthContext);
+```
 
----
-
-## 7. หน้าตะกร้าสินค้า (`CartPage.jsx`)
-
-* ตารางรายการสินค้าพร้อมรูปภาพ, สี, ไซส์, และปุ่มปรับจำนวน `+` / `-`
-* แถบ **Free Shipping Progress Meter** แจ้งเตือนยอดที่ต้องซื้อเพิ่มเพื่อให้ได้ส่งฟรี
-* สรุปยอด Subtotal, Shipping, Tax, Total พร้อมปุ่ม `PROCEED TO CHECKOUT`
-
----
-
-## 8. หน้าชำระเงิน & เช็คเอาต์ (`Payment.jsx`)
-
-* **Multi-Step Checkout Flow:**
-  1. **Shipping Information:** ชื่อ, อีเมล, ที่อยู่, เบอร์โทร, ความเร็วขนส่ง
-  2. **Payment Method:** บัตรเครดิต/เดบิต (Visa, Mastercard พร้อมระบบตรวจเลขบัตร), PromptPay QR, เก็บเงินปลายทาง (COD)
-  3. **Order Summary Sidebar:** แสดงสรุปยอดและช่องใส่คูปองส่วนลด (`MATCHA15` ลด 15%, `FREESHIP` ส่งฟรี)
-  4. **OrderSuccessModal:** ใบเสร็จคำสั่งซื้อพร้อมเคลียร์ตะกร้าอัตโนมัติ
+#### 📊 ตารางแจกแจงตัวแปร:
+| ชื่อตัวแปร / ฟังก์ชัน | ชนิดข้อมูล | หน้าที่การทำงาน | ผลกระทบและการเชื่อมต่อ |
+| :--- | :--- | :--- | :--- |
+| `currentUser` | `Object \| null` | ข้อมูลโปรไฟล์ผู้ใช้งานปัจจุบัน | ส่งให้ `Navbar` (แสดงชื่อ/Avatar), `UserAccount` (ข้อมูลส่วนตัว), และ `ProductCard` |
+| `login(data, remember)` | `Function` | บันทึก Session ลง Storage | ถ้า `rememberMe = true` บันทึก `localStorage`, ถ้าไม่จะบันทึก `sessionStorage` |
+| `isAdmin` | `Boolean` | ตรวจสอบสิทธิ์ผู้ดูแลระบบ | ใช้เปิด Route Guard สู่หน้า `/admin` ([`AdminPage.jsx`](file:///c:/coding/MatchA/app/frontend/src/pages/AdminPage.jsx)) |
+| `isAuthenticated` | `Boolean` | ตรวจสอบสถานะล็อกอิน | ส่งให้ `ProductCard.jsx` หากเป็น `false` จะห้ามกดรูปหัวใจ Wishlist |
 
 ---
 
-## 9. หน้าระบบสมาชิก (`LoginPage.jsx` & `SignUpPage.jsx`)
+### 2.3 `ToastContext.jsx` — ระบบป๊อปอัปแจ้งเตือนส่วนกลาง
 
-* **Quick Demo Login:** ปุ่มล็อกอินด่วนสำหรับทดสอบระบบ (`Admin Demo`, `Member Demo`)
-* **Client-Side Form Validation:** ตรวจสอบรูปแบบอีเมล, ความยาวรหัสผ่าน (ขั้นต่ำ 6 ตัวอักษร) พร้อม Error Badge ใต้ช่องกรอก
+#### 💻 โค้ดหลัก (Source Code):
+```javascript
+import React, { createContext, useContext, useState } from 'react';
+import { CheckCircle2, AlertCircle, Info, X } from 'lucide-react';
+
+const ToastContext = createContext(null);
+
+export const ToastProvider = ({ children }) => {
+  const [toast, setToast] = useState(null);
+
+  const showToast = (message, type = 'info') => {
+    setToast({ message, type, id: Date.now() });
+    setTimeout(() => {
+      setToast(null);
+    }, 3500);
+  };
+
+  const hideToast = () => setToast(null);
+
+  return (
+    <ToastContext.Provider value={{ showToast, hideToast }}>
+      {children}
+      {toast && (
+        <div className="fixed bottom-6 right-6 z-50 animate-slide-up select-none">
+          <div className="flex items-center gap-3 px-4 py-3 rounded-2xl bg-[#2D231E] text-white shadow-2xl border border-[#3E322C] font-mono text-xs">
+            {toast.type === 'success' && <CheckCircle2 size={16} className="text-[#85E369]" />}
+            {toast.type === 'error' && <AlertCircle size={16} className="text-[#BC5A36]" />}
+            {toast.type === 'info' && <Info size={16} className="text-[#D0DEC6]" />}
+            <span>{toast.message}</span>
+            <button onClick={hideToast} className="ml-2 hover:text-[#BC5A36] cursor-pointer">
+              <X size={14} />
+            </button>
+          </div>
+        </div>
+      )}
+    </ToastContext.Provider>
+  );
+};
+
+export const useToast = () => useContext(ToastContext);
+```
 
 ---
 
-## 10. หน้าโปรไฟล์ผู้ใช้ (`UserAccount.jsx`)
+## 3. Root & Global Routing (`App.jsx` & `Layout.jsx`)
 
-โครงสร้างแยกแท็บย่อย (Modular Tab Architecture):
-1. **`ProfileTab.jsx`:** แก้ไขชื่อ นามสกุล อีเมล เบอร์โทร
-2. **`OrdersTab.jsx`:** ประวัติคำสั่งซื้อพร้อมสถานะ Tracking
-3. **`FavoritesTab.jsx`:** รายการสินค้าใน Wishlist พร้อมปุ่มกดสั่งซื้อลงตะกร้า
-4. **`AddressesTab.jsx`:** สมุดบันทึกที่อยู่จัดส่ง
-5. **`PaymentMethodsTab.jsx`:** รายการบัตรชำระเงินที่บันทึกไว้
-6. **`PreferencesTab.jsx`:** จัดการการแจ้งเตือน VIP และโปรโมชัน
+#### 💻 โค้ดหลัก (Source Code ใน `App.jsx`):
+```javascript
+import React, { useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import Lenis from 'lenis';
+import Layout from './components/layout/Layout';
+import HomePage from './pages/HomePage';
+import CatalogPage from './pages/CatalogPage';
+import CartPage from './pages/CartPage';
+import Payment from './pages/Payment';
+import LoginPage from './pages/LoginPage';
+import SignUpPage from './pages/SignUpPage';
+import UserAccount from './pages/UserAccount';
+import AdminPage from './pages/AdminPage';
+
+export default function App() {
+  // ติดตั้ง Lenis Smooth Scroll Engine
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+
+    return () => lenis.destroy();
+  }, []);
+
+  return (
+    <Layout>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/catalog" element={<CatalogPage />} />
+        <Route path="/cart" element={<CartPage />} />
+        <Route path="/payment" element={<Payment />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/account" element={<UserAccount />} />
+        <Route path="/admin" element={<AdminPage />} />
+      </Routes>
+    </Layout>
+  );
+}
+```
 
 ---
 
-## 11. หน้าผู้ดูแลระบบระดับสูง (`AdminPage.jsx` — Executive Dashboard)
+## 4. หน้าแคตตาล็อกสินค้า & ตัวกรองแนวนอน
 
-* **🏛️ แถบเมนูด้านซ้าย (Left Navigation Sidebar):**
-  * แสดงสถานะ Live Indicator, ข้อมูลผู้ปฏิบัติงาน และแถบเมนูพร้อม Badge แจ้งเตือน
-* **📊 6 โมดูลบริหารจัดการหลัก:**
-  1. **Overview & KPIs:** การ์ดสถิติ 4 ใบ (Gross Revenue, Orders, Stock Units, VIP Vault), กราฟแท่งยอดขายรายเดือนตลอดปี 2026, กราฟสัดส่วนยอดขายตามหมวดหมู่, และตารางคำสั่งซื้อล่าสุด
-  2. **Inventory & Stock Management:** ตารางสต็อกสินค้า, ค้นหาแบบเรียลไทม์, ฟิลเตอร์หมวดหมู่/สถานะ, ปุ่มเติมสต็อกด่วน `+10`/`-5`, ปุ่มลบสินค้า, และปุ่ม `+ Add Garment` Modal
-  3. **Orders Pipeline:** ตารางออเดอร์ลูกค้า, ฟิลเตอร์สถานะ (Processing, Shipped, Delivered), ดรอปดาวน์เปลี่ยนสถานะการจัดส่ง
-  4. **Revenue Analytics:** วิเคราะห์ผลกำไร, อัตรา Conversion, และตารางเปรียบเทียบยอดขายกับเป้าหมายรายเดือน
-  5. **VIP Customer Registry:** ทะเบียนสมาชิกระดับ VIP, ยอดใช้จ่ายสะสม, ปุ่ม Promote/Demote สมาชิก
-  6. **Reports & Backups:** ดาวน์โหลด Full Store JSON Snapshot Backup และไฟล์ CSV (UTF-8 BOM สำหรับ Excel)
+### 4.1 `TopFilterBar.jsx` — แถบตัวกรองแนวนอนระดับพรีเมียม
+
+#### 💻 โค้ดหลักส่วนตัวกรองสี (Color Popover):
+```javascript
+{/* Color Dropdown Pill */}
+<div className="relative">
+  <button
+    onClick={() => setOpenDropdown(openDropdown === 'color' ? null : 'color')}
+    className={`px-3.5 py-1.5 rounded-full border text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+      selectedColor !== 'ALL' ? 'bg-[#2D5A27] text-white border-[#2D5A27]' : 'bg-white border-[#D9D3C7] text-[#2D231E]'
+    }`}
+  >
+    <span>Color: {selectedColor}</span>
+    <ChevronDown size={13} />
+  </button>
+
+  {/* Color Popover (3 Columns - มองเห็นครบ 13 สี ไม่ต้องเลื่อนจอ) */}
+  {openDropdown === 'color' && (
+    <>
+      <div className="fixed inset-0 z-20" onClick={() => setOpenDropdown(null)} />
+      <div 
+        onWheel={(e) => e.stopPropagation()} 
+        className="absolute left-0 mt-2 w-80 sm:w-115 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-3.5 z-30 font-mono text-xs animate-fade-in"
+      >
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {colorOptions.map((c) => (
+            <button
+              key={c.name}
+              onClick={() => { onSelectColor(c.name); setOpenDropdown(null); }}
+              className="flex items-center gap-2 p-2 rounded-xl hover:bg-[#FAF8F5] transition-all cursor-pointer"
+            >
+              <span className="w-4 h-4 rounded-full border" style={{ backgroundColor: c.hex }} />
+              <span>{c.name}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </>
+  )}
+</div>
+```
+
+#### 📊 ตารางแจกแจงตัวแปร:
+| ตัวแปร / Event | หน้าที่ | ผลลัพธ์และสิ่งที่เชื่อมต่อ |
+| :--- | :--- | :--- |
+| `selectedSeason` | เก็บซีซันที่เลือก (All, Autumn, Spring, Summer, Winter, Artisan) | ส่งไปกรองสินค้าใน `CatalogPage` |
+| `selectedColor` | เก็บเฉดสีที่เลือก | กรองรายการสินค้าที่มี `variants.color` ตรงกัน |
+| `priceRange` | อาร์เรย์ `[min, max]` (ช่วงราคา $30 - $200) | ดักจับ `product.price >= priceRange[0] && product.price <= priceRange[1]` |
+| `onWheel: stopPropagation()`| หยุดการกระจายของ Event กลิ้งเมาส์ | ป้องกันไม่ให้การเลื่อนเมาส์ใน Popover ไปทำให้หน้าจอใหญ่เลื่อน |
 
 ---
 
-## 12. โครงสร้าง Layout & Navigation
+## 5. คอมโพเนนต์การ์ดสินค้า & หน้าต่างพรีวิว
 
-* **`Navbar.jsx`:** โลโก้แบรนด์, แถบเมนูนำทาง, Mix & Match CTA, ตะกร้าสินค้าพร้อม Cart Count Badge และ Micro-animation
-* **`Footer.jsx`:** ข้อมูลลิขสิทธิ์, ที่อยู่สตูดิโอ, ลิงก์นโยบาย และ Social Media Links
-* **`Layout.jsx`:** Wrapper กลางที่คุม Navbar และ Footer ตลอดทั้งแอปพลิเคชัน
+### 5.1 `ProductCard.jsx`
+
+#### 💻 โค้ดหลัก (Source Code):
+```javascript
+export default function ProductCard({ product, onQuickView, onToggleWishlist, isWishlisted = false }) {
+  const { addToCart } = useCart();
+  const { currentUser } = useAuth();
+  const { showToast } = useToast();
+
+  const variants = product?.variants || [{ color: product.color, colorHex: product.colorHex, image: product.image }];
+  const [activeVariant, setActiveVariant] = useState(variants[0]);
+  const [isHovered, setIsHovered] = useState(false);
+  const [wishlistActive, setWishlistActive] = useState(isWishlisted);
+
+  // ตรวจสอบสถานะการล็อกอินก่อนกดหัวใจ
+  const handleWishlistClick = (e) => {
+    e.stopPropagation();
+    if (!currentUser) {
+      showToast('กรุณาเข้าสู่ระบบก่อนเพื่อบันทึกรายการสินค้าที่ชอบ (Wishlist)', 'info');
+      return;
+    }
+    setWishlistActive(!wishlistActive);
+    if (onToggleWishlist) onToggleWishlist(product);
+  };
+
+  return (
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="group relative bg-white border border-[#D9D3C7] hover:border-[#2D5A27] rounded-3xl overflow-hidden transition-all duration-300 hover:shadow-2xl flex flex-col justify-between select-none"
+    >
+      {/* Photo Container: aspect-4/5 + object-contain ป้องกันภาพล้น */}
+      <div 
+        onClick={() => onQuickView && onQuickView({ ...product, initialVariant: activeVariant, activeImage: activeVariant.image })}
+        className="relative aspect-4/5 w-full bg-[#FAF8F5] overflow-hidden cursor-pointer flex items-center justify-center p-3.5"
+      >
+        <img
+          src={activeVariant.image}
+          alt={product.name}
+          className="w-full h-full object-contain object-center transition-all duration-300 group-hover:scale-102"
+        />
+
+        {/* Wishlist Button (ตรวจสอบสิทธิ์) */}
+        <button
+          onClick={handleWishlistClick}
+          className={`absolute top-3 right-3 w-8 h-8 rounded-full flex items-center justify-center transition-all cursor-pointer z-10 ${
+            wishlistActive ? 'bg-white text-rose-600 ring-2 ring-rose-300' : 'bg-white/85 text-[#6B5E55] hover:text-rose-600'
+          }`}
+        >
+          <Heart size={15} className={wishlistActive ? 'fill-rose-500 text-rose-500' : ''} />
+        </button>
+
+        {/* Centered Quick View Overlay with Dark Dimming */}
+        <div className={`absolute inset-0 z-20 bg-black/35 backdrop-blur-[1px] flex items-center justify-center transition-all duration-300 ${
+          isHovered ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onQuickView && onQuickView({ ...product, initialVariant: activeVariant, activeImage: activeVariant.image });
+            }}
+            className="px-5 py-2.5 bg-white/95 hover:bg-white text-[#2D231E] hover:text-[#2D5A27] text-xs font-mono font-bold uppercase rounded-full shadow-2xl flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+          >
+            <Eye size={14} />
+            <span>Quick View</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
 
 ---
 
-## 13. Service Layer, API Pipeline & Data Persistence
+## 6. หน้าตะกร้าสินค้า & ตัววัดยอดส่งฟรี
 
-* **`services/api.js`:** ฟังก์ชัน `fetchWithFallback()` ทำงานคู่กับ Express Backend (`http://localhost:5000/api`) และสลับมาใช้ Local Dataset Fallback อัตโนมัติเมื่อ Backend ออฟไลน์
-* **`utils/imageFallback.js`:** ฟังก์ชัน `handleImageError` ตรวจจับภาพเสียและใส่ภาพสำรองคุณภาพสูงทันที
-* **LocalStorage Keys:**
-  * `matcha_cart`: บันทึกข้อมูลตะกร้าสินค้า
-  * `matcha_user`: บันทึกสถานะผู้ใช้งานที่ล็อกอิน
-  * `matcha_admin_inventory`: บันทึกฐานข้อมูลสต็อกแอดมิน
-  * `matcha_admin_orders`: บันทึกฐานข้อมูลคำสั่งซื้อแอดมิน
-  * `matcha_admin_members`: บันทึกฐานข้อมูลสมาชิก VIP
+### 6.1 `CartPage.jsx`
+
+#### 💻 โค้ดคำนวณและ Progress Bar:
+```javascript
+const { cartItems, updateQty, removeItem, subtotal, shipping, total, awayFromFreeShipping, getCartKey } = useCart();
+
+// แถบความคืบหน้าส่งฟรี (Free Shipping Meter)
+const freeShippingPercent = Math.min(100, Math.round((subtotal / 100) * 100));
+
+return (
+  <div className="max-w-7xl mx-auto p-6">
+    {/* Free Shipping Progress Indicator */}
+    <div className="p-4 rounded-2xl bg-white border border-[#D9D3C7] mb-6 font-mono text-xs">
+      <div className="flex justify-between mb-2">
+        <span>{awayFromFreeShipping === 0 ? '🎉 You unlocked FREE Express Shipping!' : `Add $${awayFromFreeShipping.toFixed(2)} more for Free Shipping`}</span>
+        <span className="font-bold text-[#2D5A27]">{freeShippingPercent}%</span>
+      </div>
+      <div className="w-full h-2 rounded-full bg-[#FAF8F5] overflow-hidden">
+        <div style={{ width: `${freeShippingPercent}%` }} className="h-full bg-[#2D5A27] transition-all duration-500" />
+      </div>
+    </div>
+  </div>
+);
+```
+
+---
+
+## 7. ระบบชำระเงิน & คำนวณส่วนลด (`Payment.jsx`)
+
+#### 💻 โค้ดเครื่องยนต์คูปองส่วนลด (Coupon Engine):
+```javascript
+const [couponCode, setCouponCode] = useState('');
+const [discountAmount, setDiscountAmount] = useState(0);
+
+const handleApplyCoupon = () => {
+  const code = couponCode.trim().toUpperCase();
+  if (code === 'MATCHA15') {
+    const discount = subtotal * 0.15;
+    setDiscountAmount(discount);
+    showToast('Applied 15% OFF Discount Coupon!', 'success');
+  } else if (code === 'FREESHIP') {
+    setDiscountAmount(shipping);
+    showToast('Applied Free Shipping Coupon!', 'success');
+  } else {
+    showToast('Invalid or expired coupon code', 'error');
+  }
+};
+
+const finalTotal = Math.max(0, subtotal - discountAmount + shipping);
+```
+
+---
+
+## 8. ระบบสมาชิก & โปรไฟล์ผู้ใช้ (`LoginPage.jsx` & `UserAccount.jsx`)
+
+#### 💻 โค้ด Demo Authentication Buttons:
+```javascript
+// ปุ่มล็อกอินจำลองสำหรับแอดมินและสมาชิก
+const handleQuickDemoLogin = (role) => {
+  if (role === 'admin') {
+    login({ id: 'ADM-001', name: 'Master Administrator', email: 'admin@matcha.com', role: 'Admin', tier: 'Executive' });
+    navigate('/admin');
+  } else {
+    login({ id: 'MEM-001', name: 'Nattapong Somchai', email: 'member@matcha.vip', role: 'Member', tier: 'VIP Connoisseur' });
+    navigate('/account');
+  }
+  showToast(`Logged in as Demo ${role.toUpperCase()}`, 'success');
+};
+```
+
+---
+
+## 9. หน้าผู้ดูแลระบบระดับสูง (`AdminPage.jsx` — Executive Command Dashboard)
+
+#### 💻 โค้ดการส่งออกข้อมูล CSV (พร้อม UTF-8 BOM สำหรับ Microsoft Excel):
+```javascript
+// ฟังก์ชันช่วยดาวน์โหลดไฟล์พร้อม UTF-8 BOM ป้องกันภาษาไทยเพี้ยนใน Excel
+const downloadFile = (content, filename, type = 'text/csv;charset=utf-8;') => {
+  const bom = type.includes('csv') ? '\uFEFF' : '';
+  const blob = new Blob([bom + content], { type });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+  showToast(`Exported ${filename} successfully!`, 'success');
+};
+
+const handleExportInventory = () => {
+  const headers = ['SKU ID,Product Name,Category,Price ($),Stock,Status,Color,Fit,Season,Created Date'];
+  const rows = inventory.map(item =>
+    `"${item.id}","${item.name.replace(/"/g, '""')}","${item.category}",${item.price},${item.stock},"${item.status}","${item.color}","${item.fit}","${item.season}","${item.createdAt}"`
+  );
+  downloadFile([headers, ...rows].join('\n'), `MatchA_Inventory_${new Date().toISOString().split('T')[0]}.csv`);
+};
+```
+
+#### 📊 ตารางแจกแจงตัวแปรใน Admin Dashboard:
+| ตัวแปร State | ชนิดข้อมูล | หน้าที่การทำงาน | การแสดงผลและการเชื่อมต่อ |
+| :--- | :--- | :--- | :--- |
+| `activeTab` | `'dashboard' \| 'inventory' \| 'orders' \| 'analytics' \| 'members' \| 'backup'` | สลับโมดูลหน้า Dashboard | ควบคุมการ Render ของ Left Sidebar และ Content Canvas ทางขวา |
+| `globalSearch` | `String` | ค้นหาข้อมูลแบบ Real-Time | ใช้กรอง SKU, ชื่อสินค้า, เลขออเดอร์, และรายชื่อสมาชิกพร้อมกัน |
+| `totalRevenue` | `Number` | รวมยอดเงินจากออเดอร์ทั้งหมด | แสดงบน KPI Card ใบแรก และคำนวณกราฟผลตอบแทน |
+| `lowStockCount` | `Number` | นับจำนวนสินค้าที่มีสต็อก $\le 10$ ชิ้น | แสดง Badge สีส้มแจ้งเตือนบน KPI Card |
+
+---
+
+## 10. Service Layer & API Resilience (`api.js` & `productsData.js`)
+
+#### 💻 โค้ดฟังก์ชันสลับโหมดอัตโนมัติ (Fallback Pipeline):
+```javascript
+import { productsData } from '../data/productsData';
+
+const API_BASE_URL = 'http://localhost:5000/api';
+
+export const fetchWithFallback = async (endpoint, options = {}) => {
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers: { 'Content-Type': 'application/json', ...options.headers }
+    });
+
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
+  } catch (error) {
+    console.warn(`[MatchA API Fallback] Express server offline at ${endpoint}. Serving Local Dataset.`);
+    
+    // หากเป็น Endpoint สินค้า จะส่ง Local productsData 60 ชิ้นกลับไปแทนทันที
+    if (endpoint.includes('/products')) {
+      return { success: true, data: productsData, isFallback: true };
+    }
+    return { success: false, error: error.message, isFallback: true };
+  }
+};
+```
+
+---
+
+## 🎯 สรุปภาพรวม Data Pipeline ทั้งระบบ:
+$$\text{User Action (UI)} \longrightarrow \text{Handler (Validation / Auth Check)} \longrightarrow \text{Context State Mutation} \longrightarrow \text{LocalStorage Sync} \longrightarrow \text{Toast Notification}$$
