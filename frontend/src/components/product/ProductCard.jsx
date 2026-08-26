@@ -82,13 +82,13 @@ export default function ProductCard({
       {/* 1. PRODUCT PHOTO CONTAINER */}
       <div 
         onClick={() => onQuickView && onQuickView({ ...product, initialVariant: activeVariant, activeImage: activeVariant.image })}
-        className="relative aspect-3/4 w-full bg-[#FAF8F5] overflow-hidden cursor-pointer"
+        className="relative aspect-4/5 w-full bg-[#FAF8F5] overflow-hidden cursor-pointer flex items-center justify-center p-3.5"
       >
         <img
           src={activeVariant.image}
           alt={`${product.name} - ${activeVariant.color}`}
           onError={handleImageError}
-          className={`w-full h-full object-cover object-top transition-all duration-500 group-hover:scale-105 ${
+          className={`w-full h-full object-contain object-center transition-all duration-300 group-hover:scale-102 ${
             imageFade ? 'opacity-40 scale-98' : 'opacity-100 scale-100'
           }`}
         />
