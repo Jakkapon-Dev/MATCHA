@@ -218,8 +218,11 @@ export default function PersonalColorPage() {
     setDiagnosedSeason(null);
   };
 
-  // Filter curated products matching the current diagnosed season
-  const curatedSeason = diagnosedSeason || selectedSeasonTab;
+  // Filter curated products matching the current active season view
+  const curatedSeason = activeTab === 'theory' 
+    ? selectedSeasonTab 
+    : (diagnosedSeason || selectedSeasonTab);
+
   const recommendedProducts = productsData.filter(p => p.season.toLowerCase() === curatedSeason.toLowerCase()).slice(0, 8);
 
   return (
@@ -497,23 +500,41 @@ export default function PersonalColorPage() {
 
         {/* 3. CURATED OUTFIT SHOWCASE: Products matching the Season */}
         <div className="space-y-6 pt-8 border-t border-[#D9D3C7]">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
               <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#2D5A27] uppercase">
                 <Sparkles size={14} />
-                <span>Curated Wardrobe</span>
+                <span>Curated Wardrobe ({recommendedProducts.length} Looks)</span>
               </div>
-              <h3 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-[#2D231E] font-serif">
-                เสื้อผ้าที่คัดสรรสำหรับโทน {curatedSeason}
+              <h3 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-[#2D231E] font-serif mt-1">
+                เสื้อผ้าที่คัดสรรสำหรับโทน {SEASON_PROFILES[curatedSeason]?.season || curatedSeason}
               </h3>
+              <p className="text-xs font-mono text-[#6B5E55] mt-0.5">
+                {SEASON_PROFILES[curatedSeason]?.undertone}
+              </p>
             </div>
-            <button
-              onClick={() => navigate('/catalog')}
-              className="font-mono text-xs font-bold text-[#2D5A27] hover:underline flex items-center gap-1 cursor-pointer"
-            >
-              <span>ดูแคตตาล็อกทั้งหมด ({productsData.length} ชิ้น)</span>
-              <ArrowRight size={14} />
-            </button>
+
+            {/* Quick Season Switcher Chips */}
+            <div className="flex items-center gap-2 flex-wrap">
+              {Object.keys(SEASON_PROFILES).map((sKey) => (
+                <button
+                  key={sKey}
+                  onClick={() => {
+                    setSelectedSeasonTab(sKey);
+                    if (activeTab !== 'theory') {
+                      setDiagnosedSeason(sKey);
+                    }
+                  }}
+                  className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer ${
+                    curatedSeason.toLowerCase() === sKey.toLowerCase()
+                      ? 'bg-[#2D5A27] text-white shadow-sm scale-105'
+                      : 'bg-white border border-[#D9D3C7] text-[#6B5E55] hover:text-[#2D231E] hover:border-[#2D5A27]'
+                  }`}
+                >
+                  {sKey}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
