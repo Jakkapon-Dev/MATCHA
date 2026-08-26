@@ -35,9 +35,9 @@ export default function Navbar({
   }, [cartCount]);
 
   const navLinks = [
-    { label: 'Collections', href: '#catalog' },
-    { label: 'Mix & Match', href: '#fit-guide' },
-    { label: 'Editorial', href: '#cinematic-reel' },
+    { label: 'Catalog', href: '/catalog' },
+    { label: 'Color Lab ✨', href: '/personal-color' },
+    { label: 'Mix & Match', href: '/mix-match' },
     { label: 'Benefits', href: '#pulse-perks' },
     { label: 'VIP Access', href: '#vip-drop' },
   ];
@@ -123,7 +123,7 @@ export default function Navbar({
 
             {/* Main Feature Action: MIX@MATCH Button with Border Beam */}
             <button
-              onClick={() => handleLinkClick('#fit-guide')}
+              onClick={() => handleLinkClick('/mix-match')}
               className="relative overflow-hidden hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:shadow-[#2D5A27]/25 transition-all active:scale-95 cursor-pointer"
             >
               <BorderBeam size={80} duration={6} colorFrom="#D0DEC6" colorTo="#BC5A36" />
