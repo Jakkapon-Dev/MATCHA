@@ -1,22 +1,32 @@
-# Dependencies
+# ==============================================================================
+# MatchA — Master .gitignore Configuration (Repository Root)
+# Continuously updated for clean repository and deployment security
+# ==============================================================================
+
+# 1. Dependencies & Package Managers
 node_modules/
 .pnp
 .pnp.js
+package-lock.json.bak
 
-# Production build outputs
+# 2. Production Build & Output
 dist/
 dist-ssr/
 build/
 out/
 *.local
 
-# Vercel deployment artifacts & cache
+# 3. Deployment Artifacts & Cloud Caches
 .vercel/
 .vercel
 .turbo/
+.next/
+.nuxt/
+.output/
 
-# Environment variables & secrets
+# 4. Environment Variables & Secret Credentials (NEVER COMMIT)
 .env
+.env.*
 .env.local
 .env.development.local
 .env.test.local
@@ -32,28 +42,43 @@ frontend/.env.production
 *.pem
 *.key
 *.cert
+*.crt
+*.pfx
+*.p12
 
-# Logs
+# 5. Logs & Runtime Debugging
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 *.log
+*.log.*
 
-# Editor & OS files
+# 6. Operating System & Editor Files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 desktop.ini
 .vscode/
+!.vscode/settings.json
 .idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.swo
+*.swn
+*.bak
+*.backup
+*.orig
 
-# AI Agent Caches, Knowledge Graphs & IDE configs
+# 7. AI Agent Caches, Knowledge Graphs & Index Directories
 .agents/
 .agents/*
 .claude/
@@ -65,24 +90,35 @@ desktop.ini
 graft/
 graft/*
 
-# Vite & build caches
+# 8. Vite, Bundler & Local Cache Stores
 .vite/
 .cache/
 *.tmp
+*.temp
 *.cache
 
-# Project Requirement & Design docs (Local only)
-Requirement/
-Requirement/*
-*.excalidraw
-*.excalidraw.bak
-*.excalidraw.tmp
-*.excalidraw.backup
-
-# Test & coverage output
+# 9. Test Results, Coverage & Dumps
 coverage/
 *.lcov
+test-output/
+*.dump
+*.dmp
+*.stackdump
 
-# Personal & interview notes (Do not upload to Git)
+# 10. Temporary Local Data & Generated Exports (Spreadsheets / Dumps)
+*.export.csv
+*.export.json
+MatchA_*_Backup_*.json
+MatchA_*_Report_*.csv
+MatchA_Inventory_*.csv
+MatchA_Orders_*.csv
+MatchA_Revenue_*.csv
+MatchA_VIP_*.csv
+MatchA_Full_Store_Backup_*.json
+
+# 11. Personal & Internal Interview Notes (Do not upload to Git)
 interview.md
 *interview*.md
+*scratch*.js
+*scratch*.ts
+scripts/scratch/
