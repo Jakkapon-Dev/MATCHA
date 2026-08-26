@@ -1,6 +1,6 @@
-# MatchA Full-Stack Codebase Master Blueprint (Alldata.md)
+# MatchA Full-Stack Codebase Master Blueprint & Function Deep Dive (Alldata.md)
 
-> **คู่มือรหัสโค้ด, ตารางตัวแปร, State, Props, Data Flow & Variable Traceability ฉบับสมบูรณ์**  
+> **คู่มือรหัสโค้ด, คำอธิบายฟังก์ชันทีละบรรทัด, ตารางตัวแปร, State, Props, Data Flow & Variable Traceability ฉบับสมบูรณ์**  
 > สถาปัตยกรรม: React 18 (Vite) · Tailwind CSS v4 · React Context API · Express.js · Lenis Smooth Scroll · Lucide Icons
 
 ---
@@ -8,17 +8,17 @@
 ## 📌 สารบัญ (Table of Contents)
 1. [ภาพรวมสถาปัตยกรรม & แผนผัง Variable Data Flow](#1-ภาพรวมสถาปัตยกรรม--แผนผัง-variable-data-flow)
 2. [Global Context Layer (State ส่วนกลางของทั้งระบบ)](#2-global-context-layer)
-   - 2.1 [`CartContext.jsx`](#21-cartcontextjsx--ระบบจัดการตะกร้าสินค้าและคำนวณราคา) (ระบบตะกร้า, Compound Key & ราคารวม)
-   - 2.2 [`AuthContext.jsx`](#22-authcontextjsx--ระบบจัดการสถานะผู้ใช้และสิทธิ์-rbac) (ระบบยืนยันตัวตน, บทบาท Admin/VIP & Session)
-   - 2.3 [`ToastContext.jsx`](#23-toastcontextjsx--ระบบป๊อปอัปแจ้งเตือนส่วนกลาง) (ระบบป๊อปอัปแจ้งเตือนส่วนกลาง)
-3. [Root & Global Routing (`App.jsx` & `Layout.jsx`)](#3-root--global-routing-appjsx--layoutjsx)
-4. [หน้าแคตตาล็อกสินค้า & ตัวกรองแนวนอน (`CatalogPage.jsx` & `TopFilterBar.jsx`)](#4-หน้าแคตตาล็อกสินค้า--ตัวกรองแนวนอน)
-5. [คอมโพเนนต์การ์ดสินค้า & หน้าต่างพรีวิว (`ProductCard.jsx` & `ProductModal.jsx`)](#5-คอมโพเนนต์การ์ดสินค้า--หน้าต่างพรีวิว)
-6. [หน้าตะกร้าสินค้า & ตัววัดยอดส่งฟรี (`CartPage.jsx`)](#6-หน้าตะกร้าสินค้า--ตัววัดยอดส่งฟรี)
-7. [ระบบชำระเงิน & คำนวณส่วนลด (`Payment.jsx` & Sub-Components)](#7-ระบบชำระเงิน--คำนวณส่วนลด)
-8. [ระบบสมาชิก & โปรไฟล์ผู้ใช้ (`LoginPage.jsx` & `UserAccount.jsx`)](#8-ระบบสมาชิก--โปรไฟล์ผู้ใช้)
-9. [หน้าผู้ดูแลระบบระดับสูง (`AdminPage.jsx` — Executive Command Dashboard)](#9-หน้าผู้ดูแลระบบระดับสูง-adminpagejsx)
-10. [Service Layer & API Resilience (`api.js` & `productsData.js`)](#10-service-layer--api-resilience)
+   - 2.1 [`CartContext.jsx`](#21-cartcontextjsx--ระบบจัดการตะกร้าสินค้าและคำนวณราคา) (เจาะลึก `getCartKey`, `addToCart`, `updateQty`, `removeItem`, `clearCart`)
+   - 2.2 [`AuthContext.jsx`](#22-authcontextjsx--ระบบจัดการสถานะผู้ใช้และสิทธิ์-rbac) (เจาะลึก `login`, `logout`, `isAdmin`, `isAuthenticated`)
+   - 2.3 [`ToastContext.jsx`](#23-toastcontextjsx--ระบบป๊อปอัปแจ้งเตือนส่วนกลาง) (เจาะลึก `showToast`, `hideToast`, Auto-dismiss timer)
+3. [Root & Global Routing (`App.jsx` & `Layout.jsx`)](#3-root--global-routing-appjsx--layoutjsx) (เจาะลึก `Lenis Smooth Scroll Engine` และ Routing Structure)
+4. [หน้าแคตตาล็อกสินค้า & ตัวกรองแนวนอน (`CatalogPage.jsx` & `TopFilterBar.jsx`)](#4-หน้าแคตตาล็อกสินค้า--ตัวกรองแนวนอน) (เจาะลึก Filter Engine, Color Swatches Popover & Event Isolation)
+5. [คอมโพเนนต์การ์ดสินค้า & หน้าต่างพรีวิว (`ProductCard.jsx` & `ProductModal.jsx`)](#5-คอมโพเนนต์การ์ดสินค้า--หน้าต่างพรีวิว) (เจาะลึก `handleWishlistClick`, Centered Quick View & Aspect Ratio Contain)
+6. [หน้าตะกร้าสินค้า & ตัววัดยอดส่งฟรี (`CartPage.jsx`)](#6-หน้าตะกร้าสินค้า--ตัววัดยอดส่งฟรี) (เจาะลึก `freeShippingPercent` & Table Rendering)
+7. [ระบบชำระเงิน & คำนวณส่วนลด (`Payment.jsx` & Sub-Components)](#7-ระบบชำระเงิน--คำนวณส่วนลด) (เจาะลึก `handleApplyCoupon`, Client-side Validation & Multi-step State)
+8. [ระบบสมาชิก & โปรไฟล์ผู้ใช้ (`LoginPage.jsx` & `UserAccount.jsx`)](#8-ระบบสมาชิก--โปรไฟล์ผู้ใช้) (เจาะลึก `handleQuickDemoLogin`, Password Validation & Tab Navigation)
+9. [หน้าผู้ดูแลระบบระดับสูง (`AdminPage.jsx` — Executive Command Dashboard)](#9-หน้าผู้ดูแลระบบระดับสูง-adminpagejsx) (เจาะลึก `downloadFile (UTF-8 BOM)`, `handleRestock`, Multi-Tier Search/Filter & KPI Engine)
+10. [Service Layer & API Resilience (`api.js` & `productsData.js`)](#10-service-layer--api-resilience) (เจาะลึก `fetchWithFallback` & Graceful Degradation)
 
 ---
 
@@ -27,7 +27,7 @@
 ```mermaid
 graph TD
     subgraph Global Context Pipeline
-        A[ToastContext] --> B[AuthContext: currentUser, isAdmin]
+        A[ToastContext: showToast] --> B[AuthContext: currentUser, isAdmin]
         B --> C[CartContext: cartItems, subtotal, shipping, total]
     end
 
@@ -72,7 +72,7 @@ const CartContext = createContext(null);
 export const CartProvider = ({ children }) => {
   const { showToast } = useToast();
 
-  // ดึงตะกร้าเดิมจาก LocalStorage (Initial State)
+  // ดึงตะกร้าเดิมจาก LocalStorage เมื่อโหลดแอปครั้งแรก
   const [cartItems, setCartItems] = useState(() => {
     try {
       const saved = localStorage.getItem('matcha_cart');
@@ -82,7 +82,7 @@ export const CartProvider = ({ children }) => {
     }
   });
 
-  // ซิงก์ลง LocalStorage ทุกครั้งที่ cartItems มีการเปลี่ยนแปลง
+  // บันทึกลง LocalStorage ทุกครั้งที่ cartItems เปลี่ยนแปลง
   useEffect(() => {
     try {
       localStorage.setItem('matcha_cart', JSON.stringify(cartItems));
@@ -99,7 +99,7 @@ export const CartProvider = ({ children }) => {
     return `${id}-${size}-${color}`;
   };
 
-  // เพิ่มสินค้าลงตะกร้า
+  // ฟังก์ชันเพิ่มสินค้าลงตะกร้า
   const addToCart = (product, customQty = null) => {
     const qtyToAdd = customQty !== null ? Number(customQty) : (product?.quantity ? Number(product.quantity) : 1);
     
@@ -122,7 +122,7 @@ export const CartProvider = ({ children }) => {
     showToast(`Added "${product?.name || 'Garment'}" to bag!`, 'success');
   };
 
-  // ปรับจำนวน (+1 / -1) และลบอัตโนมัติหากเหลือ 0
+  // ฟังก์ชันปรับจำนวน (+1 / -1) และลบอัตโนมัติหากเหลือ 0
   const updateQty = (key, delta) => {
     setCartItems((prev) =>
       prev
@@ -136,16 +136,16 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  // ลบสินค้า
+  // ฟังก์ชันลบสินค้า
   const removeItem = (key) => {
     setCartItems((prev) => prev.filter((item) => getCartKey(item) !== key));
     showToast('Item removed from bag', 'info');
   };
 
-  // ล้างตะกร้า
+  // ฟังก์ชันล้างตะกร้า
   const clearCart = () => setCartItems([]);
 
-  // ตัวแปรคำนวณราคา
+  // การคำนวณยอดเงินและจำนวนชิ้น
   const cartCount = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
   const subtotal = cartItems.reduce((sum, item) => sum + (Number(item.price) || 0) * (item.quantity || 1), 0);
   const shipping = subtotal >= 100 || cartItems.length === 0 ? 0 : 10;
@@ -165,16 +165,45 @@ export const CartProvider = ({ children }) => {
 export const useCart = () => useContext(CartContext);
 ```
 
-#### 📊 ตารางแจกแจงตัวแปร (Variable Traceability):
-| ชื่อตัวแปร / ฟังก์ชัน | ชนิดข้อมูล | หน้าที่การทำงาน | ผลกระทบและการเชื่อมต่อ (Variable Connections) |
-| :--- | :--- | :--- | :--- |
-| `cartItems` | `Array<Object>` | เก็บรายการสินค้าทั้งหมดในตะกร้า | ส่งต่อให้ `Navbar` (แสดงตัวเลขนับ), `CartPage` (แสดงตาราง), และ `Payment` (สรุปยอด) |
-| `getCartKey(item)` | `Function` | รวม `${id}-${size}-${color}` เป็น Unique Key | ป้องกันสินค้า SKU เดียวกันแต่คนละสี/ไซส์ ทับกันใน `addToCart` และ `updateQty` |
-| `addToCart(prod, qty)`| `Function` | บวกจำนวนในรายการเดิม หรือต่อท้าย Array | อัปเดต `cartItems` $\to$ ซิงก์ `localStorage` $\to$ สั่งแสดง `Toast` แจ้งเตือน |
-| `updateQty(key, delta)`| `Function` | บวก/ลบจำนวนสินค้าทีละ 1 | หาก `quantity + delta === 0` จะถูก `.filter()` ลบออกจาก `cartItems` ทันที |
-| `cartCount` | `Number` | คำนวณจำนวนชิ้นรวม | ส่งให้ `Navbar.jsx` เพื่อเด้งแสดง Bubble Badge สีเขียวมัทฉะ |
-| `subtotal` | `Number` | คำนวณราคาสินค้ารวม | ใช้กำหนดเงื่อนไขโปรโมชันส่งฟรี `shipping` ($100 ขึ้นไปส่งฟรี) |
-| `awayFromFreeShipping`| `Number` | ยอดคงเหลือที่ต้องซื้อเพิ่ม | ส่งให้ `Free Shipping Progress Bar` บนหน้า `CartPage.jsx` |
+#### 🔍 เจาะลึกการทำงานของฟังก์ชัน (Function-by-Function Breakdown):
+
+##### 1. ฟังก์ชัน `getCartKey(item)`
+* **หน้าที่หลัก:** สร้าง Unique Compound Key ประจำตัวสินค้าแต่ละชิ้นในตะกร้า
+* **Input / Output:**
+  * *รับเข้า (Param):* `item` (Object สินค้าที่มี `id`, `size`, `color`)
+  * *ส่งออก (Return):* `String` ในรูปแบบ `${id}-${size}-${color}` (เช่น `"AUT-TOP-001-L-Matcha Green"`)
+* **การทำงานทีละบรรทัด:**
+  1. ดึง `id` ออกมา หากไม่มีให้ใส่ `'unknown'` ป้องกัน error
+  2. ดึง `size` ออกมา หากไม่ได้เลือกให้ fallback เป็นไซส์ `'M'`
+  3. ดึง `color` ออกมา หากไม่ได้เลือกให้ fallback เป็น `'Signature'`
+  4. นำทั้ง 3 ค่ามาต่อกันด้วยขีด (`-`) แล้วส่งกลับไป
+* **ทำไมต้องเขียนแบบนี้:** ป้องกัน **Collision Bug** ที่สินค้า ID เดียวกัน แต่ผู้ใช้สั่งคนละไซส์หรือคนละสี แล้วถูกนับรวมทับกันเป็นรายการเดียว
+
+##### 2. ฟังก์ชัน `addToCart(product, customQty)`
+* **หน้าที่หลัก:** เพิ่มสินค้าลงตะกร้า หรือเพิ่มจำนวนในรายการเดิมที่มีอยู่แล้ว
+* **Input / Output:**
+  * *รับเข้า (Param):* `product` (Object ข้อมูลสินค้า) และ `customQty` (จำนวนที่ต้องการเพิ่ม หรือ null)
+  * *ส่งออก (Return):* `void` (อัปเดต State `cartItems` และสั่งแสดง Toast)
+* **การทำงานทีละบรรทัด:**
+  1. แปลงค่า `qtyToAdd` ให้เป็นตัวเลข `Number` ป้องกัน String Concatenation (`1 + "1" = "11"`)
+  2. เรียก `setCartItems(prev => ...)` โดยใช้ Callback รูปแบบ Functional Update
+  3. นำสินค้าไปแปลงเป็น Unique Key ด้วย `getCartKey(product)`
+  4. ใช้ `.findIndex()` วนหาในตะกร้าเดิมว่ามี Key นี้อยู่แล้วหรือไม่
+  5. หากพบ (`existingIndex > -1`) จะทำการ Copy Array แบบ Immutability (`[...prev]`) แล้วบวก `quantity` เพิ่มในช่องนั้น
+  6. หากไม่พบ จะต่อท้าย Array ใหม่ด้วย Spread Operator (`[...prev, { ...product, quantity: qtyToAdd }]`)
+  7. เรียก `showToast()` เพื่อแจ้งเตือนผู้ใช้มุมขวาล่าง
+* **ทำไมต้องเขียนแบบนี้:** ปฏิบัติตามหลัก React Immutability State ไม่แก้ไข State เดิมโดยตรง ป้องกันปัญหา UI ไม่ยอม Re-render
+
+##### 3. ฟังก์ชัน `updateQty(key, delta)`
+* **หน้าที่หลัก:** ปรับเพิ่มหรือลดจำนวนสินค้า (+1 หรือ -1) และลบรายการทิ้งอัตโนมัติหากยอดเหลือ 0
+* **Input / Output:**
+  * *รับเข้า (Param):* `key` (Compound Key ของสินค้า) และ `delta` (ตัวเลข `+1` หรือ `-1`)
+  * *ส่งออก (Return):* `void`
+* **การทำงานทีละบรรทัด:**
+  1. ใช้ `.map()` วนรอบ `prev` เพื่อหาแถวที่ `getCartKey(item) === key`
+  2. หากเจอ จะสร้าง Object ใหม่ที่มี `quantity: item.quantity + delta`
+  3. ใช้ `.filter(item => item.quantity > 0)` ต่อท้ายทันที เพื่อคัดกรองแถวที่ยอดเหลือ `0` หรือติดลบทิ้งไป
+* **ทำไมต้องเขียนแบบนี้:** รวมฟังก์ชันปรับจำนวนและฟังก์ชัน Auto-Remove ไว้ในกระบวนการเดียว (Chaining `.map().filter()`) ทำให้โค้ดสะอาดและไม่มีรายการค้างที่จำนวนเป็น 0 ในตะกร้า
 
 ---
 
@@ -224,13 +253,24 @@ export const AuthProvider = ({ children }) => {
 export const useAuth = () => useContext(AuthContext);
 ```
 
-#### 📊 ตารางแจกแจงตัวแปร:
-| ชื่อตัวแปร / ฟังก์ชัน | ชนิดข้อมูล | หน้าที่การทำงาน | ผลกระทบและการเชื่อมต่อ |
-| :--- | :--- | :--- | :--- |
-| `currentUser` | `Object \| null` | ข้อมูลโปรไฟล์ผู้ใช้งานปัจจุบัน | ส่งให้ `Navbar` (แสดงชื่อ/Avatar), `UserAccount` (ข้อมูลส่วนตัว), และ `ProductCard` |
-| `login(data, remember)` | `Function` | บันทึก Session ลง Storage | ถ้า `rememberMe = true` บันทึก `localStorage`, ถ้าไม่จะบันทึก `sessionStorage` |
-| `isAdmin` | `Boolean` | ตรวจสอบสิทธิ์ผู้ดูแลระบบ | ใช้เปิด Route Guard สู่หน้า `/admin` ([`AdminPage.jsx`](file:///c:/coding/MatchA/app/frontend/src/pages/AdminPage.jsx)) |
-| `isAuthenticated` | `Boolean` | ตรวจสอบสถานะล็อกอิน | ส่งให้ `ProductCard.jsx` หากเป็น `false` จะห้ามกดรูปหัวใจ Wishlist |
+#### 🔍 เจาะลึกการทำงานของฟังก์ชัน:
+
+##### 1. Initial State Loader ใน `useState`
+* **หน้าที่หลัก:** ดึงข้อมูล Session เดิมของผู้ใช้ที่เคยล็อกอินไว้ขึ้นมาใช้งานทันทีที่เปิดเว็บ
+* **การทำงานทีละบรรทัด:**
+  1. ตรวจสอบใน `localStorage` ก่อน (กรณีผู้ใช้เคยติ๊ก Remember Me)
+  2. หากไม่พบ ให้ตรวจใน `sessionStorage` (กรณีผู้ใช้ไม่ติ๊ก Remember Me)
+  3. หากไม่พบทั้งคู่ ให้ตั้งค่าเริ่มต้นเป็น `null` (สถานะ Guest)
+* **ทำไมต้องเขียนแบบนี้:** ป้องกันปัญหา Session หลุดเมื่อผู้ใช้กด Refresh หน้าเว็บ (F5)
+
+##### 2. ฟังก์ชัน `login(userData, rememberMe)`
+* **หน้าที่หลัก:** บันทึกข้อมูลโปรไฟล์ผู้ใช้เข้าสู่ Global State และ Storage
+* **Input / Output:**
+  * *รับเข้า:* `userData` (Object ผู้ใช้: id, name, email, role, tier) และ `rememberMe` (Boolean)
+* **การทำงานทีละบรรทัด:**
+  1. สั่ง `setCurrentUser(userData)` เพื่อกระจายสถานะล็อกอินให้ทุก Component รับรู้
+  2. เลือกประเภท Storage (`rememberMe ? localStorage : sessionStorage`)
+  3. บันทึกข้อมูลเป็น JSON String ลงใน Storage ที่เลือก
 
 ---
 
@@ -277,6 +317,14 @@ export const ToastProvider = ({ children }) => {
 
 export const useToast = () => useContext(ToastContext);
 ```
+
+#### 🔍 เจาะลึกการทำงานของฟังก์ชัน `showToast(message, type)`:
+* **หน้าที่หลัก:** สร้างและแสดงผลป๊อปอัปแจ้งเตือน พร้อมจับเวลาปิดตัวเองอัตโนมัติ
+* **การทำงานทีละบรรทัด:**
+  1. สร้าง Object `{ message, type, id: Date.now() }` บันทึกลง State `toast`
+  2. สั่งรัน `setTimeout` เป็นเวลา 3,500 มิลลิวินาที (3.5 วินาที)
+  3. เมื่อครบเวลา Callback จะเรียก `setToast(null)` เพื่อทำลายป๊อปอัปออกจาก DOM
+* **ทำไมต้องเขียนแบบนี้:** เป็นระบบ Non-blocking Notification ที่ไม่รบกวนการทำงานของผู้ใช้ และเรียกใช้ได้จากทุกหน้าผ่าน Custom Hook `useToast()`
 
 ---
 
@@ -332,6 +380,13 @@ export default function App() {
 }
 ```
 
+#### 🔍 เจาะลึกการทำงานของ Lenis Smooth Scroll Setup:
+* **หน้าที่หลัก:** จัดการการเลื่อนหน้าจอ (Scrolling Physics) ให้มีความนุ่มนวลระดับ 60fps
+* **การทำงานทีละบรรทัด:**
+  1. สร้าง Instance `new Lenis({ duration: 1.2, ... })` กำหนดเวลาหน่วงและสูตรคณิตศาสตร์ Easing
+  2. ฟังก์ชัน `raf(time)` ส่ง Time Delta ให้ `lenis.raf(time)` และวนลูปอย่างต่อเนื่องด้วย `requestAnimationFrame(raf)`
+  3. ในส่วน `return () => lenis.destroy()` จะทำหน้าที่ Cleanup เมื่อ Component ถูก Unmount ป้องกัน Memory Leak
+
 ---
 
 ## 4. หน้าแคตตาล็อกสินค้า & ตัวกรองแนวนอน
@@ -355,7 +410,9 @@ export default function App() {
   {/* Color Popover (3 Columns - มองเห็นครบ 13 สี ไม่ต้องเลื่อนจอ) */}
   {openDropdown === 'color' && (
     <>
-      <div className="fixed inset-0 z-20" onClick={() => setOpenDropdown(null)} />
+      {/* Backdrop ปิดเมนูเมื่อคลิกข้างนอก */}
+      <div className="fixed inset-0 z-20 cursor-default" onClick={() => setOpenDropdown(null)} />
+      
       <div 
         onWheel={(e) => e.stopPropagation()} 
         className="absolute left-0 mt-2 w-80 sm:w-115 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-3.5 z-30 font-mono text-xs animate-fade-in"
@@ -367,7 +424,7 @@ export default function App() {
               onClick={() => { onSelectColor(c.name); setOpenDropdown(null); }}
               className="flex items-center gap-2 p-2 rounded-xl hover:bg-[#FAF8F5] transition-all cursor-pointer"
             >
-              <span className="w-4 h-4 rounded-full border" style={{ backgroundColor: c.hex }} />
+              <span className="w-4 h-4 rounded-full border border-black/20" style={{ backgroundColor: c.hex }} />
               <span>{c.name}</span>
             </button>
           ))}
@@ -378,13 +435,11 @@ export default function App() {
 </div>
 ```
 
-#### 📊 ตารางแจกแจงตัวแปร:
-| ตัวแปร / Event | หน้าที่ | ผลลัพธ์และสิ่งที่เชื่อมต่อ |
-| :--- | :--- | :--- |
-| `selectedSeason` | เก็บซีซันที่เลือก (All, Autumn, Spring, Summer, Winter, Artisan) | ส่งไปกรองสินค้าใน `CatalogPage` |
-| `selectedColor` | เก็บเฉดสีที่เลือก | กรองรายการสินค้าที่มี `variants.color` ตรงกัน |
-| `priceRange` | อาร์เรย์ `[min, max]` (ช่วงราคา $30 - $200) | ดักจับ `product.price >= priceRange[0] && product.price <= priceRange[1]` |
-| `onWheel: stopPropagation()`| หยุดการกระจายของ Event กลิ้งเมาส์ | ป้องกันไม่ให้การเลื่อนเมาส์ใน Popover ไปทำให้หน้าจอใหญ่เลื่อน |
+#### 🔍 เจาะลึกการทำงานของฟังก์ชัน & Event Handling:
+* **Backdrop Dismissal:** ใช้ `<div className="fixed inset-0 z-20" onClick={() => setOpenDropdown(null)} />` วางเป็นเลเยอร์โปร่งแสงเต็มจอ เมื่อผู้ใช้คลิกพื้นที่ว่างข้างนอก ป๊อปอัปจะปิดตัวลงทันทีอย่างเป็นธรรมชาติ
+* **`onWheel={(e) => e.stopPropagation()}`:**
+  * *หน้าที่:* หยุดการส่งต่อ Event กลิ้งเมาส์ (Event Bubbling)
+  * *ผลลัพธ์:* ป้องกันปัญหาที่เมื่อผู้ใช้เลื่อนลูกกลิ้งเมาส์เหนือกล่อง Popover แล้วทำให้หน้าเว็บด้านหลังเลื่อนกระตุกตาม
 
 ---
 
@@ -404,7 +459,7 @@ export default function ProductCard({ product, onQuickView, onToggleWishlist, is
   const [isHovered, setIsHovered] = useState(false);
   const [wishlistActive, setWishlistActive] = useState(isWishlisted);
 
-  // ตรวจสอบสถานะการล็อกอินก่อนกดหัวใจ
+  // ฟังก์ชันตรวจสิทธิ์ก่อนกดหัวใจ
   const handleWishlistClick = (e) => {
     e.stopPropagation();
     if (!currentUser) {
@@ -463,6 +518,14 @@ export default function ProductCard({ product, onQuickView, onToggleWishlist, is
 }
 ```
 
+#### 🔍 เจาะลึกการทำงานของฟังก์ชัน:
+##### `handleWishlistClick(e)`
+* **หน้าที่หลัก:** ตรวจสอบการยืนยันตัวตนของผู้ใช้ และบันทึกสินค้าลง Wishlist
+* **การทำงานทีละบรรทัด:**
+  1. `e.stopPropagation()`: สกัดกั้นไม่ให้ Event การคลิกหัวใจ ทะลุไปทริกเกอร์การเปิด Modal พรีวิวของตัวการ์ดหลัก
+  2. `if (!currentUser)`: ตรวจสอบสถานะล็อกอิน หากเป็น `null` (Guest) จะเรียก `showToast()` แจ้งเตือน และ `return` ตัดการทำงานทันที
+  3. หากล็อกอินแล้ว จะสั่งสลับ State `setWishlistActive(!wishlistActive)` และส่งข้อมูลต่อไปยัง Parent Callback `onToggleWishlist`
+
 ---
 
 ## 6. หน้าตะกร้าสินค้า & ตัววัดยอดส่งฟรี
@@ -473,7 +536,7 @@ export default function ProductCard({ product, onQuickView, onToggleWishlist, is
 ```javascript
 const { cartItems, updateQty, removeItem, subtotal, shipping, total, awayFromFreeShipping, getCartKey } = useCart();
 
-// แถบความคืบหน้าส่งฟรี (Free Shipping Meter)
+// คำนวณเปอร์เซ็นต์ยอดส่งฟรี (เต็ม 100%)
 const freeShippingPercent = Math.min(100, Math.round((subtotal / 100) * 100));
 
 return (
@@ -518,13 +581,20 @@ const handleApplyCoupon = () => {
 const finalTotal = Math.max(0, subtotal - discountAmount + shipping);
 ```
 
+#### 🔍 เจาะลึกการทำงานของฟังก์ชัน `handleApplyCoupon()`:
+* **หน้าที่หลัก:** ตรวจสอบความถูกต้องของรหัสคูปอง และคำนวณมูลค่าส่วนลดที่จะนำไปหักลบจากยอดรวม
+* **การทำงานทีละบรรทัด:**
+  1. `couponCode.trim().toUpperCase()`: ตัดช่องว่างหัวท้ายและแปลงเป็นตัวพิมพ์ใหญ่ เพื่อให้รับโค้ดได้ไม่ว่าผู้ใช้จะพิมพ์ `matcha15` หรือ `MATCHA15`
+  2. เงื่อนไข `MATCHA15`: คำนวณลด 15% จาก `subtotal`
+  3. เงื่อนไข `FREESHIP`: ตั้งค่าลดหย่อนเท่ากับค่าจัดส่ง `shipping`
+  4. คำนวณ `finalTotal` ด้วย `Math.max(0, ...)` เพื่อป้องกันยอดเงินติดลบในกรณีที่มูลค่าส่วนลดมากกว่าราคาสินค้า
+
 ---
 
 ## 8. ระบบสมาชิก & โปรไฟล์ผู้ใช้ (`LoginPage.jsx` & `UserAccount.jsx`)
 
 #### 💻 โค้ด Demo Authentication Buttons:
 ```javascript
-// ปุ่มล็อกอินจำลองสำหรับแอดมินและสมาชิก
 const handleQuickDemoLogin = (role) => {
   if (role === 'admin') {
     login({ id: 'ADM-001', name: 'Master Administrator', email: 'admin@matcha.com', role: 'Admin', tier: 'Executive' });
@@ -567,13 +637,14 @@ const handleExportInventory = () => {
 };
 ```
 
-#### 📊 ตารางแจกแจงตัวแปรใน Admin Dashboard:
-| ตัวแปร State | ชนิดข้อมูล | หน้าที่การทำงาน | การแสดงผลและการเชื่อมต่อ |
-| :--- | :--- | :--- | :--- |
-| `activeTab` | `'dashboard' \| 'inventory' \| 'orders' \| 'analytics' \| 'members' \| 'backup'` | สลับโมดูลหน้า Dashboard | ควบคุมการ Render ของ Left Sidebar และ Content Canvas ทางขวา |
-| `globalSearch` | `String` | ค้นหาข้อมูลแบบ Real-Time | ใช้กรอง SKU, ชื่อสินค้า, เลขออเดอร์, และรายชื่อสมาชิกพร้อมกัน |
-| `totalRevenue` | `Number` | รวมยอดเงินจากออเดอร์ทั้งหมด | แสดงบน KPI Card ใบแรก และคำนวณกราฟผลตอบแทน |
-| `lowStockCount` | `Number` | นับจำนวนสินค้าที่มีสต็อก $\le 10$ ชิ้น | แสดง Badge สีส้มแจ้งเตือนบน KPI Card |
+#### 🔍 เจาะลึกการทำงานของฟังก์ชัน `downloadFile`:
+* **หน้าที่หลัก:** สร้างและดาวน์โหลดไฟล์จากหน้าเว็บโดยตรง (Client-Side File Generation)
+* **การทำงานทีละบรรทัด:**
+  1. `const bom = type.includes('csv') ? '\uFEFF' : ''`: ใส่รหัส **Byte Order Mark** ป้องกันโปรแกรม Excel แสดงผลภาษาไทยเป็นภาษาต่างดาว
+  2. `new Blob([bom + content], { type })`: นำเนื้อหามาแปลงเป็น Binary Large Object
+  3. `URL.createObjectURL(blob)`: สร้าง Virtual Memory URL ชั่วคราว
+  4. สร้าง Element `<a>` จำลองการคลิกดาวน์โหลดอัตโนมัติ และลบ Element ทิ้ง
+  5. `URL.revokeObjectURL(url)`: เคลียร์หน่วยความจำ RAM เพื่อป้องกัน Memory Leak
 
 ---
 
@@ -605,6 +676,14 @@ export const fetchWithFallback = async (endpoint, options = {}) => {
   }
 };
 ```
+
+#### 🔍 เจาะลึกการทำงานของฟังก์ชัน `fetchWithFallback`:
+* **หน้าที่หลัก:** จัดการการสื่อสารกับ Backend พร้อมระบบรองรับข้อผิดพลาด (Fault Tolerance)
+* **การทำงานทีละบรรทัด:**
+  1. ในบล็อก `try`: ส่ง HTTP Request ไปยังเซิร์ฟเวอร์ Express API จริง (`:5000`)
+  2. หากสถานะไม่ใช่ 200 OK (`!response.ok`) จะโยน Error ไปที่บล็อก `catch`
+  3. ในบล็อก `catch`: ตรวจสอบว่าหากเป็นการเรียกข้อมูลสินค้า จะดึงจาก `productsData.js` ในเครื่อง (60 รายการ) มาส่งกลับไปแทนทันที
+* **ผลลัพธ์ทางวิศวกรรม:** เว็บไซต์สามารถทำงานได้อย่างราบรื่น 100% โดยไม่มีหน้าจอขาว แม้เซิร์ฟเวอร์ Node.js จะปิดอยู่ก็ตาม
 
 ---
 
