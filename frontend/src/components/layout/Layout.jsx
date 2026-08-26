@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from './Navbar';
 import Footer from './Footer';
-import ScrollProgressTracker from './ScrollProgressTracker';
+import ScrollProgressTracker from '../ui/ScrollProgressTracker';
 
 export default function Layout({ 
   children, 
@@ -9,7 +9,9 @@ export default function Layout({
   onOpenCart, 
   onNavigate, 
   onGoToLanding,
-  currentPage = 'home'
+  currentPage = 'home',
+  currentUser = null,
+  onLogout
 }) {
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#2D231E] flex flex-col font-sans selection:bg-[#2D5A27] selection:text-white relative">
@@ -24,6 +26,8 @@ export default function Layout({
         onNavigate={onNavigate}
         onGoToLanding={onGoToLanding}
         currentPage={currentPage}
+        currentUser={currentUser}
+        onLogout={onLogout}
       />
 
       {/* Main Page Content */}

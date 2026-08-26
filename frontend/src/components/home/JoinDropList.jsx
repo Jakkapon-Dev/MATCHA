@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, ShieldCheck, ArrowRight, CreditCard, CheckCircle2 } from 'lucide-react';
-import BorderBeam from './BorderBeam';
+import BorderBeam from '../ui/BorderBeam';
 
 export default function JoinDropList({ onSubscribe }) {
   const [email, setEmail] = useState('');

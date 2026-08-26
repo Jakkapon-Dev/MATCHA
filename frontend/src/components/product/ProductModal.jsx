@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { X, Heart, Star, ShoppingBag, Check, Sparkles, ShieldCheck, Truck, RefreshCw } from 'lucide-react';
+import { handleImageError } from '../../utils/imageFallback';
+import { useCart } from '../../context/CartContext';
 
 export default function ProductModal({ product, onClose, onAddToCart, onToggleWishlist, isWishlisted = false }) {
+  const { addToCart: contextAddToCart } = useCart();
+
   // Extract variants from product
   const variants = product?.variants && product.variants.length > 0
     ? product.variants
@@ -32,6 +36,26 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
     }
   }, [product]);
 
+  // Handle ESC key press & body scroll lock
+  useEffect(() => {
+    if (!product) return;
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && onClose) {
+        onClose();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = originalOverflow || 'unset';
+    };
+  }, [product, onClose]);
+
   if (!product) return null;
 
   const handleVariantChange = (v) => {
@@ -47,14 +71,20 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
     setAddedAnimation(true);
     setTimeout(() => setAddedAnimation(false), 600);
 
-    onAddToCart({
+    const itemToAdd = {
       ...product,
       image: activeVariant.image,
       color: activeVariant.color,
       colorHex: activeVariant.colorHex,
       size: selectedSize,
       quantity: Number(quantity)
-    });
+    };
+
+    if (onAddToCart) {
+      onAddToCart(itemToAdd);
+    } else if (contextAddToCart) {
+      contextAddToCart(itemToAdd);
+    }
   };
 
   const handleWishlist = (e) => {
@@ -102,10 +132,11 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
           </div>
 
           {/* MAIN PRODUCT PHOTO FRAME: Stretches to fill the entire red box */}
-          <div className="w-full flex-1 aspect-3/4 min-h-[380px] sm:min-h-[460px] md:min-h-[500px] rounded-2xl overflow-hidden bg-white border border-[#D9D3C7] shadow-sm flex items-center justify-center relative group">
+          <div className="w-full flex-1 aspect-3/4 min-h-95 sm:min-h-115 md:min-h-125 rounded-2xl overflow-hidden bg-white border border-[#D9D3C7] shadow-sm flex items-center justify-center relative group">
             <img 
               src={activeVariant.image} 
               alt={`${product.name} - ${activeVariant.color}`}
+              onError={handleImageError}
               className={`w-full h-full object-cover object-center transition-all duration-300 group-hover:scale-105 ${
                 imageFade ? 'opacity-30 scale-95' : 'opacity-100 scale-100'
               }`}

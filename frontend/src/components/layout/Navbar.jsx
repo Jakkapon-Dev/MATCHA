@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Menu, X, Sparkles, User, LogIn } from 'lucide-react';
-import AuthModal from './AuthModal';
-import BorderBeam from './BorderBeam';
+import AuthModal from '../auth/AuthModal';
+import BorderBeam from '../ui/BorderBeam';
 
-export default function Navbar({
-  cartCount = 0,
-  onOpenCart,
-  onNavigate,
-  onGoToLanding,
-  currentPage = 'home'
+export default function Navbar({ 
+  cartCount = 0, 
+  onOpenCart, 
+  onNavigate, 
+  onGoToLanding, 
+  currentPage = 'home',
+  currentUser = null,
+  onLogout
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
@@ -134,23 +136,39 @@ export default function Navbar({
             {/* Divider */}
             <div className="hidden lg:block h-6 w-px bg-[#D9D3C7] mx-1" />
 
-            {/* Far Right: Desktop Auth Buttons (LOG IN / SIGN UP) */}
-            <div className="hidden lg:flex items-center gap-1.5 font-mono">
-              <button
-                onClick={() => handleOpenAuth('login')}
-                className="px-3 py-1.5 text-xs font-bold text-[#2D231E] hover:text-[#2D5A27] hover:bg-[#D0DEC6]/40 rounded-lg transition-colors cursor-pointer flex items-center gap-1"
-              >
-                <User size={13} />
-                <span>LOG IN</span>
-              </button>
-              <span className="text-[#D9D3C7]">/</span>
-              <button
-                onClick={() => handleLinkClick('#signup')}
-                className="px-3 py-1.5 text-xs font-bold text-[#BC5A36] hover:text-[#9E4423] hover:bg-[#BC5A36]/10 rounded-lg transition-colors cursor-pointer"
-              >
-                SIGN UP
-              </button>
-            </div>
+            {/* Far Right: Desktop Auth Buttons or User Avatar */}
+            {currentUser ? (
+              <div className="hidden lg:flex items-center gap-2 font-mono">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-[#D0DEC6]/50 border border-[#2D5A27]/30 rounded-xl text-xs font-bold text-[#2D5A27]">
+                  <span className="w-2 h-2 rounded-full bg-[#2D5A27] animate-pulse" />
+                  <span className="truncate max-w-30">{currentUser.name}</span>
+                </div>
+                <button
+                  onClick={onLogout}
+                  className="px-2.5 py-1.5 text-xs font-bold text-[#BC5A36] hover:bg-[#BC5A36]/10 rounded-lg transition-colors cursor-pointer"
+                  title="Sign out of MatchA"
+                >
+                  LOG OUT
+                </button>
+              </div>
+            ) : (
+              <div className="hidden lg:flex items-center gap-1.5 font-mono">
+                <button
+                  onClick={() => handleLinkClick('/login')}
+                  className="px-3 py-1.5 text-xs font-bold text-[#2D231E] hover:text-[#2D5A27] hover:bg-[#D0DEC6]/40 rounded-lg transition-colors cursor-pointer flex items-center gap-1"
+                >
+                  <User size={13} />
+                  <span>LOG IN</span>
+                </button>
+                <span className="text-[#D9D3C7]">/</span>
+                <button
+                  onClick={() => handleLinkClick('/signup')}
+                  className="px-3 py-1.5 text-xs font-bold text-[#BC5A36] hover:text-[#9E4423] hover:bg-[#BC5A36]/10 rounded-lg transition-colors cursor-pointer"
+                >
+                  SIGN UP
+                </button>
+              </div>
+            )}
 
             {/* Mobile Menu Toggle */}
             <button
@@ -171,21 +189,41 @@ export default function Navbar({
             <nav className="flex flex-col gap-4">
 
               {/* Mobile Auth Quick Buttons */}
-              <div className="grid grid-cols-2 gap-2 pb-3 border-b border-[#D9D3C7]">
-                <button
-                  onClick={() => handleOpenAuth('login')}
-                  className="py-2 px-3 bg-white border border-[#D9D3C7] rounded-xl text-xs font-mono font-bold text-[#2D231E] hover:border-[#2D5A27] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
-                >
-                  <User size={13} />
-                  <span>LOG IN</span>
-                </button>
-                <button
-                  onClick={() => handleLinkClick('#signup')}
-                  className="py-2 px-3 bg-[#BC5A36] text-white rounded-xl text-xs font-mono font-bold hover:bg-[#9E4423] flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
-                >
-                  <span>SIGN UP</span>
-                </button>
-              </div>
+              {currentUser ? (
+                <div className="flex items-center justify-between pb-3 border-b border-[#D9D3C7]">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-[#2D5A27] text-white flex items-center justify-center text-xs font-bold font-mono">
+                      {currentUser.name?.charAt(0)?.toUpperCase() || 'M'}
+                    </div>
+                    <div>
+                      <p className="text-xs font-mono font-bold text-[#2D231E]">{currentUser.name}</p>
+                      <p className="text-[10px] font-mono text-[#6B5E55]">{currentUser.role || 'VIP Member'}</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); onLogout(); }}
+                    className="text-xs font-mono font-bold text-[#BC5A36] hover:underline cursor-pointer"
+                  >
+                    Log Out
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-2 pb-3 border-b border-[#D9D3C7]">
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); handleLinkClick('/login'); }}
+                    className="py-2 px-3 bg-white border border-[#D9D3C7] rounded-xl text-xs font-mono font-bold text-[#2D231E] hover:border-[#2D5A27] flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                  >
+                    <User size={13} />
+                    <span>LOG IN</span>
+                  </button>
+                  <button
+                    onClick={() => { setMobileMenuOpen(false); handleLinkClick('/signup'); }}
+                    className="py-2 px-3 bg-[#BC5A36] text-white rounded-xl text-xs font-mono font-bold hover:bg-[#9E4423] flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
+                  >
+                    <span>SIGN UP</span>
+                  </button>
+                </div>
+              )}
 
               <button
                 onClick={() => { setMobileMenuOpen(false); onGoToLanding(); }}

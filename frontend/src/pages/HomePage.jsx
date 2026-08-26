@@ -1,11 +1,11 @@
 import React from 'react';
-import BrandHero from '../components/BrandHero';
-import ChooseYourFit from '../components/ChooseYourFit';
-import StreetFavorites from '../components/StreetFavorites';
-import BrandLoop from '../components/BrandLoop';
-import VdoSection from '../components/VdoSection';
-import PulsePerks from '../components/PulsePerks';
-import JoinDropList from '../components/JoinDropList';
+import BrandHero from '../components/home/BrandHero';
+import ChooseYourFit from '../components/home/ChooseYourFit';
+import StreetFavorites from '../components/home/StreetFavorites';
+import BrandLoop from '../components/home/BrandLoop';
+import VdoSection from '../components/home/VdoSection';
+import PulsePerks from '../components/home/PulsePerks';
+import JoinDropList from '../components/home/JoinDropList';
 
 export default function HomePage({
   onSelectFit,

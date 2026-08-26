@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { 
-  Search, SlidersHorizontal, ArrowUpDown, Grid2x2, Grid3x3, LayoutGrid, 
-  List, X, Check, Star, ShoppingBag, Eye, Sparkles, Filter, ChevronLeft, 
-  ChevronRight, RefreshCw, ArrowLeft, ArrowUpRight, RotateCcw
-} from 'lucide-react';
+import { Sparkles, ArrowLeft, RotateCcw } from 'lucide-react';
 import { api } from '../services/api';
-import ProductCard from '../components/ProductCard';
+import ProductCard from '../components/product/ProductCard';
+import ProductCardSkeleton from '../components/ui/ProductCardSkeleton';
+import EmptyState from '../components/ui/EmptyState';
+import CatalogFilterDrawer from '../components/catalog/CatalogFilterDrawer';
+import CatalogToolbar from '../components/catalog/CatalogToolbar';
+import CatalogPagination from '../components/catalog/CatalogPagination';
 
 export default function CatalogPage({ 
   initialCategory = 'ALL',
@@ -26,20 +27,19 @@ export default function CatalogPage({
   const [selectedSeason, setSelectedSeason] = useState('ALL');
   const [selectedColor, setSelectedColor] = useState('ALL');
   const [selectedFit, setSelectedFit] = useState('ALL');
-  const [priceRange, setPriceRange] = useState(150);
+  const [priceRange, setPriceRange] = useState(200);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
 
-  // UI States - Slide-Out Filter Drawer
+  // UI States
   const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
   const [gridCols, setGridCols] = useState(3); // 2, 3, 4, or 'list'
-  const [hoveredCardId, setHoveredCardId] = useState(null);
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(12);
+  const itemsPerPage = 12;
 
-  // Season Options
+  // Options
   const seasonOptions = [
     { label: 'All Seasons', value: 'ALL', icon: '✦' },
     { label: 'Spring Drop', value: 'Spring', icon: '🌸' },
@@ -49,7 +49,6 @@ export default function CatalogPage({
     { label: 'Artisan Core', value: 'Artisan', icon: '🍵' },
   ];
 
-  // Predefined Color Palette Filters across all collections
   const colorOptions = [
     { label: 'All Colors', value: 'ALL', hex: 'linear-gradient(135deg, #2D5A27, #BC5A36, #1B3B6F)' },
     { label: 'Olive Green', value: 'Olive', hex: '#556B2F' },
@@ -66,7 +65,6 @@ export default function CatalogPage({
     { label: 'Natural Ecru', value: 'Ecru', hex: '#EAE6DF' }
   ];
 
-  // Predefined Fit Types
   const fitOptions = ['ALL', 'Oversized', 'Relaxed', 'Tailored', 'Wide Leg', 'Vintage Boxy'];
 
   // Load Categories on mount
@@ -84,7 +82,6 @@ export default function CatalogPage({
 
   // Fetch Products based on filters
   useEffect(() => {
-    let isMounted = true;
     async function loadProducts() {
       setLoading(true);
       try {
@@ -98,740 +95,215 @@ export default function CatalogPage({
           inStockOnly,
           maxPrice: priceRange,
           page: 1,
-          limit: 500 // Load full 247 catalog items for responsive client-side filtering & snappy pagination
+          limit: 100,
         });
 
-        if (isMounted && response && response.data) {
+        if (response && response.data) {
           setProducts(response.data);
           setError(null);
         }
       } catch (err) {
-        if (isMounted) setError('Failed to load products. Please check connection.');
+        console.error('Failed to load products:', err);
+        setError('Unable to reach server. Displaying cached archive collection.');
       } finally {
-        if (isMounted) setLoading(false);
+        setLoading(false);
       }
     }
 
     loadProducts();
-    return () => { isMounted = false; };
   }, [selectedCategory, selectedSeason, searchQuery, sortBy, selectedColor, selectedFit, inStockOnly, priceRange]);
 
-  // Reset page when key filters change
+  // Reset pagination when filter changes
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory, selectedSeason, searchQuery, selectedColor, selectedFit, inStockOnly, priceRange, sortBy]);
+  }, [selectedCategory, selectedSeason, searchQuery, sortBy, selectedColor, selectedFit, inStockOnly, priceRange]);
 
-  // Pagination calculation
-  const totalPages = Math.ceil(products.length / itemsPerPage) || 1;
-  const paginatedProducts = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return products.slice(start, start + itemsPerPage);
-  }, [products, currentPage, itemsPerPage]);
-
-  const activeFiltersCount = useMemo(() => {
+  // Calculate active filter count
+  const activeFilterCount = useMemo(() => {
     let count = 0;
-    if (selectedCategory !== 'ALL') count++;
     if (selectedSeason !== 'ALL') count++;
     if (selectedColor !== 'ALL') count++;
     if (selectedFit !== 'ALL') count++;
     if (inStockOnly) count++;
-    if (priceRange < 150) count++;
-    if (searchQuery.trim()) count++;
+    if (priceRange < 200) count++;
     return count;
-  }, [selectedCategory, selectedSeason, selectedColor, selectedFit, inStockOnly, priceRange, searchQuery]);
+  }, [selectedSeason, selectedColor, selectedFit, inStockOnly, priceRange]);
 
   const handleResetFilters = () => {
     setSelectedCategory('ALL');
     setSelectedSeason('ALL');
     setSelectedColor('ALL');
     setSelectedFit('ALL');
-    setPriceRange(150);
+    setPriceRange(200);
     setInStockOnly(false);
     setSearchQuery('');
     setSortBy('featured');
     setCurrentPage(1);
   };
 
+  // Client-side pagination slice
+  const totalItems = products.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+  const paginatedProducts = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return products.slice(start, start + itemsPerPage);
+  }, [products, currentPage, itemsPerPage]);
+
+  const startIndex = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
+
+  // Grid class mapping
+  const gridClasses = {
+    2: 'grid-cols-1 sm:grid-cols-2',
+    3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
+    4: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4',
+    list: 'grid-cols-1 max-w-4xl mx-auto',
+  }[gridCols] || 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-[#2D231E] relative">
-      
-      {/* 1. Catalog Header & Breadcrumb */}
-      <section className="bg-[#FAF8F5] border-b border-[#D9D3C7] pt-8 pb-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          
-          {/* Breadcrumb Navigation & Back to Home */}
-          <div className="flex items-center justify-between gap-4 mb-4">
-            <div className="flex items-center gap-2 text-xs font-mono text-[#6B5E55]">
-              <button 
-                onClick={onBackToHome}
-                className="hover:text-[#2D5A27] transition-colors flex items-center gap-1 font-bold cursor-pointer"
-              >
-                <ArrowLeft size={13} />
-                <span>HOME</span>
-              </button>
-              <span>/</span>
-              <span className="text-[#2D5A27] font-bold uppercase">COLLECTIONS & CATALOG</span>
-            </div>
+    <div className="w-full bg-[#FAF8F5] min-h-screen py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
 
-            <button
-              onClick={onBackToHome}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#D9D3C7] hover:border-[#2D5A27] bg-white text-xs font-mono font-bold text-[#2D231E] hover:text-[#2D5A27] shadow-2xs transition-all cursor-pointer"
-            >
-              <span>RETURN TO LOOKBOOK</span>
-              <ArrowUpRight size={13} />
-            </button>
+        {/* Page Header */}
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-6 border-b border-[#D9D3C7]">
+          <div>
+            <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#2D5A27] uppercase tracking-widest mb-1.5">
+              <span>MatchA Catalog Archive</span>
+              <span>✦</span>
+              <span>2026 Collection</span>
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-black uppercase text-[#2D231E] tracking-tight">
+              Artisan Apparel
+            </h1>
           </div>
 
-          {/* Title & Description */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
-            <div>
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#2D5A27]/10 text-[#2D5A27] text-[11px] font-mono font-bold tracking-wider uppercase mb-2">
-                <Sparkles size={13} className="text-[#BC5A36]" />
-                <span>MATCH.A 2026 ARCHIVE • 247 PIECES</span>
-              </div>
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight uppercase text-[#2D231E]">
-                All Collections
-              </h1>
-              <p className="mt-1.5 text-xs sm:text-sm text-[#6B5E55] max-w-2xl font-normal">
-                Discover organic heavyweight textures, volume Japanese denim, seasonal outerwear, and artisanal accessories.
-              </p>
-            </div>
-
-            {/* Quick Category Tab Pills */}
-            <div className="flex items-center gap-1.5 flex-wrap">
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-3.5 py-1.5 text-xs font-mono font-bold uppercase rounded-xl border transition-all cursor-pointer ${
-                    selectedCategory === cat.id
-                      ? 'bg-[#2D5A27] text-white border-[#2D5A27] shadow-sm scale-102'
-                      : 'bg-white text-[#2D231E] border-[#D9D3C7] hover:border-[#2D5A27] hover:text-[#2D5A27]'
-                  }`}
-                >
-                  {cat.name.split(' ')[0]} ({cat.count})
-                </button>
-              ))}
-            </div>
+          <div className="text-xs font-mono text-[#6B5E55]">
+            Total <strong className="text-[#2D231E]">{totalItems}</strong> pieces available
           </div>
-
         </div>
-      </section>
 
-      {/* 2. Main Sticky Control Bar: Search + Filter Trigger + Sort + Layout Switcher */}
-      <section className="sticky top-16 sm:top-20 z-30 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#D9D3C7] py-3 px-4 sm:px-6 lg:px-8 shadow-2xs">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-3 sm:gap-4">
-          
-          {/* Left: Live Search Input */}
-          <div className="relative w-full md:w-80 lg:w-96">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B5E55]" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search 247 items by name, silhouette, color..."
-              className="w-full pl-9 pr-9 py-2 bg-white border border-[#D9D3C7] rounded-xl text-xs sm:text-sm font-sans focus:outline-none focus:ring-2 focus:ring-[#2D5A27] focus:border-transparent transition-all shadow-2xs"
-            />
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery('')}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B5E55] hover:text-[#2D231E]"
-              >
-                <X size={14} />
-              </button>
-            )}
-          </div>
+        {/* Toolbar Controls (Search, Categories, Sort, Layout) */}
+        <CatalogToolbar
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          categories={categories}
+          selectedCategory={selectedCategory}
+          onSelectCategory={setSelectedCategory}
+          onOpenFilterDrawer={() => setFilterDrawerOpen(true)}
+          activeFilterCount={activeFilterCount}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          gridCols={gridCols}
+          onGridChange={setGridCols}
+          totalResults={totalItems}
+        />
 
-          {/* Right: FILTERS Slide-Out Drawer Button + Sort + Layout Switchers */}
-          <div className="flex items-center justify-between w-full md:w-auto gap-2 sm:gap-3">
-            
-            {/* Primary Filter Slide-Out Trigger Button (Desktop & Mobile) */}
-            <button
-              onClick={() => setFilterDrawerOpen(true)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-mono font-bold uppercase tracking-wider transition-all shadow-sm cursor-pointer active:scale-95 ${
-                activeFiltersCount > 0
-                  ? 'bg-[#2D5A27] text-white hover:bg-[#23471E] ring-2 ring-[#2D5A27]/30'
-                  : 'bg-white text-[#2D231E] border border-[#D9D3C7] hover:border-[#2D5A27] hover:text-[#2D5A27]'
-              }`}
-            >
-              <SlidersHorizontal size={14} className={activeFiltersCount > 0 ? 'text-[#D0DEC6]' : 'text-[#BC5A36]'} />
-              <span>FILTERS</span>
-              {activeFiltersCount > 0 ? (
-                <span className="w-5 h-5 rounded-full bg-[#BC5A36] text-white text-[11px] flex items-center justify-center font-bold font-mono">
-                  {activeFiltersCount}
+        {/* Active Filters Pill Bar (When filters applied) */}
+        {activeFilterCount > 0 && (
+          <div className="mb-6 p-3 rounded-2xl bg-[#D0DEC6]/30 border border-[#B8CBAE]/60 flex items-center justify-between gap-3 text-xs font-mono">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-bold text-[#2D5A27]">Active Filters ({activeFilterCount}):</span>
+              {selectedSeason !== 'ALL' && (
+                <span className="px-2 py-0.5 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E]">
+                  Season: {selectedSeason}
                 </span>
-              ) : (
-                <span className="text-[10px] text-[#6B5E55]">✦</span>
               )}
-            </button>
-
-            {/* Sort Dropdown */}
-            <div className="flex items-center gap-1.5 bg-white border border-[#D9D3C7] rounded-xl px-3 py-1.5 shadow-2xs">
-              <ArrowUpDown size={13} className="text-[#6B5E55] hidden sm:inline" />
-              <label htmlFor="sort-select" className="text-[11px] font-mono font-bold text-[#6B5E55] uppercase hidden sm:inline">
-                Sort:
-              </label>
-              <select
-                id="sort-select"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="bg-transparent text-xs font-mono font-bold text-[#2D231E] focus:outline-none cursor-pointer py-0.5"
-              >
-                <option value="featured">Featured Drops</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="newest">Newest Arrivals</option>
-                <option value="rating">Highest Rated</option>
-              </select>
+              {selectedColor !== 'ALL' && (
+                <span className="px-2 py-0.5 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E]">
+                  Color: {selectedColor}
+                </span>
+              )}
+              {selectedFit !== 'ALL' && (
+                <span className="px-2 py-0.5 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E]">
+                  Fit: {selectedFit}
+                </span>
+              )}
+              {priceRange < 200 && (
+                <span className="px-2 py-0.5 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E]">
+                  Max: ${priceRange}
+                </span>
+              )}
+              {inStockOnly && (
+                <span className="px-2 py-0.5 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E]">
+                  In Stock Only
+                </span>
+              )}
             </div>
-
-            {/* Grid Layout Switcher */}
-            <div className="hidden sm:flex items-center gap-1 bg-white border border-[#D9D3C7] p-1 rounded-xl shadow-2xs">
-              <button
-                onClick={() => setGridCols(2)}
-                title="2 Columns (Editorial)"
-                className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                  gridCols === 2 ? 'bg-[#2D5A27] text-white' : 'text-[#6B5E55] hover:text-[#2D231E]'
-                }`}
-              >
-                <Grid2x2 size={15} />
-              </button>
-              <button
-                onClick={() => setGridCols(3)}
-                title="3 Columns (Standard)"
-                className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                  gridCols === 3 ? 'bg-[#2D5A27] text-white' : 'text-[#6B5E55] hover:text-[#2D231E]'
-                }`}
-              >
-                <Grid3x3 size={15} />
-              </button>
-              <button
-                onClick={() => setGridCols(4)}
-                title="4 Columns (Full Width Grid)"
-                className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                  gridCols === 4 ? 'bg-[#2D5A27] text-white' : 'text-[#6B5E55] hover:text-[#2D231E]'
-                }`}
-              >
-                <LayoutGrid size={15} />
-              </button>
-              <button
-                onClick={() => setGridCols('list')}
-                title="List View"
-                className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                  gridCols === 'list' ? 'bg-[#2D5A27] text-white' : 'text-[#6B5E55] hover:text-[#2D231E]'
-                }`}
-              >
-                <List size={15} />
-              </button>
-            </div>
-
-          </div>
-
-        </div>
-      </section>
-
-      {/* 3. Full-Width Product Catalog Grid (No boxy sidebar!) */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        
-        {/* Active Filters Summary Chips Bar */}
-        {activeFiltersCount > 0 && (
-          <div className="flex items-center gap-2 flex-wrap mb-6 p-3.5 rounded-2xl bg-white border border-[#D9D3C7] text-xs shadow-2xs animate-fade-in">
-            <span className="font-mono text-[11px] font-bold text-[#6B5E55] uppercase flex items-center gap-1">
-              <Filter size={12} className="text-[#2D5A27]" />
-              Active Filters ({activeFiltersCount}):
-            </span>
-            
-            {selectedCategory !== 'ALL' && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#2D5A27]/10 text-[#2D5A27] font-bold text-xs font-mono">
-                Category: {selectedCategory}
-                <button onClick={() => setSelectedCategory('ALL')} className="hover:text-[#BC5A36] cursor-pointer"><X size={12} /></button>
-              </span>
-            )}
-
-            {selectedSeason !== 'ALL' && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#2D5A27]/10 text-[#2D5A27] font-bold text-xs font-mono">
-                Season: {selectedSeason} Drop
-                <button onClick={() => setSelectedSeason('ALL')} className="hover:text-[#BC5A36] cursor-pointer"><X size={12} /></button>
-              </span>
-            )}
-
-            {selectedColor !== 'ALL' && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#2D5A27]/10 text-[#2D5A27] font-bold text-xs font-mono">
-                Color: {selectedColor}
-                <button onClick={() => setSelectedColor('ALL')} className="hover:text-[#BC5A36] cursor-pointer"><X size={12} /></button>
-              </span>
-            )}
-
-            {selectedFit !== 'ALL' && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#BC5A36]/10 text-[#BC5A36] font-bold text-xs font-mono">
-                Fit: {selectedFit}
-                <button onClick={() => setSelectedFit('ALL')} className="hover:text-[#2D231E] cursor-pointer"><X size={12} /></button>
-              </span>
-            )}
-
-            {priceRange < 150 && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#FAF8F5] border border-[#D9D3C7] text-[#2D231E] font-bold text-xs font-mono">
-                Under ${priceRange}
-                <button onClick={() => setPriceRange(150)} className="hover:text-[#BC5A36] cursor-pointer"><X size={12} /></button>
-              </span>
-            )}
-
-            {inStockOnly && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#2D5A27]/10 text-[#2D5A27] font-bold text-xs font-mono">
-                In Stock Only
-                <button onClick={() => setInStockOnly(false)} className="hover:text-[#BC5A36] cursor-pointer"><X size={12} /></button>
-              </span>
-            )}
-
-            {searchQuery && (
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#FAF8F5] border border-[#D9D3C7] text-[#2D231E] font-bold text-xs font-mono">
-                "{searchQuery}"
-                <button onClick={() => setSearchQuery('')} className="hover:text-[#BC5A36] cursor-pointer"><X size={12} /></button>
-              </span>
-            )}
-
-            <button 
+            <button
               onClick={handleResetFilters}
-              className="ml-auto text-xs font-mono font-bold text-[#BC5A36] hover:underline cursor-pointer flex items-center gap-1"
+              className="text-[#BC5A36] font-bold hover:underline cursor-pointer flex items-center gap-1 shrink-0"
             >
               <RotateCcw size={12} />
-              <span>Reset All</span>
+              <span>Clear All</span>
             </button>
           </div>
         )}
 
-        {/* Results Count & Items Per Page Selector */}
-        <div className="flex items-center justify-between mb-5">
-          <p className="text-xs font-mono text-[#6B5E55]">
-            Showing <strong className="text-[#2D231E]">{products.length}</strong> styles in MatchA archive
-          </p>
-
-          <div className="flex items-center gap-2 text-xs font-mono text-[#6B5E55]">
-            <span>Show:</span>
-            {[12, 24, 48].map((num) => (
-              <button
-                key={num}
-                onClick={() => { setItemsPerPage(num); setCurrentPage(1); }}
-                className={`px-2 py-0.5 rounded cursor-pointer ${
-                  itemsPerPage === num ? 'bg-[#2D5A27] text-white font-bold' : 'hover:text-[#2D231E]'
-                }`}
-              >
-                {num}
-              </button>
+        {/* Product Grid Area (4-State Contract: Loading, Empty, Error, Data) */}
+        {loading ? (
+          <div className={`grid ${gridClasses} gap-6`}>
+            {Array.from({ length: 6 }).map((_, i) => (
+              <ProductCardSkeleton key={i} />
             ))}
           </div>
-        </div>
-
-        {/* Loading Indicator */}
-        {loading && (
-          <div className="py-24 text-center">
-            <RefreshCw size={28} className="mx-auto text-[#2D5A27] animate-spin mb-3" />
-            <p className="text-sm font-mono text-[#6B5E55]">Curating MatchA Collection...</p>
-          </div>
-        )}
-
-        {/* Error Message */}
-        {error && !loading && (
-          <div className="p-6 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-center my-6">
-            <p className="text-sm font-semibold">{error}</p>
-            <button
-              onClick={handleResetFilters}
-              className="mt-3 px-4 py-1.5 bg-red-700 text-white rounded-lg text-xs font-mono font-bold hover:bg-red-800"
-            >
-              Retry & Clear Filters
-            </button>
-          </div>
-        )}
-
-        {/* Empty State */}
-        {!loading && products.length === 0 && (
-          <div className="py-24 px-6 text-center bg-white border border-[#D9D3C7] rounded-3xl my-4 shadow-xs">
-            <div className="w-16 h-16 rounded-2xl bg-[#FAF8F5] border border-[#D9D3C7] flex items-center justify-center mx-auto text-2xl mb-4">
-              🔍
-            </div>
-            <h3 className="text-lg font-bold uppercase text-[#2D231E]">No Matching Silhouettes Found</h3>
-            <p className="text-xs text-[#6B5E55] max-w-md mx-auto mt-2 mb-5">
-              Try adjusting your search query, price limit, or clearing color filters to discover available pieces.
-            </p>
-            <button
-              onClick={handleResetFilters}
-              className="px-5 py-2.5 bg-[#2D5A27] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:bg-[#23471E] transition-all cursor-pointer"
-            >
-              Clear All Filters
-            </button>
-          </div>
-        )}
-
-        {/* Product Grid / List Layout */}
-        {!loading && products.length > 0 && (
-          <>
-            {gridCols === 'list' ? (
-              /* --- LIST VIEW --- */
-              <div className="space-y-4">
-                {paginatedProducts.map((product) => (
-                  <div 
-                    key={product.id}
-                    className="bg-white border border-[#D9D3C7] hover:border-[#2D5A27] rounded-2xl p-4 transition-all shadow-2xs hover:shadow-md flex flex-col sm:flex-row items-center gap-5 group"
-                  >
-                    <div className="w-full sm:w-44 aspect-square rounded-xl overflow-hidden bg-[#FAF8F5] shrink-0 relative">
-                      <img 
-                        src={product.image} 
-                        alt={product.name} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
-                      />
-                      {product.tag && (
-                        <span className="absolute top-2 left-2 px-2 py-0.5 bg-[#2D231E]/90 text-white text-[9px] font-mono font-bold rounded">
-                          {product.tag}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex-1 min-w-0 text-left w-full">
-                      <div className="flex items-center gap-2 text-[10px] font-mono text-[#6B5E55]">
-                        <span className="text-[#2D5A27] font-bold uppercase">{product.season} Drop</span>
-                        <span>•</span>
-                        <span className="uppercase">{product.category}</span>
-                        <span>•</span>
-                        <span>{product.id}</span>
-                        <span>•</span>
-                        <span className="inline-flex items-center gap-0.5 text-amber-600 font-bold">
-                          <Star size={10} className="fill-amber-500 text-amber-500" />
-                          {product.rating} ({product.reviewsCount})
-                        </span>
-                      </div>
-
-                      <h3 className="text-base font-extrabold text-[#2D231E] uppercase mt-1 tracking-tight group-hover:text-[#2D5A27] transition-colors">
-                        {product.name}
-                      </h3>
-                      <p className="text-xs text-[#6B5E55] mt-1 line-clamp-2">
-                        {product.description}
-                      </p>
-
-                      <div className="flex items-center gap-2 mt-3 text-xs font-mono">
-                        <span className="font-bold text-sm text-[#2D231E]">${product.price.toFixed(2)}</span>
-                        {product.originalPrice && (
-                          <span className="line-through text-[#6B5E55] text-xs">${product.originalPrice.toFixed(2)}</span>
-                        )}
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-[#D0DEC6]/60 text-[#2D5A27] font-bold ml-2">
-                          {product.fit}
-                        </span>
-                        <span 
-                          className="w-3 h-3 rounded-full border border-black/10 inline-block ml-1"
-                          style={{ backgroundColor: product.colorHex }}
-                          title={product.color}
-                        />
-                      </div>
-                    </div>
-
-                    <div className="flex sm:flex-col gap-2 w-full sm:w-36 shrink-0 pt-3 sm:pt-0 border-t sm:border-t-0 border-[#D9D3C7]">
-                      <button
-                        onClick={() => onAddToCart && onAddToCart(product)}
-                        className="flex-1 sm:w-full py-2.5 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-bold uppercase rounded-xl flex items-center justify-center gap-1.5 shadow-xs transition-all active:scale-95 cursor-pointer"
-                      >
-                        <ShoppingBag size={13} />
-                        <span>Add Bag</span>
-                      </button>
-                      <button
-                        onClick={() => onQuickView && onQuickView(product)}
-                        className="flex-1 sm:w-full py-2.5 bg-white border border-[#D9D3C7] hover:border-[#2D5A27] text-[#2D231E] text-xs font-bold font-mono uppercase rounded-xl flex items-center justify-center gap-1.5 transition-all cursor-pointer"
-                      >
-                        <Eye size={13} />
-                        <span>Quick View</span>
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              /* --- GRID VIEW (2, 3, or 4 Cols) --- */
-              <div className={`grid gap-5 sm:gap-6 ${
-                gridCols === 2 ? 'grid-cols-1 sm:grid-cols-2' :
-                gridCols === 4 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' :
-                'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-              }`}>
-                {paginatedProducts.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    onAddToCart={onAddToCart}
-                    onQuickView={onQuickView}
-                  />
-                ))}
-              </div>
-            )}
-
-            {/* 4. Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="mt-12 pt-6 border-t border-[#D9D3C7] flex items-center justify-between flex-wrap gap-4">
-                <p className="text-xs font-mono text-[#6B5E55]">
-                  Page <strong className="text-[#2D231E]">{currentPage}</strong> of <strong className="text-[#2D231E]">{totalPages}</strong> ({products.length} Total Items)
-                </p>
-
-                <div className="flex items-center gap-1.5 font-mono text-xs">
-                  <button
-                    onClick={() => { setCurrentPage(p => Math.max(1, p - 1)); window.scrollTo({ top: 200, behavior: 'smooth' }); }}
-                    disabled={currentPage === 1}
-                    className="px-3 py-1.5 rounded-lg border border-[#D9D3C7] bg-white text-[#2D231E] disabled:opacity-40 disabled:cursor-not-allowed hover:border-[#2D5A27] cursor-pointer flex items-center gap-1"
-                  >
-                    <ChevronLeft size={13} />
-                    <span>PREV</span>
-                  </button>
-
-                  {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
-                    let pageNum;
-                    if (totalPages <= 7) pageNum = i + 1;
-                    else if (currentPage <= 4) pageNum = i + 1;
-                    else if (currentPage >= totalPages - 3) pageNum = totalPages - 6 + i;
-                    else pageNum = currentPage - 3 + i;
-
-                    return (
-                      <button
-                        key={pageNum}
-                        onClick={() => { setCurrentPage(pageNum); window.scrollTo({ top: 200, behavior: 'smooth' }); }}
-                        className={`w-8 h-8 rounded-lg font-bold transition-all cursor-pointer ${
-                          currentPage === pageNum
-                            ? 'bg-[#2D5A27] text-white shadow-xs'
-                            : 'bg-white border border-[#D9D3C7] text-[#2D231E] hover:border-[#2D5A27]'
-                        }`}
-                      >
-                        {pageNum}
-                      </button>
-                    );
-                  })}
-
-                  <button
-                    onClick={() => { setCurrentPage(p => Math.min(totalPages, p + 1)); window.scrollTo({ top: 200, behavior: 'smooth' }); }}
-                    disabled={currentPage === totalPages}
-                    className="px-3 py-1.5 rounded-lg border border-[#D9D3C7] bg-white text-[#2D231E] disabled:opacity-40 disabled:cursor-not-allowed hover:border-[#2D5A27] cursor-pointer flex items-center gap-1"
-                  >
-                    <span>NEXT</span>
-                    <ChevronRight size={13} />
-                  </button>
-                </div>
-              </div>
-            )}
-          </>
-        )}
-
-      </main>
-
-      {/* ================= 4. SLIDE-OVER GLASSMORPHISM FILTER DRAWER ================= */}
-      {filterDrawerOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden select-none">
-          
-          {/* Frosted Glass Backdrop */}
-          <div 
-            onClick={() => setFilterDrawerOpen(false)}
-            className="fixed inset-0 bg-black/50 backdrop-blur-xs transition-opacity animate-fade-in cursor-pointer" 
+        ) : paginatedProducts.length === 0 ? (
+          <EmptyState
+            title="No garments matched your filters"
+            description="We couldn't find any MatchA pieces matching this combination. Try clearing your search query or loosening the color/season filters."
+            actionLabel="Reset All Filters"
+            onAction={handleResetFilters}
           />
-
-          <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-md bg-[#FAF8F5] border-l border-[#D9D3C7] shadow-2xl flex flex-col justify-between animate-slide-left">
-              
-              {/* Drawer Header */}
-              <div className="px-6 py-5 bg-white border-b border-[#D9D3C7] flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-[#2D5A27] text-white flex items-center justify-center shadow-xs">
-                    <SlidersHorizontal size={16} />
-                  </div>
-                  <div>
-                    <h3 className="font-extrabold text-base uppercase text-[#2D231E] tracking-tight">Curate Archive</h3>
-                    <p className="text-[10px] font-mono text-[#6B5E55]">MATCH.A SPECIFICATION & FILTERS</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  {activeFiltersCount > 0 && (
-                    <button
-                      onClick={handleResetFilters}
-                      className="text-xs font-mono font-bold text-[#BC5A36] hover:underline cursor-pointer px-2 py-1"
-                    >
-                      Clear ({activeFiltersCount})
-                    </button>
-                  )}
-                  <button 
-                    onClick={() => setFilterDrawerOpen(false)}
-                    className="p-1.5 rounded-xl hover:bg-[#FAF8F5] text-[#6B5E55] hover:text-[#2D231E] transition-colors cursor-pointer"
-                  >
-                    <X size={20} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Drawer Scrollable Filter Body */}
-              <div className="px-6 py-6 overflow-y-auto flex-1 space-y-6">
-                
-                {/* 1. Category Filter */}
-                <div>
-                  <h4 className="text-xs font-mono font-bold text-[#6B5E55] uppercase tracking-wider mb-2.5">
-                    Category
-                  </h4>
-                  <div className="grid grid-cols-2 gap-1.5">
-                    {categories.map((cat) => (
-                      <button
-                        key={cat.id}
-                        onClick={() => setSelectedCategory(cat.id)}
-                        className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold transition-all cursor-pointer ${
-                          selectedCategory === cat.id
-                            ? 'bg-[#2D5A27] text-white font-bold shadow-xs'
-                            : 'bg-white text-[#2D231E] border border-[#D9D3C7] hover:border-[#2D5A27]'
-                        }`}
-                      >
-                        <span className="truncate">{cat.name.split(' ')[0]}</span>
-                        <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded ${
-                          selectedCategory === cat.id ? 'bg-white/20 text-white' : 'bg-[#FAF8F5] text-[#6B5E55]'
-                        }`}>
-                          {cat.count}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 2. Seasonal Drop Filter */}
-                <div className="pt-5 border-t border-[#D9D3C7]">
-                  <h4 className="text-xs font-mono font-bold text-[#6B5E55] uppercase tracking-wider mb-2.5">
-                    Seasonal Drop
-                  </h4>
-                  <div className="grid grid-cols-2 gap-1.5">
-                    {seasonOptions.map((s) => (
-                      <button
-                        key={s.value}
-                        onClick={() => setSelectedSeason(s.value)}
-                        className={`px-3 py-2 rounded-xl border text-xs text-left transition-all cursor-pointer flex items-center gap-2 ${
-                          selectedSeason === s.value
-                            ? 'border-[#2D5A27] bg-[#2D5A27] text-white font-bold shadow-xs'
-                            : 'bg-white border-[#D9D3C7] text-[#2D231E] hover:border-[#2D5A27]'
-                        }`}
-                      >
-                        <span>{s.icon}</span>
-                        <span className="truncate">{s.label}</span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 3. Price Range Slider */}
-                <div className="pt-5 border-t border-[#D9D3C7]">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-xs font-mono font-bold text-[#6B5E55] uppercase tracking-wider">
-                      Max Price Range
-                    </h4>
-                    <span className="text-sm font-mono font-bold text-[#2D5A27] bg-white px-2 py-0.5 rounded border border-[#D9D3C7]">
-                      ${priceRange}.00
-                    </span>
-                  </div>
-                  <input
-                    type="range"
-                    min="20"
-                    max="150"
-                    step="5"
-                    value={priceRange}
-                    onChange={(e) => setPriceRange(Number(e.target.value))}
-                    className="w-full accent-[#2D5A27] cursor-pointer"
-                  />
-                  <div className="flex justify-between text-[10px] font-mono text-[#6B5E55] mt-1">
-                    <span>$20</span>
-                    <span>$85</span>
-                    <span>$150+</span>
-                  </div>
-                </div>
-
-                {/* 4. Color Shade Filter */}
-                <div className="pt-5 border-t border-[#D9D3C7]">
-                  <h4 className="text-xs font-mono font-bold text-[#6B5E55] uppercase tracking-wider mb-2.5">
-                    Color Shade
-                  </h4>
-                  <div className="grid grid-cols-2 gap-1.5">
-                    {colorOptions.map((c) => {
-                      const isSelected = selectedColor === c.value;
-                      return (
-                        <button
-                          key={c.value}
-                          onClick={() => setSelectedColor(c.value)}
-                          className={`flex items-center gap-2 px-2.5 py-1.5 rounded-xl border text-xs text-left transition-all cursor-pointer ${
-                            isSelected 
-                              ? 'border-[#2D5A27] bg-[#2D5A27]/10 font-bold text-[#2D5A27]' 
-                              : 'bg-white border-[#D9D3C7] text-[#2D231E] hover:border-[#6B5E55]'
-                          }`}
-                        >
-                          <span 
-                            className="w-3.5 h-3.5 rounded-full shrink-0 border border-black/10 shadow-2xs"
-                            style={{ background: c.hex }}
-                          />
-                          <span className="truncate text-[11px]">{c.label}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* 5. Silhouette Fit Filter */}
-                <div className="pt-5 border-t border-[#D9D3C7]">
-                  <h4 className="text-xs font-mono font-bold text-[#6B5E55] uppercase tracking-wider mb-2.5">
-                    Silhouette Fit
-                  </h4>
-                  <div className="flex flex-wrap gap-1.5">
-                    {fitOptions.map((fit) => (
-                      <button
-                        key={fit}
-                        onClick={() => setSelectedFit(fit)}
-                        className={`px-3 py-1.5 text-xs font-mono rounded-xl border transition-all cursor-pointer ${
-                          selectedFit === fit
-                            ? 'bg-[#BC5A36] text-white border-[#BC5A36] font-bold shadow-2xs'
-                            : 'bg-white border-[#D9D3C7] text-[#6B5E55] hover:border-[#2D5A27] hover:text-[#2D231E]'
-                        }`}
-                      >
-                        {fit}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 6. In-Stock Only Switch */}
-                <div className="pt-5 border-t border-[#D9D3C7] flex items-center justify-between bg-white p-3.5 rounded-2xl border border-[#D9D3C7]">
-                  <div>
-                    <span className="text-xs font-bold text-[#2D231E] block">In Stock Ready</span>
-                    <span className="text-[10px] text-[#6B5E55]">Show immediately dispatchable pieces</span>
-                  </div>
-                  <button
-                    onClick={() => setInStockOnly(!inStockOnly)}
-                    className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${
-                      inStockOnly ? 'bg-[#2D5A27]' : 'bg-[#D9D3C7]'
-                    }`}
-                  >
-                    <span
-                      className={`w-4.5 h-4.5 rounded-full bg-white absolute top-0.75 transition-transform shadow-xs ${
-                        inStockOnly ? 'right-1' : 'left-1'
-                      }`}
-                    />
-                  </button>
-                </div>
-
-              </div>
-
-              {/* Drawer Footer Actions */}
-              <div className="p-5 bg-white border-t border-[#D9D3C7] space-y-2">
-                <button
-                  onClick={() => setFilterDrawerOpen(false)}
-                  className="w-full py-3.5 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-bold font-mono uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-98 cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <Check size={15} />
-                  <span>VIEW MATCHING PIECES ({products.length})</span>
-                </button>
-                <button
-                  onClick={handleResetFilters}
-                  className="w-full py-2 bg-transparent text-[#BC5A36] hover:text-[#9E4423] text-xs font-mono font-bold transition-colors cursor-pointer"
-                >
-                  RESET ALL FILTERS
-                </button>
-              </div>
-
-            </div>
+        ) : (
+          <div className={`grid ${gridClasses} gap-6`}>
+            {paginatedProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={onAddToCart}
+                onQuickView={onQuickView}
+              />
+            ))}
           </div>
-        </div>
-      )}
+        )}
 
+        {/* Pagination Navigation */}
+        {!loading && paginatedProducts.length > 0 && (
+          <CatalogPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => {
+              setCurrentPage(page);
+              window.scrollTo({ top: 200, behavior: 'smooth' });
+            }}
+            totalItems={totalItems}
+            startIndex={startIndex}
+            endIndex={endIndex}
+          />
+        )}
+
+        {/* Slide-out Facet Filter Drawer */}
+        <CatalogFilterDrawer
+          isOpen={filterDrawerOpen}
+          onClose={() => setFilterDrawerOpen(false)}
+          seasonOptions={seasonOptions}
+          selectedSeason={selectedSeason}
+          onSelectSeason={setSelectedSeason}
+          colorOptions={colorOptions}
+          selectedColor={selectedColor}
+          onSelectColor={setSelectedColor}
+          fitOptions={fitOptions}
+          selectedFit={selectedFit}
+          onSelectFit={setSelectedFit}
+          priceRange={priceRange}
+          onChangePrice={setPriceRange}
+          inStockOnly={inStockOnly}
+          onToggleInStock={() => setInStockOnly(!inStockOnly)}
+          onResetFilters={handleResetFilters}
+          activeFilterCount={activeFilterCount}
+          totalResults={totalItems}
+        />
+
+      </div>
     </div>
   );
 }

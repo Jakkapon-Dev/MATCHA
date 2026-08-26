@@ -7,41 +7,30 @@ import HomePage from './pages/HomePage';
 import CatalogPage from './pages/CatalogPage';
 import CartPage from './pages/CartPage';
 import SignUpPage from './pages/SignUpPage';
+import LoginPage from './pages/LoginPage';
 import Payment from './pages/Payment';
-import Layout from './components/Layout';
-import ProductModal from './components/ProductModal';
+import UserAccount from './pages/UserAccount';
+import Layout from './components/layout/Layout';
+import ProductModal from './components/product/ProductModal';
 
-const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color || 'default'}`;
+// Context Providers and Hooks
+import { ToastProvider, useToast, AuthProvider, useAuth, CartProvider, useCart } from './context';
 
-const loadCart = () => {
-  try {
-    const saved = localStorage.getItem('matcha_cart');
-    return saved ? JSON.parse(saved) : [];
-  } catch {
-    return [];
-  }
-};
-
-export default function App() {
+function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Context Hooks
+  const { cartItems, setCartItems, addToCart, updateQty, removeItem, cartCount } = useCart();
+  const { currentUser, login, logout } = useAuth();
+  const { showToast } = useToast();
+
+  // Local UI States
   const [healthStatus, setHealthStatus] = useState(null);
-  const [cartItems, setCartItems] = useState(loadCart);
-  const [toast, setToast] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [catalogCategory, setCatalogCategory] = useState('ALL');
 
-  // Sync cart to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem('matcha_cart', JSON.stringify(cartItems));
-    } catch (e) {
-      console.error('Failed to save cart to localStorage', e);
-    }
-  }, [cartItems]);
-
-  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup, #payment -> /payment)
+  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup, etc.)
   useEffect(() => {
     const hash = window.location.hash.toLowerCase();
     if (hash === '#catalog' && location.pathname !== '/catalog') {
@@ -50,8 +39,12 @@ export default function App() {
       navigate('/cart', { replace: true });
     } else if (hash === '#signup' && location.pathname !== '/signup') {
       navigate('/signup', { replace: true });
+    } else if (hash === '#login' && location.pathname !== '/login') {
+      navigate('/login', { replace: true });
     } else if (hash === '#payment' && location.pathname !== '/payment') {
       navigate('/payment', { replace: true });
+    } else if (hash === '#account' && location.pathname !== '/account') {
+      navigate('/account', { replace: true });
     }
   }, [location.pathname, navigate]);
 
@@ -81,6 +74,7 @@ export default function App() {
     };
   }, []);
 
+  // Health check
   useEffect(() => {
     async function loadHealth() {
       try {
@@ -93,49 +87,8 @@ export default function App() {
     loadHealth();
   }, []);
 
-  const showToast = (message) => {
-    setToast(message);
-    setTimeout(() => setToast(null), 3500);
-  };
-
-  const handleAddToCart = (product) => {
-    const amount = product.quantity || 1;
-    setCartItems((prev) => {
-      const key = getCartKey(product);
-      const idx = prev.findIndex((item) => getCartKey(item) === key);
-      if (idx > -1) {
-        const next = [...prev];
-        next[idx] = { ...next[idx], quantity: (next[idx].quantity || 1) + amount };
-        return next;
-      }
-      return [...prev, { ...product, quantity: amount }];
-    });
-    const details = product.size && product.color ? ` (${product.size} / ${product.color})` : '';
-    showToast(`Added ${product.name}${details} to bag! 🛍️`);
-  };
-
-  const handleUpdateQty = (key, delta) => {
-    setCartItems((prev) =>
-      prev
-        .map((item) =>
-          getCartKey(item) === key
-            ? { ...item, quantity: (item.quantity || 1) + delta }
-            : item
-        )
-        .filter((item) => (item.quantity || 1) > 0)
-    );
-  };
-
-  const handleRemoveItem = (key) => {
-    setCartItems((prev) => prev.filter((item) => getCartKey(item) !== key));
-    showToast('Removed item from cart 🗑️');
-  };
-
   const handleProceedToPayment = () => {
-    if (cartItems.length === 0) {
-      showToast('Your cart is empty! Add items first. 🛍️');
-      return;
-    }
+    if (cartItems.length === 0) return;
     navigate('/payment');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -165,8 +118,18 @@ export default function App() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
+    if (pathOrHash === '/login' || pathOrHash === '#login') {
+      navigate('/login');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     if (pathOrHash === '/payment' || pathOrHash === '#payment') {
       handleProceedToPayment();
+      return;
+    }
+    if (pathOrHash === '/account' || pathOrHash === '#account') {
+      navigate('/account');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
@@ -189,7 +152,6 @@ export default function App() {
   };
 
   const handleSelectFit = (fit) => {
-    showToast(`Exploring ${fit.category || fit.title} in Catalog! 🎨`);
     const cat = fit.category || '';
     if (cat.toLowerCase().includes('tank') || cat.toLowerCase().includes('tee') || cat.toLowerCase().includes('sweat')) {
       setCatalogCategory('Tops');
@@ -204,44 +166,30 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleClaimPromo = () => {
-    showToast(`Claimed 15% discount code MATCHA15 applied at checkout! 🎉`);
-  };
-
-  const handleSubscribe = (email) => {
-    showToast(`Subscribed ${email} to VIP Drop List! 📩`);
-  };
-
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#2D231E] font-sans selection:bg-[#2D5A27] selection:text-white relative">
-
-      {/* Interactive Toast Notification */}
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-50 animate-bounce pointer-events-none">
-          <div className="py-3 px-5 rounded-2xl bg-[#2D231E] text-[#FAF8F5] border border-[#3D312A] font-bold text-xs shadow-2xl flex items-center gap-2">
-            <span className="text-[#BC5A36]">✨</span>
-            {toast}
-          </div>
-        </div>
-      )}
-
+      
       {/* Product Customizer & Quick View Modal */}
       {selectedProduct && (
         <ProductModal
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
-          onAddToCart={handleAddToCart}
+          onAddToCart={addToCart}
         />
       )}
 
       {/* Main Experience Layout */}
       <Layout
-        cartCount={cartItems.length}
+        cartCount={cartCount}
+        currentUser={currentUser}
+        onLogout={logout}
         currentPage={
           location.pathname === '/catalog' ? 'catalog' : 
           location.pathname === '/cart' ? 'cart' : 
           location.pathname === '/signup' ? 'signup' : 
+          location.pathname === '/login' ? 'login' : 
           location.pathname === '/payment' ? 'payment' : 
+          location.pathname === '/account' ? 'account' : 
           'home'
         }
         onOpenCart={handleOpenCart}
@@ -255,14 +203,14 @@ export default function App() {
             element={
               <HomePage
                 onSelectFit={handleSelectFit}
-                onClaimPromo={handleClaimPromo}
-                onAddToCart={handleAddToCart}
+                onClaimPromo={() => showToast('Claimed 15% discount code MATCHA15! 🎉')}
+                onAddToCart={addToCart}
                 onQuickView={(prod) => setSelectedProduct(prod)}
                 onExploreWarehouse={() => {
                   navigate('/catalog');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                onSubscribe={handleSubscribe}
+                onSubscribe={(email) => showToast(`Subscribed ${email} to VIP Drop List! 📩`)}
               />
             }
           />
@@ -274,7 +222,7 @@ export default function App() {
               <CatalogPage
                 initialCategory={catalogCategory}
                 onBackToHome={handleGoToHome}
-                onAddToCart={handleAddToCart}
+                onAddToCart={addToCart}
                 onQuickView={(prod) => setSelectedProduct(prod)}
                 onSelectFit={handleSelectFit}
               />
@@ -287,15 +235,15 @@ export default function App() {
             element={
               <CartPage
                 cartItems={cartItems}
-                onUpdateQty={handleUpdateQty}
-                onRemove={handleRemoveItem}
+                onUpdateQty={updateQty}
+                onRemove={removeItem}
                 onBackToStore={handleGoToHome}
                 onCheckout={handleProceedToPayment}
               />
             }
           />
 
-          {/* 4. Payment / Checkout Page (From Pete) */}
+          {/* 4. Payment / Checkout Page */}
           <Route 
             path="/payment" 
             element={
@@ -306,10 +254,38 @@ export default function App() {
             } 
           />
 
-          {/* 5. Sign Up Page */}
-          <Route
+          {/* 5. Login Page */}
+          <Route 
+            path="/login" 
+            element={
+              <LoginPage 
+                onLoginSuccess={(user) => {
+                  login(user);
+                }} 
+              />
+            } 
+          />
+
+          {/* 6. Sign Up Page */}
+          <Route 
             path="/signup" 
             element={<SignUpPage onBackToStore={handleGoToHome} />} 
+          />
+
+          {/* 7. User Account Page */}
+          <Route
+            path="/account"
+            element={
+              <UserAccount
+                cartCount={cartCount}
+                onOpenCart={handleOpenCart}
+                onNavigate={handleNavigate}
+                onGoToLanding={handleGoToHome}
+                user={currentUser}
+                onAddToCart={addToCart}
+                onLogout={logout}
+              />
+            }
           />
 
           {/* Fallback */}
@@ -318,5 +294,17 @@ export default function App() {
       </Layout>
 
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ToastProvider>
+      <AuthProvider>
+        <CartProvider>
+          <AppContent />
+        </CartProvider>
+      </AuthProvider>
+    </ToastProvider>
   );
 }
