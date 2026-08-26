@@ -32,7 +32,7 @@ export default function CatalogPage({
   const [sortBy, setSortBy] = useState('featured');
 
   // UI States
-  const [gridCols, setGridCols] = useState(3); // 2, 3, 4, or 'list'
+  const [gridCols, setGridCols] = useState(4); // Default to 4 columns (2 on mobile, 3 on tablet, 4 on desktop)
 
   // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
@@ -157,7 +157,7 @@ export default function CatalogPage({
     3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
     4: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4',
     list: 'grid-cols-1 max-w-4xl mx-auto',
-  }[gridCols] || 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3';
+  }[gridCols] || 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4';
 
   return (
     <div className="w-full bg-[#FAF8F5] min-h-screen py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
