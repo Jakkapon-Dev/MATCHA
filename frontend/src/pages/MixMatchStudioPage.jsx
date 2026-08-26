@@ -82,6 +82,7 @@ export default function MixMatchStudioPage() {
   const [selectedBottom, setSelectedBottom] = useState(bottoms[0] || productsData[1]);
   const [selectedAccessory, setSelectedAccessory] = useState(accessories[0] || productsData[2]);
   const [activeSlotTab, setActiveSlotTab] = useState('tops'); // 'tops' | 'bottoms' | 'accessories'
+  const [activePresetId, setActivePresetId] = useState('PRESET-01');
   const [justAddedBundle, setJustAddedBundle] = useState(false);
 
   // Apply Predefined Preset
@@ -93,7 +94,7 @@ export default function MixMatchStudioPage() {
     setSelectedTop(t);
     setSelectedBottom(b);
     setSelectedAccessory(a);
-    showToast(`โหลดชุดเซ็ต: ${preset.name} สำเร็จ! ✨`);
+    setActivePresetId(preset.id);
   };
 
   // Randomize Outfit
@@ -105,7 +106,7 @@ export default function MixMatchStudioPage() {
     setSelectedTop(randomTop);
     setSelectedBottom(randomBottom);
     setSelectedAccessory(randomAcc);
-    showToast('สุ่มชุดแฟชั่นเซ็ตใหม่เรียบร้อย 🎲');
+    setActivePresetId(null);
   };
 
   // Pricing & Combo Discount
@@ -174,28 +175,52 @@ export default function MixMatchStudioPage() {
         </div>
 
         {/* 2. EDITORIAL PRESET CHIPS */}
-        <div className="space-y-2">
-          <span className="text-[11px] font-mono font-bold uppercase text-[#6B5E55] tracking-wider block">
-            ลุคแฟชั่นยอดนิยม (Curated Presets):
-          </span>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            {OUTFIT_PRESETS.map((preset) => (
-              <button
-                key={preset.id}
-                onClick={() => handleApplyPreset(preset)}
-                className="p-3.5 bg-white rounded-2xl border border-[#D9D3C7] hover:border-[#2D5A27] text-left transition-all hover:shadow-md cursor-pointer group"
-              >
-                <div className="flex items-center justify-between text-xs font-bold font-mono mb-1">
-                  <span className="text-[#2D231E] truncate group-hover:text-[#2D5A27]">{preset.name}</span>
-                  <span className="text-[10px] text-[#2D5A27] bg-[#E2ECE9] px-2 py-0.5 rounded-md">{preset.harmonyScore}%</span>
-                </div>
-                <p className="text-[11px] text-[#6B5E55] line-clamp-2 leading-relaxed">
-                  {preset.description}
-                </p>
-              </button>
-            ))}
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-mono font-bold uppercase text-[#6B5E55] tracking-wider block">
+              ลุคแฟชั่นยอดนิยม (Curated Presets):
+            </span>
+            {activePresetId && (
+              <span className="text-[10px] font-mono text-[#2D5A27] font-bold bg-[#E2ECE9] px-2.5 py-0.5 rounded-full">
+                ✓ กำลังแสดงลุคที่เลือก
+              </span>
+            )}
           </div>
-        </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {OUTFIT_PRESETS.map((preset) => {
+              const isActive = activePresetId === preset.id;
+              return (
+                <button
+                  key={preset.id}
+                  onClick={() => handleApplyPreset(preset)}
+                  className={`p-3.5 rounded-2xl border-2 text-left transition-all duration-200 cursor-pointer group relative ${
+                    isActive
+                      ? 'border-[#2D5A27] bg-[#2D5A27]/8 shadow-lg ring-2 ring-[#2D5A27]/25 scale-[1.02]'
+                      : 'border-[#D9D3C7] bg-white hover:border-[#2D5A27]/50 hover:bg-[#FAF8F5] hover:shadow-md'
+                  }`}
+                >
+                  <div className="flex items-center justify-between text-xs font-bold font-mono mb-1.5">
+                    <span className={`truncate font-bold transition-colors ${
+                      isActive ? 'text-[#2D5A27]' : 'text-[#2D231E] group-hover:text-[#2D5A27]'
+                    }`}>
+                      {preset.name}
+                    </span>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md transition-colors ${
+                      isActive 
+                        ? 'bg-[#2D5A27] text-white shadow-xs' 
+                        : 'bg-[#E2ECE9] text-[#2D5A27]'
+                    }`}>
+                      {preset.harmonyScore}%
+                    </span>
+                  </div>
+                  <p className={`text-[11px] line-clamp-2 leading-relaxed transition-colors ${
+                    isActive ? 'text-[#2D231E] font-medium' : 'text-[#6B5E55]'
+                  }`}>
+                    {preset.description}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
 
         {/* 3. TWO-COLUMN STUDIO INTERFACE */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
