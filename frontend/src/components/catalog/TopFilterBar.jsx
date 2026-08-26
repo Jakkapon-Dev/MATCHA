@@ -56,7 +56,7 @@ export default function TopFilterBar({
         />
       )}
       
-      {/* 1. Horizontal Flex-wrap Pill Filter Bar (No overflow clipping) */}
+      {/* 1. Horizontal Flex-wrap Pill Filter Bar */}
       <div className="flex items-center gap-2.5 flex-wrap py-1 relative z-20">
         
         {/* Season Dropdown Pill */}
@@ -76,11 +76,25 @@ export default function TopFilterBar({
             <ChevronDown size={13} className={`transition-transform duration-200 ${openDropdown === 'season' ? 'rotate-180' : ''}`} />
           </button>
 
-          {/* Season Popover */}
+          {/* Season Popover (All visible, no scrollbar) */}
           {openDropdown === 'season' && (
-            <div className="absolute left-0 mt-2 w-56 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-2 z-30 font-mono text-xs animate-fade-in">
-              <div className="text-[10px] font-bold uppercase text-[#6B5E55] px-3 py-1.5 tracking-wider border-b border-[#D9D3C7]/40 mb-1">
-                Seasonal Drop
+            <div 
+              onWheel={(e) => e.stopPropagation()}
+              className="absolute left-0 mt-2 w-60 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-2.5 z-30 font-mono text-xs animate-fade-in"
+            >
+              <div className="text-[10px] font-bold uppercase text-[#6B5E55] px-3 py-1.5 tracking-wider border-b border-[#D9D3C7]/40 mb-1.5 flex items-center justify-between">
+                <span>Seasonal Drop</span>
+                {selectedSeason !== 'ALL' && (
+                  <button
+                    onClick={() => {
+                      onSelectSeason('ALL');
+                      setOpenDropdown(null);
+                    }}
+                    className="text-[10px] text-[#BC5A36] hover:underline font-bold cursor-pointer"
+                  >
+                    Reset
+                  </button>
+                )}
               </div>
               <div className="space-y-1">
                 {seasonOptions.map(option => {
@@ -131,11 +145,17 @@ export default function TopFilterBar({
             <ChevronDown size={13} className={`transition-transform duration-200 ${openDropdown === 'color' ? 'rotate-180' : ''}`} />
           </button>
 
-          {/* Color Popover */}
+          {/* Color Popover (Expanded 3 Columns - All 13 colors fully visible without scrolling) */}
           {openDropdown === 'color' && (
-            <div className="absolute left-0 mt-2 w-72 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-3 z-30 font-mono text-xs animate-fade-in">
-              <div className="flex items-center justify-between px-1 py-1 border-b border-[#D9D3C7]/40 mb-2">
-                <span className="text-[10px] font-bold uppercase text-[#6B5E55] tracking-wider">Color Swatches</span>
+            <div 
+              onWheel={(e) => e.stopPropagation()}
+              className="absolute left-0 mt-2 w-80 sm:w-[460px] bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-3.5 z-30 font-mono text-xs animate-fade-in"
+            >
+              <div className="flex items-center justify-between px-1.5 py-1 border-b border-[#D9D3C7]/40 mb-2.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-bold uppercase text-[#6B5E55] tracking-wider">Color Swatches</span>
+                  <span className="text-[10px] text-[#6B5E55]/70">({colorOptions.length} Shades)</span>
+                </div>
                 {selectedColor !== 'ALL' && (
                   <button 
                     onClick={() => {
@@ -144,11 +164,13 @@ export default function TopFilterBar({
                     }}
                     className="text-[10px] text-[#BC5A36] hover:underline font-bold cursor-pointer"
                   >
-                    Reset
+                    Reset to All
                   </button>
                 )}
               </div>
-              <div className="grid grid-cols-2 gap-1.5 max-h-64 overflow-y-auto pr-1">
+
+              {/* 3 Columns Grid for perfect visibility */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
                 {colorOptions.map(color => {
                   const isSelected = selectedColor === color.value;
                   return (
@@ -160,15 +182,15 @@ export default function TopFilterBar({
                       }}
                       className={`flex items-center gap-2 px-2.5 py-2 rounded-xl border text-left text-[11px] transition-all cursor-pointer ${
                         isSelected
-                          ? 'border-[#2D5A27] bg-[#D0DEC6]/30 text-[#2D5A27] font-bold'
-                          : 'border-transparent hover:bg-[#FAF8F5] text-[#2D231E]'
+                          ? 'border-[#2D5A27] bg-[#D0DEC6]/30 text-[#2D5A27] font-bold shadow-xs'
+                          : 'border-transparent hover:bg-[#FAF8F5] text-[#2D231E] hover:border-[#D9D3C7]/60'
                       }`}
                     >
                       <div 
                         className="w-4 h-4 rounded-full border border-black/15 shadow-2xs shrink-0" 
                         style={{ background: color.hex }}
                       />
-                      <span className="truncate">{color.label}</span>
+                      <span className="truncate font-sans font-medium">{color.label}</span>
                     </button>
                   );
                 })}
@@ -193,11 +215,25 @@ export default function TopFilterBar({
             <ChevronDown size={13} className={`transition-transform duration-200 ${openDropdown === 'fit' ? 'rotate-180' : ''}`} />
           </button>
 
-          {/* Fit Popover */}
+          {/* Fit Popover (All visible, no scrollbar) */}
           {openDropdown === 'fit' && (
-            <div className="absolute left-0 mt-2 w-56 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-2 z-30 font-mono text-xs animate-fade-in">
-              <div className="text-[10px] font-bold uppercase text-[#6B5E55] px-3 py-1.5 tracking-wider border-b border-[#D9D3C7]/40 mb-1">
-                Garment Silhouette
+            <div 
+              onWheel={(e) => e.stopPropagation()}
+              className="absolute left-0 mt-2 w-60 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-2.5 z-30 font-mono text-xs animate-fade-in"
+            >
+              <div className="text-[10px] font-bold uppercase text-[#6B5E55] px-3 py-1.5 tracking-wider border-b border-[#D9D3C7]/40 mb-1.5 flex items-center justify-between">
+                <span>Garment Silhouette</span>
+                {selectedFit !== 'ALL' && (
+                  <button
+                    onClick={() => {
+                      onSelectFit('ALL');
+                      setOpenDropdown(null);
+                    }}
+                    className="text-[10px] text-[#BC5A36] hover:underline font-bold cursor-pointer"
+                  >
+                    Reset
+                  </button>
+                )}
               </div>
               <div className="space-y-1">
                 {fitOptions.map(fit => {
@@ -241,12 +277,15 @@ export default function TopFilterBar({
             <ChevronDown size={13} className={`transition-transform duration-200 ${openDropdown === 'price' ? 'rotate-180' : ''}`} />
           </button>
 
-          {/* Price Popover */}
+          {/* Price Popover (All visible, no scrollbar) */}
           {openDropdown === 'price' && (
-            <div className="absolute left-0 mt-2 w-64 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-4 z-30 font-mono text-xs animate-fade-in">
+            <div 
+              onWheel={(e) => e.stopPropagation()}
+              className="absolute left-0 mt-2 w-72 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-4 z-30 font-mono text-xs animate-fade-in"
+            >
               <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#D9D3C7]/40">
                 <span className="text-[10px] font-bold uppercase text-[#6B5E55] tracking-wider">Maximum Price</span>
-                <span className="text-sm font-black text-[#2D5A27]">${priceRange}</span>
+                <span className="text-base font-black text-[#2D5A27]">${priceRange}</span>
               </div>
               <input
                 type="range"
@@ -262,10 +301,20 @@ export default function TopFilterBar({
                 <span>$100</span>
                 <span>$200</span>
               </div>
-              <div className="mt-4 pt-2 border-t border-[#D9D3C7]/40 flex justify-end">
+              <div className="mt-4 pt-2.5 border-t border-[#D9D3C7]/40 flex items-center justify-between">
+                {priceRange < 200 ? (
+                  <button
+                    onClick={() => {
+                      onChangePrice(200);
+                    }}
+                    className="text-[10px] text-[#BC5A36] hover:underline font-bold cursor-pointer"
+                  >
+                    Reset Max
+                  </button>
+                ) : <span />}
                 <button
                   onClick={() => setOpenDropdown(null)}
-                  className="px-3 py-1.5 rounded-lg bg-[#2D5A27] text-white font-bold text-[11px] cursor-pointer hover:bg-[#23471E]"
+                  className="px-3.5 py-1.5 rounded-lg bg-[#2D5A27] text-white font-bold text-xs cursor-pointer hover:bg-[#23471E]"
                 >
                   Apply
                 </button>
