@@ -4,6 +4,7 @@
   "private": true,
   "description": "MatchA - Modern Artisan Tea & Beverage Full-Stack App (React Vite + Express)",
   "scripts": {
+    "build": "npm run build --prefix frontend",
     "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
     "dev:backend": "npm run dev --prefix backend",
     "dev:frontend": "npm run dev --prefix frontend",
