@@ -149,7 +149,7 @@ export default function TopFilterBar({
           {openDropdown === 'color' && (
             <div 
               onWheel={(e) => e.stopPropagation()}
-              className="absolute left-0 mt-2 w-80 sm:w-[460px] bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-3.5 z-30 font-mono text-xs animate-fade-in"
+              className="absolute left-0 mt-2 w-80 sm:w-115 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-3.5 z-30 font-mono text-xs animate-fade-in"
             >
               <div className="flex items-center justify-between px-1.5 py-1 border-b border-[#D9D3C7]/40 mb-2.5">
                 <div className="flex items-center gap-2">

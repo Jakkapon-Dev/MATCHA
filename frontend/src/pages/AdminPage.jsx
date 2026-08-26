@@ -512,7 +512,7 @@ export default function AdminPage() {
                 value={globalSearch}
                 onChange={(e) => setGlobalSearch(e.target.value)}
                 placeholder="Search metrics, SKU, orders, members..."
-                className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-[#D9D3C7] bg-white font-mono text-xs text-[#2D231E] outline-none focus:border-[#2D5A27] focus:ring-1 focus:ring-[#2D5A27]"
+                className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-[#D9D3C7] bg-white font-mono text-xs text-[#2D231E] outline-none focus:ring-2 focus:ring-[#2D5A27]/30 focus:border-[#2D5A27]"
               />
               {globalSearch && (
                 <button
@@ -547,8 +547,8 @@ export default function AdminPage() {
               {isExportMenuOpen && (
                 <>
                   <div className="fixed inset-0 z-20 cursor-default" onClick={() => setIsExportMenuOpen(false)} />
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-2 z-30 font-mono text-xs animate-fade-in divide-y divide-[#D9D3C7]/40">
-                    <div className="p-1.5 space-y-1">
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-2 z-30 font-mono text-xs animate-fade-in">
+                    <div className="p-1.5 space-y-1 border-b border-[#D9D3C7]/40">
                       <button
                         onClick={handleExportInventory}
                         className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-[#FAF8F5] text-left transition-colors cursor-pointer"
@@ -699,7 +699,7 @@ export default function AdminPage() {
                           </span>
                           
                           {/* Bar Container */}
-                          <div className="w-full max-w-[42px] bg-[#FAF8F5] rounded-t-xl h-full flex items-end p-1 relative overflow-hidden">
+                          <div className="w-full max-w-10.5 bg-[#FAF8F5] rounded-t-xl h-full flex items-end p-1 relative overflow-hidden">
                             <div
                               style={{ height: `${heightPercent}%` }}
                               className={`w-full rounded-t-lg transition-all duration-500 group-hover:brightness-110 ${
