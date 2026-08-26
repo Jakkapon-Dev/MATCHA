@@ -26,12 +26,12 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      # 3. ติดตั้ง Dependencies ของโปรเจกต์
+      # 3. ติดตั้ง Dependencies ของโปรเจกต์ (High-speed optimized)
       - name: 📦 Install Root & Workspace Dependencies
         run: |
-          npm install
-          cd frontend && npm install
-          cd ../backend && npm install
+          npm install --no-audit --no-fund
+          cd frontend && npm install --no-audit --no-fund
+          cd ../backend && npm install --no-audit --no-fund
           cd ..
 
       # 4. ทดสอบความถูกต้องของ Syntax และการ Import ไฟล์
