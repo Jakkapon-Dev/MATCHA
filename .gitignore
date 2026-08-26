@@ -1,9 +1,15 @@
 # ==============================================================================
 # MatchA — Master .gitignore Configuration
-# Continuously updated for clean repository, CI/CD, and deployment security
+# Continuously updated for clean repository and deployment security
 # ==============================================================================
 
-# 1. Dependencies & Package Managers
+# 1. CI/CD & GitHub Workflows (Explicitly disabled/ignored)
+.github/
+.github/*
+.github-actions/
+*.runner.log
+
+# 2. Dependencies & Package Managers
 node_modules/
 .pnp
 .pnp.js
@@ -13,7 +19,7 @@ package-lock.json.bak
 .yarn/build-state.yml
 .yarn/install-state.gz
 
-# 2. Production Build & Output
+# 3. Production Build & Output
 dist/
 dist-ssr/
 build/
@@ -21,7 +27,7 @@ out/
 *.local
 *.tsbuildinfo
 
-# 3. Deployment Artifacts & Cloud Caches
+# 4. Deployment Artifacts & Cloud Caches
 .vercel/
 .vercel
 .turbo/
@@ -31,7 +37,7 @@ out/
 .netlify/
 .serverless/
 
-# 4. Environment Variables & Secret Credentials (NEVER COMMIT)
+# 5. Environment Variables & Secret Credentials (NEVER COMMIT)
 .env
 .env.*
 .env.local
@@ -57,7 +63,7 @@ app/frontend/.env.*
 *.pfx
 *.p12
 
-# 5. Logs & Runtime Debugging
+# 6. Logs & Runtime Debugging
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -66,7 +72,7 @@ lerna-debug.log*
 *.log
 *.log.*
 
-# 6. Operating System & Editor Files
+# 7. Operating System & Editor Files
 .DS_Store
 .DS_Store?
 ._*
@@ -89,7 +95,7 @@ desktop.ini
 *.backup
 *.orig
 
-# 7. AI Agent Caches, Knowledge Graphs & Index Directories
+# 8. AI Agent Caches, Knowledge Graphs & Index Directories
 .agents/
 .agents/*
 .claude/
@@ -101,7 +107,7 @@ desktop.ini
 graft/
 graft/*
 
-# 8. Vite, Bundler & Local Cache Stores
+# 9. Vite, Bundler & Local Cache Stores
 .vite/
 .cache/
 *.tmp
@@ -110,7 +116,7 @@ graft/*
 .eslintcache
 .stylelintcache
 
-# 9. Test Results, CI Reports & Coverage Dumps
+# 10. Test Results & Coverage Dumps
 coverage/
 *.lcov
 test-output/
@@ -120,10 +126,8 @@ blob-report/
 *.dump
 *.dmp
 *.stackdump
-.github-actions/
-*.runner.log
 
-# 10. Temporary Local Data & Generated Exports (Spreadsheets / Dumps)
+# 11. Temporary Local Data & Generated Exports (Spreadsheets / Dumps)
 *.export.csv
 *.export.json
 MatchA_*_Backup_*.json
@@ -134,7 +138,7 @@ MatchA_Revenue_*.csv
 MatchA_VIP_*.csv
 MatchA_Full_Store_Backup_*.json
 
-# 11. Personal & Internal Interview Notes (Do not upload to Git)
+# 12. Personal & Internal Interview Notes (Do not upload to Git)
 interview.md
 *interview*.md
 *scratch*.js
