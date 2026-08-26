@@ -141,13 +141,12 @@ export default function Navbar({
               <div className="hidden lg:flex items-center gap-2 font-mono">
                 <button
                   onClick={() => handleLinkClick('/account')}
-                  className="flex items-center gap-2 px-3 py-1.5 bg-[#D0DEC6]/50 hover:bg-[#D0DEC6] border border-[#2D5A27]/30 hover:border-[#2D5A27] rounded-xl text-xs font-bold text-[#2D5A27] transition-all cursor-pointer shadow-2xs group"
+                  className="flex items-center gap-2 px-3.5 py-2 bg-[#D0DEC6]/50 hover:bg-[#D0DEC6] border border-[#2D5A27]/30 hover:border-[#2D5A27] rounded-xl text-xs font-bold text-[#2D5A27] transition-all cursor-pointer shadow-2xs group"
                   title="Go to My Account"
                 >
-                  <User size={13} className="text-[#2D5A27]" />
-                  <span className="truncate max-w-30">{currentUser.name}</span>
-                  <span className="text-[10px] px-1.5 py-0.5 bg-[#2D5A27] text-white rounded font-mono uppercase opacity-90 group-hover:opacity-100 flex items-center gap-1">
-                    {currentUser.role === 'Admin' ? '👑 Admin' : 'My Account'}
+                  <User size={14} className="text-[#2D5A27]" />
+                  <span className="font-mono text-xs font-bold tracking-wide uppercase">
+                    {currentUser.role === 'Admin' ? '👑 Admin Dashboard' : 'My Account'}
                   </span>
                 </button>
                 <button
