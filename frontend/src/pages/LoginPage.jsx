@@ -262,7 +262,7 @@ export default function LoginPage({ onLoginSuccess }) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-3 py-3.5 bg-[#2D5A27] hover:bg-[#23471E] active:scale-[0.98] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-[#2D5A27]/25 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+              className="w-full mt-3 py-3.5 bg-[#2D5A27] hover:bg-[#23471E] active:scale-[0.98] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-[#2D5A27]/25 flex items-center justify-center gap-2 enabled:cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
