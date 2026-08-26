@@ -71,7 +71,10 @@ graft/*
 *.tmp
 *.cache
 
-# Diagram editor temp & backup files
+# Project Requirement & Design docs (Local only)
+Requirement/
+Requirement/*
+*.excalidraw
 *.excalidraw.bak
 *.excalidraw.tmp
 *.excalidraw.backup
