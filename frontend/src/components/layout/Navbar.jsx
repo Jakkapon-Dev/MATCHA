@@ -142,12 +142,12 @@ export default function Navbar({
                 <button
                   onClick={() => handleLinkClick('/account')}
                   className="flex items-center gap-2 px-3 py-1.5 bg-[#D0DEC6]/50 hover:bg-[#D0DEC6] border border-[#2D5A27]/30 hover:border-[#2D5A27] rounded-xl text-xs font-bold text-[#2D5A27] transition-all cursor-pointer shadow-2xs group"
-                  title="Go to Account & Admin Dashboard"
+                  title="Go to My Account"
                 >
-                  <span className="w-2 h-2 rounded-full bg-[#2D5A27] animate-pulse" />
+                  <User size={13} className="text-[#2D5A27]" />
                   <span className="truncate max-w-30">{currentUser.name}</span>
-                  <span className="text-[10px] px-1.5 py-0.2 bg-[#2D5A27] text-white rounded font-mono uppercase opacity-90 group-hover:opacity-100">
-                    {currentUser.role === 'Admin' ? '👑 Admin' : '👤 Lounge'}
+                  <span className="text-[10px] px-1.5 py-0.5 bg-[#2D5A27] text-white rounded font-mono uppercase opacity-90 group-hover:opacity-100 flex items-center gap-1">
+                    {currentUser.role === 'Admin' ? '👑 Admin' : 'My Account'}
                   </span>
                 </button>
                 <button
@@ -207,7 +207,7 @@ export default function Navbar({
                     </div>
                     <div>
                       <p className="text-xs font-mono font-bold text-[#2D231E] group-hover:text-[#2D5A27]">{currentUser.name}</p>
-                      <p className="text-[10px] font-mono text-[#6B5E55]">{currentUser.role === 'Admin' ? '👑 Admin Dashboard' : '🟢 Member Lounge'}</p>
+                      <p className="text-[10px] font-mono text-[#6B5E55]">{currentUser.role === 'Admin' ? '👑 Admin Dashboard' : '👤 My Account'}</p>
                     </div>
                   </button>
                   <button
