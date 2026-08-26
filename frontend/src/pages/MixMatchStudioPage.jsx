@@ -27,9 +27,9 @@ const OUTFIT_PRESETS = [
     season: 'Autumn',
     harmonyScore: 98,
     harmonyType: 'Analogous Warm Palette',
-    description: 'การจับคู่สีมัสตาร์ดเอิร์ธโทนกับกางเกงลินินอบอุ่น ขับเน้นเสน่ห์ของสาวผิว Warm Undertone',
-    topId: 'AUT-TOP-001',
-    bottomId: 'AUT-BOT-001',
+    description: 'การจับคู่เสื้อฮู้ดสีเอิร์ธโทนกับกางเกงชิโน่และกระเป๋าหนังโทนอุ่น ขับเน้นเสน่ห์ของสาวผิว Warm Autumn',
+    topId: 'AUT-TOP-009',
+    bottomId: 'AUT-BOT-003',
     accessoryId: 'AUT-ACC-001'
   },
   {
@@ -38,10 +38,10 @@ const OUTFIT_PRESETS = [
     season: 'Spring',
     harmonyScore: 95,
     harmonyType: 'Complementary Pastel',
-    description: 'โทนสีพีชคอรัลจับคู่กับเฉดครีมสว่าง ให้ลุคสดใส ร่าเริง สไตล์สาวเกาหลี',
-    topId: 'SPR-TOP-001',
-    bottomId: 'SPR-BOT-001',
-    accessoryId: 'SPR-ACC-001'
+    description: 'เสื้อคาร์ดิแกนสีพีชจับคู่กับยีนส์สว่างและกระเป๋าสะพายลินิน ให้ลุคสดใส ร่าเริง สไตล์สาว Bright Spring',
+    topId: 'SPR-TOP-022',
+    bottomId: 'SPR-BOT-015',
+    accessoryId: 'SPR-ACC-013'
   },
   {
     id: 'PRESET-03',
@@ -49,10 +49,10 @@ const OUTFIT_PRESETS = [
     season: 'Summer',
     harmonyScore: 94,
     harmonyType: 'Monochromatic Muted Sky',
-    description: 'โทนสีลาเวนเดอร์และมินต์พาสเทล ให้ความรู้สึกผ่อนคลายและสุภาพอย่างมีระดับ',
-    topId: 'SUM-TOP-001',
-    bottomId: 'SUM-BOT-001',
-    accessoryId: 'SUM-ACC-001'
+    description: 'เสื้อเชิ้ตซัมเมอร์สีฟ้าพาสเทลกับกางเกงลินินและหมวกสาน ให้ความรู้สึกผ่อนคลาย สุภาพ สไตล์ Cool Summer',
+    topId: 'SUM-TOP-046',
+    bottomId: 'SUM-BOT-040',
+    accessoryId: 'SUM-ACC-037'
   },
   {
     id: 'PRESET-04',
@@ -60,10 +60,10 @@ const OUTFIT_PRESETS = [
     season: 'Winter',
     harmonyScore: 97,
     harmonyType: 'High Contrast Dramatic',
-    description: 'เบลเซอร์สีกรมท่าเข้มตัดกับสแล็คชาร์โคล ให้ลุคภูมิฐาน คมกริบ สไตล์สาวมั่น',
-    topId: 'WIN-TOP-001',
-    bottomId: 'WIN-BOT-001',
-    accessoryId: 'WIN-ACC-001'
+    description: 'โค้ทฤดูหนาวคัตติ้งเนี้ยบตัดกับกางเกงสแล็คและหมวกบีนนี่ ให้ลุคภูมิฐาน คมกริบ สไตล์สาว Vivid Winter',
+    topId: 'WIN-OUT-057',
+    bottomId: 'WIN-BOT-053',
+    accessoryId: 'WIN-ACC-049'
   }
 ];
 
