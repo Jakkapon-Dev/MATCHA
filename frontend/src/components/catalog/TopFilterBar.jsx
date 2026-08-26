@@ -1,14 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  Sparkles, 
-  Palette, 
-  SlidersHorizontal, 
-  DollarSign, 
   Check, 
   ChevronDown, 
-  X, 
-  RotateCcw,
-  CheckCircle2
+  RotateCcw
 } from 'lucide-react';
 
 export default function TopFilterBar({
@@ -52,20 +46,28 @@ export default function TopFilterBar({
   const selectedColorObj = colorOptions.find(c => c.value === selectedColor) || colorOptions[0];
 
   return (
-    <div ref={barRef} className="w-full relative z-20 mb-6">
+    <div ref={barRef} className="w-full relative z-30 mb-6">
+
+      {/* Backdrop overlay when any dropdown is open for crisp click-away */}
+      {openDropdown && (
+        <div 
+          className="fixed inset-0 z-20 cursor-default" 
+          onClick={() => setOpenDropdown(null)} 
+        />
+      )}
       
-      {/* 1. Horizontal Scrollable Pill Filter Bar */}
-      <div className="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none py-1">
+      {/* 1. Horizontal Flex-wrap Pill Filter Bar (No overflow clipping) */}
+      <div className="flex items-center gap-2.5 flex-wrap py-1 relative z-20">
         
         {/* Season Dropdown Pill */}
-        <div className="relative shrink-0">
+        <div className="relative">
           <button
             onClick={() => toggleDropdown('season')}
-            className={`px-3.5 py-2 rounded-full border text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
+            className={`px-4 py-2 rounded-full border text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
               selectedSeason !== 'ALL'
                 ? 'bg-[#2D5A27] text-white border-[#2D5A27]'
                 : openDropdown === 'season'
-                ? 'bg-white text-[#2D5A27] border-[#2D5A27] ring-2 ring-[#2D5A27]/20'
+                ? 'bg-white text-[#2D5A27] border-[#2D5A27] ring-2 ring-[#2D5A27]/20 shadow-md'
                 : 'bg-white text-[#2D231E] border-[#D9D3C7] hover:border-[#2D5A27]'
             }`}
           >
@@ -76,7 +78,7 @@ export default function TopFilterBar({
 
           {/* Season Popover */}
           {openDropdown === 'season' && (
-            <div className="absolute left-0 mt-2 w-56 bg-white rounded-2xl border border-[#D9D3C7] shadow-xl p-2 z-30 font-mono text-xs animate-fade-in">
+            <div className="absolute left-0 mt-2 w-56 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-2 z-30 font-mono text-xs animate-fade-in">
               <div className="text-[10px] font-bold uppercase text-[#6B5E55] px-3 py-1.5 tracking-wider border-b border-[#D9D3C7]/40 mb-1">
                 Seasonal Drop
               </div>
@@ -110,19 +112,19 @@ export default function TopFilterBar({
         </div>
 
         {/* Color Shade Dropdown Pill */}
-        <div className="relative shrink-0">
+        <div className="relative">
           <button
             onClick={() => toggleDropdown('color')}
-            className={`px-3.5 py-2 rounded-full border text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
+            className={`px-4 py-2 rounded-full border text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
               selectedColor !== 'ALL'
                 ? 'bg-[#2D5A27] text-white border-[#2D5A27]'
                 : openDropdown === 'color'
-                ? 'bg-white text-[#2D5A27] border-[#2D5A27] ring-2 ring-[#2D5A27]/20'
+                ? 'bg-white text-[#2D5A27] border-[#2D5A27] ring-2 ring-[#2D5A27]/20 shadow-md'
                 : 'bg-white text-[#2D231E] border-[#D9D3C7] hover:border-[#2D5A27]'
             }`}
           >
             <div 
-              className="w-3.5 h-3.5 rounded-full border border-white/60 shadow-2xs shrink-0" 
+              className="w-3.5 h-3.5 rounded-full border border-black/15 shadow-2xs shrink-0" 
               style={{ background: selectedColorObj.hex }}
             />
             <span>{selectedColor === 'ALL' ? 'Color' : selectedColorObj.label}</span>
@@ -131,13 +133,16 @@ export default function TopFilterBar({
 
           {/* Color Popover */}
           {openDropdown === 'color' && (
-            <div className="absolute left-0 mt-2 w-72 bg-white rounded-2xl border border-[#D9D3C7] shadow-xl p-3 z-30 font-mono text-xs animate-fade-in">
+            <div className="absolute left-0 mt-2 w-72 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-3 z-30 font-mono text-xs animate-fade-in">
               <div className="flex items-center justify-between px-1 py-1 border-b border-[#D9D3C7]/40 mb-2">
                 <span className="text-[10px] font-bold uppercase text-[#6B5E55] tracking-wider">Color Swatches</span>
                 {selectedColor !== 'ALL' && (
                   <button 
-                    onClick={() => onSelectColor('ALL')}
-                    className="text-[10px] text-[#BC5A36] hover:underline font-bold"
+                    onClick={() => {
+                      onSelectColor('ALL');
+                      setOpenDropdown(null);
+                    }}
+                    className="text-[10px] text-[#BC5A36] hover:underline font-bold cursor-pointer"
                   >
                     Reset
                   </button>
@@ -153,14 +158,14 @@ export default function TopFilterBar({
                         onSelectColor(color.value);
                         setOpenDropdown(null);
                       }}
-                      className={`flex items-center gap-2 px-2.5 py-1.5 rounded-xl border text-left text-[11px] transition-all cursor-pointer ${
+                      className={`flex items-center gap-2 px-2.5 py-2 rounded-xl border text-left text-[11px] transition-all cursor-pointer ${
                         isSelected
                           ? 'border-[#2D5A27] bg-[#D0DEC6]/30 text-[#2D5A27] font-bold'
                           : 'border-transparent hover:bg-[#FAF8F5] text-[#2D231E]'
                       }`}
                     >
                       <div 
-                        className="w-3.5 h-3.5 rounded-full border border-black/10 shadow-2xs shrink-0" 
+                        className="w-4 h-4 rounded-full border border-black/15 shadow-2xs shrink-0" 
                         style={{ background: color.hex }}
                       />
                       <span className="truncate">{color.label}</span>
@@ -173,14 +178,14 @@ export default function TopFilterBar({
         </div>
 
         {/* Silhouette & Fit Dropdown Pill */}
-        <div className="relative shrink-0">
+        <div className="relative">
           <button
             onClick={() => toggleDropdown('fit')}
-            className={`px-3.5 py-2 rounded-full border text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
+            className={`px-4 py-2 rounded-full border text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
               selectedFit !== 'ALL'
                 ? 'bg-[#2D5A27] text-white border-[#2D5A27]'
                 : openDropdown === 'fit'
-                ? 'bg-white text-[#2D5A27] border-[#2D5A27] ring-2 ring-[#2D5A27]/20'
+                ? 'bg-white text-[#2D5A27] border-[#2D5A27] ring-2 ring-[#2D5A27]/20 shadow-md'
                 : 'bg-white text-[#2D231E] border-[#D9D3C7] hover:border-[#2D5A27]'
             }`}
           >
@@ -190,7 +195,7 @@ export default function TopFilterBar({
 
           {/* Fit Popover */}
           {openDropdown === 'fit' && (
-            <div className="absolute left-0 mt-2 w-56 bg-white rounded-2xl border border-[#D9D3C7] shadow-xl p-2 z-30 font-mono text-xs animate-fade-in">
+            <div className="absolute left-0 mt-2 w-56 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-2 z-30 font-mono text-xs animate-fade-in">
               <div className="text-[10px] font-bold uppercase text-[#6B5E55] px-3 py-1.5 tracking-wider border-b border-[#D9D3C7]/40 mb-1">
                 Garment Silhouette
               </div>
@@ -221,14 +226,14 @@ export default function TopFilterBar({
         </div>
 
         {/* Price Range Dropdown Pill */}
-        <div className="relative shrink-0">
+        <div className="relative">
           <button
             onClick={() => toggleDropdown('price')}
-            className={`px-3.5 py-2 rounded-full border text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
+            className={`px-4 py-2 rounded-full border text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
               priceRange < 200
                 ? 'bg-[#2D5A27] text-white border-[#2D5A27]'
                 : openDropdown === 'price'
-                ? 'bg-white text-[#2D5A27] border-[#2D5A27] ring-2 ring-[#2D5A27]/20'
+                ? 'bg-white text-[#2D5A27] border-[#2D5A27] ring-2 ring-[#2D5A27]/20 shadow-md'
                 : 'bg-white text-[#2D231E] border-[#D9D3C7] hover:border-[#2D5A27]'
             }`}
           >
@@ -238,7 +243,7 @@ export default function TopFilterBar({
 
           {/* Price Popover */}
           {openDropdown === 'price' && (
-            <div className="absolute left-0 mt-2 w-64 bg-white rounded-2xl border border-[#D9D3C7] shadow-xl p-4 z-30 font-mono text-xs animate-fade-in">
+            <div className="absolute left-0 mt-2 w-64 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-4 z-30 font-mono text-xs animate-fade-in">
               <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#D9D3C7]/40">
                 <span className="text-[10px] font-bold uppercase text-[#6B5E55] tracking-wider">Maximum Price</span>
                 <span className="text-sm font-black text-[#2D5A27]">${priceRange}</span>
@@ -272,7 +277,7 @@ export default function TopFilterBar({
         {/* In-Stock Only Quick Toggle Pill */}
         <button
           onClick={onToggleInStock}
-          className={`px-3.5 py-2 rounded-full border text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shrink-0 shadow-xs ${
+          className={`px-4 py-2 rounded-full border text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
             inStockOnly
               ? 'bg-[#2D5A27] text-white border-[#2D5A27]'
               : 'bg-white text-[#2D231E] border-[#D9D3C7] hover:border-[#2D5A27]'
@@ -286,7 +291,7 @@ export default function TopFilterBar({
         {activeFilterCount > 0 && (
           <button
             onClick={onResetFilters}
-            className="px-3 py-2 rounded-full text-xs font-mono font-bold text-[#BC5A36] hover:bg-[#BC5A36]/10 flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 ml-auto"
+            className="px-3 py-2 rounded-full text-xs font-mono font-bold text-[#BC5A36] hover:bg-[#BC5A36]/10 flex items-center gap-1.5 transition-colors cursor-pointer ml-auto"
           >
             <RotateCcw size={12} />
             <span>Clear Filters</span>
