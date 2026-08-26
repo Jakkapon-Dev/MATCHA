@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Heart, ShoppingBag, Eye, Star, Check } from 'lucide-react';
 import { handleImageError } from '../../utils/imageFallback';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 
 export default function ProductCard({ 
   product, 
@@ -21,6 +23,9 @@ export default function ProductCard({
       ];
 
   const { addToCart: contextAddToCart } = useCart();
+  const { currentUser } = useAuth();
+  const { showToast } = useToast();
+
   const [activeVariant, setActiveVariant] = useState(variants[0]);
   const [selectedSize, setSelectedSize] = useState(product?.sizes?.[0] || 'M');
   const [isHovered, setIsHovered] = useState(false);
@@ -69,6 +74,10 @@ export default function ProductCard({
 
   const handleWishlistClick = (e) => {
     e.stopPropagation();
+    if (!currentUser) {
+      showToast('กรุณาเข้าสู่ระบบก่อนเพื่อบันทึกรายการสินค้าที่ชอบ (Wishlist)', 'info');
+      return;
+    }
     setWishlistActive(!wishlistActive);
     if (onToggleWishlist) onToggleWishlist(product);
   };
@@ -82,13 +91,13 @@ export default function ProductCard({
       {/* 1. PRODUCT PHOTO CONTAINER */}
       <div 
         onClick={() => onQuickView && onQuickView({ ...product, initialVariant: activeVariant, activeImage: activeVariant.image })}
-        className="relative aspect-3/4 w-full bg-[#FAF8F5] overflow-hidden cursor-pointer"
+        className="relative aspect-4/5 w-full bg-[#FAF8F5] overflow-hidden cursor-pointer flex items-center justify-center p-3.5"
       >
         <img
           src={activeVariant.image}
           alt={`${product.name} - ${activeVariant.color}`}
           onError={handleImageError}
-          className={`w-full h-full object-cover object-top transition-all duration-500 group-hover:scale-105 ${
+          className={`w-full h-full object-contain object-center transition-all duration-300 group-hover:scale-102 ${
             imageFade ? 'opacity-40 scale-98' : 'opacity-100 scale-100'
           }`}
         />
@@ -135,25 +144,25 @@ export default function ProductCard({
           </span>
         </div>
 
-        {/* Quick View Hover Floating Overlay */}
-        <div className={`absolute inset-x-3 bottom-3 z-20 flex gap-2 transition-all duration-300 transform ${
-          isHovered ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0 pointer-events-none'
+        {/* Centered Quick View Hover Overlay with Dimmed Backdrop */}
+        <div className={`absolute inset-0 z-20 bg-black/35 backdrop-blur-[1px] flex items-center justify-center transition-all duration-300 ${
+          isHovered ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}>
           <button
             onClick={(e) => {
               e.stopPropagation();
               onQuickView && onQuickView({ ...product, initialVariant: activeVariant, activeImage: activeVariant.image });
             }}
-            className="flex-1 py-2 bg-white/95 hover:bg-white text-[#2D231E] text-xs font-mono font-bold uppercase rounded-xl backdrop-blur-md shadow-md flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+            className="px-5 py-2.5 bg-white/95 hover:bg-white text-[#2D231E] hover:text-[#2D5A27] text-xs font-mono font-bold uppercase rounded-full shadow-2xl flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 cursor-pointer transform duration-200"
           >
-            <Eye size={13} />
+            <Eye size={14} />
             <span>Quick View</span>
           </button>
         </div>
 
         {/* Sold Out Overlay */}
         {!product.inStock && (
-          <div className="absolute inset-0 bg-[#2D231E]/60 backdrop-blur-[1px] flex items-center justify-center z-15">
+          <div className="absolute inset-0 bg-[#2D231E]/60 backdrop-blur-[1px] flex items-center justify-center z-25">
             <span className="px-3 py-1 bg-white text-[#2D231E] text-xs font-mono font-bold uppercase tracking-wider rounded-lg shadow-md">
               Sold Out
             </span>

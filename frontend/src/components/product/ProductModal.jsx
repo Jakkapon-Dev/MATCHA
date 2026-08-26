@@ -131,13 +131,13 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             </button>
           </div>
 
-          {/* MAIN PRODUCT PHOTO FRAME: Stretches to fill the entire red box */}
-          <div className="w-full flex-1 aspect-3/4 min-h-95 sm:min-h-115 md:min-h-125 rounded-2xl overflow-hidden bg-white border border-[#D9D3C7] shadow-sm flex items-center justify-center relative group">
+          {/* MAIN PRODUCT PHOTO FRAME: Spacious non-overflowing container */}
+          <div className="w-full flex-1 aspect-4/5 min-h-75 sm:min-h-90 md:min-h-100 rounded-2xl overflow-hidden bg-white border border-[#D9D3C7] shadow-sm flex items-center justify-center relative group p-4 sm:p-6">
             <img 
               src={activeVariant.image} 
               alt={`${product.name} - ${activeVariant.color}`}
               onError={handleImageError}
-              className={`w-full h-full object-cover object-center transition-all duration-300 group-hover:scale-105 ${
+              className={`w-full h-full object-contain object-center transition-all duration-300 group-hover:scale-102 ${
                 imageFade ? 'opacity-30 scale-95' : 'opacity-100 scale-100'
               }`}
             />

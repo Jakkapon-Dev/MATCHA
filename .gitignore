@@ -1,6 +1,6 @@
 # ==============================================================================
-# MatchA — Master .gitignore Configuration (Repository Root)
-# Continuously updated for clean repository and deployment security
+# MatchA — Master .gitignore Configuration
+# Continuously updated for clean repository, CI/CD, and deployment security
 # ==============================================================================
 
 # 1. Dependencies & Package Managers
@@ -8,6 +8,10 @@ node_modules/
 .pnp
 .pnp.js
 package-lock.json.bak
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
 
 # 2. Production Build & Output
 dist/
@@ -15,6 +19,7 @@ dist-ssr/
 build/
 out/
 *.local
+*.tsbuildinfo
 
 # 3. Deployment Artifacts & Cloud Caches
 .vercel/
@@ -23,6 +28,8 @@ out/
 .next/
 .nuxt/
 .output/
+.netlify/
+.serverless/
 
 # 4. Environment Variables & Secret Credentials (NEVER COMMIT)
 .env
@@ -39,6 +46,10 @@ frontend/.env
 frontend/.env.*
 frontend/.env.local
 frontend/.env.production
+app/backend/.env
+app/backend/.env.*
+app/frontend/.env
+app/frontend/.env.*
 *.pem
 *.key
 *.cert
@@ -96,14 +107,21 @@ graft/*
 *.tmp
 *.temp
 *.cache
+.eslintcache
+.stylelintcache
 
-# 9. Test Results, Coverage & Dumps
+# 9. Test Results, CI Reports & Coverage Dumps
 coverage/
 *.lcov
 test-output/
+playwright-report/
+blob-report/
+.nyc_output/
 *.dump
 *.dmp
 *.stackdump
+.github-actions/
+*.runner.log
 
 # 10. Temporary Local Data & Generated Exports (Spreadsheets / Dumps)
 *.export.csv
@@ -122,3 +140,4 @@ interview.md
 *scratch*.js
 *scratch*.ts
 scripts/scratch/
+app/scripts/scratch/

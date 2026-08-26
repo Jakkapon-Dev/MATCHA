@@ -1,0 +1,51 @@
+name: MatchA CI Pipeline (Continuous Integration)
+
+on:
+  push:
+    branches: [ "main", "feat/*", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  verify-and-build:
+    name: Code Quality, Syntax & Production Build Check
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20]
+
+    steps:
+      # 1. ดึงโค้ดจาก GitHub Repository
+      - name: 📥 Checkout Repository Code
+        uses: actions/checkout@v4
+
+      # 2. ติดตั้งสภาพแวดล้อม Node.js
+      - name: 🟢 Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      # 3. ติดตั้ง Dependencies ของโปรเจกต์ (High-speed optimized)
+      - name: 📦 Install Root & Workspace Dependencies
+        run: |
+          npm install --no-audit --no-fund
+          cd frontend && npm install --no-audit --no-fund
+          cd ../backend && npm install --no-audit --no-fund
+          cd ..
+
+      # 4. ทดสอบความถูกต้องของ Syntax และการ Import ไฟล์
+      - name: 🔍 Run Syntax & Broken Import Checks
+        run: |
+          node scripts/test_syntax.js
+
+      # 5. ทดสอบการ Build Frontend เป็น Production Bundle
+      - name: ⚡ Test Frontend Production Build (Vite)
+        run: |
+          cd frontend
+          npm run build
+          cd ..
+
+      # 6. แจ้งเตือนสถานะสำเร็จ
+      - name: ✅ Pipeline Verified Successfully
+        run: echo "🎉 MatchA CI Pipeline passed all checks! Ready for Deployment."
