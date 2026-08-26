@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20.x]
+        node-version: [20]
 
     steps:
       # 1. ดึงโค้ดจาก GitHub Repository
@@ -25,14 +25,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
 
       # 3. ติดตั้ง Dependencies ของโปรเจกต์
       - name: 📦 Install Root & Workspace Dependencies
         run: |
-          npm ci --ignore-scripts || npm install
-          cd frontend && npm install && cd ..
-          cd backend && npm install && cd ..
+          npm install
+          cd frontend && npm install
+          cd ../backend && npm install
+          cd ..
 
       # 4. ทดสอบความถูกต้องของ Syntax และการ Import ไฟล์
       - name: 🔍 Run Syntax & Broken Import Checks

@@ -36,10 +36,21 @@ function checkDir(dir) {
   return errors;
 }
 
-const frontendErrors = checkDir(path.resolve('c:/coding/MatchA/app/frontend/src'));
-const backendErrors = checkDir(path.resolve('c:/coding/MatchA/app/backend'));
+const frontendDir = path.join(__dirname, '../frontend/src');
+const backendDir = path.join(__dirname, '../backend');
+
+const frontendErrors = fs.existsSync(frontendDir) ? checkDir(frontendDir) : 0;
+const backendErrors = fs.existsSync(backendDir) ? checkDir(backendDir) : 0;
+
+const totalErrors = frontendErrors + backendErrors;
 
 console.log(`\n================================`);
 console.log(`Checked all source files!`);
-console.log(`Broken Import Errors: ${frontendErrors + backendErrors}`);
+console.log(`Broken Import Errors: ${totalErrors}`);
 console.log(`================================\n`);
+
+if (totalErrors > 0) {
+  process.exit(1);
+} else {
+  process.exit(0);
+}
