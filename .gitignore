@@ -10,6 +10,11 @@ build/
 out/
 *.local
 
+# Vercel deployment artifacts & cache
+.vercel/
+.vercel
+.turbo/
+
 # Environment variables & secrets
 .env
 .env.local
@@ -24,6 +29,9 @@ frontend/.env
 frontend/.env.*
 frontend/.env.local
 frontend/.env.production
+*.pem
+*.key
+*.cert
 
 # Logs
 npm-debug.log*
