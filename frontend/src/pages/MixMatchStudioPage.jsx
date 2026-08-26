@@ -377,8 +377,12 @@ export default function MixMatchStudioPage() {
               </button>
             </div>
 
-            {/* Grid of Items for the Active Slot */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-160 overflow-y-auto pr-1">
+            {/* Grid of Items for the Active Slot (Isolated Scrollable Container) */}
+            <div 
+              data-lenis-prevent="true"
+              onWheel={(e) => e.stopPropagation()}
+              className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-h-160 overflow-y-auto overscroll-contain pr-2"
+            >
               {(activeSlotTab === 'tops' ? tops : activeSlotTab === 'bottoms' ? bottoms : accessories).map((item) => {
                 const isSelected = (
                   (activeSlotTab === 'tops' && selectedTop?.id === item.id) ||

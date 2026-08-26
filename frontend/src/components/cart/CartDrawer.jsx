@@ -37,8 +37,12 @@ export default function CartDrawer({ isOpen, onClose }) {
             </button>
           </div>
 
-          {/* Cart Items List */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          {/* Cart Items List (Isolated Scrollable Container) */}
+          <div 
+            data-lenis-prevent="true"
+            onWheel={(e) => e.stopPropagation()}
+            className="flex-1 overflow-y-auto overscroll-contain p-6 space-y-4"
+          >
             {cartItems.length === 0 ? (
               <div className="text-center py-16 space-y-4">
                 <ShoppingBag size={48} className="mx-auto text-[#D9D3C7]" />
