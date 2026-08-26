@@ -75,11 +75,11 @@ export default function LoginPage({ onLoginSuccess }) {
         onLoginSuccess(user);
       }
 
-      setTimeout(() => {
-        navigate('/');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 1000);
-    }, 850);
+      // Fast, smooth transition
+      const targetPath = user.role === 'Admin' ? '/admin' : '/';
+      navigate(targetPath);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 150);
   };
 
   const handleFillDemo = (type) => {
@@ -262,7 +262,7 @@ export default function LoginPage({ onLoginSuccess }) {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-3 py-3.5 bg-[#2D5A27] hover:bg-[#23471E] active:scale-[0.98] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-[#2D5A27]/25 flex items-center justify-center gap-2 enabled:cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+              className="w-full mt-3 py-3.5 bg-[#2D5A27] hover:bg-[#23471E] active:scale-[0.98] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-[#2D5A27]/25 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 disabled:pointer-events-none"
             >
               {isLoading ? (
                 <>

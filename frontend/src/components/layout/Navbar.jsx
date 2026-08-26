@@ -85,9 +85,8 @@ export default function Navbar({
                 🍵
               </div>
               <div>
-                <span className="font-extrabold text-xl sm:text-2xl tracking-tighter text-[#2D231E] uppercase font-sans flex items-center gap-1">
-                  <span>MatchA</span>
-                  <span className="text-[#2D5A27] text-xs font-mono lowercase tracking-normal">.vip</span>
+                <span className="font-extrabold text-xl sm:text-2xl tracking-tighter text-[#2D231E] uppercase font-sans block">
+                  MatchA
                 </span>
                 <span className="block text-[9px] font-mono tracking-widest text-[#6B5E55] uppercase -mt-1">
                   Artisan Color Archive

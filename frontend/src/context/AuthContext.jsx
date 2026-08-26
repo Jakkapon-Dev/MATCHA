@@ -26,15 +26,13 @@ export function AuthProvider({ children }) {
       sessionStorage.setItem('matcha_user', JSON.stringify(userData));
       localStorage.removeItem('matcha_user');
     }
-    showToast(`Welcome back, ${userData.name || userData.email}! 👋`);
-  }, [showToast]);
+  }, []);
 
   const logout = useCallback(() => {
     setCurrentUser(null);
     localStorage.removeItem('matcha_user');
     sessionStorage.removeItem('matcha_user');
-    showToast('Logged out of MatchA. See you next drop! 🍵');
-  }, [showToast]);
+  }, []);
 
   const updateProfile = useCallback((updates) => {
     setCurrentUser((prev) => {

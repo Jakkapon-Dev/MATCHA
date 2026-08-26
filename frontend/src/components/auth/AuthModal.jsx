@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
 import { X, Mail, Lock, User, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 
 export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
+  const { login } = useAuth();
+  const { showToast } = useToast();
   const [mode, setMode] = useState(initialMode); // 'login' or 'signup'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,10 +17,23 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitted(true);
+
+    const userRole = email.toLowerCase().includes('admin') ? 'Admin' : 'Member';
+    const userName = name.trim() || email.split('@')[0] || (userRole === 'Admin' ? 'MatchA Admin' : 'MatchA Collector');
+
+    const user = {
+      name: userName,
+      email: email.trim(),
+      role: userRole,
+      avatar: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80`,
+    };
+
+    login(user);
+
     setTimeout(() => {
       setSubmitted(false);
       onClose();
-    }, 1200);
+    }, 200);
   };
 
   return (

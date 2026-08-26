@@ -10,6 +10,7 @@ import SignUpPage from './pages/SignUpPage';
 import LoginPage from './pages/LoginPage';
 import Payment from './pages/Payment';
 import UserAccount from './pages/UserAccount';
+import AdminPage from './pages/AdminPage';
 import Layout from './components/layout/Layout';
 import ProductModal from './components/product/ProductModal';
 
@@ -45,6 +46,8 @@ function AppContent() {
       navigate('/payment', { replace: true });
     } else if (hash === '#account' && location.pathname !== '/account') {
       navigate('/account', { replace: true });
+    } else if (hash === '#admin' && location.pathname !== '/admin') {
+      navigate('/admin', { replace: true });
     }
   }, [location.pathname, navigate]);
 
@@ -132,6 +135,11 @@ function AppContent() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
+    if (pathOrHash === '/admin' || pathOrHash === '#admin') {
+      navigate('/admin');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
 
     // Anchor hash links like #fit-guide or #street-favorites
     if (pathOrHash.startsWith('#')) {
@@ -166,6 +174,12 @@ function AppContent() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#2D231E] font-sans selection:bg-[#2D5A27] selection:text-white relative">
       
@@ -182,7 +196,7 @@ function AppContent() {
       <Layout
         cartCount={cartCount}
         currentUser={currentUser}
-        onLogout={logout}
+        onLogout={handleLogout}
         currentPage={
           location.pathname === '/catalog' ? 'catalog' : 
           location.pathname === '/cart' ? 'cart' : 
@@ -190,6 +204,7 @@ function AppContent() {
           location.pathname === '/login' ? 'login' : 
           location.pathname === '/payment' ? 'payment' : 
           location.pathname === '/account' ? 'account' : 
+          location.pathname === '/admin' ? 'admin' : 
           'home'
         }
         onOpenCart={handleOpenCart}
@@ -272,7 +287,7 @@ function AppContent() {
             element={<SignUpPage onBackToStore={handleGoToHome} />} 
           />
 
-          {/* 7. User Account Page */}
+          {/* 7. User Account Page (Member VIP Lounge) */}
           <Route
             path="/account"
             element={
@@ -286,6 +301,12 @@ function AppContent() {
                 onLogout={logout}
               />
             }
+          />
+
+          {/* 8. Admin Control Center */}
+          <Route
+            path="/admin"
+            element={<AdminPage />}
           />
 
           {/* Fallback */}
