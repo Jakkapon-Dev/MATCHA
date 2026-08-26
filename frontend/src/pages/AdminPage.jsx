@@ -512,7 +512,7 @@ export default function AdminPage() {
                 value={globalSearch}
                 onChange={(e) => setGlobalSearch(e.target.value)}
                 placeholder="Search metrics, SKU, orders, members..."
-                className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-[#D9D3C7] bg-white font-mono text-xs text-[#2D231E] outline-none focus:ring-2 focus:ring-[#2D5A27]/30 focus:border-[#2D5A27]"
+                className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-[#D9D3C7] bg-white font-mono text-xs text-[#2D231E] outline-none focus:ring-2 focus:ring-[#2D5A27]/40"
               />
               {globalSearch && (
                 <button
