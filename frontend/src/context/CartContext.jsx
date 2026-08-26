@@ -49,10 +49,7 @@ export function CartProvider({ children }) {
       }
       return [...prev, { ...product, quantity: amount }];
     });
-
-    const name = product.name || 'Item';
-    showToast(`Added ${name} (${amount}) to your cart! 🍵`);
-  }, [showToast]);
+  }, []);
 
   const updateQty = useCallback((key, delta) => {
     setCartItems((prev) =>
