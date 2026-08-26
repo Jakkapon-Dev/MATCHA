@@ -138,8 +138,8 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
   ];
 
   const filteredProducts = activeCategory === 'ALL' 
-    ? products 
-    : products.filter(p => p.category === activeCategory);
+    ? productsData.slice(0, 24) 
+    : productsData.filter(p => p.category === activeCategory);
 
   const scrollLeft = () => {
     if (scrollRef.current) {

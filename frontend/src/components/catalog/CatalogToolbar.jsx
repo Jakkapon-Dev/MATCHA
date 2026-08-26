@@ -32,27 +32,9 @@ export default function CatalogToolbar({
           />
         </div>
 
-        {/* Right Controls: Filter Drawer Toggle, Sort Dropdown & Grid View Switcher */}
+        {/* Right Controls: Sort Dropdown & Grid View Switcher */}
         <div className="flex items-center gap-2 flex-wrap justify-between md:justify-end">
           
-          {/* Filter Drawer Trigger */}
-          <button
-            onClick={onOpenFilterDrawer}
-            className={`px-3.5 py-2.5 rounded-xl border font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-2xs ${
-              activeFilterCount > 0
-                ? 'bg-[#2D5A27] text-white border-[#2D5A27]'
-                : 'bg-white text-[#2D231E] border-[#D9D3C7] hover:border-[#2D5A27]'
-            }`}
-          >
-            <SlidersHorizontal size={14} />
-            <span>Filters</span>
-            {activeFilterCount > 0 && (
-              <span className="w-5 h-5 rounded-full bg-[#BC5A36] text-white text-[10px] flex items-center justify-center font-bold">
-                {activeFilterCount}
-              </span>
-            )}
-          </button>
-
           {/* Sort Dropdown */}
           <div className="relative">
             <select
