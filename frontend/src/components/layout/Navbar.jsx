@@ -38,7 +38,7 @@ export default function Navbar({
     { label: 'Catalog', href: '/catalog' },
     { label: 'Color Lab ✨', href: '/personal-color' },
     { label: 'Mix & Match', href: '/mix-match' },
-    { label: 'Benefits', href: '#pulse-perks' },
+    { label: 'Lookbook 📸', href: '/lookbook' },
     { label: 'VIP Access', href: '#vip-drop' },
   ];
 

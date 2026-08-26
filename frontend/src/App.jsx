@@ -13,6 +13,7 @@ import UserAccount from './pages/UserAccount';
 import AdminPage from './pages/AdminPage';
 import PersonalColorPage from './pages/PersonalColorPage';
 import MixMatchStudioPage from './pages/MixMatchStudioPage';
+import EditorialLookbookPage from './pages/EditorialLookbookPage';
 import Layout from './components/layout/Layout';
 import ProductModal from './components/product/ProductModal';
 
@@ -258,7 +259,17 @@ function AppContent() {
             element={<MixMatchStudioPage />}
           />
 
-          {/* 5. Shopping Cart Page */}
+          {/* 5. High-Fashion Editorial Lookbook */}
+          <Route
+            path="/lookbook"
+            element={<EditorialLookbookPage />}
+          />
+          <Route
+            path="/editorial"
+            element={<EditorialLookbookPage />}
+          />
+
+          {/* 6. Shopping Cart Page */}
           <Route
             path="/cart"
             element={
