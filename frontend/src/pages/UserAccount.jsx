@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Package,
   Heart,
@@ -9,7 +10,8 @@ import {
   LogOut,
   Sparkles,
   ShieldCheck,
-  BarChart3
+  ArrowRight,
+  ExternalLink
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -19,13 +21,13 @@ import FavoritesTab from '../components/account/FavoritesTab';
 import AddressesTab from '../components/account/AddressesTab';
 import PaymentMethodsTab from '../components/account/PaymentMethodsTab';
 import PreferencesTab from '../components/account/PreferencesTab';
-import AdminDashboardTab from '../components/account/AdminDashboardTab';
 
 export default function UserAccount() {
   const { currentUser, updateProfile, logout } = useAuth();
   const { showToast } = useToast();
+  const navigate = useNavigate();
 
-  const [activeTab, setActiveTab] = useState(currentUser?.role === 'Admin' ? 'admin' : 'details');
+  const [activeTab, setActiveTab] = useState('details');
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -51,9 +53,6 @@ export default function UserAccount() {
         lastName: currentUser.lastName || currentUser.name?.split(' ').slice(1).join(' ') || prev.lastName,
         email: currentUser.email || prev.email
       }));
-      if (currentUser.role === 'Admin') {
-        setActiveTab('admin');
-      }
     }
   }, [currentUser]);
 
@@ -64,7 +63,6 @@ export default function UserAccount() {
     { id: 'address', label: 'ADDRESS BOOK', icon: MapPin },
     { id: 'payment', label: 'PAYMENT METHODS', icon: CreditCard },
     { id: 'preferences', label: 'PREFERENCES', icon: Sliders },
-    { id: 'admin', label: 'ADMIN DASHBOARD & INVENTORY', icon: BarChart3, isAdminBadge: true },
     { id: 'logout', label: 'LOG OUT', icon: LogOut, isDanger: true }
   ];
 
@@ -94,26 +92,95 @@ export default function UserAccount() {
     showToast('Updated communication preference.');
   };
 
+  const handleConfirmLogout = () => {
+    setShowLogoutConfirm(false);
+    logout();
+    navigate('/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // If user is logged out while on /account, display graceful prompt
+  if (!currentUser) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center p-4 bg-[#FAF8F5]">
+        <div className="bg-white border border-[#D9D3C7] rounded-3xl p-8 sm:p-12 max-w-md w-full text-center space-y-6 shadow-xl">
+          <div className="w-16 h-16 rounded-2xl bg-[#D0DEC6] text-[#2D5A27] flex items-center justify-center mx-auto text-2xl font-bold">
+            🍵
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-2xl font-black uppercase text-[#2D231E]">Signed Out</h1>
+            <p className="text-xs font-mono text-[#6B5E55]">
+              You have been successfully logged out of MatchA.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={() => navigate('/login')}
+              className="flex-1 py-3 bg-[#2D5A27] text-white text-xs font-bold font-mono uppercase rounded-xl shadow-md hover:bg-[#23471E] transition-all cursor-pointer"
+            >
+              Sign In Again
+            </button>
+            <button
+              onClick={() => navigate('/')}
+              className="flex-1 py-3 border border-[#D9D3C7] text-xs font-bold font-mono uppercase text-[#2D231E] hover:bg-[#FAF8F5] rounded-xl transition-all cursor-pointer"
+            >
+              Back to Store
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full bg-[#FAF8F5] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
-      <main className="w-full max-w-7xl mx-auto">
+      <main className="w-full max-w-7xl mx-auto space-y-8">
         
+        {/* Admin Quick Switch Banner if logged in user is Admin */}
+        {currentUser?.role === 'Admin' && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 sm:p-5 bg-[#2D5A27] text-white rounded-3xl shadow-md border border-[#23471E]">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
+                <ShieldCheck size={20} className="text-[#D0DEC6]" />
+              </div>
+              <div>
+                <div className="text-xs font-mono font-bold uppercase tracking-wider text-[#D0DEC6]">
+                  Administrator Privilege Active
+                </div>
+                <div className="text-sm font-black">
+                  You are currently viewing the customer Member Lounge
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={() => navigate('/admin')}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-[#FAF8F5] text-[#2D5A27] text-xs font-bold font-mono uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-sm active:scale-98 shrink-0"
+            >
+              <span>Open Admin Command Center</span>
+              <ArrowRight size={14} />
+            </button>
+          </div>
+        )}
+
         {/* Top Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-6 border-b border-[#D9D3C7]">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 pb-6 border-b border-[#D9D3C7]">
           <div>
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#2D5A27] uppercase tracking-widest mb-1">
               <Sparkles size={14} />
               <span>MatchA Collector Lounge</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black uppercase text-[#2D231E] tracking-tight">
-              {currentUser?.role === 'Admin' ? 'Admin Control Center' : 'Member Account'}
+              Member Account
             </h1>
           </div>
 
-          {/* VIP / Admin Badge */}
+          {/* VIP Badge */}
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#D0DEC6] text-[#2D5A27] font-mono text-xs font-bold shadow-2xs">
             <span className="w-2 h-2 rounded-full bg-[#2D5A27] animate-pulse" />
-            <span>Role: {currentUser?.role === 'Admin' ? '👑 STORE ADMINISTRATOR' : '🟢 MATCH A CONNOISSEUR (VIP)'}</span>
+            <span>
+              {currentUser?.role === 'Admin' ? '👑 STORE ADMINISTRATOR' : '🟢 MATCHA CONNOISSEUR (VIP)'}
+            </span>
           </div>
         </div>
 
@@ -135,8 +202,6 @@ export default function UserAccount() {
                       ? 'text-[#BC5A36] hover:bg-[#BC5A36]/10'
                       : isActive
                       ? 'bg-[#2D5A27] text-white shadow-xs'
-                      : item.isAdminBadge
-                      ? 'text-[#2D5A27] bg-[#D0DEC6]/30 hover:bg-[#D0DEC6]/60'
                       : 'text-[#6B5E55] hover:bg-[#FAF8F5] hover:text-[#2D231E]'
                   }`}
                 >
@@ -175,8 +240,6 @@ export default function UserAccount() {
                 onTogglePreference={handlePreferenceToggle}
               />
             )}
-
-            {activeTab === 'admin' && <AdminDashboardTab />}
           </div>
 
         </div>
@@ -197,7 +260,7 @@ export default function UserAccount() {
                   Cancel
                 </button>
                 <button
-                  onClick={logout}
+                  onClick={handleConfirmLogout}
                   className="flex-1 py-3 bg-[#BC5A36] text-white text-xs font-bold font-mono uppercase rounded-xl shadow-md hover:bg-[#9E4423] cursor-pointer"
                 >
                   Log Out

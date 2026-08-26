@@ -1,21 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { ShoppingBag, Menu, X, Sparkles, User, LogIn } from 'lucide-react';
-import AuthModal from '../auth/AuthModal';
-import BorderBeam from '../ui/BorderBeam';
+import {
+  ShoppingBag,
+  Sparkles,
+  Menu,
+  X,
+  User,
+  LogOut,
+  ShieldCheck,
+  LayoutDashboard,
+  Loader2
+} from 'lucide-react';
+import { BorderBeam } from '../ui/BorderBeam';
 
-export default function Navbar({ 
-  cartCount = 0, 
-  onOpenCart, 
-  onNavigate, 
-  onGoToLanding, 
-  currentPage = 'home',
+export default function Navbar({
+  cartCount = 0,
   currentUser = null,
-  onLogout
+  onLogout = () => { },
+  currentPage = 'home',
+  onOpenCart = () => { },
+  onNavigate = () => { },
+  onGoToLanding = () => { }
 }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [authMode, setAuthMode] = useState('login');
   const [cartAnimated, setCartAnimated] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Trigger bouncy pop animation on cart icon when items are added
   useEffect(() => {
@@ -34,12 +42,6 @@ export default function Navbar({
     { label: 'VIP Access', href: '#vip-drop' },
   ];
 
-  const handleOpenAuth = (mode) => {
-    setAuthMode(mode);
-    setAuthModalOpen(true);
-    setMobileMenuOpen(false);
-  };
-
   const handleLinkClick = (href) => {
     setMobileMenuOpen(false);
     if (onNavigate) {
@@ -50,6 +52,14 @@ export default function Navbar({
     }
   };
 
+  const handleLogoutClick = () => {
+    setIsLoggingOut(true);
+    setTimeout(() => {
+      onLogout();
+      setIsLoggingOut(false);
+    }, 400);
+  };
+
   return (
     <>
       <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-[#FAF8F5]/90 border-b border-[#D9D3C7] transition-all">
@@ -58,43 +68,46 @@ export default function Navbar({
         <div className="bg-[#2D231E] text-[#D0DEC6] text-[11px] py-1.5 px-4 text-center font-mono flex items-center justify-center gap-2">
           <span className="text-[#BC5A36]">✦</span>
           <span>FREE EXPRESS SHIPPING ON ORDERS OVER $100</span>
-          <span className="hidden sm:inline">| USE CODE: <strong>MATCHA15</strong> FOR 15% OFF</span>
-          <span className="text-[#BC5A36]">✦</span>
+          <span className="text-[#BC5A36] hidden sm:inline">✦</span>
+          <span className="hidden sm:inline text-white/70">ECO TEA-DYE CAPSULE NOW LIVE</span>
         </div>
 
         {/* 2. Main Navigation Bar */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
 
-          {/* Left: Brand Logo (Scroll to Top) */}
-          <button
-            onClick={() => handleLinkClick('#brand-hero')}
-            className="flex items-center gap-2.5 group cursor-pointer text-left"
-            title="Scroll to Top"
-          >
-            <div className="w-10 h-10 rounded-xl bg-[#2D5A27] flex items-center justify-center text-white text-xl shadow-md group-hover:scale-105 transition-transform">
-              🍵
-            </div>
-            <div>
-              <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-[#2D5A27] uppercase">
-                MatchA
-              </span>
-              <span className="hidden sm:block text-[9px] font-mono tracking-widest text-[#6B5E55] -mt-1">
-                ARTISAN APPAREL
-              </span>
-            </div>
-          </button>
+          {/* Left: Brand Logo & Wordmark */}
+          <div className="flex items-center gap-6">
+            <button
+              onClick={onGoToLanding}
+              className="flex items-center gap-2.5 group cursor-pointer text-left"
+            >
+              <div className="w-10 h-10 rounded-2xl bg-[#2D5A27] text-white flex items-center justify-center font-black text-xl shadow-md group-hover:scale-105 group-hover:bg-[#23471E] transition-all">
+                🍵
+              </div>
+              <div>
+                <span className="font-extrabold text-xl sm:text-2xl tracking-tighter text-[#2D231E] uppercase font-sans block">
+                  MatchA
+                </span>
+                <span className="block text-[9px] font-mono tracking-widest text-[#6B5E55] uppercase -mt-1">
+                  Artisan Color Archive
+                </span>
+              </div>
+            </button>
+          </div>
 
-          {/* Center: Desktop Nav Links */}
+          {/* Center: Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-6 lg:gap-8">
             {navLinks.map((link) => {
-              const isActive = (link.href === '#catalog' && currentPage === 'catalog') || (link.href === '#brand-hero' && currentPage === 'home');
+              const isActive = currentPage === 'home' && false;
+
               return (
                 <a
                   key={link.label}
                   href={link.href}
                   onClick={(e) => { e.preventDefault(); handleLinkClick(link.href); }}
-                  className={`text-xs font-semibold tracking-wider uppercase font-mono transition-colors relative py-1 ${isActive ? 'text-[#2D5A27] font-bold' : 'text-[#2D231E] hover:text-[#2D5A27]'
-                    }`}
+                  className={`text-xs font-semibold tracking-wider uppercase font-mono transition-colors relative py-1 ${
+                    isActive ? 'text-[#2D5A27] font-bold' : 'text-[#2D231E] hover:text-[#2D5A27]'
+                  }`}
                 >
                   {link.label}
                   {isActive && (
@@ -122,8 +135,9 @@ export default function Navbar({
             <button
               onClick={onOpenCart}
               aria-label="View Cart"
-              className={`relative p-2.5 rounded-xl bg-[#D0DEC6]/60 hover:bg-[#D0DEC6] text-[#2D231E] hover:text-[#2D5A27] border border-[#B8CBAE] transition-all cursor-pointer ${cartAnimated ? 'animate-cart-pop ring-3 ring-[#BC5A36] bg-[#D0DEC6]' : ''
-                }`}
+              className={`relative p-2.5 rounded-xl bg-[#D0DEC6]/60 hover:bg-[#D0DEC6] text-[#2D231E] hover:text-[#2D5A27] border border-[#B8CBAE] transition-all cursor-pointer ${
+                cartAnimated ? 'animate-cart-pop ring-3 ring-[#BC5A36] bg-[#D0DEC6]' : ''
+              }`}
             >
               <ShoppingBag size={20} />
               {cartCount > 0 && (
@@ -140,21 +154,30 @@ export default function Navbar({
             {currentUser ? (
               <div className="hidden lg:flex items-center gap-2 font-mono">
                 <button
-                  onClick={() => handleLinkClick('/account')}
+                  onClick={() => handleLinkClick(currentUser.role === 'Admin' ? '/admin' : '/account')}
                   className="flex items-center gap-2 px-3.5 py-2 bg-[#D0DEC6]/50 hover:bg-[#D0DEC6] border border-[#2D5A27]/30 hover:border-[#2D5A27] rounded-xl text-xs font-bold text-[#2D5A27] transition-all cursor-pointer shadow-2xs group"
-                  title="Go to My Account"
+                  title={currentUser.role === 'Admin' ? 'Open Admin Command Center' : 'Go to My Account'}
                 >
                   <User size={14} className="text-[#2D5A27]" />
                   <span className="font-mono text-xs font-bold tracking-wide uppercase">
                     {currentUser.role === 'Admin' ? '👑 Admin Dashboard' : 'My Account'}
                   </span>
                 </button>
+
                 <button
-                  onClick={onLogout}
-                  className="px-2.5 py-1.5 text-xs font-bold text-[#BC5A36] hover:bg-[#BC5A36]/10 rounded-lg transition-colors cursor-pointer"
+                  onClick={handleLogoutClick}
+                  disabled={isLoggingOut}
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-[#BC5A36] hover:bg-[#BC5A36]/10 rounded-lg transition-all cursor-pointer disabled:opacity-70 font-mono"
                   title="Sign out of MatchA"
                 >
-                  LOG OUT
+                  {isLoggingOut ? (
+                    <>
+                      <Loader2 size={12} className="animate-spin text-[#BC5A36]" />
+                      <span>EXITING...</span>
+                    </>
+                  ) : (
+                    <span>LOG OUT</span>
+                  )}
                 </button>
               </div>
             ) : (
@@ -198,7 +221,10 @@ export default function Navbar({
               {currentUser ? (
                 <div className="flex items-center justify-between pb-3 border-b border-[#D9D3C7]">
                   <button
-                    onClick={() => { setMobileMenuOpen(false); handleLinkClick('/account'); }}
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleLinkClick(currentUser.role === 'Admin' ? '/admin' : '/account');
+                    }}
                     className="flex items-center gap-2 text-left cursor-pointer group"
                   >
                     <div className="w-8 h-8 rounded-full bg-[#2D5A27] text-white flex items-center justify-center text-xs font-bold font-mono group-hover:scale-105 transition-transform">
@@ -206,14 +232,19 @@ export default function Navbar({
                     </div>
                     <div>
                       <p className="text-xs font-mono font-bold text-[#2D231E] group-hover:text-[#2D5A27]">{currentUser.name}</p>
-                      <p className="text-[10px] font-mono text-[#6B5E55]">{currentUser.role === 'Admin' ? '👑 Admin Dashboard' : '👤 My Account'}</p>
+                      <p className="text-[10px] font-mono text-[#6B5E55]">{currentUser.role === 'Admin' ? '👑 Admin Command Center' : '👤 My Account'}</p>
                     </div>
                   </button>
                   <button
-                    onClick={() => { setMobileMenuOpen(false); onLogout(); }}
-                    className="text-xs font-mono font-bold text-[#BC5A36] hover:underline cursor-pointer"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      handleLogoutClick();
+                    }}
+                    disabled={isLoggingOut}
+                    className="text-xs font-mono font-bold text-[#BC5A36] hover:underline cursor-pointer flex items-center gap-1 disabled:opacity-60"
                   >
-                    Log Out
+                    {isLoggingOut && <Loader2 size={11} className="animate-spin" />}
+                    <span>{isLoggingOut ? 'Exiting...' : 'Log Out'}</span>
                   </button>
                 </div>
               ) : (
@@ -251,27 +282,11 @@ export default function Navbar({
                   {link.label}
                 </a>
               ))}
-
-              <button
-                onClick={() => handleLinkClick('#fit-guide')}
-                className="mt-2 w-full py-2.5 bg-[#2D5A27] text-white text-xs font-bold uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 shadow-md cursor-pointer"
-              >
-                <Sparkles size={14} />
-                <span>MIX@MATCH FIT FINDER</span>
-              </button>
-
             </nav>
           </div>
         )}
 
       </header>
-
-      {/* Member Login & Sign Up Modal */}
-      <AuthModal
-        isOpen={authModalOpen}
-        onClose={() => setAuthModalOpen(false)}
-        initialMode={authMode}
-      />
     </>
   );
 }

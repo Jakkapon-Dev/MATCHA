@@ -59,7 +59,7 @@ export default function SignupForm({ onBackToStore }) {
       login(newUser);
       showToast(`Account created for ${newUser.name}! Welcome to VIP Archive 🎉`);
       navigate('/');
-    }, 600);
+    }, 150);
   };
 
   return (
