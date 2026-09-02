@@ -26,7 +26,7 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [healthStatus, setHealthStatus] = useState(null);
+  const [healthStatus, health] = useState(null);
   const [cartItems, setCartItems] = useState(loadCart);
   const [toast, setToast] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
