@@ -10,6 +10,9 @@ import SignUpPage from './pages/SignUpPage';
 import Payment from './pages/Payment';
 import Layout from './components/Layout';
 import ProductModal from './components/ProductModal';
+import Payment from './pages/Payment';
+
+
 
 const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color || 'default'}`;
 
@@ -317,6 +320,7 @@ export default function App() {
         </Routes>
       </Layout>
 
-    </div>
+      </div>
+    
   );
 }
