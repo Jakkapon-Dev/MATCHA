@@ -65,9 +65,19 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                   className="flex gap-4 p-5 bg-white rounded-3xl border border-[#D9D3C7] shadow-sm hover:shadow-md transition-shadow"
                 >
                   {/* Thumbnail */}
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#2D5A27] flex flex-col items-center justify-center text-white shrink-0 overflow-hidden relative">
-                    <span className="text-3xl">🍵</span>
-                    <span className="text-[9px] font-mono tracking-widest text-[#D0DEC6] mt-1">{item.id}</span>
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#FAF8F5] border border-[#D9D3C7] flex items-center justify-center shrink-0 overflow-hidden relative shadow-2xs">
+                    {item.image ? (
+                      <img 
+                        src={item.image} 
+                        alt={item.name} 
+                        className="w-full h-full object-cover" 
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-[#2D5A27] flex flex-col items-center justify-center text-white">
+                        <span className="text-2xl">🍵</span>
+                        <span className="text-[9px] font-mono tracking-widest text-[#D0DEC6] mt-0.5">{item.id}</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Info & Controls */}

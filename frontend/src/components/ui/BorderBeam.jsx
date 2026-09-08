@@ -37,3 +37,5 @@ export default function BorderBeam({
     </div>
   );
 }
+
+export { BorderBeam };

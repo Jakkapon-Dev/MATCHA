@@ -49,7 +49,7 @@ const initialCardData = {
   cvv: '',
 };
 
-export default function Payment() {
+export default function PaymentPage() {
   const navigate = useNavigate();
   const { cartItems, clearCart } = useCart();
   const { showToast } = useToast();

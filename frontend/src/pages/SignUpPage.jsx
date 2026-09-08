@@ -1,23 +1,12 @@
 import React from 'react';
 import { ArrowLeft, Sparkles, ShieldCheck } from 'lucide-react';
-import SignupForm from '../components/SignUpForm';
+import SignupForm from '../components/auth/SignUpForm';
 
 export default function SignUpPage({ onBackToStore }) {
   return (
     <div className="w-full bg-[#FAF8F5] py-12 sm:py-16 px-4 sm:px-6 md:px-8 min-h-[75vh] flex flex-col items-center justify-center">
       <div className="max-w-md w-full">
         
-        {/* Back to store link */}
-        {onBackToStore && (
-          <button
-            onClick={onBackToStore}
-            className="mb-6 inline-flex items-center gap-2 text-xs font-mono font-bold text-[#2D5A27] hover:text-[#BC5A36] uppercase tracking-wider transition-colors cursor-pointer"
-          >
-            <ArrowLeft size={14} />
-            <span>Back to Store</span>
-          </button>
-        )}
-
         {/* Header Branding */}
         <div className="text-center mb-6">
           <span className="px-3 py-1 bg-[#2D231E] text-[#D0DEC6] text-[10px] font-mono font-bold tracking-widest uppercase rounded-lg shadow-2xs">
