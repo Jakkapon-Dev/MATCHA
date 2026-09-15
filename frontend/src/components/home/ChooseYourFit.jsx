@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
+import { webpSrc } from '../../utils/imageFallback';
 
 export default function ChooseYourFit({ onSelectFit }) {
   const [hoveredCard, setHoveredCard] = useState(null);
@@ -92,15 +93,16 @@ export default function ChooseYourFit({ onSelectFit }) {
       <div className="relative w-full max-w-[1700px] mx-auto h-215 sm:h-230 lg:h-245 px-4 sm:px-8 z-10 pointer-events-auto">
         {fitItems.map((item, index) => {
           const isHovered = hoveredCard === item.id;
-          const floatClass = index % 3 === 0 ? 'animate-card-float-1' : index % 3 === 1 ? 'animate-card-float-2' : 'animate-card-float-3';
 
           return (
             <div
               key={item.id}
+              data-reveal="fit"
+              style={{ '--enter-delay': `${(index % 2) * 80}ms` }}
               onMouseEnter={() => setHoveredCard(item.id)}
               onMouseLeave={() => setHoveredCard(null)}
               onClick={() => onSelectFit && onSelectFit(item)}
-              className={`absolute ${item.positionClass} ${!isHovered ? floatClass : ''} w-36 sm:w-48 lg:w-56 xl:w-60 aspect-3/4 z-20 cursor-pointer transition-all duration-300 transform ${
+              className={`absolute ${item.positionClass} w-36 sm:w-48 lg:w-56 xl:w-60 aspect-3/4 z-20 cursor-pointer transition-all duration-300 transform ${
                 isHovered
                   ? "scale-108 z-40 shadow-2xl -translate-y-1.5 ring-2 ring-[#BC5A36]"
                   : "shadow-md hover:shadow-xl"
@@ -108,7 +110,7 @@ export default function ChooseYourFit({ onSelectFit }) {
             >
               {/* Outfit Photo */}
               <img
-                src={item.image}
+                src={webpSrc(item.image)} data-original-src={item.image}
                 alt={item.category}
                 className="w-full h-full object-cover object-top transition-transform duration-500"
               />

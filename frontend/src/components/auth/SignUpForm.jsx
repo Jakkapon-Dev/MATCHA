@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useToast } from '../../context/ToastContext';
-import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext.jsx';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { api } from '../../services/api';
 import { User, Mail, Lock, ShieldCheck, ArrowRight, AlertCircle } from 'lucide-react';
 
 export default function SignupForm({ onBackToStore }) {
@@ -28,12 +29,12 @@ export default function SignupForm({ onBackToStore }) {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters.');
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters.');
       return;
     }
 
@@ -44,22 +45,43 @@ export default function SignupForm({ onBackToStore }) {
 
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
-      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
-      const newUser = {
-        name: fullName || formData.email.split('@')[0],
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        role: 'Member',
-        badge: '🟢 VIP MEMBER',
-      };
+    const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+    const newUser = {
+      name: fullName || formData.email.split('@')[0],
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      role: 'Member',
+    };
 
-      login(newUser);
-      showToast(`Account created for ${newUser.name}! Welcome to VIP Archive 🎉`);
+    try {
+      // The account has to exist on the server before we call anyone signed in;
+      // a failure here is a failure to register, not a warning to swallow.
+      const res = await api.register({
+        name: newUser.name,
+        email: newUser.email,
+        password: newUser.password
+      });
+      const account = res.data || {};
+      login(
+        {
+          id: account._id,
+          name: account.name || newUser.name,
+          email: account.email || newUser.email,
+          role: account.role || 'Member',
+          tier: account.tier
+        },
+        true,
+        res.token
+      );
+      showToast(`Account created for ${newUser.name}! Welcome to MatchA 🎉`);
       navigate('/');
-    }, 150);
+    } catch (err) {
+      setError(err.message || 'Could not create your account. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -78,13 +100,12 @@ export default function SignupForm({ onBackToStore }) {
             First Name *
           </label>
           <div className="relative">
-            <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B5E55]" />
+            <User size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#6B5E55]" />
             <input
               type="text"
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
-              placeholder="e.g. Alex"
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-matcha-border focus:border-matcha-primary focus:ring-2 focus:ring-matcha-primary/20 outline-none text-xs text-matcha-text bg-matcha-bg/50 transition-all font-mono"
               required
             />
@@ -96,13 +117,12 @@ export default function SignupForm({ onBackToStore }) {
             Last Name *
           </label>
           <div className="relative">
-            <User size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B5E55]" />
+            <User size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#6B5E55]" />
             <input
               type="text"
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
-              placeholder="e.g. Collector"
               className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-matcha-border focus:border-matcha-primary focus:ring-2 focus:ring-matcha-primary/20 outline-none text-xs text-matcha-text bg-matcha-bg/50 transition-all font-mono"
               required
             />
@@ -116,13 +136,13 @@ export default function SignupForm({ onBackToStore }) {
           Email Address *
         </label>
         <div className="relative">
-          <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B5E55]" />
+          <Mail size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#6B5E55]" />
           <input
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="your.email@matcha.vip"
+            placeholder="name@domain.com"
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-matcha-border focus:border-matcha-primary focus:ring-2 focus:ring-matcha-primary/20 outline-none text-xs text-matcha-text bg-matcha-bg/50 transition-all font-mono"
             required
           />
@@ -135,13 +155,13 @@ export default function SignupForm({ onBackToStore }) {
           Password *
         </label>
         <div className="relative">
-          <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B5E55]" />
+          <Lock size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#6B5E55]" />
           <input
             type="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
-            placeholder="At least 6 characters"
+            placeholder="At least 8 characters"
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-matcha-border focus:border-matcha-primary focus:ring-2 focus:ring-matcha-primary/20 outline-none text-xs text-matcha-text bg-matcha-bg/50 transition-all font-mono"
             required
           />
@@ -154,7 +174,7 @@ export default function SignupForm({ onBackToStore }) {
           Password Confirmation *
         </label>
         <div className="relative">
-          <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B5E55]" />
+          <Lock size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#6B5E55]" />
           <input
             type="password"
             name="confirmPassword"
@@ -174,7 +194,7 @@ export default function SignupForm({ onBackToStore }) {
         className="w-full mt-3 py-3.5 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-bold uppercase tracking-widest rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
       >
         {isLoading ? (
-          <span>Creating VIP Account...</span>
+          <span>Creating account...</span>
         ) : (
           <>
             <span>Join MatchA Archive</span>

@@ -8,6 +8,17 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
+  build: {
+    rollupOptions: {
+      output: {
+        // React กับ router แทบไม่เปลี่ยนระหว่าง deploy — แยกไว้ให้เบราว์เซอร์เก็บ cache ยาว ๆ
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+          'motion-vendor': ['lenis']
+        }
+      }
+    }
+  },
   server: {
     port: 5173,
     watch: {
@@ -15,7 +26,7 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'http://127.0.0.1:5000',
+        target: 'http://127.0.0.1:5001',
         changeOrigin: true,
         secure: false
       }

@@ -1,0 +1,19 @@
+# Keep the source photographs out of the deployment.
+#
+# Every JPEG and PNG under public/images has a .webp twin roughly nine times
+# smaller, and that is the file the app asks for — webpSrc() rewrites the
+# extension before the request is made. Shipping both would put 400 MB of
+# unread files into the bundle.
+#
+# The originals stay in the repository: they are the source the .webp files are
+# generated from, and the fallback when a conversion is missing. Nothing is
+# missing today — every original has its twin — so the deployed site never
+# reaches for one.
+public/images/**/*.jpg
+public/images/**/*.jpeg
+public/images/**/*.png
+
+# Build output and local environment
+dist
+.env
+.env.local

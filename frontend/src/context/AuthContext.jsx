@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { useToast } from './ToastContext';
+import { useToast } from './ToastContext.jsx';
+import { api, setToken } from '../services/api';
 
-const AuthContext = createContext(null);
+const AUTH_CONTEXT_KEY = Symbol.for('matcha.auth.context');
+const AuthContext = globalThis[AUTH_CONTEXT_KEY] || (globalThis[AUTH_CONTEXT_KEY] = createContext(null));
 
 const loadInitialUser = () => {
   try {
@@ -17,7 +19,13 @@ export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(loadInitialUser);
   const { showToast } = useToast();
 
-  const login = useCallback((userData, rememberMe = true) => {
+  const login = useCallback((userData, rememberMe = true, token = null) => {
+    if (token) setToken(token, rememberMe);
+    // The basket filled before signing in belongs to this account now. Failing
+    // to hand it over must not block the sign-in itself.
+    if (token) {
+      api.mergeGuestCart().catch((err) => console.warn('Guest cart merge skipped:', err.message));
+    }
     setCurrentUser(userData);
     if (rememberMe) {
       localStorage.setItem('matcha_user', JSON.stringify(userData));
@@ -29,6 +37,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const logout = useCallback(() => {
+    setToken(null);
     setCurrentUser(null);
     localStorage.removeItem('matcha_user');
     sessionStorage.removeItem('matcha_user');

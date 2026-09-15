@@ -35,11 +35,9 @@ export default function Navbar({
   }, [cartCount]);
 
   const navLinks = [
-    { label: 'Collections', href: '#catalog' },
-    { label: 'Mix & Match', href: '#fit-guide' },
-    { label: 'Editorial', href: '#cinematic-reel' },
-    { label: 'Benefits', href: '#pulse-perks' },
-    { label: 'VIP Access', href: '#vip-drop' },
+    { label: 'Color Lab', href: '/personal-color' },
+    { label: 'Catalog', href: '/catalog' },
+    { label: 'Lookbook', href: '/lookbook' },
   ];
 
   const handleLinkClick = (href) => {
@@ -123,7 +121,7 @@ export default function Navbar({
 
             {/* Main Feature Action: MIX@MATCH Button with Border Beam */}
             <button
-              onClick={() => handleLinkClick('#fit-guide')}
+              onClick={() => handleLinkClick('/mix-match')}
               className="relative overflow-hidden hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:shadow-[#2D5A27]/25 transition-all active:scale-95 cursor-pointer"
             >
               <BorderBeam size={80} duration={6} colorFrom="#D0DEC6" colorTo="#BC5A36" />
@@ -135,6 +133,7 @@ export default function Navbar({
             <button
               onClick={onOpenCart}
               aria-label="View Cart"
+              data-cart-target
               className={`relative p-2.5 rounded-xl bg-[#D0DEC6]/60 hover:bg-[#D0DEC6] text-[#2D231E] hover:text-[#2D5A27] border border-[#B8CBAE] transition-all cursor-pointer ${
                 cartAnimated ? 'animate-cart-pop ring-3 ring-[#BC5A36] bg-[#D0DEC6]' : ''
               }`}

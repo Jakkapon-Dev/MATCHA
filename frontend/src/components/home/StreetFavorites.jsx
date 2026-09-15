@@ -1,9 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { ChevronLeft, ChevronRight, ShoppingBag, Sparkles, Star, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingBag, Sparkles, Star, Check, Eye } from 'lucide-react';
 import SpotlightCard from '../ui/SpotlightCard';
-import { productsData } from '../../data/productsData';
+import useStreetProducts from '../../hooks/useStreetProducts';
+import ProductCardSkeleton from '../ui/ProductCardSkeleton';
+import { webpSrc } from '../../utils/imageFallback';
 
 function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
+  const sizeList = Array.isArray(item?.sizes) ? item.sizes.filter(Boolean) : [];
+  const needsSizeChoice = sizeList.length !== 1;
+
   const variants = item?.variants && item.variants.length > 0
     ? item.variants
     : [
@@ -31,7 +36,7 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
     <SpotlightCard
       onClick={() => onQuickView && onQuickView({ ...item, initialVariant: activeVariant, activeImage: activeVariant.image })}
       spotlightColor="rgba(188, 90, 54, 0.15)"
-      className="w-64 sm:w-72 lg:w-80 shrink-0 p-5 sm:p-6 flex flex-col justify-between hover:bg-[#FAF8F5]/60 transition-colors duration-200 cursor-pointer group relative rounded-none border-0"
+      className="matcha-hover-card w-64 sm:w-72 lg:w-80 shrink-0 p-5 sm:p-6 flex flex-col justify-between hover:bg-[#FAF8F5]/60 transition-colors duration-200 cursor-pointer group relative rounded-none border-0"
     >
       {/* Top Tag & Category */}
       <div className="flex justify-between items-start mb-3 relative z-10">
@@ -46,7 +51,7 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
       {/* Product Image Container */}
       <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden mb-3 p-2 bg-[#FAF8F5]/60 rounded-xl group-hover:bg-[#FAF8F5] transition-colors z-10">
         <img
-          src={activeVariant.image}
+          src={webpSrc(activeVariant.image)} data-original-src={activeVariant.image}
           alt={`${item.name} - ${activeVariant.color}`}
           className={`w-full h-full object-contain object-center transition-all duration-300 group-hover:scale-105 ${
             imageFade ? 'opacity-30 scale-95' : 'opacity-100 scale-100'
@@ -61,6 +66,15 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
           />
           <span>{activeVariant.color}</span>
         </span>
+
+        {/* Sold Out Overlay */}
+        {!item.inStock && (
+          <div className="absolute inset-0 bg-[#2D231E]/60 backdrop-blur-[1px] flex items-center justify-center z-25">
+            <span className="px-3 py-1 bg-white text-[#2D231E] text-xs font-mono font-bold uppercase tracking-wider rounded-lg shadow-md">
+              Sold Out
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Interactive Color Selection Buttons */}
@@ -89,22 +103,38 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
         </div>
       )}
 
-      {/* Solid Terracotta ADD TO CART Button */}
+      {/* Solid Terracotta Action Button */}
       <div className="mb-3 relative z-10">
         <button
           onClick={(e) => {
             e.stopPropagation();
-            onAddToCart && onAddToCart({
-              ...item,
-              image: activeVariant.image,
-              color: activeVariant.color,
-              colorHex: activeVariant.colorHex
-            });
+            if (!item.inStock) return;
+            if (needsSizeChoice) {
+              onQuickView && onQuickView({
+                ...item,
+                initialVariant: activeVariant,
+                activeImage: activeVariant.image
+              });
+            } else {
+              onAddToCart && onAddToCart({
+                ...item,
+                image: activeVariant.image,
+                color: activeVariant.color,
+                colorHex: activeVariant.colorHex,
+                size: sizeList[0],
+                quantity: 1
+              });
+            }
           }}
-          className="w-full py-2.5 bg-[#BC5A36] hover:bg-[#9E4423] text-white font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-1.5 rounded-lg"
+          disabled={!item.inStock}
+          className={`w-full py-2.5 font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-1.5 rounded-lg ${
+            item.inStock
+              ? 'bg-[#BC5A36] hover:bg-[#9E4423] text-white'
+              : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
+          }`}
         >
-          <ShoppingBag size={13} />
-          <span>ADD TO CART</span>
+          {needsSizeChoice && item.inStock ? <Eye size={13} /> : <ShoppingBag size={13} />}
+          <span>{!item.inStock ? 'SOLD OUT' : needsSizeChoice ? 'SELECT SIZE' : 'ADD TO CART'}</span>
         </button>
       </div>
 
@@ -126,20 +156,20 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
   const scrollRef = useRef(null);
   const [activeCategory, setActiveCategory] = useState('ALL');
 
-  // Use clean master products data (featuring only authentic models with color variants)
-  const products = productsData.slice(0, 24);
+  const { products, loading, error, retry } = useStreetProducts();
 
   const categories = [
     { key: 'ALL', label: 'ALL DROPS' },
     { key: 'Tops', label: 'TOPS & KNIT' },
     { key: 'Bottoms', label: 'BOTTOMS & DENIM' },
     { key: 'Outerwear', label: 'OUTERWEAR' },
+    { key: 'Shoes', label: 'SHOES & FOOTWEAR' },
     { key: 'Accessories', label: 'ACCESSORIES' },
   ];
 
   const filteredProducts = activeCategory === 'ALL' 
-    ? productsData.slice(0, 24) 
-    : productsData.filter(p => p.category === activeCategory);
+    ? products.slice(0, 24)
+    : products.filter(p => p.category === activeCategory);
 
   const scrollLeft = () => {
     if (scrollRef.current) {
@@ -171,7 +201,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
                 className="px-4 py-2 bg-[#2D5A27] hover:bg-[#23471E] text-white font-mono font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm transition-all flex items-center gap-1.5 cursor-pointer mr-2"
               >
                 <Sparkles size={13} className="text-[#D0DEC6]" />
-                <span>VIEW FULL CATALOG ({productsData.length})</span>
+                <span>VIEW FULL CATALOG{!loading && !error ? ` (${products.length})` : ''}</span>
               </button>
             )}
             <button
@@ -211,15 +241,17 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
         {/* 3. Main Framed Carousel Container with Spotlight Tracking */}
         <div className="relative border-2 border-[#BC5A36] bg-white shadow-xl overflow-hidden rounded-2xl">
           
-          <div
+          <div 
             ref={scrollRef}
             className="flex overflow-x-auto scrollbar-none divide-x-2 divide-[#BC5A36] scroll-smooth"
-            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
-            {filteredProducts.map((item) => (
-              <StreetFavoriteCard
-                key={item.id}
-                item={item}
+            {loading ? <div role="status" aria-label="กำลังโหลดสินค้า" className="flex gap-4 p-5">{[0, 1, 2, 3].map(i => <div key={i} className="w-64 sm:w-72 lg:w-80 shrink-0"><ProductCardSkeleton /></div>)}</div>
+              : error ? <div role="alert" className="p-6 text-red-900"><p>{error}</p><button onClick={retry} className="mt-3 px-4 py-2 rounded-lg bg-[#2D5A27] text-white hover:bg-[#23471E]">ลองใหม่</button></div>
+              : !filteredProducts.length ? <div className="m-5 p-6 border border-dashed border-[#D9D3C7] rounded-xl"><ShoppingBag aria-hidden="true" /><p className="my-3">ยังไม่มีสินค้าในหมวดนี้</p><button onClick={onExploreCatalog} className="px-4 py-2 rounded-lg bg-[#2D5A27] text-white hover:bg-[#23471E]">ดูสินค้าทั้งหมด</button></div>
+              : filteredProducts.map((item) => (
+              <StreetFavoriteCard 
+                key={item.id} 
+                item={item} 
                 onAddToCart={onAddToCart}
                 onQuickView={onQuickView}
               />

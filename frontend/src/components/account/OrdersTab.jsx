@@ -1,29 +1,40 @@
 import React from 'react';
-import { Package, Clock, Truck, CheckCircle2, ChevronRight } from 'lucide-react';
-import { handleImageError } from '../../utils/imageFallback';
+import { Package, Clock, Truck, CheckCircle2, ChevronRight, AlertCircle, ShoppingBag } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { handleImageError, webpSrc } from '../../utils/imageFallback';
 
-export default function OrdersTab({ orders = [] }) {
-  const defaultOrders = orders.length > 0 ? orders : [
-    {
-      id: 'MTA-8921',
-      date: '24 Aug 2026',
-      status: 'Delivered',
-      total: 136.00,
-      items: [
-        { name: 'MatchA Signature Heavyweight Boxy Tee', color: 'Olive Green', size: 'L', qty: 1, price: 48, image: '/images/products/standalone/mustard_sweater.jpg' },
-        { name: 'MatchA Pleated Relaxed Trousers', color: 'Charcoal Black', size: '32', qty: 1, price: 88, image: '/images/products/standalone/matcha_green_crew.jpg' }
-      ]
-    },
-    {
-      id: 'MTA-8740',
-      date: '12 Aug 2026',
-      status: 'In Transit',
-      total: 110.00,
-      items: [
-        { name: 'MatchA Loopback Mineral Fleece Hoodie', color: 'Burnt Orange', size: 'XL', qty: 1, price: 110, image: '/images/products/standalone/matcha_hoodie_terracotta.jpg' }
-      ]
+export default function OrdersTab({ orders = [], isLoaded = true }) {
+  const navigate = useNavigate();
+
+  const getStatusBadge = (status = '') => {
+    const s = status.toLowerCase();
+    if (s === 'delivered' || s === 'completed') {
+      return 'bg-[#D0DEC6] text-[#2D5A27] border border-[#B8CBAE]';
     }
-  ];
+    if (s === 'shipped') {
+      return 'bg-purple-100 text-purple-800 border border-purple-200';
+    }
+    if (s === 'processing') {
+      return 'bg-blue-100 text-blue-800 border border-blue-200';
+    }
+    if (s === 'cancelled') {
+      return 'bg-red-100 text-red-800 border border-red-200';
+    }
+    // pending
+    return 'bg-amber-100 text-amber-800 border border-amber-200';
+  };
+
+  const getPaymentStatusBadge = (paymentStatus = '') => {
+    const ps = paymentStatus.toLowerCase();
+    if (ps === 'paid') {
+      return 'bg-emerald-100 text-emerald-800 border border-emerald-300';
+    }
+    if (ps === 'refunded') {
+      return 'bg-zinc-100 text-zinc-700 border border-zinc-300';
+    }
+    // unpaid
+    return 'bg-amber-50 text-amber-800 border border-amber-300';
+  };
 
   return (
     <div className="bg-white border border-[#D9D3C7] rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
@@ -31,55 +42,87 @@ export default function OrdersTab({ orders = [] }) {
         <div className="flex items-center gap-2">
           <Package size={18} className="text-[#2D5A27]" />
           <h2 className="text-base font-extrabold uppercase tracking-tight text-[#2D231E]">
-            Order History & Archive Drops ({defaultOrders.length})
+            Order History ({orders.length})
           </h2>
         </div>
       </div>
 
-      <div className="space-y-4">
-        {defaultOrders.map((order) => (
-          <div key={order.id} className="p-5 rounded-2xl border border-[#D9D3C7] bg-[#FAF8F5]/50 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-[#D9D3C7]/60 text-xs font-mono">
-              <div className="flex items-center gap-3">
-                <span className="font-bold text-[#2D231E]">#{order.id}</span>
-                <span className="text-[#6B5E55]">• {order.date}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${
-                  order.status === 'Delivered' 
-                    ? 'bg-[#D0DEC6] text-[#2D5A27]' 
-                    : 'bg-[#BC5A36]/15 text-[#BC5A36]'
-                }`}>
-                  {order.status}
-                </span>
-                <span className="font-bold text-[#2D231E]">${order.total.toFixed(2)}</span>
-              </div>
-            </div>
+      {/* Empty State */}
+      {orders.length === 0 && (
+        <div className="py-12 px-4 text-center rounded-2xl border border-dashed border-[#D9D3C7] bg-[#FAF8F5]/60 space-y-3">
+          <div className="w-12 h-12 mx-auto rounded-2xl bg-[#FAF8F5] border border-[#D9D3C7] flex items-center justify-center text-[#6B5E55]">
+            <Package size={24} />
+          </div>
+          <div className="text-sm font-bold text-[#2D231E]">ยังไม่มีประวัติคำสั่งซื้อ</div>
+          <p className="text-xs text-[#6B5E55] max-w-sm mx-auto font-mono">
+            คำสั่งซื้อใหม่และสถานะการจัดส่งแบบเรียลไทม์จะปรากฏที่นี่หลังจากทำรายการ
+          </p>
+          <button
+            type="button"
+            onClick={() => navigate('/catalog')}
+            className="mt-2 inline-flex items-center gap-2 px-5 py-2.5 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-colors cursor-pointer shadow-sm"
+          >
+            <ShoppingBag size={14} />
+            <span>เลือกดูสินค้าใน Catalog</span>
+          </button>
+        </div>
+      )}
 
-            {/* Items */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {order.items.map((item, i) => (
-                <div key={i} className="flex items-center gap-3 text-xs font-mono">
-                  <div className="w-12 h-14 rounded-lg bg-white border border-[#D9D3C7] overflow-hidden shrink-0">
-                    <img 
-                      src={item.image} 
-                      alt={item.name} 
-                      onError={handleImageError}
-                      className="w-full h-full object-cover" 
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="font-bold text-[#2D231E] truncate">{item.name}</div>
-                    <div className="text-[10px] text-[#6B5E55]">
-                      {item.color} • {item.size} • Qty {item.qty}
+      {/* Orders List */}
+      {orders.length > 0 && (
+        <div className="space-y-4">
+          {orders.map((order) => (
+            <div key={order.id} className="p-5 rounded-2xl border border-[#D9D3C7] bg-[#FAF8F5]/50 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#D9D3C7]/60 text-xs font-mono">
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  <span className="font-bold text-[#2D231E]">#{order.id}</span>
+                  <span className="text-[#6B5E55]">• {order.date}</span>
+                  {order.paymentMethod && (
+                    <span className="text-[10px] text-[#6B5E55] bg-white px-2 py-0.5 rounded border border-[#D9D3C7] uppercase">
+                      {order.paymentMethod}
+                    </span>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {/* Fulfillment Status */}
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${getStatusBadge(order.status)}`}>
+                    Order: {order.status}
+                  </span>
+                  {/* Payment Status */}
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${getPaymentStatusBadge(order.paymentStatus)}`}>
+                    Payment: {order.paymentStatus || 'unpaid'}
+                  </span>
+                  <span className="font-bold text-[#2D231E] ml-1">${order.total.toFixed(2)}</span>
+                </div>
+              </div>
+
+              {/* Items */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {order.items.map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 text-xs font-mono">
+                    <div className="w-12 h-14 rounded-lg bg-white border border-[#D9D3C7] overflow-hidden shrink-0">
+                      <img 
+                        src={webpSrc(item.image)} data-original-src={item.image} 
+                        loading="lazy"
+                        decoding="async"
+                        alt={item.name} 
+                        onError={handleImageError}
+                        className="w-full h-full object-cover" 
+                      />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="font-bold text-[#2D231E] truncate">{item.name}</div>
+                      <div className="text-[10px] text-[#6B5E55]">
+                        {item.color} {item.size ? `• ${item.size}` : ''} • Qty {item.qty}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
