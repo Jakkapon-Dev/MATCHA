@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
 import { useCart } from '../../context/CartContext.jsx';
+import { SHIPPING_OPTIONS as SHIPPING_RATES, FREE_SHIPPING_THRESHOLD } from '../../config/shipping';
 
 export default function ProductModal({ product, onClose, onAddToCart, onToggleWishlist, isWishlisted = false }) {
   const { addToCart: contextAddToCart } = useCart();
@@ -138,8 +139,8 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
 
   const itemPrice = typeof product.price === 'number' ? product.price : 59.99;
   const currentTotal = itemPrice * quantity;
-  const isFreeShippingEligible = currentTotal >= 100;
-  const remainingForFreeShipping = Math.max(0, 100 - currentTotal);
+  const isFreeShippingEligible = currentTotal >= FREE_SHIPPING_THRESHOLD;
+  const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - currentTotal);
 
   return (
     <div 
@@ -607,14 +608,14 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
               </span>
             </button>
 
-            {/* Dynamic Shipping Rule from CartContext (Free over $100, else $10 standard) */}
+            {/* ค่าส่งมาจากตารางกลางเดียวกับเซิร์ฟเวอร์ — ตัวเลขที่นี่คือตัวแรกที่ผู้ซื้อเห็น */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] font-mono text-[#6B5E55] pt-1">
               <div className="flex items-center gap-1.5">
                 <Truck size={13} className={isFreeShippingEligible ? 'text-[#2D5A27]' : 'text-[#BC5A36]'} />
                 <span>
                   {isFreeShippingEligible 
-                    ? 'ส่งฟรี (ยอดสินค้านี้ถึงเกณฑ์ $100+)' 
-                    : `ส่งมาตรฐาน $10 (ส่งฟรีเมื่อครบ $100 - ขาดอีก $${remainingForFreeShipping.toFixed(2)})`}
+                    ? `ส่งฟรีทุกแบบ (ยอดถึงเกณฑ์ $${FREE_SHIPPING_THRESHOLD}+)` 
+                    : `ส่งมาตรฐานฟรี · ส่งด่วน $${SHIPPING_RATES.express} (ฟรีเมื่อครบ $${FREE_SHIPPING_THRESHOLD} - ขาดอีก $${remainingForFreeShipping.toFixed(2)})`}
                 </span>
               </div>
               <div className="flex items-center gap-1.5">

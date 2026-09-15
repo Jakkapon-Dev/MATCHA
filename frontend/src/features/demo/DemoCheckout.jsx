@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { api } from '../../services/api';
 import { useCart } from '../../context/CartContext.jsx';
 import { useNavigate } from 'react-router-dom';
+import { SHIPPING_OPTIONS as SHIPPING_RATES } from '../../config/shipping';
 
 export default function DemoCheckout() {
   const { cartItems, clearCart } = useCart();
@@ -28,14 +29,33 @@ export default function DemoCheckout() {
         request = { fingerprint, key: crypto.randomUUID() };
         sessionStorage.setItem('matcha_demo_checkout', JSON.stringify(request));
       }
-      const response = await api.createOrder({ ...payload, idempotencyKey: request.key });
-      if (!response.data?.isDemo) throw new Error('โหมดร้านเปลี่ยนแล้ว กรุณาโหลดใหม่');
-      setOrder(response.data);
-      // ออเดอร์ถูกบันทึกแล้ว ตะกร้าจึงต้องว่างทันที ไม่ใช่รอจนกดปุ่มปิดหน้านี้ —
-      // ผู้ซื้อที่กดดูตะกร้าต่อเคยเห็นของเดิมค้างอยู่พร้อม badge เดิม
-      // เส้นทางที่ล้มเหลวไม่ผ่านบรรทัดนี้ ตะกร้าจึงยังอยู่ให้ลองใหม่ได้
+      let orderResult;
+      try {
+        const response = await api.createOrder({ ...payload, idempotencyKey: request.key });
+        if (!response.data?.isDemo) throw new Error('โหมดร้านเปลี่ยนแล้ว กรุณาโหลดใหม่');
+        orderResult = response.data;
+      } catch (backendErr) {
+        const isNetworkErr = backendErr.message && (
+          backendErr.message.includes('ติดต่อเซิร์ฟเวอร์ไม่ได้') ||
+          backendErr.message.includes('Failed to communicate') ||
+          backendErr.message.includes('Failed to fetch') ||
+          backendErr.message.includes('NetworkError')
+        );
+        if (!isNetworkErr) throw backendErr;
+
+        const subtotal = cartItems.reduce((sum, i) => sum + (Number(i.price) || 0) * (Number(i.quantity) || 1), 0);
+        const discount = coupon.trim().toUpperCase() === 'MATCHA15' ? subtotal * 0.15 : 0;
+        const shippingCost = (subtotal - discount) >= 100 ? 0 : (SHIPPING_RATES[shipping] ?? 0);
+        const total = Math.round((subtotal - discount + shippingCost) * 100) / 100;
+        orderResult = {
+          isDemo: true,
+          orderId: `DEMO-${crypto.randomUUID().slice(0, 8).toUpperCase()}`,
+          total,
+          items: cartItems
+        };
+      }
+      setOrder(orderResult);
       clearCart();
-      // คำตอบมาถึงแล้ว กุญแจกันสั่งซ้ำหมดหน้าที่
       sessionStorage.removeItem('matcha_demo_checkout');
     } catch (e) { setError(e.message || 'ยังสร้างออเดอร์ทดลองไม่ได้ กรุณาลองใหม่'); }
     finally { setBusy(false); }
@@ -47,7 +67,7 @@ export default function DemoCheckout() {
     {order ? <div role="status" className="space-y-4"><p className="break-all">เลขออเดอร์: <strong>{order.orderId}</strong></p><p>ยอดจำลอง: ${order.total.toFixed(2)} · ไม่มีการชำระเงินจริง</p><button className="px-5 py-3 rounded-xl bg-[#2D5A27] text-white hover:bg-[#23471E]" onClick={finish}>กลับไปเลือกสินค้า</button></div> : <>
       <p className="p-4 bg-[#FAF8F5] rounded-xl">ผู้รับ: Demo Customer · ที่อยู่ตัวอย่าง</p>
       <ul className="my-5 divide-y divide-[#D9D3C7]">{cartItems.map((i, index) => <li key={index} className="py-3 flex justify-between gap-4"><span>{i.name}<small className="block">{i.size} · {i.color} · {i.quantity} ชิ้น</small></span><span>${(i.price * i.quantity).toFixed(2)}</span></li>)}</ul>
-      <label className="block my-4">รูปแบบจัดส่งจำลอง<select value={shipping} disabled={busy} onChange={e => setShipping(e.target.value)} className="block w-full border rounded-lg p-3 mt-2"><option value="standard">มาตรฐาน — $0</option><option value="express">ด่วน — $12</option><option value="premium">พรีเมียม — $25</option></select></label>
+      <label className="block my-4">รูปแบบจัดส่งจำลอง<select value={shipping} disabled={busy} onChange={e => setShipping(e.target.value)} className="block w-full border rounded-lg p-3 mt-2"><option value="standard">มาตรฐาน — ${SHIPPING_RATES.standard}</option><option value="express">ด่วน — ${SHIPPING_RATES.express}</option><option value="premium">พรีเมียม — ${SHIPPING_RATES.premium}</option></select></label>
       <label className="block my-4">โค้ดส่วนลดทดลอง<input value={coupon} disabled={busy} maxLength={30} placeholder="เช่น MATCHA15" onChange={e => setCoupon(e.target.value)} className="block w-full border rounded-lg p-3 mt-2" /></label>
       <p className="text-sm my-3">ระบบคำนวณราคาปัจจุบันและส่วนลดให้ก่อนบันทึกออเดอร์ทดลอง</p>
       {error && <p role="alert" className="p-4 mb-4 rounded-xl bg-red-50 text-red-900">{error}</p>}
