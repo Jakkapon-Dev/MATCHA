@@ -1,7 +1,7 @@
 import React from 'react';
 import { Heart, ShoppingBag, Trash2 } from 'lucide-react';
-import { handleImageError } from '../../utils/imageFallback';
-import { useCart } from '../../context/CartContext';
+import { handleImageError, webpSrc } from '../../utils/imageFallback';
+import { useCart } from '../../context/CartContext.jsx';
 
 export default function FavoritesTab({ favorites = [], onRemoveFavorite }) {
   const { addToCart } = useCart();
@@ -46,7 +46,9 @@ export default function FavoritesTab({ favorites = [], onRemoveFavorite }) {
             <div className="flex items-center gap-3">
               <div className="w-16 h-20 rounded-xl bg-white border border-[#D9D3C7] overflow-hidden shrink-0">
                 <img
-                  src={item.image}
+                  src={webpSrc(item.image)} data-original-src={item.image}
+                  loading="lazy"
+                  decoding="async"
                   alt={item.name}
                   onError={handleImageError}
                   className="w-full h-full object-cover"

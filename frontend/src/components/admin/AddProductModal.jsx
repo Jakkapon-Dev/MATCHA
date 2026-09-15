@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { X, Upload, Plus, Sparkles, Image as ImageIcon, Check } from 'lucide-react';
+import { X, Upload, Plus, Sparkles, Image as ImageIcon, Check, Calendar, Tag as TagIcon, AlertCircle } from 'lucide-react';
+import { webpSrc } from '../../utils/imageFallback';
 
 export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
   const [formData, setFormData] = useState({
@@ -7,14 +8,15 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
     id: `SKU-${Math.floor(100 + Math.random() * 900)}`,
     category: 'Tops',
     price: '',
-    stock: 25,
+    stock: '25',
+    date: new Date().toISOString().split('T')[0],
+    tag: 'NEW RELEASE',
     status: 'In Stock',
     color: 'Matcha Green',
     fit: 'Boxy Oversized',
     season: 'SS26',
     description: '',
-    image: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80',
-    tag: 'NEW RELEASE',
+    image: '/images/products/autumn/tops/shirts/color_1_brown.jpeg',
   });
 
   const [imagePreview, setImagePreview] = useState(formData.image);
@@ -38,9 +40,41 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
 
   const validate = () => {
     const errs = {};
-    if (!formData.name.trim()) errs.name = 'Garment name is required';
-    if (!formData.price || parseFloat(formData.price) <= 0) errs.price = 'Valid price is required';
-    if (formData.stock === '' || parseInt(formData.stock, 10) < 0) errs.stock = 'Stock must be 0 or more';
+
+    // 1. Name validation
+    if (!formData.name.trim()) {
+      errs.name = 'Garment name is required';
+    } else if (formData.name.trim().length < 3) {
+      errs.name = 'Garment name must be at least 3 characters';
+    }
+
+    // 2. Description validation
+    if (!formData.description.trim()) {
+      errs.description = 'Product description is required';
+    } else if (formData.description.trim().length < 10) {
+      errs.description = 'Description must be at least 10 characters';
+    }
+
+    // 3. Price validation
+    if (!formData.price || isNaN(parseFloat(formData.price)) || parseFloat(formData.price) <= 0) {
+      errs.price = 'Valid price greater than $0 is required';
+    }
+
+    // 4. Quantity / Stock validation
+    if (formData.stock === '' || isNaN(parseInt(formData.stock, 10)) || parseInt(formData.stock, 10) < 0) {
+      errs.stock = 'Stock must be a positive number (0 or more)';
+    }
+
+    // 5. Date validation
+    if (!formData.date || !formData.date.trim()) {
+      errs.date = 'Release date is required';
+    }
+
+    // 6. Tag validation
+    if (!formData.tag || !formData.tag.trim()) {
+      errs.tag = 'Product tag / badge is required';
+    }
+
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -49,17 +83,18 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
     e.preventDefault();
     if (!validate()) return;
 
+    const stockNum = parseInt(formData.stock, 10);
     const newProduct = {
       ...formData,
       id: formData.id || `SKU-${Date.now().toString().slice(-4)}`,
       price: parseFloat(formData.price),
-      stock: parseInt(formData.stock, 10),
-      status: parseInt(formData.stock, 10) > 10 ? 'In Stock' : parseInt(formData.stock, 10) > 0 ? 'Low Stock' : 'Out of Stock',
-      createdAt: new Date().toISOString(),
+      stock: stockNum,
+      status: stockNum > 10 ? 'In Stock' : stockNum > 0 ? 'Low Stock' : 'Out of Stock',
+      createdAt: formData.date || new Date().toISOString().split('T')[0],
       rating: 5.0,
       reviewsCount: 0,
       isFeatured: true,
-      inStock: parseInt(formData.stock, 10) > 0,
+      inStock: stockNum > 0,
     };
 
     onAddProduct(newProduct);
@@ -68,10 +103,11 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
 
   // Preset sample image options for quick testing
   const sampleImages = [
-    { label: 'Matcha Tee', url: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80' },
-    { label: 'Olive Hoodie', url: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=800&q=80' },
-    { label: 'Wide Trousers', url: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=800&q=80' },
-    { label: 'Artisan Hat', url: 'https://images.unsplash.com/photo-1588850561407-ed78c282e89b?auto=format&fit=crop&w=800&q=80' },
+    { label: 'Heavy Shirt', url: '/images/products/autumn/tops/shirts/color_1_brown.jpeg' },
+    { label: 'Fleece Hoodie', url: '/images/products/autumn/tops/hoodies/color_1_burnt_orange.jpeg' },
+    { label: 'Chino Pants', url: '/images/products/autumn/bottoms/chinos/color_1_olive.jpeg' },
+    { label: 'Utility Bag', url: '/images/products/autumn/accessories/bags/color_1_burnt_orange.jpeg' },
+    { label: 'Silk Scarf', url: '/images/products/autumn/accessories/scarves/color_1_burnt_orange.jpeg' },
   ];
 
   return (
@@ -101,21 +137,27 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 sm:p-8 space-y-6">
           
-          {/* Garment Name & SKU */}
+          {/* 1. Garment Name & SKU */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-2 space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#2D231E] uppercase">
-                Garment Name <span className="text-[#BC5A36]">*</span>
+              <label className="font-bold text-[#2D231E] uppercase flex items-center justify-between">
+                <span>Garment Name <span className="text-[#BC5A36]">*</span></span>
+                <span className="text-[10px] font-normal text-[#6B5E55]">Min 3 chars</span>
               </label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="e.g. MatchA Raw Silk Heavy Tee"
-                className={`w-full px-4 py-3 bg-white border ${errors.name ? 'border-[#BC5A36]' : 'border-[#D9D3C7]'} rounded-xl text-[#2D231E] outline-none focus:ring-1 focus:ring-[#2D5A27]`}
+                placeholder="e.g. MatchA Heavyweight Boxy Tee"
+                className={`w-full px-4 py-3 bg-white border ${errors.name ? 'border-[#BC5A36] focus:ring-1 focus:ring-[#BC5A36]' : 'border-[#D9D3C7] focus:ring-1 focus:ring-[#2D5A27]'} rounded-xl text-[#2D231E] outline-none transition-all`}
               />
-              {errors.name && <p className="text-[11px] text-[#BC5A36] font-bold">{errors.name}</p>}
+              {errors.name && (
+                <p className="text-[11px] text-[#BC5A36] font-bold flex items-center gap-1 mt-1">
+                  <AlertCircle size={12} />
+                  <span>{errors.name}</span>
+                </p>
+              )}
             </div>
 
             <div className="space-y-1.5 font-mono text-xs">
@@ -130,7 +172,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
             </div>
           </div>
 
-          {/* Category, Price, Stock */}
+          {/* 2. Category, Price, Quantity (Stock) */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5 font-mono text-xs">
               <label className="font-bold text-[#2D231E] uppercase">Category</label>
@@ -143,7 +185,8 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
                 <option value="Tops">Tops & Knitwear</option>
                 <option value="Bottoms">Bottoms & Denim</option>
                 <option value="Outerwear">Outerwear & Coats</option>
-                <option value="Accessories">Accessories & Tea</option>
+                <option value="Shoes">Shoes & Footwear</option>
+                <option value="Accessories">Accessories & Bags</option>
               </select>
             </div>
 
@@ -152,23 +195,28 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
                 Price (USD) <span className="text-[#BC5A36]">*</span>
               </label>
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B5E55] font-bold">$</span>
+                <span className="absolute left-3.5 inset-y-0 my-auto h-fit text-[#6B5E55] font-bold">$</span>
                 <input
                   type="number"
                   step="0.01"
                   name="price"
                   value={formData.price}
                   onChange={handleChange}
-                  placeholder="58.00"
-                  className={`w-full pl-8 pr-4 py-3 bg-white border ${errors.price ? 'border-[#BC5A36]' : 'border-[#D9D3C7]'} rounded-xl text-[#2D231E] font-bold outline-none focus:ring-1 focus:ring-[#2D5A27]`}
+                  placeholder="48.00"
+                  className={`w-full pl-8 pr-4 py-3 bg-white border ${errors.price ? 'border-[#BC5A36] focus:ring-1 focus:ring-[#BC5A36]' : 'border-[#D9D3C7] focus:ring-1 focus:ring-[#2D5A27]'} rounded-xl text-[#2D231E] font-bold outline-none transition-all`}
                 />
               </div>
-              {errors.price && <p className="text-[11px] text-[#BC5A36] font-bold">{errors.price}</p>}
+              {errors.price && (
+                <p className="text-[11px] text-[#BC5A36] font-bold flex items-center gap-1 mt-1">
+                  <AlertCircle size={12} />
+                  <span>{errors.price}</span>
+                </p>
+              )}
             </div>
 
             <div className="space-y-1.5 font-mono text-xs">
               <label className="font-bold text-[#2D231E] uppercase">
-                Initial Stock <span className="text-[#BC5A36]">*</span>
+                Quantity (Stock) <span className="text-[#BC5A36]">*</span>
               </label>
               <input
                 type="number"
@@ -176,42 +224,69 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
                 value={formData.stock}
                 onChange={handleChange}
                 placeholder="25"
-                className={`w-full px-4 py-3 bg-white border ${errors.stock ? 'border-[#BC5A36]' : 'border-[#D9D3C7]'} rounded-xl text-[#2D231E] font-bold outline-none focus:ring-1 focus:ring-[#2D5A27]`}
+                className={`w-full px-4 py-3 bg-white border ${errors.stock ? 'border-[#BC5A36] focus:ring-1 focus:ring-[#BC5A36]' : 'border-[#D9D3C7] focus:ring-1 focus:ring-[#2D5A27]'} rounded-xl text-[#2D231E] font-bold outline-none transition-all`}
               />
-              {errors.stock && <p className="text-[11px] text-[#BC5A36] font-bold">{errors.stock}</p>}
+              {errors.stock && (
+                <p className="text-[11px] text-[#BC5A36] font-bold flex items-center gap-1 mt-1">
+                  <AlertCircle size={12} />
+                  <span>{errors.stock}</span>
+                </p>
+              )}
             </div>
           </div>
 
-          {/* Color, Fit, Season */}
+          {/* 3. Release Date, Tag, Season (Task 4 Required Fields) */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            
+            {/* Field: Date */}
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#2D231E] uppercase">Color</label>
+              <label className="font-bold text-[#2D231E] uppercase flex items-center gap-1.5">
+                <Calendar size={13} className="text-[#2D5A27]" />
+                <span>Release Date <span className="text-[#BC5A36]">*</span></span>
+              </label>
               <input
-                type="text"
-                name="color"
-                value={formData.color}
+                type="date"
+                name="date"
+                value={formData.date}
                 onChange={handleChange}
-                placeholder="e.g. Forest Moss"
-                className="w-full px-4 py-3 bg-white border border-[#D9D3C7] rounded-xl text-[#2D231E] outline-none focus:ring-1 focus:ring-[#2D5A27]"
+                className={`w-full px-4 py-3 bg-white border ${errors.date ? 'border-[#BC5A36] focus:ring-1 focus:ring-[#BC5A36]' : 'border-[#D9D3C7] focus:ring-1 focus:ring-[#2D5A27]'} rounded-xl text-[#2D231E] font-bold outline-none transition-all cursor-pointer`}
               />
+              {errors.date && (
+                <p className="text-[11px] text-[#BC5A36] font-bold flex items-center gap-1 mt-1">
+                  <AlertCircle size={12} />
+                  <span>{errors.date}</span>
+                </p>
+              )}
             </div>
 
+            {/* Field: Tag */}
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#2D231E] uppercase">Silhouette / Fit</label>
+              <label className="font-bold text-[#2D231E] uppercase flex items-center gap-1.5">
+                <TagIcon size={13} className="text-[#BC5A36]" />
+                <span>Product Tag <span className="text-[#BC5A36]">*</span></span>
+              </label>
               <select
-                name="fit"
-                value={formData.fit}
+                name="tag"
+                value={formData.tag}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-white border border-[#D9D3C7] rounded-xl text-[#2D231E] outline-none focus:ring-1 focus:ring-[#2D5A27] cursor-pointer"
+                className={`w-full px-4 py-3 bg-white border ${errors.tag ? 'border-[#BC5A36] focus:ring-1 focus:ring-[#BC5A36]' : 'border-[#D9D3C7] focus:ring-1 focus:ring-[#2D5A27]'} rounded-xl text-[#2D231E] font-bold outline-none transition-all cursor-pointer`}
               >
-                <option value="Boxy Oversized">Boxy Oversized</option>
-                <option value="Relaxed Tailored">Relaxed Tailored</option>
-                <option value="Standard Fit">Standard Fit</option>
-                <option value="Wide Leg">Wide Leg</option>
-                <option value="Cropped">Cropped</option>
+                <option value="NEW RELEASE">NEW RELEASE</option>
+                <option value="BESTSELLER">BESTSELLER</option>
+                <option value="LIMITED ARCHIVE">LIMITED ARCHIVE</option>
+                <option value="STAFF PICK">STAFF PICK</option>
+                <option value="ESSENTIAL">ESSENTIAL</option>
+                <option value="ORGANIC COTTON">ORGANIC COTTON</option>
               </select>
+              {errors.tag && (
+                <p className="text-[11px] text-[#BC5A36] font-bold flex items-center gap-1 mt-1">
+                  <AlertCircle size={12} />
+                  <span>{errors.tag}</span>
+                </p>
+              )}
             </div>
 
+            {/* Field: Season */}
             <div className="space-y-1.5 font-mono text-xs">
               <label className="font-bold text-[#2D231E] uppercase">Season</label>
               <select
@@ -226,9 +301,41 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
                 <option value="Archive">Limited Capsule</option>
               </select>
             </div>
+
           </div>
 
-          {/* Image URL & Live Preview */}
+          {/* 4. Color & Silhouette / Fit */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="space-y-1.5 font-mono text-xs">
+              <label className="font-bold text-[#2D231E] uppercase">Color Shade</label>
+              <input
+                type="text"
+                name="color"
+                value={formData.color}
+                onChange={handleChange}
+                placeholder="e.g. Matcha Green"
+                className="w-full px-4 py-3 bg-white border border-[#D9D3C7] rounded-xl text-[#2D231E] outline-none focus:ring-1 focus:ring-[#2D5A27]"
+              />
+            </div>
+
+            <div className="sm:col-span-2 space-y-1.5 font-mono text-xs">
+              <label className="font-bold text-[#2D231E] uppercase">Silhouette / Fit</label>
+              <select
+                name="fit"
+                value={formData.fit}
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-white border border-[#D9D3C7] rounded-xl text-[#2D231E] outline-none focus:ring-1 focus:ring-[#2D5A27] cursor-pointer"
+              >
+                <option value="Boxy Oversized">Boxy Oversized (ทรงหลวมคลาสสิก)</option>
+                <option value="Relaxed Tailored">Relaxed Tailored (ทรงปล่อยเข้ารูป)</option>
+                <option value="Standard Fit">Standard Fit (ทรงมาตรฐาน)</option>
+                <option value="Wide Leg">Wide Leg (ขากว้าง)</option>
+                <option value="Cropped">Cropped (ทรงครอป)</option>
+              </select>
+            </div>
+          </div>
+
+          {/* 5. Image URL & Live Preview */}
           <div className="space-y-3 font-mono text-xs">
             <label className="font-bold text-[#2D231E] uppercase">Garment Photo / Artwork URL</label>
             <div className="flex gap-3">
@@ -244,7 +351,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
               </div>
               <div className="w-12 h-12 rounded-xl bg-[#EFECE6] border border-[#D9D3C7] overflow-hidden flex items-center justify-center shrink-0">
                 {imagePreview ? (
-                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" onError={() => setImagePreview('')} />
+                  <img src={webpSrc(imagePreview)} data-original-src={imagePreview} alt="Preview" className="w-full h-full object-cover" onError={() => setImagePreview('')} />
                 ) : (
                   <ImageIcon size={18} className="text-[#6B5E55]" />
                 )}
@@ -262,7 +369,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
                     setFormData((p) => ({ ...p, image: s.url }));
                     setImagePreview(s.url);
                   }}
-                  className="px-2.5 py-1 rounded-lg bg-white border border-[#D9D3C7] hover:border-[#2D5A27] text-[11px] font-bold text-[#2D231E] transition-all cursor-pointer"
+                  className="px-2.5 py-1 rounded-lg bg-white border border-[#D9D3C7] hover:border-[#2D5A27] text-[11px] font-bold text-[#2D231E] transition-all cursor-pointer active:scale-95"
                 >
                   {s.label}
                 </button>
@@ -270,17 +377,28 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
             </div>
           </div>
 
-          {/* Description */}
+          {/* 6. Description & Material Notes (Validated Field) */}
           <div className="space-y-1.5 font-mono text-xs">
-            <label className="font-bold text-[#2D231E] uppercase">Description & Material Notes</label>
+            <div className="flex items-center justify-between">
+              <label className="font-bold text-[#2D231E] uppercase">
+                Description & Material Notes <span className="text-[#BC5A36]">*</span>
+              </label>
+              <span className="text-[10px] text-[#6B5E55]">Min 10 characters</span>
+            </div>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
               rows={3}
               placeholder="e.g. Crafted from 320gsm organic Japanese cotton. Bio-washed with natural matcha pigments for a tactile drape."
-              className="w-full px-4 py-3 bg-white border border-[#D9D3C7] rounded-xl text-[#2D231E] outline-none focus:ring-1 focus:ring-[#2D5A27] resize-none"
+              className={`w-full px-4 py-3 bg-white border ${errors.description ? 'border-[#BC5A36] focus:ring-1 focus:ring-[#BC5A36]' : 'border-[#D9D3C7] focus:ring-1 focus:ring-[#2D5A27]'} rounded-xl text-[#2D231E] outline-none transition-all resize-none`}
             />
+            {errors.description && (
+              <p className="text-[11px] text-[#BC5A36] font-bold flex items-center gap-1 mt-1">
+                <AlertCircle size={12} />
+                <span>{errors.description}</span>
+              </p>
+            )}
           </div>
 
           {/* Form Actions */}

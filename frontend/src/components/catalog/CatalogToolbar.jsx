@@ -22,7 +22,7 @@ export default function CatalogToolbar({
         
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
-          <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#6B5E55]" />
+          <Search size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#6B5E55]" />
           <input
             type="text"
             value={searchQuery}

@@ -10,7 +10,7 @@ export default function SignUpPage({ onBackToStore }) {
         {/* Header Branding */}
         <div className="text-center mb-6">
           <span className="px-3 py-1 bg-[#2D231E] text-[#D0DEC6] text-[10px] font-mono font-bold tracking-widest uppercase rounded-lg shadow-2xs">
-            MatchA VIP Archive • 2026
+            MatchA Archive • 2026
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold text-[#2D231E] uppercase tracking-tight mt-2">
             Create Account

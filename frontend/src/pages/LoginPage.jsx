@@ -1,26 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, Sparkles, ShieldCheck, ArrowRight, Shield, User, CheckCircle2, KeyRound } from 'lucide-react';
-
-const DEMO_ACCOUNTS = {
-  admin: {
-    name: 'MatchA Admin',
-    email: 'admin@matcha.vip',
-    password: 'admin1234',
-    role: 'Admin',
-    badge: '👑 ADMIN',
-  },
-  member: {
-    name: 'Alex Collector',
-    email: 'member@matcha.vip',
-    password: 'user1234',
-    role: 'Member',
-    badge: '🟢 VIP MEMBER',
-  },
-};
+import { api } from '../services/api';
+import { useAuth } from '../context/AuthContext.jsx';
+import { Mail, Lock, Eye, EyeOff, Sparkles, ShieldCheck, ArrowRight, Shield, User, CheckCircle2 } from 'lucide-react';
 
 export default function LoginPage({ onLoginSuccess }) {
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,7 +19,7 @@ export default function LoginPage({ onLoginSuccess }) {
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotSent, setForgotSent] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     setErrorMsg('');
     setSuccessMsg('');
@@ -44,50 +30,30 @@ export default function LoginPage({ onLoginSuccess }) {
     }
 
     setIsLoading(true);
-
-    setTimeout(() => {
-      setIsLoading(false);
-
-      let userRole = 'Member';
-      let userName = email.split('@')[0].replace(/[._-]/g, ' ') || 'MatchA Collector';
-
-      if (email.toLowerCase().includes('admin')) {
-        userRole = 'Admin';
-        userName = 'MatchA Admin';
-      }
-
+    try {
+      // The server decides who this is and what they may do; the browser is
+      // told the answer, it does not work it out for itself.
+      const res = await api.login(email.trim(), password);
+      const account = res.data || {};
       const user = {
-        name: userName,
-        email: email.trim(),
-        role: userRole,
-        avatar: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80`,
+        id: account._id,
+        name: account.name || email.split('@')[0],
+        email: account.email,
+        role: account.role || 'Member',
+        tier: account.tier,
       };
 
-      if (rememberMe) {
-        localStorage.setItem('matcha_user', JSON.stringify(user));
-      } else {
-        sessionStorage.setItem('matcha_user', JSON.stringify(user));
-      }
-
+      login(user, rememberMe, res.token);
       setSuccessMsg(`Welcome back, ${user.name}! (${user.role}) ✨`);
 
-      if (onLoginSuccess) {
-        onLoginSuccess(user);
-      }
+      if (onLoginSuccess) onLoginSuccess(user);
 
-      // Fast, smooth transition
-      const targetPath = user.role === 'Admin' ? '/admin' : '/';
-      navigate(targetPath);
+      navigate(user.role === 'Admin' ? '/admin' : '/');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 150);
-  };
-
-  const handleFillDemo = (type) => {
-    const acc = DEMO_ACCOUNTS[type];
-    if (acc) {
-      setEmail(acc.email);
-      setPassword(acc.password);
-      setErrorMsg('');
+    } catch (err) {
+      setErrorMsg(err.message || 'Unable to sign in right now. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -118,56 +84,15 @@ export default function LoginPage({ onLoginSuccess }) {
           <div className="text-center mb-6">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#2D231E] text-[#D0DEC6] text-[10px] font-mono font-bold tracking-widest uppercase rounded-full shadow-xs mb-3">
               <Sparkles size={11} className="text-[#BC5A36]" />
-              <span>MatchA Collective • VIP Portal</span>
+              <span>MatchA Collective</span>
             </div>
             
             <h1 className="text-3xl font-extrabold text-[#2D231E] uppercase tracking-tight">
               Welcome Back
             </h1>
             <p className="text-xs text-[#6B5E55] mt-1.5 font-mono">
-              Sign in to access your seasonal drops, orders & VIP perks.
+              Sign in to see your seasonal drops and your orders.
             </p>
-          </div>
-
-          {/* Quick Demo Credentials Box */}
-          <div className="mb-6 p-4 rounded-2xl bg-[#FAF8F5] border border-[#D9D3C7] space-y-2.5">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#2D5A27] flex items-center gap-1">
-                <KeyRound size={12} />
-                Quick Demo Logins
-              </span>
-              <span className="text-[10px] font-mono text-[#6B5E55]">Click to auto-fill:</span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              {/* Admin Demo Button */}
-              <button
-                type="button"
-                onClick={() => handleFillDemo('admin')}
-                className="p-2.5 rounded-xl border border-[#D9D3C7] hover:border-[#BC5A36] bg-white hover:bg-[#BC5A36]/5 text-left transition-all cursor-pointer shadow-2xs group"
-              >
-                <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#BC5A36]">
-                  <span>👑</span>
-                  <span>Admin</span>
-                </div>
-                <p className="text-[10px] font-mono text-[#6B5E55] mt-0.5 truncate">admin@matcha.vip</p>
-                <p className="text-[9px] font-mono text-[#2D231E]/60">pass: admin1234</p>
-              </button>
-
-              {/* Member Demo Button */}
-              <button
-                type="button"
-                onClick={() => handleFillDemo('member')}
-                className="p-2.5 rounded-xl border border-[#D9D3C7] hover:border-[#2D5A27] bg-white hover:bg-[#2D5A27]/5 text-left transition-all cursor-pointer shadow-2xs group"
-              >
-                <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#2D5A27]">
-                  <span>👤</span>
-                  <span>Member</span>
-                </div>
-                <p className="text-[10px] font-mono text-[#6B5E55] mt-0.5 truncate">member@matcha.vip</p>
-                <p className="text-[9px] font-mono text-[#2D231E]/60">pass: user1234</p>
-              </button>
-            </div>
           </div>
 
           {/* Error / Success Notifications */}
@@ -281,17 +206,15 @@ export default function LoginPage({ onLoginSuccess }) {
           {/* Social Login Dividers */}
           <div className="mt-6 pt-5 border-t border-[#D9D3C7] text-center">
             <span className="text-[10px] font-mono text-[#6B5E55] uppercase tracking-widest bg-white px-2 relative -top-7.5">
-              or quick connect
+              social sign-in — coming soon
             </span>
 
             <div className="grid grid-cols-2 gap-3 -mt-2">
               <button
                 type="button"
-                onClick={() => {
-                  setEmail('collector.google@matcha.vip');
-                  setPassword('GoogleAuth2026');
-                }}
-                className="py-2.5 px-3 border border-[#D9D3C7] hover:border-[#2D5A27] rounded-xl text-xs font-mono font-bold text-[#2D231E] bg-[#FAF8F5] hover:bg-white flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
+                disabled
+                title="Social sign-in is not implemented yet"
+                className="py-2.5 px-3 border border-[#D9D3C7] rounded-xl text-xs font-mono font-bold text-[#2D231E]/40 bg-[#FAF8F5] flex items-center justify-center gap-2 cursor-not-allowed shadow-2xs"
               >
                 <span>🌐</span>
                 <span>Google</span>
@@ -299,11 +222,9 @@ export default function LoginPage({ onLoginSuccess }) {
 
               <button
                 type="button"
-                onClick={() => {
-                  setEmail('dev.collector@github.com');
-                  setPassword('GitHubAuth2026');
-                }}
-                className="py-2.5 px-3 border border-[#D9D3C7] hover:border-[#2D5A27] rounded-xl text-xs font-mono font-bold text-[#2D231E] bg-[#FAF8F5] hover:bg-white flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs"
+                disabled
+                title="Social sign-in is not implemented yet"
+                className="py-2.5 px-3 border border-[#D9D3C7] rounded-xl text-xs font-mono font-bold text-[#2D231E]/40 bg-[#FAF8F5] flex items-center justify-center gap-2 cursor-not-allowed shadow-2xs"
               >
                 <span>🐙</span>
                 <span>GitHub</span>
@@ -313,7 +234,7 @@ export default function LoginPage({ onLoginSuccess }) {
 
           {/* Switch to SignUp */}
           <div className="mt-6 text-center text-xs font-mono text-[#6B5E55]">
-            Don't have a MatchA VIP ID?{' '}
+            Don't have an account yet?{' '}
             <Link
               to="/signup"
               className="font-bold text-[#BC5A36] hover:underline"

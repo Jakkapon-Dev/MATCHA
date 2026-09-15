@@ -40,6 +40,19 @@ export default function PaymentMethodStep({
           </div>
         </div>
 
+        {/* Test Mode Banner */}
+        <div className="mb-6 p-4 rounded-2xl bg-amber-50 border border-amber-200/80 text-xs font-mono text-amber-900 space-y-1">
+          <div className="flex items-center gap-2 font-bold text-amber-800">
+            <span className="px-2 py-0.5 rounded bg-amber-200/80 text-amber-900 text-[10px] font-bold uppercase tracking-wider">
+              Test Simulation Mode
+            </span>
+            <span>โหมดทดสอบ — ยังไม่มีการตัดเงินจริง</span>
+          </div>
+          <p className="text-[11px] text-amber-700 leading-relaxed">
+            ระบบยังไม่ได้เชื่อมต่อ Payment Gateway จริง ออเดอร์ใหม่จะถูกบันทึกเป็น <strong>“รับออเดอร์แล้ว (Pending)”</strong> และสถานะชำระเงินเป็น <strong>“รอชำระเงิน (Unpaid)”</strong>
+          </p>
+        </div>
+
         {/* Method Radio Pills */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
           {paymentMethods.map((pm) => (
@@ -133,6 +146,9 @@ export default function PaymentMethodStep({
             <p className="text-xs font-mono text-[#6B5E55]">
               Scan PromptPay QR code with any mobile banking app
             </p>
+            <p className="text-[11px] font-mono text-amber-800 bg-amber-50 py-1 px-3 rounded-lg border border-amber-200/80 inline-block">
+              ⚠️ โหมดทดสอบ: ยังไม่มีการยืนยันยอดเงินจากธนาคารจริง ออเดอร์จะบันทึกสถานะเป็นรอชำระเงิน
+            </p>
           </div>
         )}
 
@@ -140,10 +156,11 @@ export default function PaymentMethodStep({
         {selectedPayment === 'cod' && (
           <div className="p-4 rounded-2xl bg-[#D0DEC6]/30 border border-[#B8CBAE] text-xs font-mono text-[#2D231E] space-y-1 mt-4">
             <div className="font-bold flex items-center gap-1.5 text-[#2D5A27]">
-              <span>💵 Cash On Delivery Selected</span>
+              <span>💵 Cash On Delivery (COD)</span>
+              <span className="px-2 py-0.5 rounded bg-[#2D5A27]/10 text-[#2D5A27] text-[10px]">ชำระเงินปลายทาง</span>
             </div>
             <p className="text-[11px] text-[#6B5E55]">
-              Please prepare exact cash of <strong>${totalAmount.toFixed(2)}</strong> upon delivery.
+              กรุณาเตรียมเงินสดจำนวน <strong>${totalAmount.toFixed(2)}</strong> ให้พนักงานจัดส่ง (ออเดอร์จะบันทึกในสถานะรอชำระเงินจนกว่าจะส่งมอบสินค้า)
             </p>
           </div>
         )}
@@ -165,11 +182,11 @@ export default function PaymentMethodStep({
           className="px-8 py-3.5 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-bold uppercase tracking-widest rounded-xl shadow-lg transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer flex items-center gap-2"
         >
           {isProcessing ? (
-            <span>Processing Payment...</span>
+            <span>Placing Order...</span>
           ) : (
             <>
               <Shield size={14} />
-              <span>Complete Order (${totalAmount.toFixed(2)})</span>
+              <span>Place Order (${totalAmount.toFixed(2)})</span>
             </>
           )}
         </button>

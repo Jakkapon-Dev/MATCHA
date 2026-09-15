@@ -1,6 +1,6 @@
 import React from 'react';
 import { Gift, Lock, ShoppingBag } from 'lucide-react';
-import { handleImageError } from '../../utils/imageFallback';
+import { handleImageError, webpSrc } from '../../utils/imageFallback';
 
 export default function OrderSummarySidebar({
   cartItems,
@@ -34,7 +34,7 @@ export default function OrderSummarySidebar({
           <div key={idx} className="flex items-center gap-3 text-xs font-mono">
             <div className="w-12 h-14 rounded-lg bg-[#FAF8F5] border border-[#D9D3C7] overflow-hidden shrink-0">
               <img
-                src={item.image}
+                src={webpSrc(item.image)} data-original-src={item.image}
                 alt={item.name}
                 onError={handleImageError}
                 className="w-full h-full object-cover"

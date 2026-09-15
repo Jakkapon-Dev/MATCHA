@@ -1,28 +1,95 @@
 import { productsData } from '../data/productsData';
+import { API_ORIGIN, API_BASE } from './apiConfig';
 
-const API_BASE = '/api';
-const DIRECT_API = 'http://localhost:5000/api';
+// Where the API lives. In development this stays '/api' and Vite's proxy
+// forwards it to the local server. A deployed build has no proxy, so the host
+// supplies VITE_API_URL — the full origin of the backend, e.g.
+// https://matcha-api.onrender.com — and requests go straight there.
+const TOKEN_KEY = 'matcha_token';
 
-async function fetchWithFallback(endpoint) {
+export function getToken() {
   try {
-    const res = await fetch(`${API_BASE}${endpoint}`);
+    return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY) || null;
+  } catch {
+    return null;
+  }
+}
+
+export function setToken(token, remember = true) {
+  try {
+    const store = remember ? localStorage : sessionStorage;
+    const other = remember ? sessionStorage : localStorage;
+    if (token) {
+      store.setItem(TOKEN_KEY, token);
+      other.removeItem(TOKEN_KEY);
+    } else {
+      localStorage.removeItem(TOKEN_KEY);
+      sessionStorage.removeItem(TOKEN_KEY);
+    }
+  } catch {
+    // Storage can be unavailable in private mode; the session simply won't persist.
+  }
+}
+// Second attempt when the first is refused by the network. It only makes sense
+// while the API is on this machine, so a configured deployment skips it rather
+// than sending a visitor's browser to its own localhost.
+const DIRECT_API = API_ORIGIN ? null : 'http://localhost:5001/api';
+const GUEST_KEY = 'matcha_guest_id';
+
+// ตะกร้าของคนที่ยังไม่ล็อกอินต้องแยกใบกัน ไม่ใช่ใช้ 'guest' ร่วมกันทั้งโลก
+function guestId() {
+  try {
+    let id = localStorage.getItem(GUEST_KEY);
+    if (!id) {
+      id = `guest-${crypto.randomUUID().replace(/-/g, '')}`;
+      localStorage.setItem(GUEST_KEY, id);
+    }
+    return id;
+  } catch {
+    // Storage ปิดอยู่ (โหมดส่วนตัว) — ตะกร้าจะไม่ข้ามการรีเฟรช แต่ยังใช้งานได้
+    return `guest-${Math.random().toString(36).slice(2, 14)}`;
+  }
+}
+
+async function fetchWithFallback(endpoint, options = {}) {
+  const token = getToken();
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-Guest-Id': guestId(),
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(options.headers || {})
+  };
+  const config = { ...options, headers };
+
+  try {
+    const res = await fetch(`${API_BASE}${endpoint}`, config);
     if (res.ok) return await res.json();
+    const errorData = await res.json().catch(() => ({}));
+    throw new Error(errorData.message || `Request failed with status ${res.status}`);
   } catch (err) {
-    // try direct
+    if (err.message && !err.message.includes('Failed to fetch') && !err.message.includes('NetworkError')) {
+      throw err;
+    }
   }
 
-  // Fallback to direct backend URL
+  // Fallback to direct backend URL. A deployed build has none — sending the
+  // visitor's browser to its own localhost would only fail more slowly.
+  if (!DIRECT_API) {
+    throw new Error(`ติดต่อเซิร์ฟเวอร์ไม่ได้ (${endpoint})`);
+  }
+
   try {
-    const directRes = await fetch(`${DIRECT_API}${endpoint}`);
+    const directRes = await fetch(`${DIRECT_API}${endpoint}`, config);
     if (directRes.ok) return await directRes.json();
+    const errorData = await directRes.json().catch(() => ({}));
+    throw new Error(errorData.message || `Direct request failed with status ${directRes.status}`);
   } catch (err) {
-    // ignore
+    throw new Error(err.message || `Failed to communicate with backend at ${endpoint}`);
   }
-
-  throw new Error(`Failed to communicate with backend at ${endpoint}`);
 }
 
 export const api = {
+  getStoreConfig: () => fetchWithFallback('/store-config'),
   // Check backend server health status
   checkHealth: async () => {
     return fetchWithFallback('/health');
@@ -31,6 +98,135 @@ export const api = {
   // Fetch sample items from backend
   getItems: async () => {
     return fetchWithFallback('/items');
+  },
+
+  // Product CRUD
+  createProduct: async (productData) => {
+    return fetchWithFallback('/products', {
+      method: 'POST',
+      body: JSON.stringify(productData)
+    });
+  },
+
+  updateProduct: async (id, updateData) => {
+    return fetchWithFallback(`/products/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updateData)
+    });
+  },
+
+  deleteProduct: async (id) => {
+    return fetchWithFallback(`/products/${id}`, {
+      method: 'DELETE'
+    });
+  },
+
+  // Orders CRUD
+  getOrders: async () => {
+    return fetchWithFallback('/orders');
+  },
+
+  createOrder: async (orderData, options = {}) => {
+    const key = orderData?.idempotencyKey || orderData?.requestId;
+    const headers = {};
+    if (key) {
+      headers['Idempotency-Key'] = key;
+      headers['X-Request-Id'] = key;
+    }
+    return fetchWithFallback('/orders', {
+      method: 'POST',
+      headers: { ...headers, ...(options.headers || {}) },
+      body: JSON.stringify(orderData)
+    });
+  },
+
+  updateOrderStatus: async (id, updateData) => {
+    return fetchWithFallback(`/orders/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(updateData)
+    });
+  },
+
+  getOrderById: async (id) => {
+    return fetchWithFallback(`/orders/${id}`);
+  },
+
+  // Cart CRUD — เจ้าของตะกร้ามาจาก token หรือ X-Guest-Id ไม่ใช่จากพารามิเตอร์
+  // Hand the pre-sign-in basket over to the account (US-35).
+  mergeGuestCart: async () => {
+    return fetchWithFallback('/cart/merge', { method: 'POST' });
+  },
+
+  getCart: async () => {
+    return fetchWithFallback('/cart');
+  },
+
+  addToCart: async (item) => {
+    return fetchWithFallback('/cart', {
+      method: 'POST',
+      body: JSON.stringify({ item })
+    });
+  },
+
+  updateCartItem: async (itemId, quantity) => {
+    return fetchWithFallback(`/cart/${encodeURIComponent(itemId)}`, {
+      method: 'PUT',
+      body: JSON.stringify({ quantity })
+    });
+  },
+
+  deleteCartItem: async (itemId) => {
+    return fetchWithFallback(`/cart/${encodeURIComponent(itemId)}`, {
+      method: 'DELETE'
+    });
+  },
+
+  // Users CRUD
+  getUsers: async (params = {}) => {
+    const query = new URLSearchParams(params).toString();
+    return fetchWithFallback(`/users${query ? `?${query}` : ''}`);
+  },
+
+  getUserById: async (id) => {
+    return fetchWithFallback(`/users/${id}`);
+  },
+
+  login: async (email, password) => {
+    return fetchWithFallback('/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password })
+    });
+  },
+
+  register: async (payload) => {
+    return fetchWithFallback('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify(payload)
+    });
+  },
+
+  me: async () => {
+    return fetchWithFallback('/auth/me');
+  },
+
+  createUser: async (userData) => {
+    return fetchWithFallback('/users', {
+      method: 'POST',
+      body: JSON.stringify(userData)
+    });
+  },
+
+  updateUser: async (id, updateData) => {
+    return fetchWithFallback(`/users/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(updateData)
+    });
+  },
+
+  deleteUser: async (id) => {
+    return fetchWithFallback(`/users/${id}`, {
+      method: 'DELETE'
+    });
   },
 
   // Fetch categories with product counts
@@ -52,12 +248,13 @@ export const api = {
       { id: 'Tops', name: 'Tops & Knitwear', count: categoryCounts['Tops'] || 0 },
       { id: 'Bottoms', name: 'Bottoms & Denim', count: categoryCounts['Bottoms'] || 0 },
       { id: 'Outerwear', name: 'Outerwear & Coats', count: categoryCounts['Outerwear'] || 0 },
+      { id: 'Shoes', name: 'Shoes & Footwear', count: categoryCounts['Shoes'] || 0 },
       { id: 'Accessories', name: 'Accessories & Bags', count: categoryCounts['Accessories'] || 0 }
     ];
   },
 
   // Fetch filtered & paginated products
-  getProducts: async (params = {}) => {
+  getProducts: async (params = {}, { allowFallback = true } = {}) => {
     const queryParams = new URLSearchParams();
     Object.keys(params).forEach(key => {
       if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
@@ -72,6 +269,7 @@ export const api = {
       const res = await fetchWithFallback(endpoint);
       if (res && res.data) return res;
     } catch (err) {
+      if (!allowFallback) throw err;
       console.warn('Backend products fetch failed, using local filtering fallback');
     }
 
@@ -168,5 +366,4 @@ export const api = {
     };
   }
 };
-
 

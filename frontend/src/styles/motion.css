@@ -1,0 +1,105 @@
+/* Site-wide motion primitives.
+
+   [data-enter]  plays once as the element mounts — page arrival.
+   [data-reveal] plays once the first time the element scrolls into view.
+   [data-drift]  tracks the scroll position continuously, where supported.
+
+   All of them stagger through --enter-delay and fall back to a plain fade when
+   the visitor asks for reduced motion. None of them hide anything: an element
+   that never receives its animation is simply visible, so a missing observer,
+   an unsupported browser or a failed script costs nothing. */
+
+@keyframes enter-rise {
+  from { opacity: 0; transform: translateY(18px) scale(0.99); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes enter-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+/* Editorial type: the line wipes up from its own baseline, the way a magazine
+   masthead lands. The end inset runs past the box so descenders never clip. */
+@keyframes enter-wipe {
+  from { opacity: 0; transform: translateY(0.38em); clip-path: inset(0 0 100% 0); }
+  to { opacity: 1; transform: none; clip-path: inset(-15% -5% -15% 0); }
+}
+
+[data-enter],
+[data-reveal].revealed {
+  animation: enter-rise 700ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation-delay: var(--enter-delay, 0ms);
+}
+
+[data-enter="wipe"],
+[data-reveal="wipe"].revealed {
+  animation: enter-wipe 700ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation-delay: var(--enter-delay, 0ms);
+}
+
+/* Scroll-linked drift. Driven by the compositor rather than scroll events, so
+   it stays smooth under Lenis, which swallows nearly every scroll event. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-drift] {
+      animation: drift linear both;
+      animation-timeline: view();
+      animation-range: entry 0% exit 100%;
+      will-change: transform;
+    }
+    @keyframes drift {
+      from { transform: translateY(var(--drift-from, 24px)); }
+      to { transform: translateY(var(--drift-to, -24px)); }
+    }
+  }
+}
+
+/* Direct-manipulation feedback: the control gives way under the press. Composes
+   with Tailwind's scale utilities, which set the `scale` property, not this
+   one. Kept under reduced motion — it answers the user's own finger. */
+button:not(:disabled):active {
+  transform: scale(0.97);
+}
+
+/* Pointer feedback complements the existing card zooms and button colors.
+   Keep it off touch screens, where hover can remain stuck after a tap. */
+@media (hover: hover) and (pointer: fine) {
+  .matcha-hover-card {
+    transition: translate 220ms cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 220ms ease-out, border-color 180ms ease-out,
+      background-color 180ms ease-out;
+  }
+  .matcha-hover-card:hover { translate: 0 -4px; }
+  :where(main, header) button:not(:disabled):hover {
+    filter: brightness(0.96) saturate(1.08);
+  }
+  nav a {
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-underline-offset: 7px;
+    text-decoration-thickness: 2px;
+    transition: color 180ms ease-out, text-decoration-color 180ms ease-out;
+  }
+  nav a:hover { text-decoration-color: #BC5A36; }
+  [data-motion-slot] {
+    transition: box-shadow 180ms ease-out;
+  }
+  [data-motion-slot]:hover {
+    box-shadow: inset 0 0 0 1px #8F9779;
+  }
+}
+
+:where(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid #2D5A27;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .matcha-hover-card:hover { translate: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-enter],
+  [data-reveal].revealed,
+  [data-enter="wipe"],
+  [data-reveal="wipe"].revealed { animation-name: enter-fade; }
+}

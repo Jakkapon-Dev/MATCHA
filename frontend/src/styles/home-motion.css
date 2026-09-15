@@ -1,0 +1,61 @@
+/* Homepage-only motion: editorial masthead, fit cards, then quiet content. */
+.home-masthead { overflow: hidden; }
+
+/* Hero supporting elements arrive just behind the masthead, quickly enough
+   that they never compete with the four slices for attention. */
+.home-hero-enter { animation-duration: 500ms; }
+.home-page [data-reveal="fit"].revealed {
+  animation: home-fit-enter 600ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation-delay: var(--enter-delay, 0ms);
+}
+@keyframes home-fit-enter {
+  from { opacity: 0.35; translate: 0 18px; }
+  to { opacity: 1; translate: 0 0; }
+}
+.home-page[data-motion="reduced"] [data-reveal="fit"].revealed {
+  animation-name: home-fade-enter;
+}
+.home-masthead-title {
+  animation: home-title-enter 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes home-title-enter {
+  from { transform: translateY(85%); clip-path: inset(0 0 100% 0); }
+  to { transform: translateY(0); clip-path: inset(0); }
+}
+.home-page [data-reveal="products"].revealed {
+  animation: home-content-enter 450ms ease-out;
+}
+@keyframes home-content-enter { from { opacity: 0.4; } to { opacity: 1; } }
+.home-page [data-reveal="film"].revealed {
+  animation: home-film-enter 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes home-film-enter {
+  from { clip-path: inset(5% 2%); }
+  to { clip-path: inset(0); }
+}
+/* Reduced motion: reduce, don't remove. Anything that travels across the screen
+   is replaced by a plain opacity fade, so the page still reads as alive without
+   the movement that triggers motion sensitivity. Hover feedback and the tilt are
+   user-driven and stay as they are. */
+@keyframes home-fade-enter { from { opacity: 0.4; } to { opacity: 1; } }
+
+/* Masthead: swoop up from below -> fade in place. */
+.home-page[data-motion="reduced"] .home-masthead-title { animation-name: home-fade-enter; }
+
+/* Film panel: clip-path wipe -> fade. */
+.home-page[data-motion="reduced"] [data-reveal="film"].revealed {
+  animation-name: home-fade-enter;
+}
+
+/* Fit cards: the endless float loop has no gentle equivalent, so it gives way
+   to a single fade on arrival. Replacing the float animation on the very same
+   selector means the two can never run against each other. */
+.home-page[data-motion="reduced"] .animate-card-float-1,
+.home-page[data-motion="reduced"] .animate-card-float-2,
+.home-page[data-motion="reduced"] .animate-card-float-3 {
+  animation: home-fade-enter 500ms ease-out backwards;
+  animation-delay: var(--enter-delay, 0ms);
+}
+@media (hover: none) {
+  .home-page .preserve-3d { transform: none !important; }
+}
