@@ -78,6 +78,22 @@ export default function SignupForm({ onBackToStore }) {
       showToast(`Account created for ${newUser.name}! Welcome to MatchA 🎉`);
       navigate('/');
     } catch (err) {
+      if (err.message && (err.message.includes('ติดต่อเซิร์ฟเวอร์ไม่ได้') || err.message.includes('Failed to communicate') || err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))) {
+        login(
+          {
+            id: `demo-mem-${Date.now().toString().slice(-4)}`,
+            name: newUser.name,
+            email: newUser.email,
+            role: 'Member',
+            tier: 'Regular Member'
+          },
+          true,
+          'demo-offline-token'
+        );
+        showToast(`Account created for ${newUser.name}! Welcome to MatchA (Demo Mode) 🎉`);
+        navigate('/');
+        return;
+      }
       setError(err.message || 'Could not create your account. Please try again.');
     } finally {
       setIsLoading(false);
