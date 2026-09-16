@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const { Schema, model } = mongoose;
 
@@ -21,7 +21,7 @@ const cartItemSchema = new Schema(
 const cartSchema = new Schema(
   {
     userId: {
-      type: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId, // อย่าลืมเช็กเรื่อง ObjectId vs String ID กับฝั่ง Auth
       ref: 'User',
       default: null
     },
@@ -64,4 +64,4 @@ cartSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 const Cart = model('Cart', cartSchema);
 
-export default Cart;
+module.exports = Cart;
