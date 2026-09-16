@@ -5,7 +5,8 @@ const { findById } = require('../services/userStore');
 
 const getJwtSecret = () => process.env.JWT_SECRET || 'matcha-dev-secret-change-me';
 
-function requireAuth(req, res, next) {
+// 1. ใส่ async และ await ป้องกัน Promise Bug
+async function requireAuth(req, res, next) {
   const header = req.headers.authorization || '';
   const token = header.startsWith('Bearer ') ? header.slice(7) : null;
   if (!token) {
@@ -13,7 +14,11 @@ function requireAuth(req, res, next) {
   }
   try {
     const payload = jwt.verify(token, getJwtSecret());
-    const user = findById(payload.id);
+    
+    // ดักให้รองรับทั้ง id, userId, _id
+    const userId = payload.id || payload.userId || payload._id;
+    const user = await findById(userId);
+    
     if (!user) {
       return res.status(401).json({ success: false, message: 'User not found' });
     }
@@ -34,4 +39,15 @@ function requireRole(role) {
   };
 }
 
-module.exports = { requireAuth, requireRole, getJwtSecret };
+// 2. กำหนด Alias ให้เข้ากับ Route อื่นๆ ในโปรเจกต์
+const authRequired = requireAuth;
+const adminOnly = requireRole('admin');
+
+// 3. Export ทั้งแบบของเพื่อน และแบบที่ระบบเดิมใช้
+module.exports = { 
+  requireAuth, 
+  requireRole, 
+  getJwtSecret,
+  authRequired, // <-- เพิ่มตัวนี้
+  adminOnly     // <-- เพิ่มตัวนี้
+};
