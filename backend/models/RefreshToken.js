@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import crypto from 'crypto';
+const mongoose = require('mongoose');
+const crypto = require('crypto');
 
 const { Schema, model } = mongoose;
 
@@ -39,7 +39,11 @@ const refreshTokenSchema = new Schema(
       default: null
     }
   },
-  { timestamps: true }
+  { 
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true }
+  }
 );
 
 refreshTokenSchema.statics.hashToken = function hashToken(rawToken) {
@@ -65,4 +69,4 @@ refreshTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 const RefreshToken = model('RefreshToken', refreshTokenSchema);
 
-export default RefreshToken;
+module.exports = RefreshToken;
