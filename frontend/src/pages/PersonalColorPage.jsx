@@ -92,6 +92,25 @@ const SEASON_PROFILES = {
   }
 };
 
+// ข้อ 5 บอก "ความเข้ม/คอนทราสต์" ส่วนข้อ 1-4 บอก "อันเดอร์โทน" — ต้องใช้ทั้งคู่ถึงจะได้ฤดูที่ถูก
+const SEASON_DEPTH = { Spring: 'Light', Summer: 'Light', Autumn: 'Deep', Winter: 'Deep' };
+const SEASON_BY_TONE = {
+  Warm: { Light: 'Spring', Deep: 'Autumn' },
+  Cool: { Light: 'Summer', Deep: 'Winter' }
+};
+
+const STORAGE_KEY = 'matcha_personal_color';
+
+// ค่าที่ค้างใน localStorage อาจเป็นของเวอร์ชันเก่าหรือถูกแก้มา ถ้าไม่ตรวจก่อนหน้าจะพังถาวร
+const readStoredSeason = () => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return SEASON_PROFILES[stored] ? stored : null;
+  } catch {
+    return null;
+  }
+};
+
 const QUIZ_QUESTIONS = [
   {
     id: 1,
@@ -281,13 +300,9 @@ export default function PersonalColorPage() {
   const [activeTab, setActiveTab] = useState('quiz'); // 'quiz' | 'theory' | 'palette'
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [diagnosedSeason, setDiagnosedSeason] = useState(() => {
-    return localStorage.getItem('matcha_personal_color') || null;
-  });
+  const [diagnosedSeason, setDiagnosedSeason] = useState(readStoredSeason);
   const [isScanning, setIsScanning] = useState(false);
-  const [selectedSeasonTab, setSelectedSeasonTab] = useState(
-    () => localStorage.getItem('matcha_personal_color') || 'Autumn'
-  );
+  const [selectedSeasonTab, setSelectedSeasonTab] = useState(() => readStoredSeason() || 'Autumn');
   const quizAnchorRef = useRef(null);
   const questionMotionRef = useChangeMotion(`${activeTab}-${currentStep}-${diagnosedSeason}-${isScanning}`);
   const resultMotionRef = useChangeMotion(`${activeTab}-${diagnosedSeason}-${isScanning}`);
@@ -306,39 +321,47 @@ export default function PersonalColorPage() {
   };
 
   // Calculate Result Algorithm
+  // ข้อ 1-4 = อันเดอร์โทน (Warm/Cool/Neutral), ข้อ 5 = ความเข้ม/คอนทราสต์
+  // ทั้งสองแกนต้องมาประกอบกันตามทฤษฎี 4 ฤดู ไม่ใช่ให้ข้อ 5 ตัดสินคนเดียว
   const calculateResult = (finalAnswers) => {
     setIsScanning(true);
 
     setTimeout(() => {
       let warmScore = 0;
       let coolScore = 0;
-      const seasonVotes = { Spring: 0, Summer: 0, Autumn: 0, Winter: 0 };
+      let intensitySeason = null;
 
       Object.values(finalAnswers).forEach(ans => {
-        if (ans.score === 'Warm') warmScore += (ans.weight || 1);
-        if (ans.score === 'Cool') coolScore += (ans.weight || 1);
-        if (ans.score === 'Spring') { warmScore += (ans.weight || 1); seasonVotes.Spring += (ans.weight || 1); }
-        if (ans.score === 'Autumn') { warmScore += (ans.weight || 1); seasonVotes.Autumn += (ans.weight || 1); }
-        if (ans.score === 'Summer') { coolScore += (ans.weight || 1); seasonVotes.Summer += (ans.weight || 1); }
-        if (ans.score === 'Winter') { coolScore += (ans.weight || 1); seasonVotes.Winter += (ans.weight || 1); }
+        const weight = ans.weight || 1;
+        if (ans.score === 'Warm') warmScore += weight;
+        else if (ans.score === 'Cool') coolScore += weight;
+        else if (SEASON_DEPTH[ans.score]) intensitySeason = ans.score;
+        // 'Neutral' ไม่เทน้ำหนักไปฝั่งไหน แต่ทำให้โอกาสเสมอสูงขึ้น = ให้ข้อ 5 ตัดสิน
       });
 
-      // Pick top season
-      const sortedSeasons = Object.entries(seasonVotes).sort((a, b) => b[1] - a[1]);
-      let finalSeason = 'Autumn';
+      const undertone =
+        warmScore > coolScore ? 'Warm' :
+        coolScore > warmScore ? 'Cool' : 'Neutral';
 
-      if (sortedSeasons[0][1] > 0) {
-        finalSeason = sortedSeasons[0][0];
-      } else if (warmScore > coolScore) {
-        finalSeason = Math.random() > 0.5 ? 'Autumn' : 'Spring';
+      let finalSeason;
+      if (!intensitySeason) {
+        // ไม่ควรเกิด (ข้อ 5 บังคับตอบ) แต่กันไว้ไม่ให้ผลลัพธ์หลุดเป็น undefined
+        finalSeason = undertone === 'Cool' ? 'Winter' : 'Autumn';
+      } else if (undertone === 'Neutral') {
+        // อันเดอร์โทนก้ำกึ่ง — ข้อ 5 คือสัญญาณที่เจาะจงที่สุดที่มี
+        finalSeason = intensitySeason;
       } else {
-        finalSeason = Math.random() > 0.5 ? 'Winter' : 'Summer';
+        finalSeason = SEASON_BY_TONE[undertone][SEASON_DEPTH[intensitySeason]];
       }
 
       setDiagnosedSeason(finalSeason);
       setSelectedSeasonTab(finalSeason);
       setIsScanning(false);
-      localStorage.setItem('matcha_personal_color', finalSeason);
+      try {
+        localStorage.setItem(STORAGE_KEY, finalSeason);
+      } catch {
+        // โหมดส่วนตัว/ปิด storage — ผลยังแสดงได้ แค่ไม่ถูกจำข้ามหน้า
+      }
       showToast(`วิเคราะห์ผลสำเร็จ: โทนสีผิวของคุณคือ ${SEASON_PROFILES[finalSeason].thaiName} ✨`);
     }, 1200);
   };
