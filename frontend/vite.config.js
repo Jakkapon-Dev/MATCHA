@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
 
 // https://vitejs.dev/config/
+// Vite server config - re-indexed assets
 export default defineConfig({
   plugins: [
     react(),
