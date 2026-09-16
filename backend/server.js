@@ -1,4 +1,8 @@
 require('dotenv').config();
+const dns = require('dns');
+// Windows / Node.js c-ares DNS SRV lookup fix for MongoDB Atlas
+dns.setServers(['8.8.8.8', '1.1.1.1']);
+
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -53,6 +57,10 @@ initUserStore({ bcrypt, adminPassword: process.env.ADMIN_SEED_PASSWORD });
 
 const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
+
+// Modular Feature Routes (Lookbook & Media Management)
+app.use('/api', require('./routes/lookbookRoutes'));
+app.use('/api', require('./routes/mediaRoutes'));
 
 // Sample Starter API endpoint
 app.get('/api/items', (req, res) => {
