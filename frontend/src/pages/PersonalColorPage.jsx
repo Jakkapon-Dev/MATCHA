@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useChangeMotion from '../hooks/useChangeMotion';
 import { 
@@ -285,7 +285,10 @@ export default function PersonalColorPage() {
     return localStorage.getItem('matcha_personal_color') || null;
   });
   const [isScanning, setIsScanning] = useState(false);
-  const [selectedSeasonTab, setSelectedSeasonTab] = useState('Autumn');
+  const [selectedSeasonTab, setSelectedSeasonTab] = useState(
+    () => localStorage.getItem('matcha_personal_color') || 'Autumn'
+  );
+  const quizAnchorRef = useRef(null);
   const questionMotionRef = useChangeMotion(`${activeTab}-${currentStep}-${diagnosedSeason}-${isScanning}`);
   const resultMotionRef = useChangeMotion(`${activeTab}-${diagnosedSeason}-${isScanning}`);
   const paletteMotionRef = useChangeMotion(`${activeTab}-${selectedSeasonTab}-${diagnosedSeason}-${isScanning}`, 'grid');
@@ -344,6 +347,19 @@ export default function PersonalColorPage() {
     setAnswers({});
     setCurrentStep(0);
     setDiagnosedSeason(null);
+    // เลื่อนลงไปที่คำถามข้อแรก ไม่งั้นผู้ใช้ค้างอยู่หัวหน้าโดยไม่รู้ว่าแบบทดสอบเริ่มแล้ว
+    requestAnimationFrame(() => {
+      quizAnchorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+
+  // ปุ่ม Diagnostic Quiz: ถ้ากำลังดูผลอยู่แล้วให้เริ่มทำใหม่ ไม่ใช่กดแล้วเงียบ
+  const handleQuizTabClick = () => {
+    if (activeTab === 'quiz' && diagnosedSeason) {
+      handleResetQuiz();
+      return;
+    }
+    setActiveTab('quiz');
   };
 
 
@@ -367,7 +383,7 @@ export default function PersonalColorPage() {
           {/* Navigation Pill Tabs */}
           <div className="flex items-center justify-center gap-2 pt-4">
             <button
-              onClick={() => setActiveTab('quiz')}
+              onClick={handleQuizTabClick}
               className={`px-5 py-2.5 rounded-full text-xs font-mono font-bold uppercase transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'quiz'
                   ? 'bg-[#2D5A27] text-white shadow-md'
@@ -396,7 +412,7 @@ export default function PersonalColorPage() {
           <div>
             {!diagnosedSeason && !isScanning ? (
               /* Quiz Questionnaire Card */
-              <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
+              <div ref={quizAnchorRef} className="max-w-4xl mx-auto space-y-6 animate-fade-in">
                 
                 {/* Progress Bar */}
                 <div className="bg-white rounded-2xl border border-[#D9D3C7] p-4 sm:p-5 shadow-xs">
@@ -591,7 +607,7 @@ export default function PersonalColorPage() {
                   <div className="bg-[#FAF8F5] p-5 rounded-2xl border border-[#D9D3C7] space-y-4">
                     <h4 className="font-mono text-xs font-bold uppercase text-[#2D231E] flex items-center justify-between">
                       <span>Signature Palette (สีที่ขับผิวที่สุด)</span>
-                      <Palette size={14} className="text-[#2D5A27]" />
+                      <Palette size={14} className="text-[#2D5A27]" aria-hidden="true" focusable="false" />
                     </h4>
                     <div ref={paletteMotionRef} className="grid grid-cols-2 gap-2">
                       {SEASON_PROFILES[diagnosedSeason].palette.map((color, i) => (
