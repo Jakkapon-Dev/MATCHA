@@ -154,3 +154,6 @@ MatchA_Orders_*.csv
 MatchA_Revenue_*.csv
 MatchA_VIP_*.csv
 MatchA_Full_Store_Backup_*.json
+
+# 13. Local Auth User Store (contains password hashes — never commit)
+backend/data/users.json
