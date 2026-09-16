@@ -12,6 +12,8 @@ export default function ProductCard({
   onToggleWishlist,
   isWishlisted = false 
 }) {
+  // Normalize products without explicit variants into a one-variant list. This keeps
+  // the image, swatch, quick-view, and add-to-cart paths identical for every product.
   const variants = product?.variants && product.variants.length > 0
     ? product.variants
     : [
@@ -34,9 +36,11 @@ export default function ProductCard({
   const [imageFade, setImageFade] = useState(false);
 
   const handleColorSelect = (e, variant) => {
+    // Swatch clicks must not bubble to the surrounding quick-view photo action.
     e.stopPropagation();
     if (variant.image === activeVariant.image) return;
 
+    // Delay the image swap until the fade-out is visible, then restore opacity.
     setImageFade(true);
     setTimeout(() => {
       setActiveVariant(variant);
@@ -51,6 +55,7 @@ export default function ProductCard({
 
   const handleQuickAdd = (e) => {
     e.stopPropagation();
+    // Sold-out cards ignore quick-add even if this handler is called programmatically.
     if (!product.inStock) return;
 
     setJustAdded(true);
@@ -65,6 +70,7 @@ export default function ProductCard({
       quantity: 1
     };
 
+    // A supplied callback lets a parent override cart behavior; otherwise use context.
     if (onAddToCart) {
       onAddToCart(itemToAdd);
     } else if (contextAddToCart) {
@@ -74,10 +80,12 @@ export default function ProductCard({
 
   const handleWishlistClick = (e) => {
     e.stopPropagation();
+    // Wishlist changes require a signed-in user; guests receive guidance instead.
     if (!currentUser) {
       showToast('กรุณาเข้าสู่ระบบก่อนเพื่อบันทึกรายการสินค้าที่ชอบ (Wishlist)', 'info');
       return;
     }
+    // Update the heart immediately, then notify the parent persistence layer if present.
     setWishlistActive(!wishlistActive);
     if (onToggleWishlist) onToggleWishlist(product);
   };

@@ -6,7 +6,7 @@ import { useCart } from '../../context/CartContext';
 export default function ProductQuickView({ product, onClose, onAddToCart, onToggleWishlist, isWishlisted = false }) {
   const { addToCart: contextAddToCart } = useCart();
 
-  // Extract variants from product
+  // Normalize a product without variants into the same list shape used by selectors.
   const variants = product?.variants && product.variants.length > 0
     ? product.variants
     : [
@@ -24,7 +24,8 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
   const [addedAnimation, setAddedAnimation] = useState(false);
   const [imageFade, setImageFade] = useState(false);
 
-  // Sync when product changes
+  // Opening a different product resets transient choices. A variant selected on the
+  // card is honored through initialVariant; accessories default to one-size (OS).
   useEffect(() => {
     if (product) {
       const initialVariant = product.initialVariant || (product.variants && product.variants.length > 0
@@ -36,7 +37,8 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
     }
   }, [product]);
 
-  // Handle ESC key press & body scroll lock
+  // While open, support Escape-to-close and lock background scrolling. Cleanup restores
+  // the page's exact previous overflow value and removes the global keyboard listener.
   useEffect(() => {
     if (!product) return;
 
@@ -60,6 +62,7 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
 
   const handleVariantChange = (v) => {
     if (v.image === activeVariant.image) return;
+    // Briefly fade the old image so the variant change reads as an intentional swap.
     setImageFade(true);
     setTimeout(() => {
       setActiveVariant(v);
@@ -68,6 +71,7 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
   };
 
   const handleAdd = () => {
+    // Feedback is local and temporary; the actual cart write is delegated below.
     setAddedAnimation(true);
     setTimeout(() => setAddedAnimation(false), 600);
 
@@ -80,6 +84,7 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
       quantity: Number(quantity)
     };
 
+    // Prefer a parent override when supplied, otherwise write through CartContext.
     if (onAddToCart) {
       onAddToCart(itemToAdd);
     } else if (contextAddToCart) {
@@ -88,11 +93,13 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
   };
 
   const handleWishlist = (e) => {
+    // Prevent modal-level click handling and optimistically reflect the selection.
     e.stopPropagation();
     setWishlistActive(!wishlistActive);
     if (onToggleWishlist) onToggleWishlist(product);
   };
 
+  // Clicking the backdrop closes the modal; the content panel stops propagation.
   return (
     <div 
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 md:p-6 bg-black/80 backdrop-blur-md animate-fade-in select-none"

@@ -6,9 +6,12 @@ import ProductCardSkeleton from '../ui/ProductCardSkeleton';
 import { webpSrc } from '../../utils/imageFallback';
 
 function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
+  // Products with zero or multiple sizes must open quick view for an explicit choice;
+  // exactly one size can be added directly from the carousel.
   const sizeList = Array.isArray(item?.sizes) ? item.sizes.filter(Boolean) : [];
   const needsSizeChoice = sizeList.length !== 1;
 
+  // Normalize single-image products into the same variant shape used by swatches.
   const variants = item?.variants && item.variants.length > 0
     ? item.variants
     : [
@@ -23,6 +26,7 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
   const [imageFade, setImageFade] = useState(false);
 
   const handleColorClick = (e, v) => {
+    // Do not let a swatch click trigger the card-level quick view.
     e.stopPropagation();
     if (v.image === activeVariant.image) return;
     setImageFade(true);
@@ -109,6 +113,8 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
           onClick={(e) => {
             e.stopPropagation();
             if (!item.inStock) return;
+            // Route ambiguous sizes through quick view; otherwise construct a complete
+            // cart line using the active color and the product's sole size.
             if (needsSizeChoice) {
               onQuickView && onQuickView({
                 ...item,
@@ -156,6 +162,8 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
   const scrollRef = useRef(null);
   const [activeCategory, setActiveCategory] = useState('ALL');
 
+  // The hook owns remote loading and retry behavior; this component selects which
+  // loading, error, empty, or product-list state to render.
   const { products, loading, error, retry } = useStreetProducts();
 
   const categories = [
@@ -167,11 +175,13 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
     { key: 'Accessories', label: 'ACCESSORIES' },
   ];
 
+  // Limit the unfiltered home carousel to 24 items; category views show every match.
   const filteredProducts = activeCategory === 'ALL' 
     ? products.slice(0, 24)
     : products.filter(p => p.category === activeCategory);
 
   const scrollLeft = () => {
+    // One navigation click moves approximately one desktop card plus its spacing.
     if (scrollRef.current) {
       scrollRef.current.scrollBy({ left: -340, behavior: 'smooth' });
     }

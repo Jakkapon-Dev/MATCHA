@@ -13,10 +13,13 @@ export default function ProductCard({
   onToggleWishlist,
   isWishlisted = false 
 }) {
-  // ไซซ์จริงจากข้อมูลเท่านั้น ห้ามเดา OS หรือ EU 40 แทนข้อมูลที่ขาด
+  // Use only sizes supplied by product data. Zero or multiple options require the
+  // modal; exactly one option is safe for direct add-to-cart.
   const sizeList = Array.isArray(product?.sizes) ? product.sizes.filter(Boolean) : [];
   const needsSizeChoice = sizeList.length !== 1;
 
+  // Normalize single-image products into the same variant list used by swatches,
+  // quick view, and the cart payload.
   const variants = product?.variants && product.variants.length > 0
     ? product.variants
     : [
@@ -38,9 +41,11 @@ export default function ProductCard({
   const [imageFade, setImageFade] = useState(false);
 
   const handleColorSelect = (e, variant) => {
+    // A swatch click changes the card only and must not bubble to quick view.
     e.stopPropagation();
     if (variant.image === activeVariant.image) return;
 
+    // Swap the image midway through a short fade to avoid an abrupt visual jump.
     setImageFade(true);
     setTimeout(() => {
       setActiveVariant(variant);
@@ -50,6 +55,7 @@ export default function ProductCard({
 
   const handleQuickAdd = (e) => {
     e.stopPropagation();
+    // Sold-out products remain protected even if this handler is invoked directly.
     if (!product.inStock) return;
 
     setJustAdded(true);
@@ -64,8 +70,10 @@ export default function ProductCard({
       quantity: 1
     };
 
+    // Start visual feedback from this card before delegating the actual cart write.
     flyToCart(cardRef.current);
 
+    // A parent callback can override cart behavior; CartContext is the default path.
     if (onAddToCart) {
       onAddToCart(itemToAdd);
     } else if (contextAddToCart) {
@@ -75,10 +83,12 @@ export default function ProductCard({
 
   const handleWishlistClick = (e) => {
     e.stopPropagation();
+    // Guests cannot mutate wishlist state and receive an explanatory toast.
     if (!currentUser) {
       showToast('กรุณาเข้าสู่ระบบก่อนเพื่อบันทึกรายการสินค้าที่ชอบ (Wishlist)', 'info');
       return;
     }
+    // Update the heart immediately, then let the optional parent persist the change.
     setWishlistActive(!wishlistActive);
     if (onToggleWishlist) onToggleWishlist(product);
   };
@@ -223,6 +233,7 @@ export default function ProductCard({
             )}
           </div>
 
+          {/* Ambiguous sizes open the modal; a sole known size can be added directly. */}
           {needsSizeChoice ? (
             <button
               onClick={(e) => {

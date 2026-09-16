@@ -15,6 +15,8 @@ export default function CatalogToolbar({
   onGridChange,
   totalResults
 }) {
+  // This is a controlled toolbar: CatalogPage owns searching, category selection,
+  // sorting, and layout state so all controls operate on the same result set.
   return (
     <div className="space-y-4 mb-8">
       {/* Top Search & Filter Bar */}
@@ -51,6 +53,7 @@ export default function CatalogToolbar({
           </div>
 
           {/* Grid Layout Switcher (Desktop) */}
+          {/* gridCols is numeric for card grids and the string "list" for list view. */}
           <div className="hidden sm:flex items-center p-1 rounded-xl bg-white border border-[#D9D3C7] shadow-2xs">
             <button
               onClick={() => onGridChange(2)}

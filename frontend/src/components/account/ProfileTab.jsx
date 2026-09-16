@@ -8,6 +8,8 @@ export default function ProfileTab({
   saveSuccess
 }) {
   const handleChange = (e) => {
+    // All fields share this controlled-input handler. The input's name selects the
+    // profile property while the spread preserves values from the other fields.
     onProfileChange({
       ...profile,
       [e.target.name]: e.target.value
@@ -31,6 +33,7 @@ export default function ProfileTab({
         )}
       </div>
 
+      {/* Submission stays in the parent, where account/auth state is available. */}
       <form onSubmit={onSave} className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>

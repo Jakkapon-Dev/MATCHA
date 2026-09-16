@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Sparkles, Zap, RotateCcw, ShieldCheck } from 'lucide-react';
 
 export default function PulsePerks() {
+  // Rotation is stored in degrees and initialized to a readable resting perspective.
   const [rotate, setRotate] = useState({ x: 4, y: -18 });
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef(null);
@@ -30,13 +31,14 @@ export default function PulsePerks() {
   // Interactive 3D Card Rotation based on Mouse Movement
   const handleMouseMove = (e) => {
     if (!cardRef.current) return;
+    // Convert the pointer into coordinates relative to the interactive card container.
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    // Calculate dynamic 3D rotation angles
+    // Normalize distance from center into bounded X/Y tilt angles.
     const rotateX = ((y - centerY) / centerY) * -14;
     const rotateY = ((x - centerX) / centerX) * 22;
 
@@ -44,6 +46,7 @@ export default function PulsePerks() {
   };
 
   const handleMouseLeave = () => {
+    // Removing hover also returns the card to its designed resting angle.
     setIsHovered(false);
     // Reset to subtle iconic 3D perspective angle from reference screenshot
     setRotate({ x: 3, y: -16 });

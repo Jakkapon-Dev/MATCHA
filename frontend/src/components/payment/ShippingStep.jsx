@@ -11,12 +11,16 @@ export default function ShippingStep({
   onBackToCart
 }) {
   const handleChange = (e) => {
+    // All shipping inputs are controlled by the parent checkout page. The input name
+    // selects the field to replace while preserving the rest of the address.
     onFormChange({
       ...formData,
       [e.target.name]: e.target.value
     });
   };
 
+  // This step currently checks presence only; native input types handle basic browser
+  // validation. The Next button stays disabled until every required value is truthy.
   const isFormValid = formData.firstName && formData.lastName && formData.email && formData.phone && formData.address && formData.city && formData.zipCode;
 
   return (
@@ -148,6 +152,7 @@ export default function ShippingStep({
         </div>
 
         <div className="space-y-3">
+          {/* The complete label is clickable; the radio mirrors parent-owned selection. */}
           {shippingOptions.map((option) => (
             <label
               key={option.id}

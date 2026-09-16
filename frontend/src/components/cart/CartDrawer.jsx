@@ -4,9 +4,12 @@ import { useCart } from '../../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 
 export default function CartDrawer({ isOpen, onClose }) {
+  // CartContext owns item persistence, quantity rules, backend synchronization, and
+  // all monetary calculations; this drawer only presents and triggers those actions.
   const { cartItems, updateQty, removeItem, subtotal, shipping, total, getCartKey } = useCart();
   const navigate = useNavigate();
 
+  // A closed drawer is removed from the DOM so its overlay cannot block the page.
   if (!isOpen) return null;
 
   return (
@@ -26,6 +29,7 @@ export default function CartDrawer({ isOpen, onClose }) {
               <ShoppingBag size={20} className="text-[#2D5A27]" />
               <h2 className="font-serif text-lg font-bold text-[#2D231E]">Your Artisan Bag</h2>
               <span className="text-xs font-mono bg-[#E2ECE9] text-[#2D5A27] px-2 py-0.5 rounded-full font-bold">
+                {/* Counts distinct product variants, not the sum of their quantities. */}
                 {cartItems.length}
               </span>
             </div>
@@ -39,6 +43,7 @@ export default function CartDrawer({ isOpen, onClose }) {
 
           {/* Cart Items List */}
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
+            {/* Empty-cart navigation closes the overlay before changing routes. */}
             {cartItems.length === 0 ? (
               <div className="text-center py-16 space-y-4">
                 <ShoppingBag size={48} className="mx-auto text-[#D9D3C7]" />
@@ -52,6 +57,8 @@ export default function CartDrawer({ isOpen, onClose }) {
               </div>
             ) : (
               cartItems.map((item) => {
+                // The composite key includes product, size, and color so variants of
+                // the same product remain separate cart rows and update independently.
                 const key = getCartKey(item);
                 return (
                   <div key={key} className="p-3.5 bg-white rounded-2xl border border-[#D9D3C7] flex gap-3.5 items-center">
@@ -72,6 +79,7 @@ export default function CartDrawer({ isOpen, onClose }) {
 
                     <div className="flex items-center gap-2">
                       <div className="flex items-center border border-[#D9D3C7] rounded-full bg-[#FAF8F5] px-1.5 py-0.5">
+                        {/* CartContext clamps decrements at one; deletion is explicit. */}
                         <button 
                           onClick={() => updateQty(key, -1)}
                           className="w-5 h-5 flex items-center justify-center text-[#6B5E55] hover:text-[#2D231E] cursor-pointer"
@@ -100,6 +108,7 @@ export default function CartDrawer({ isOpen, onClose }) {
           </div>
 
           {/* Footer & Checkout */}
+          {/* Totals are precomputed by CartContext and hidden for an empty cart. */}
           {cartItems.length > 0 && (
             <div className="p-6 bg-white border-t border-[#D9D3C7] space-y-4">
               <div className="space-y-1.5 font-mono text-xs">
@@ -118,6 +127,7 @@ export default function CartDrawer({ isOpen, onClose }) {
               </div>
 
               <div className="grid grid-cols-2 gap-2">
+                {/* Close first so the drawer does not remain open on the destination. */}
                 <button
                   onClick={() => { onClose(); navigate('/cart'); }}
                   className="py-3 rounded-xl border border-[#D9D3C7] bg-[#FAF8F5] text-[#2D231E] font-mono text-xs font-bold uppercase transition-all hover:bg-[#EAE6DF] cursor-pointer text-center"

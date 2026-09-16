@@ -9,6 +9,7 @@ export default function CatalogPagination({
   startIndex,
   endIndex
 }) {
+  // A single-page result set needs no navigation or range summary.
   if (totalPages <= 1) return null;
 
   return (
@@ -29,7 +30,7 @@ export default function CatalogPagination({
           <ChevronLeft size={16} />
         </button>
 
-        {/* Numbers */}
+        {/* Generate one controlled page button for every page in the filtered result. */}
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
           <button
             key={p}
@@ -45,6 +46,7 @@ export default function CatalogPagination({
         ))}
 
         {/* Next */}
+        {/* Boundary buttons are disabled so the parent never receives an invalid page. */}
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}

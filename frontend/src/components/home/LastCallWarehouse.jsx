@@ -2,7 +2,8 @@ import React from 'react';
 import { Plus } from 'lucide-react';
 
 export default function LastCallWarehouse({ onAddToCart, onQuickView, onExploreWarehouse }) {
-  // Archive clearance products from warehouse matching the reference screenshot
+  // Static clearance fixtures share the minimal product fields required by quick view
+  // and cart callbacks; a future API response can replace this array directly.
   const warehouseProducts = [
     {
       id: 'LC-01',
@@ -53,6 +54,7 @@ export default function LastCallWarehouse({ onAddToCart, onQuickView, onExploreW
 
             {/* Horizontal Product Cards Row */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+              {/* Card opens details; nested quick-add stops propagation to avoid both actions. */}
               {warehouseProducts.map((item) => (
                 <div
                   key={item.id}

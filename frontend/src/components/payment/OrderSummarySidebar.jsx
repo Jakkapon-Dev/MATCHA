@@ -15,6 +15,8 @@ export default function OrderSummarySidebar({
   couponError,
   onRemoveCoupon
 }) {
+  // Prices, discounts, shipping, and coupon validation are calculated by the parent;
+  // this sidebar is a controlled summary and never mutates checkout state directly.
   return (
     <div className="bg-white border border-[#D9D3C7] rounded-3xl p-6 sm:p-7 shadow-sm sticky top-28 space-y-6">
       
@@ -54,6 +56,7 @@ export default function OrderSummarySidebar({
       </div>
 
       {/* Promo Code Form */}
+      {/* Submitting delegates validation; applied and error states come back as props. */}
       <form onSubmit={onApplyCoupon} className="space-y-2 pt-4 border-t border-[#D9D3C7]">
         <label className="block text-[10px] font-mono font-bold uppercase text-[#6B5E55]">
           Promotional Code
@@ -92,7 +95,7 @@ export default function OrderSummarySidebar({
         )}
       </form>
 
-      {/* Calculations Breakdown */}
+      {/* Render the parent's calculation order: subtotal + shipping - discount = total. */}
       <div className="space-y-2 pt-4 border-t border-[#D9D3C7] text-xs font-mono">
         <div className="flex justify-between text-[#6B5E55]">
           <span>Subtotal</span>

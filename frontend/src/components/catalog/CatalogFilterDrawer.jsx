@@ -21,6 +21,9 @@ export default function CatalogFilterDrawer({
   activeFilterCount,
   totalResults
 }) {
+  // Filter values are controlled by CatalogPage. Each interaction reports a change
+  // immediately, so the result count can update while the drawer remains open.
+  // Removing a closed drawer from the DOM prevents its backdrop from blocking the page.
   if (!isOpen) return null;
 
   return (
@@ -151,6 +154,7 @@ export default function CatalogFilterDrawer({
                   ${priceRange}
                 </span>
               </div>
+              {/* Range inputs emit strings; normalize to a number for price comparisons. */}
               <input
                 type="range"
                 min="30"
@@ -187,6 +191,7 @@ export default function CatalogFilterDrawer({
           </div>
 
           {/* Footer Actions */}
+          {/* Reset changes parent filter state; View Results only closes the drawer. */}
           <div className="p-6 border-t border-[#D9D3C7] bg-white flex items-center gap-3">
             <button
               onClick={onResetFilters}

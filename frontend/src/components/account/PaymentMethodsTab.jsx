@@ -2,6 +2,8 @@ import React from 'react';
 import { CreditCard, Plus, ShieldCheck } from 'lucide-react';
 
 export default function PaymentMethodsTab() {
+  // These are masked display fixtures only; full card details must never be stored in
+  // frontend state. A payment-provider integration can replace this summary list.
   const cards = [
     { id: 'c1', brand: 'Visa', last4: '8899', exp: '08/28', isDefault: true },
     { id: 'c2', brand: 'Mastercard', last4: '4412', exp: '11/27', isDefault: false }

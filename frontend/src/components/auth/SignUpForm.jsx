@@ -22,6 +22,8 @@ export default function SignupForm({ onBackToStore }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
+    // Clear the previous submission error as the user corrects the form. Each input's
+    // name maps directly to its property in this single controlled state object.
     setError('');
     setFormData({
       ...formData,
@@ -33,6 +35,7 @@ export default function SignupForm({ onBackToStore }) {
     e.preventDefault();
     setError('');
 
+    // Run inexpensive client checks before starting the registration request.
     if (formData.password.length < 8) {
       setError('Password must be at least 8 characters.');
       return;
@@ -45,6 +48,8 @@ export default function SignupForm({ onBackToStore }) {
 
     setIsLoading(true);
 
+    // Build the shape shared by the API request, AuthContext, and welcome message.
+    // The email prefix is a defensive display-name fallback.
     const fullName = `${formData.firstName} ${formData.lastName}`.trim();
     const newUser = {
       name: fullName || formData.email.split('@')[0],
@@ -64,6 +69,7 @@ export default function SignupForm({ onBackToStore }) {
         password: newUser.password
       });
       const account = res.data || {};
+      // Prefer canonical server fields and store the returned token through AuthContext.
       login(
         {
           id: account._id,
@@ -78,6 +84,8 @@ export default function SignupForm({ onBackToStore }) {
       showToast(`Account created for ${newUser.name}! Welcome to MatchA 🎉`);
       navigate('/');
     } catch (err) {
+      // Demo mode is limited to connectivity failures. Server validation/auth errors
+      // remain visible to QA and do not create a local account.
       if (err.message && (err.message.includes('ติดต่อเซิร์ฟเวอร์ไม่ได้') || err.message.includes('Failed to communicate') || err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))) {
         login(
           {
@@ -96,6 +104,7 @@ export default function SignupForm({ onBackToStore }) {
       }
       setError(err.message || 'Could not create your account. Please try again.');
     } finally {
+      // Restore the submit button for both successful and failed requests.
       setIsLoading(false);
     }
   };

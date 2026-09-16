@@ -6,6 +6,8 @@ import { useCart } from '../../context/CartContext.jsx';
 export default function FavoritesTab({ favorites = [], onRemoveFavorite }) {
   const { addToCart } = useCart();
 
+  // Prefer favorites supplied by the account data source. Sample products keep the
+  // archive populated for UI/QA testing when the parent passes no saved items.
   const defaultFavorites = favorites.length > 0 ? favorites : [
     {
       id: 101,
@@ -61,6 +63,7 @@ export default function FavoritesTab({ favorites = [], onRemoveFavorite }) {
             </div>
 
             <div className="flex flex-col gap-2 shrink-0">
+              {/* CartContext owns cart persistence and duplicate-item behavior. */}
               <button
                 onClick={() => addToCart(item)}
                 className="p-2.5 rounded-xl bg-[#2D5A27] hover:bg-[#23471E] text-white transition-colors cursor-pointer shadow-xs"
