@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useChangeMotion from '../hooks/useChangeMotion';
 import { 
@@ -7,9 +7,6 @@ import {
   ArrowRight, 
   RotateCcw, 
   Eye, 
-  Heart, 
-  ShoppingBag, 
-  Info, 
   BookOpen, 
   Palette, 
   Compass, 
@@ -17,7 +14,6 @@ import {
   Droplet, 
   Layers 
 } from 'lucide-react';
-import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 
 // 4 Master Personal Color Profiles with Grounded Theory
@@ -89,6 +85,25 @@ const SEASON_PROFILES = {
     ],
     avoidColors: ['ส้มอิฐอมน้ำตาล (Muted Terracotta)', 'เหลืองดิน (Muddy Ochre)', 'เบจอมส้ม (Warm Beige)'],
     recommendedFabrics: 'ผ้าแคชเมียร์, ผ้าไหมซาตินเนื้อเงา, ผ้าสูททอแน่นระดับพรีเมียม'
+  }
+};
+
+// ข้อ 5 บอก "ความเข้ม/คอนทราสต์" ส่วนข้อ 1-4 บอก "อันเดอร์โทน" — ต้องใช้ทั้งคู่ถึงจะได้ฤดูที่ถูก
+const SEASON_DEPTH = { Spring: 'Light', Summer: 'Light', Autumn: 'Deep', Winter: 'Deep' };
+const SEASON_BY_TONE = {
+  Warm: { Light: 'Spring', Deep: 'Autumn' },
+  Cool: { Light: 'Summer', Deep: 'Winter' }
+};
+
+const STORAGE_KEY = 'matcha_personal_color';
+
+// ค่าที่ค้างใน localStorage อาจเป็นของเวอร์ชันเก่าหรือถูกแก้มา ถ้าไม่ตรวจก่อนหน้าจะพังถาวร
+const readStoredSeason = () => {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    return SEASON_PROFILES[stored] ? stored : null;
+  } catch {
+    return null;
   }
 };
 
@@ -276,16 +291,14 @@ const QUIZ_QUESTIONS = [
 export default function PersonalColorPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { currentUser, login } = useAuth();
 
   const [activeTab, setActiveTab] = useState('quiz'); // 'quiz' | 'theory' | 'palette'
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState({});
-  const [diagnosedSeason, setDiagnosedSeason] = useState(() => {
-    return localStorage.getItem('matcha_personal_color') || null;
-  });
+  const [diagnosedSeason, setDiagnosedSeason] = useState(readStoredSeason);
   const [isScanning, setIsScanning] = useState(false);
-  const [selectedSeasonTab, setSelectedSeasonTab] = useState('Autumn');
+  const [selectedSeasonTab, setSelectedSeasonTab] = useState(() => readStoredSeason() || 'Autumn');
+  const quizAnchorRef = useRef(null);
   const questionMotionRef = useChangeMotion(`${activeTab}-${currentStep}-${diagnosedSeason}-${isScanning}`);
   const resultMotionRef = useChangeMotion(`${activeTab}-${diagnosedSeason}-${isScanning}`);
   const paletteMotionRef = useChangeMotion(`${activeTab}-${selectedSeasonTab}-${diagnosedSeason}-${isScanning}`, 'grid');
@@ -303,39 +316,47 @@ export default function PersonalColorPage() {
   };
 
   // Calculate Result Algorithm
+  // ข้อ 1-4 = อันเดอร์โทน (Warm/Cool/Neutral), ข้อ 5 = ความเข้ม/คอนทราสต์
+  // ทั้งสองแกนต้องมาประกอบกันตามทฤษฎี 4 ฤดู ไม่ใช่ให้ข้อ 5 ตัดสินคนเดียว
   const calculateResult = (finalAnswers) => {
     setIsScanning(true);
 
     setTimeout(() => {
       let warmScore = 0;
       let coolScore = 0;
-      const seasonVotes = { Spring: 0, Summer: 0, Autumn: 0, Winter: 0 };
+      let intensitySeason = null;
 
       Object.values(finalAnswers).forEach(ans => {
-        if (ans.score === 'Warm') warmScore += (ans.weight || 1);
-        if (ans.score === 'Cool') coolScore += (ans.weight || 1);
-        if (ans.score === 'Spring') { warmScore += (ans.weight || 1); seasonVotes.Spring += (ans.weight || 1); }
-        if (ans.score === 'Autumn') { warmScore += (ans.weight || 1); seasonVotes.Autumn += (ans.weight || 1); }
-        if (ans.score === 'Summer') { coolScore += (ans.weight || 1); seasonVotes.Summer += (ans.weight || 1); }
-        if (ans.score === 'Winter') { coolScore += (ans.weight || 1); seasonVotes.Winter += (ans.weight || 1); }
+        const weight = ans.weight || 1;
+        if (ans.score === 'Warm') warmScore += weight;
+        else if (ans.score === 'Cool') coolScore += weight;
+        else if (SEASON_DEPTH[ans.score]) intensitySeason = ans.score;
+        // 'Neutral' ไม่เทน้ำหนักไปฝั่งไหน แต่ทำให้โอกาสเสมอสูงขึ้น = ให้ข้อ 5 ตัดสิน
       });
 
-      // Pick top season
-      const sortedSeasons = Object.entries(seasonVotes).sort((a, b) => b[1] - a[1]);
-      let finalSeason = 'Autumn';
+      const undertone =
+        warmScore > coolScore ? 'Warm' :
+        coolScore > warmScore ? 'Cool' : 'Neutral';
 
-      if (sortedSeasons[0][1] > 0) {
-        finalSeason = sortedSeasons[0][0];
-      } else if (warmScore > coolScore) {
-        finalSeason = Math.random() > 0.5 ? 'Autumn' : 'Spring';
+      let finalSeason;
+      if (!intensitySeason) {
+        // ไม่ควรเกิด (ข้อ 5 บังคับตอบ) แต่กันไว้ไม่ให้ผลลัพธ์หลุดเป็น undefined
+        finalSeason = undertone === 'Cool' ? 'Winter' : 'Autumn';
+      } else if (undertone === 'Neutral') {
+        // อันเดอร์โทนก้ำกึ่ง — ข้อ 5 คือสัญญาณที่เจาะจงที่สุดที่มี
+        finalSeason = intensitySeason;
       } else {
-        finalSeason = Math.random() > 0.5 ? 'Winter' : 'Summer';
+        finalSeason = SEASON_BY_TONE[undertone][SEASON_DEPTH[intensitySeason]];
       }
 
       setDiagnosedSeason(finalSeason);
       setSelectedSeasonTab(finalSeason);
       setIsScanning(false);
-      localStorage.setItem('matcha_personal_color', finalSeason);
+      try {
+        localStorage.setItem(STORAGE_KEY, finalSeason);
+      } catch {
+        // โหมดส่วนตัว/ปิด storage — ผลยังแสดงได้ แค่ไม่ถูกจำข้ามหน้า
+      }
       showToast(`วิเคราะห์ผลสำเร็จ: โทนสีผิวของคุณคือ ${SEASON_PROFILES[finalSeason].thaiName} ✨`);
     }, 1200);
   };
@@ -344,6 +365,19 @@ export default function PersonalColorPage() {
     setAnswers({});
     setCurrentStep(0);
     setDiagnosedSeason(null);
+    // เลื่อนลงไปที่คำถามข้อแรก ไม่งั้นผู้ใช้ค้างอยู่หัวหน้าโดยไม่รู้ว่าแบบทดสอบเริ่มแล้ว
+    requestAnimationFrame(() => {
+      quizAnchorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  };
+
+  // ปุ่ม Diagnostic Quiz: ถ้ากำลังดูผลอยู่แล้วให้เริ่มทำใหม่ ไม่ใช่กดแล้วเงียบ
+  const handleQuizTabClick = () => {
+    if (activeTab === 'quiz' && diagnosedSeason) {
+      handleResetQuiz();
+      return;
+    }
+    setActiveTab('quiz');
   };
 
 
@@ -365,9 +399,11 @@ export default function PersonalColorPage() {
           </p>
 
           {/* Navigation Pill Tabs */}
-          <div className="flex items-center justify-center gap-2 pt-4">
+          <div className="flex items-center justify-center gap-2 pt-4" role="tablist" aria-label="โหมดของ Personal Color Lab">
             <button
-              onClick={() => setActiveTab('quiz')}
+              role="tab"
+              aria-selected={activeTab === 'quiz'}
+              onClick={handleQuizTabClick}
               className={`px-5 py-2.5 rounded-full text-xs font-mono font-bold uppercase transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'quiz'
                   ? 'bg-[#2D5A27] text-white shadow-md'
@@ -378,6 +414,8 @@ export default function PersonalColorPage() {
               <span>Diagnostic Quiz (แบบทดสอบสีผิว)</span>
             </button>
             <button
+              role="tab"
+              aria-selected={activeTab === 'theory'}
               onClick={() => setActiveTab('theory')}
               className={`px-5 py-2.5 rounded-full text-xs font-mono font-bold uppercase transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'theory'
@@ -396,7 +434,7 @@ export default function PersonalColorPage() {
           <div>
             {!diagnosedSeason && !isScanning ? (
               /* Quiz Questionnaire Card */
-              <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
+              <div ref={quizAnchorRef} className="max-w-4xl mx-auto space-y-6 animate-fade-in">
                 
                 {/* Progress Bar */}
                 <div className="bg-white rounded-2xl border border-[#D9D3C7] p-4 sm:p-5 shadow-xs">
@@ -404,7 +442,14 @@ export default function PersonalColorPage() {
                     <span>คำถามที่ {currentStep + 1} จาก {QUIZ_QUESTIONS.length}</span>
                     <span className="text-[#2D5A27]">{Math.round(((currentStep + 1) / QUIZ_QUESTIONS.length) * 100)}%</span>
                   </div>
-                  <div className="w-full h-2 rounded-full bg-[#FAF8F5] overflow-hidden border border-[#D9D3C7]/60">
+                  <div
+                    className="w-full h-2 rounded-full bg-[#FAF8F5] overflow-hidden border border-[#D9D3C7]/60"
+                    role="progressbar"
+                    aria-valuemin={1}
+                    aria-valuemax={QUIZ_QUESTIONS.length}
+                    aria-valuenow={currentStep + 1}
+                    aria-valuetext={`คำถามที่ ${currentStep + 1} จาก ${QUIZ_QUESTIONS.length}`}
+                  >
                     <div 
                       className="h-full bg-[#2D5A27] transition-all duration-300"
                       style={{ width: `${((currentStep + 1) / QUIZ_QUESTIONS.length) * 100}%` }}
@@ -413,7 +458,7 @@ export default function PersonalColorPage() {
                 </div>
 
                 {/* Current Question Container */}
-                <div ref={questionMotionRef} className="space-y-6">
+                <div ref={questionMotionRef} className="space-y-6" aria-live="polite">
                   {/* Question Banner Card */}
                   {QUIZ_QUESTIONS[currentStep].image ? (
                     <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#D9D3C7] overflow-hidden shadow-sm flex flex-col md:flex-row items-stretch min-h-[220px]">
@@ -426,7 +471,7 @@ export default function PersonalColorPage() {
                           {QUIZ_QUESTIONS[currentStep].question}
                         </h2>
                         {QUIZ_QUESTIONS[currentStep].subtitle && (
-                          <p className="text-xs sm:text-sm text-[#8C827A] mt-2.5 font-sans">
+                          <p className="text-xs sm:text-sm text-[#6F655C] mt-2.5 font-sans">
                             {QUIZ_QUESTIONS[currentStep].subtitle}
                           </p>
                         )}
@@ -437,7 +482,8 @@ export default function PersonalColorPage() {
                           alt={QUIZ_QUESTIONS[currentStep].question}
                           className="w-full h-full object-cover object-center"
                           referrerPolicy="no-referrer"
-                          loading="lazy"
+                          loading={currentStep === 0 ? 'eager' : 'lazy'}
+                          fetchPriority={currentStep === 0 ? 'high' : 'auto'}
                         />
                       </div>
                     </div>
@@ -451,7 +497,7 @@ export default function PersonalColorPage() {
                         {QUIZ_QUESTIONS[currentStep].question}
                       </h2>
                       {QUIZ_QUESTIONS[currentStep].subtitle && (
-                        <p className="text-xs sm:text-sm text-[#8C827A] mt-2 font-sans">
+                        <p className="text-xs sm:text-sm text-[#6F655C] mt-2 font-sans">
                           {QUIZ_QUESTIONS[currentStep].subtitle}
                         </p>
                       )}
@@ -469,7 +515,7 @@ export default function PersonalColorPage() {
                           className="group w-full bg-white hover:bg-[#FAF8F5] border border-[#D9D3C7] hover:border-[#2D5A27] rounded-2xl overflow-hidden text-left transition-all hover:shadow-md cursor-pointer flex items-stretch justify-between h-[105px] sm:h-[115px]"
                         >
                           <div className="p-4 sm:p-5 flex-1 flex flex-col justify-center min-w-0 pr-3">
-                            <span className="text-xs font-mono font-bold text-[#8C827A] group-hover:text-[#2D5A27] transition-colors mb-1">
+                            <span className="text-xs font-mono font-bold text-[#6F655C] group-hover:text-[#2D5A27] transition-colors mb-1">
                               {letter}
                             </span>
                             <span className="text-xs sm:text-sm md:text-base font-bold text-[#2D231E] leading-snug line-clamp-2">
@@ -523,7 +569,7 @@ export default function PersonalColorPage() {
               </div>
             ) : (
               /* Quiz Result Presentation Card */
-              <div ref={resultMotionRef} className="bg-white rounded-3xl border border-[#D9D3C7] p-6 sm:p-10 shadow-2xl space-y-8">
+              <div ref={resultMotionRef} className="bg-white rounded-3xl border border-[#D9D3C7] p-6 sm:p-10 shadow-2xl space-y-8" aria-live="polite">
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-[#D9D3C7]">
                   <div className="space-y-2">
                     <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#2D5A27] text-white text-[11px] font-mono font-bold uppercase">
@@ -591,7 +637,7 @@ export default function PersonalColorPage() {
                   <div className="bg-[#FAF8F5] p-5 rounded-2xl border border-[#D9D3C7] space-y-4">
                     <h4 className="font-mono text-xs font-bold uppercase text-[#2D231E] flex items-center justify-between">
                       <span>Signature Palette (สีที่ขับผิวที่สุด)</span>
-                      <Palette size={14} className="text-[#2D5A27]" />
+                      <Palette size={14} className="text-[#2D5A27]" aria-hidden="true" focusable="false" />
                     </h4>
                     <div ref={paletteMotionRef} className="grid grid-cols-2 gap-2">
                       {SEASON_PROFILES[diagnosedSeason].palette.map((color, i) => (
