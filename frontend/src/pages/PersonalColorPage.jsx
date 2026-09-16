@@ -99,57 +99,179 @@ const QUIZ_QUESTIONS = [
   {
     id: 1,
     category: 'Undertone Test',
-    question: '1. เมื่อสังเกตเส้นเลือดที่ข้อมือของคุณใต้แสงธรรมชาติ เห็นเป็นสีอะไรชัดที่สุด?',
+    question: 'ดูเส้นเลือดที่ข้อมือใต้แสงธรรมชาติ คุณเห็นเป็นสีอะไร?',
+    subtitle: 'เลือกคำตอบที่ใกล้เคียงกับคุณที่สุด',
+    image: '/images/personal_test/undertone.jpg',
     icon: <Droplet size={18} className="text-[#2D5A27]" />,
     options: [
-      { label: 'เห็นเป็นสีเขียวหรือเขียวขี้ม้า (Green / Olive)', score: 'Warm', weight: 2 },
-      { label: 'เห็นเป็นสีน้ำเงินหรือม่วงชัดเจน (Blue / Purple)', score: 'Cool', weight: 2 },
-      { label: 'เห็นผสมกันทั้งสีเขียวและน้ำเงิน (Blue-Green Neutral)', score: 'Neutral', weight: 1 }
+      { 
+        letter: 'A',
+        label: 'สีเขียวหรือเขียวขี้ม้า (Green / Olive)', 
+        score: 'Warm', 
+        weight: 2,
+        image: '/images/personal_test/warm-skin.jpg',
+        imagePosition: '0% center'
+      },
+      { 
+        letter: 'B',
+        label: 'น้ำเงินหรือม่วงชัดเจน (Blue / Purple)', 
+        score: 'Cool', 
+        weight: 2,
+        image: '/images/personal_test/cool-skin.jpg',
+        imagePosition: '0% center'
+      },
+      { 
+        letter: 'C',
+        label: 'ผสมกันทั้งเขียวและน้ำเงิน (Blue-Green Neutral)', 
+        score: 'Neutral', 
+        weight: 2,
+        image: '/images/personal_test/neutral-skin.jpg',
+        imagePosition: '0% center'
+      }
     ]
   },
   {
     id: 2,
     category: 'Jewelry Reflection Test',
-    question: '2. เมื่อสวมใส่เครื่องประดับ โลหะชนิดใดทำให้ผิวของคุณดูสว่างและเปล่งปลั่งที่สุด?',
+    question: 'เมื่อสวมใส่เครื่องประดับ โลหะชนิดใดทำให้ผิวของคุณดูสว่างและเปล่งปลั่งที่สุด?',
+    subtitle: 'สังเกตความเปล่งประกายของใบหน้าและผิวเมื่อทาบเครื่องประดับ',
+    image: '/images/personal_test/acc.jpg',
     icon: <Sun size={18} className="text-[#BC5A36]" />,
     options: [
-      { label: 'ทองคำ / ทองเหลือง / Yellow Gold (ช่วยขับผิวให้ดูสดใส ไม่หมอง)', score: 'Warm', weight: 2 },
-      { label: 'เงิน / แพลทินัม / Silver / White Gold (ช่วยให้ผิวดูขาวผ่อง ดูคมชัด)', score: 'Cool', weight: 2 },
-      { label: 'ใส่ได้ทั้งสองสี ดูดีพอๆ กัน', score: 'Neutral', weight: 1 }
+      { 
+        letter: 'A', 
+        label: 'ทองคำ / ทองเหลือง / Yellow Gold (ช่วยขับผิวให้ดูสดใส ไม่หมอง)', 
+        score: 'Warm', 
+        weight: 2,
+        image: '/images/personal_test/acc-gold.jpg',
+        imagePosition: '0% center'
+      },
+      { 
+        letter: 'B', 
+        label: 'เงิน / แพลทินัม / Silver / White Gold (ช่วยให้ผิวดูขาวผ่อง ดูคมชัด)', 
+        score: 'Cool', 
+        weight: 2,
+        image: '/images/personal_test/acc-silver.jpg',
+        imagePosition: '0% center'
+      },
+      { 
+        letter: 'C', 
+        label: 'ใส่ได้ทั้งสองสี ดูดีพอๆ กัน', 
+        score: 'Neutral', 
+        weight: 1,
+        image: '/images/personal_test/acc-gold-silver.jpg',
+        imagePosition: '0% center'
+      }
     ]
   },
   {
     id: 3,
     category: 'Sun & Tanning Reaction',
-    question: '3. เมื่อต้องอยู่กลางแดดจัดเป็นเวลานาน ผิวของคุณตอบสนองอย่างไร?',
+    question: 'เมื่อต้องอยู่กลางแดดจัดเป็นเวลานาน ผิวของคุณตอบสนองอย่างไร?',
+    subtitle: 'สังเกตปฏิกิริยาของผิวหลังสัมผัสแสงแดดเป็นเวลาต่อเนื่อง',
+    image: '/images/personal_test/skin.jpg',
     icon: <Sun size={18} className="text-amber-600" />,
     options: [
-      { label: 'ผิวเปลี่ยนเป็นสีแทนได้ง่าย ไม่ค่อยไหม้แดด (Tans Easily)', score: 'Warm', weight: 2 },
-      { label: 'ผิวไหม้แดง แสบง่าย และไม่ค่อยเปลี่ยนเป็นสีแทน (Burns Easily)', score: 'Cool', weight: 2 },
-      { label: 'ผิวแดงเล็กน้อยในวันแรก แล้วค่อยๆ เปลี่ยนเป็นสีแทนในเวลาต่อมา', score: 'Neutral', weight: 1 }
+      { 
+        letter: 'A', 
+        label: 'ผิวเปลี่ยนเป็นสีแทนได้ง่าย ไม่ค่อยไหม้แดด (Tans Easily)', 
+        score: 'Warm', 
+        weight: 2,
+        image: '/images/personal_test/tans-easily.jpg',
+        imagePosition: '0% center'
+      },
+      { 
+        letter: 'B', 
+        label: 'ผิวไหม้แดง แสบง่าย และไม่ค่อยเปลี่ยนเป็นสีแทน (Burns Easily)', 
+        score: 'Cool', 
+        weight: 2,
+        image: '/images/personal_test/burn-easily.jpg',
+        imagePosition: '0% center'
+      },
+      { 
+        letter: 'C', 
+        label: 'ผิวแดงเล็กน้อยในวันแรก แล้วค่อยๆ เปลี่ยนเป็นสีแทนในเวลาต่อมา', 
+        score: 'Neutral', 
+        weight: 1,
+        image: '/images/personal_test/skin-neutral.jpg',
+        imagePosition: '0% center'
+      }
     ]
   },
   {
     id: 4,
     category: 'Fabric Color Contrast',
-    question: '4. ระหว่างเสื้อสีขาวนวล (Off-White/Ivory) กับ เสื้อสีขาวโอโม่สว่าง (Pure White) ตัวไหนใส่แล้วหน้าไม่ดูโทรม?',
+    question: 'ระหว่างเสื้อสีขาวนวล (Off-White/Ivory) กับ เสื้อสีขาวโอโม่สว่าง (Pure White) ตัวไหนใส่แล้วหน้าไม่ดูโทรม?',
+    subtitle: 'เลือกสีเสื้อเชิ้ตหรือผ้าทาบที่ทำให้ใบหน้าดูสดใสที่สุด',
+    image: '/images/personal_test/fabric.jpg',
     icon: <Layers size={18} className="text-[#2D5A27]" />,
     options: [
-      { label: 'สีขาวนวล (Off-White / Cream) ทำให้ใบหน้าดูนวล อบอุ่น', score: 'Warm', weight: 2 },
-      { label: 'สีขาวสว่างจัด (Pure Bright White) ทำให้ใบหน้าดูสว่าง คมชัด ไม่กลืน', score: 'Cool', weight: 2 },
-      { label: 'ดูเข้ากับใบหน้าได้ทั้งสองสี', score: 'Neutral', weight: 1 }
+      { 
+        letter: 'A', 
+        label: 'สีขาวนวล (Off-White / Cream) ทำให้ใบหน้าดูนวล อบอุ่น', 
+        score: 'Warm', 
+        weight: 2,
+        image: '/images/personal_test/fabric-warm.jpg',
+        imagePosition: '0% center'
+      },
+      { 
+        letter: 'B', 
+        label: 'สีขาวสว่างจัด (Pure Bright White) ทำให้ใบหน้าดูสว่าง คมชัด ไม่กลืน', 
+        score: 'Cool', 
+        weight: 2,
+        image: '/images/personal_test/fabric-cool.jpg',
+        imagePosition: '0% center'
+      },
+      { 
+        letter: 'C', 
+        label: 'ดูเข้ากับใบหน้าได้ทั้งสองสี', 
+        score: 'Neutral', 
+        weight: 1,
+        image: '/images/personal_test/fabric-neutral.jpg',
+        imagePosition: '0% center'
+      }
     ]
   },
   {
     id: 5,
     category: 'Contrast & Intensity',
-    question: '5. สีผมตามธรรมชาติ สีตา และริมฝีปากของคุณมีลักษณะอย่างไร?',
+    question: 'สีผมตามธรรมชาติ สีตา และริมฝีปากของคุณมีลักษณะอย่างไร?',
+    subtitle: 'พิจารณาความเข้มอ่อนและความคมชัดตามธรรมชาติขององค์ประกอบใบหน้า',
+    image: '/images/personal_test/intensity-tone.jpg',
     icon: <Eye size={18} className="text-[#2D231E]" />,
     options: [
-      { label: 'ผมน้ำตาลประกายทอง หรือตาสีน้ำตาลสว่าง มีความสดใส (Light & Bright)', score: 'Spring', weight: 3 },
-      { label: 'ผมน้ำตาลหม่น ผิวอมชมพู ริมฝีปากสีชมพูระเรื่อ นุ่มนวล (Soft & Muted)', score: 'Summer', weight: 3 },
-      { label: 'ผมน้ำตาลเข้ม ตาสีน้ำตาลเข้มลึก ผิวสองสีอบอุ่น (Deep & Warm)', score: 'Autumn', weight: 3 },
-      { label: 'ผมดำสนิท ตาดำขลับ คอนทราสต์ตัดกับสีผิวชัดเจน (Vivid & Contrast)', score: 'Winter', weight: 3 }
+      { 
+        letter: 'A', 
+        label: 'ผมน้ำตาลประกายทอง หรือตาสีน้ำตาลสว่าง มีความสดใส (Light & Bright)', 
+        score: 'Spring', 
+        weight: 3,
+        image: '/images/personal_test/intensity-spring.jpg',
+        imagePosition: '0% center'
+      },
+      { 
+        letter: 'B', 
+        label: 'ผมน้ำตาลหม่น ผิวอมชมพู ริมฝีปากสีชมพูระเรื่อ นุ่มนวล (Soft & Muted)', 
+        score: 'Summer', 
+        weight: 3,
+        image: '/images/personal_test/intensity-summer.jpg',
+        imagePosition: '0% center' 
+      },
+      { 
+        letter: 'C', 
+        label: 'ผมน้ำตาลเข้ม ตาสีน้ำตาลเข้มลึก ผิวสองสีอบอุ่น (Deep & Warm)', 
+        score: 'Autumn', 
+        weight: 3,
+        image: '/images/personal_test/intensity-autumnn.jpg',
+        imagePosition: '0% center'
+      },
+      { 
+        letter: 'D', 
+        label: 'ผมดำสนิท ตาดำขลับ คอนทราสต์ตัดกับสีผิวชัดเจน (Vivid & Contrast)', 
+        score: 'Winter', 
+        weight: 3,
+        image: '/images/personal_test/intensity-winter.jpg',
+        imagePosition: '0% center' 
+      }
     ]
   }
 ];
@@ -190,19 +312,23 @@ export default function PersonalColorPage() {
     setTimeout(() => {
       let warmScore = 0;
       let coolScore = 0;
-      let specificSeason = null;
+      const seasonVotes = { Spring: 0, Summer: 0, Autumn: 0, Winter: 0 };
 
       Object.values(finalAnswers).forEach(ans => {
-        if (ans.score === 'Warm') warmScore += ans.weight;
-        if (ans.score === 'Cool') coolScore += ans.weight;
-        if (['Spring', 'Summer', 'Autumn', 'Winter'].includes(ans.score)) {
-          specificSeason = ans.score;
-        }
+        if (ans.score === 'Warm') warmScore += (ans.weight || 1);
+        if (ans.score === 'Cool') coolScore += (ans.weight || 1);
+        if (ans.score === 'Spring') { warmScore += (ans.weight || 1); seasonVotes.Spring += (ans.weight || 1); }
+        if (ans.score === 'Autumn') { warmScore += (ans.weight || 1); seasonVotes.Autumn += (ans.weight || 1); }
+        if (ans.score === 'Summer') { coolScore += (ans.weight || 1); seasonVotes.Summer += (ans.weight || 1); }
+        if (ans.score === 'Winter') { coolScore += (ans.weight || 1); seasonVotes.Winter += (ans.weight || 1); }
       });
 
+      // Pick top season
+      const sortedSeasons = Object.entries(seasonVotes).sort((a, b) => b[1] - a[1]);
       let finalSeason = 'Autumn';
-      if (specificSeason) {
-        finalSeason = specificSeason;
+
+      if (sortedSeasons[0][1] > 0) {
+        finalSeason = sortedSeasons[0][0];
       } else if (warmScore > coolScore) {
         finalSeason = Math.random() > 0.5 ? 'Autumn' : 'Spring';
       } else {
@@ -280,10 +406,10 @@ export default function PersonalColorPage() {
           <div>
             {!diagnosedSeason && !isScanning ? (
               /* Quiz Questionnaire Card */
-              <div className="max-w-2xl mx-auto bg-white rounded-3xl border border-[#D9D3C7] p-6 sm:p-10 shadow-xl relative overflow-hidden animate-fade-in">
+              <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
                 
                 {/* Progress Bar */}
-                <div className="mb-6">
+                <div className="bg-white rounded-2xl border border-[#D9D3C7] p-4 sm:p-5 shadow-xs">
                   <div className="flex justify-between text-xs font-mono text-[#6B5E55] mb-2 font-bold">
                     <span>คำถามที่ {currentStep + 1} จาก {QUIZ_QUESTIONS.length}</span>
                     <span className="text-[#2D5A27]">{Math.round(((currentStep + 1) / QUIZ_QUESTIONS.length) * 100)}%</span>
@@ -296,40 +422,102 @@ export default function PersonalColorPage() {
                   </div>
                 </div>
 
-                {/* Current Question */}
+                {/* Current Question Container */}
                 <div ref={questionMotionRef} className="space-y-6">
-                  <div className="space-y-2">
-                    <span className="text-[11px] font-mono font-bold uppercase text-[#BC5A36] tracking-wider flex items-center gap-1.5">
-                      {QUIZ_QUESTIONS[currentStep].icon}
-                      <span>{QUIZ_QUESTIONS[currentStep].category}</span>
-                    </span>
-                    <h2 className="text-lg sm:text-xl font-extrabold text-[#2D231E] leading-snug">
-                      {QUIZ_QUESTIONS[currentStep].question}
-                    </h2>
-                  </div>
+                  {/* Question Banner Card */}
+                  {QUIZ_QUESTIONS[currentStep].image ? (
+                    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#D9D3C7] overflow-hidden shadow-sm flex flex-col md:flex-row items-stretch min-h-[220px]">
+                      <div className="flex-1 p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
+                        <span className="text-[11px] font-mono font-bold uppercase text-[#BC5A36] tracking-wider flex items-center gap-1.5 mb-2">
+                          {QUIZ_QUESTIONS[currentStep].icon}
+                          <span>{QUIZ_QUESTIONS[currentStep].category}</span>
+                        </span>
+                        <h2 className="text-xl sm:text-2xl font-bold text-[#2D231E] leading-snug">
+                          {QUIZ_QUESTIONS[currentStep].question}
+                        </h2>
+                        {QUIZ_QUESTIONS[currentStep].subtitle && (
+                          <p className="text-xs sm:text-sm text-[#8C827A] mt-2.5 font-sans">
+                            {QUIZ_QUESTIONS[currentStep].subtitle}
+                          </p>
+                        )}
+                      </div>
+                      <div className="w-full md:w-[320px] lg:w-[350px] h-[200px] sm:h-[220px] md:h-auto shrink-0 self-stretch relative overflow-hidden bg-[#FAF8F5] flex items-center justify-center border-t md:border-t-0 md:border-l border-[#D9D3C7]/60">
+                        <img 
+                          src={QUIZ_QUESTIONS[currentStep].image} 
+                          alt={QUIZ_QUESTIONS[currentStep].question}
+                          className="w-full h-full object-cover object-center"
+                          referrerPolicy="no-referrer"
+                          loading="lazy"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#D9D3C7] p-6 sm:p-8 shadow-sm">
+                      <span className="text-[11px] font-mono font-bold uppercase text-[#BC5A36] tracking-wider flex items-center gap-1.5 mb-2">
+                        {QUIZ_QUESTIONS[currentStep].icon}
+                        <span>{QUIZ_QUESTIONS[currentStep].category}</span>
+                      </span>
+                      <h2 className="text-lg sm:text-2xl font-extrabold text-[#2D231E] leading-snug">
+                        {QUIZ_QUESTIONS[currentStep].question}
+                      </h2>
+                      {QUIZ_QUESTIONS[currentStep].subtitle && (
+                        <p className="text-xs sm:text-sm text-[#8C827A] mt-2 font-sans">
+                          {QUIZ_QUESTIONS[currentStep].subtitle}
+                        </p>
+                      )}
+                    </div>
+                  )}
 
-                  {/* Options List */}
-                  <div className="space-y-3">
-                    {QUIZ_QUESTIONS[currentStep].options.map((option, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleSelectOption(QUIZ_QUESTIONS[currentStep].id, option)}
-                        className="w-full p-4 rounded-2xl border border-[#D9D3C7] hover:border-[#2D5A27] bg-[#FAF8F5] hover:bg-white text-left font-sans text-xs sm:text-sm font-medium text-[#2D231E] transition-all hover:shadow-md flex items-center justify-between group cursor-pointer"
-                      >
-                        <span>{option.label}</span>
-                        <ArrowRight size={16} className="text-[#6B5E55] group-hover:text-[#2D5A27] group-hover:translate-x-1 transition-all" />
-                      </button>
-                    ))}
+                  {/* Options List (Vertical Stack) */}
+                  <div className="flex flex-col gap-3.5">
+                    {QUIZ_QUESTIONS[currentStep].options.map((option, idx) => {
+                      const letter = option.letter || String.fromCharCode(65 + idx);
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => handleSelectOption(QUIZ_QUESTIONS[currentStep].id, option)}
+                          className="group w-full bg-white hover:bg-[#FAF8F5] border border-[#D9D3C7] hover:border-[#2D5A27] rounded-2xl overflow-hidden text-left transition-all hover:shadow-md cursor-pointer flex items-stretch justify-between h-[105px] sm:h-[115px]"
+                        >
+                          <div className="p-4 sm:p-5 flex-1 flex flex-col justify-center min-w-0 pr-3">
+                            <span className="text-xs font-mono font-bold text-[#8C827A] group-hover:text-[#2D5A27] transition-colors mb-1">
+                              {letter}
+                            </span>
+                            <span className="text-xs sm:text-sm md:text-base font-bold text-[#2D231E] leading-snug line-clamp-2">
+                              {option.label}
+                            </span>
+                          </div>
+
+                          {option.image ? (
+                            <div className="w-32 sm:w-44 md:w-52 h-full shrink-0 border-l border-[#D9D3C7]/40 overflow-hidden relative bg-white flex items-center justify-center">
+                              <img 
+                                src={option.image} 
+                                alt={option.label}
+                                className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                                style={{ objectPosition: option.imagePosition || 'center' }}
+                                referrerPolicy="no-referrer"
+                                loading="lazy"
+                              />
+                            </div>
+                          ) : (
+                            <div className="p-5 flex items-center">
+                              <ArrowRight size={18} className="text-[#6B5E55] group-hover:text-[#2D5A27] group-hover:translate-x-1 transition-all" />
+                            </div>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
 
                   {/* Back button if step > 0 */}
                   {currentStep > 0 && (
-                    <button
-                      onClick={() => setCurrentStep(prev => prev - 1)}
-                      className="text-xs font-mono text-[#6B5E55] hover:text-[#2D231E] font-bold cursor-pointer underline"
-                    >
-                      ← ย้อนกลับข้อก่อนหน้า
-                    </button>
+                    <div className="pt-2">
+                      <button
+                        onClick={() => setCurrentStep(prev => prev - 1)}
+                        className="text-xs font-mono text-[#6B5E55] hover:text-[#2D231E] font-bold cursor-pointer underline inline-flex items-center gap-1"
+                      >
+                        ← ย้อนกลับข้อก่อนหน้า
+                      </button>
+                    </div>
                   )}
                 </div>
 
