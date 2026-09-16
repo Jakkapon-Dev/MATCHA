@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
+const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 
 const { Schema, model } = mongoose;
 
@@ -48,7 +48,7 @@ const userSchema = new Schema(
     },
     tier: {
       type: String,
-      enum: ['Regular Member', 'Silver', 'Gold', 'VIP'],
+      enum: ['Regular Member', 'Silver', 'Gold', 'VIP', 'VIP Connoisseur'],
       default: 'Regular Member'
     },
     phone: {
@@ -60,33 +60,35 @@ const userSchema = new Schema(
       default: []
     }
   },
-  { timestamps: true }
+  { 
+    timestamps: true,
+    toJSON: {
+      virtuals: true,
+      transform: (_doc, ret) => {
+        delete ret.password;
+        delete ret.__v;
+        return ret;
+      }
+    },
+    toObject: { virtuals: true }
+  }
 );
 
 userSchema.virtual('name').get(function getFullName() {
   return `${this.firstName} ${this.lastName}`.trim();
 });
 
-userSchema.pre('save', async function hashPassword(next) {
-  if (!this.isModified('password')) return next();
+// Hash password อัตโนมัติก่อนบันทึก
+userSchema.pre('save', async function hashPassword() {
+  if (!this.isModified('password')) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  next();
 });
 
 userSchema.methods.comparePassword = function comparePassword(candidate) {
   return bcrypt.compare(candidate, this.password);
 };
 
-userSchema.set('toJSON', {
-  virtuals: true,
-  transform: (_doc, ret) => {
-    delete ret.password;
-    delete ret.__v;
-    return ret;
-  }
-});
-
 const User = model('User', userSchema);
 
-export default User;
+module.exports = User;
