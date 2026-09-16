@@ -77,6 +77,19 @@ const isFootwear = (p) => {
   return p.category === 'Shoes';
 };
 
+// ผลวิเคราะห์จาก Personal Color Lab (เก็บไว้ที่ key เดียวกับหน้า /personal-color)
+const readPersonalColor = () => {
+  try {
+    return localStorage.getItem('matcha_personal_color');
+  } catch {
+    return null;
+  }
+};
+
+// ลุคเริ่มต้นต้องตรงกับฤดูของผู้ใช้ ไม่ใช่ตัวแรกในลิสต์เสมอ
+const getPresetForSeason = (season) =>
+  OUTFIT_PRESETS.find((preset) => preset.season === season) || OUTFIT_PRESETS[0];
+
 export default function MixMatchStudioPage() {
   const navigate = useNavigate();
   const { addToCart } = useCart();
@@ -88,13 +101,18 @@ export default function MixMatchStudioPage() {
   const footwear = useMemo(() => productsData.filter(p => p.category === 'Shoes'), []);
   const accessories = useMemo(() => productsData.filter(p => p.category === 'Accessories'), []);
 
+  // โทนสีผิวของผู้ใช้ + ลุคตั้งต้นที่แมตช์กับโทนนั้น
+  const [userSeason] = useState(readPersonalColor);
+  const initialPreset = useMemo(() => getPresetForSeason(userSeason), [userSeason]);
+  const pickById = (id, fallback) => productsData.find((p) => p.id === id) || fallback;
+
   // Selected Outfit Slots (4-Slot Architecture)
-  const [selectedTop, setSelectedTop] = useState(tops[0] || productsData[0]);
-  const [selectedBottom, setSelectedBottom] = useState(bottoms[0] || productsData[1]);
-  const [selectedFootwear, setSelectedFootwear] = useState(footwear[0] || productsData[2]);
-  const [selectedAccessory, setSelectedAccessory] = useState(accessories[0] || productsData[3]);
+  const [selectedTop, setSelectedTop] = useState(() => pickById(initialPreset.topId, tops[0] || productsData[0]));
+  const [selectedBottom, setSelectedBottom] = useState(() => pickById(initialPreset.bottomId, bottoms[0] || productsData[1]));
+  const [selectedFootwear, setSelectedFootwear] = useState(() => pickById(initialPreset.footwearId, footwear[0] || productsData[2]));
+  const [selectedAccessory, setSelectedAccessory] = useState(() => pickById(initialPreset.accessoryId, accessories[0] || productsData[3]));
   const [activeSlotTab, setActiveSlotTab] = useState('tops'); // 'tops' | 'bottoms' | 'footwear' | 'accessories'
-  const [activePresetId, setActivePresetId] = useState('PRESET-01');
+  const [activePresetId, setActivePresetId] = useState(initialPreset.id);
   const [justAddedBundle, setJustAddedBundle] = useState(false);
   const outfitMotionRef = useChangeMotion([selectedTop?.id, selectedBottom?.id, selectedFootwear?.id, selectedAccessory?.id].join('|'), 'outfit');
   const pickerMotionRef = useChangeMotion(activeSlotTab, 'grid');
@@ -250,7 +268,9 @@ export default function MixMatchStudioPage() {
         <div className="space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-mono font-bold uppercase text-[#6B5E55] tracking-wider block">
-              ลุคแฟชั่นยอดนิยม 4-Piece Presets:
+              {userSeason
+                ? `ลุคแนะนำตามโทนสีผิวของคุณ (${userSeason}) 4-Piece Presets:`
+                : 'ลุคแฟชั่นยอดนิยม 4-Piece Presets:'}
             </span>
             {activePresetId && (
               <span className="text-[10px] font-mono text-[#2D5A27] font-bold bg-[#E2ECE9] px-2.5 py-0.5 rounded-full">
@@ -261,6 +281,7 @@ export default function MixMatchStudioPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             {OUTFIT_PRESETS.map((preset) => {
               const isActive = activePresetId === preset.id;
+              const isUserSeason = Boolean(userSeason) && preset.season === userSeason;
               return (
                 <button
                   key={preset.id}
@@ -277,12 +298,15 @@ export default function MixMatchStudioPage() {
                     }`}>
                       {preset.name}
                     </span>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md transition-colors ${
-                      isActive 
-                        ? 'bg-[#2D5A27] text-white shadow-xs' 
-                        : 'bg-[#E2ECE9] text-[#2D5A27]'
-                    }`}>
-                      {preset.harmonyScore}%
+                    <span
+                      title={`Color Harmony: ${preset.harmonyType}`}
+                      className={`text-[10px] font-bold px-2 py-0.5 rounded-md transition-colors shrink-0 ${
+                        isActive
+                          ? 'bg-[#2D5A27] text-white shadow-xs'
+                          : 'bg-[#E2ECE9] text-[#2D5A27]'
+                      }`}
+                    >
+                      {preset.harmonyScore}% Harmony
                     </span>
                   </div>
                   <p className={`text-[11px] line-clamp-2 leading-relaxed transition-colors ${
@@ -290,6 +314,11 @@ export default function MixMatchStudioPage() {
                   }`}>
                     {preset.description}
                   </p>
+                  {isUserSeason && (
+                    <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-mono font-bold text-[#2D5A27] bg-[#E2ECE9] px-2 py-0.5 rounded-full">
+                      ✓ ตรงกับผลวิเคราะห์ของคุณ
+                    </span>
+                  )}
                 </button>
               );
             })}
