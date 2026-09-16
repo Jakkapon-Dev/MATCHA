@@ -20,13 +20,16 @@ import { handleImageError, webpSrc } from '../utils/imageFallback';
 import { computeOutfitSynergy } from '../utils/fashionTheory';
 import useChangeMotion from '../hooks/useChangeMotion';
 
+// ส่วนลดเซ็ต 4 ชิ้น — ประกาศที่เดียวเพื่อไม่ให้ตัวเลขที่โชว์กับที่คิดเงินหลุดจากกัน
+const BUNDLE_DISCOUNT_RATE = 0.12;
+const BUNDLE_DISCOUNT_PERCENT = Math.round(BUNDLE_DISCOUNT_RATE * 100);
+
 // Curated Editorial Presets (Complete 4-Piece Head-to-Toe Looks)
 const OUTFIT_PRESETS = [
   {
     id: 'PRESET-01',
     name: '🍵 Kyoto Artisan Earth (Warm Autumn)',
     season: 'Autumn',
-    harmonyScore: 98,
     harmonyType: 'Analogous Warm Palette',
     description: 'เสื้อฮู้ดสีเอิร์ธโทน กางเกงชิโน่ บูทหนังแท้ และกระเป๋าหนังโทนอุ่น ขับเน้นเสน่ห์สาวผิว Warm Autumn',
     topId: 'AUT-TOP-009',
@@ -38,7 +41,6 @@ const OUTFIT_PRESETS = [
     id: 'PRESET-02',
     name: '🌸 Spring Floral Blossom (Bright Spring)',
     season: 'Spring',
-    harmonyScore: 95,
     harmonyType: 'Complementary Pastel',
     description: 'เสื้อคาร์ดิแกนสีพีช ยีนส์สว่าง สนีกเกอร์คอรัล และกระเป๋าสะพายลินิน ลุคสดใสร่าเริง Bright Spring',
     topId: 'SPR-TOP-022',
@@ -50,7 +52,6 @@ const OUTFIT_PRESETS = [
     id: 'PRESET-03',
     name: '🌊 Summer Coastal Breeze (Cool Summer)',
     season: 'Summer',
-    harmonyScore: 94,
     harmonyType: 'Monochromatic Muted Sky',
     description: 'เสื้อเชิ้ตซัมเมอร์สีฟ้าพาสเทล กางเกงลินิน แซนดัลเบาสบาย และหมวกสาน สุภาพผ่อนคลาย Cool Summer',
     topId: 'SUM-TOP-046',
@@ -62,7 +63,6 @@ const OUTFIT_PRESETS = [
     id: 'PRESET-04',
     name: '❄️ Winter Midnight Tailored (Vivid Winter)',
     season: 'Winter',
-    harmonyScore: 97,
     harmonyType: 'High Contrast Dramatic',
     description: 'โค้ทฤดูหนาวคัตติ้งเนี้ยบ กางเกงสแล็ค บูทหนังดำ และหมวกบีนนี่ ภูมิฐาน คมกริบ Vivid Winter',
     topId: 'WIN-OUT-057',
@@ -78,9 +78,11 @@ const isFootwear = (p) => {
 };
 
 // ผลวิเคราะห์จาก Personal Color Lab (เก็บไว้ที่ key เดียวกับหน้า /personal-color)
+// ค่าที่ค้างอยู่อาจเป็นของเวอร์ชันเก่า จึงรับเฉพาะฤดูที่มี preset รองรับจริง
 const readPersonalColor = () => {
   try {
-    return localStorage.getItem('matcha_personal_color');
+    const stored = localStorage.getItem('matcha_personal_color');
+    return OUTFIT_PRESETS.some((preset) => preset.season === stored) ? stored : null;
   } catch {
     return null;
   }
@@ -89,6 +91,19 @@ const readPersonalColor = () => {
 // ลุคเริ่มต้นต้องตรงกับฤดูของผู้ใช้ ไม่ใช่ตัวแรกในลิสต์เสมอ
 const getPresetForSeason = (season) =>
   OUTFIT_PRESETS.find((preset) => preset.season === season) || OUTFIT_PRESETS[0];
+
+// คะแนนบนชิปต้องมาจากเอนจินตัวเดียวกับที่โชว์ใน Color Harmony Index
+// ไม่งั้นลุคเดียวกันจะมีสองเลขขัดกันอยู่บนจอเดียว
+const PRESET_HARMONY = OUTFIT_PRESETS.reduce((acc, preset) => {
+  const find = (id) => productsData.find((p) => p.id === id);
+  acc[preset.id] = computeOutfitSynergy(
+    find(preset.topId),
+    find(preset.bottomId),
+    find(preset.footwearId),
+    find(preset.accessoryId)
+  ).score;
+  return acc;
+}, {});
 
 export default function MixMatchStudioPage() {
   const navigate = useNavigate();
@@ -167,22 +182,29 @@ export default function MixMatchStudioPage() {
 
   // Randomize Outfit
   const handleRandomize = () => {
-    const randomTop = tops[Math.floor(Math.random() * tops.length)];
-    const randomBottom = bottoms[Math.floor(Math.random() * bottoms.length)];
-    const randomFootwear = footwear[Math.floor(Math.random() * footwear.length)];
-    const randomAcc = accessories[Math.floor(Math.random() * accessories.length)];
+    // สุ่มเฉพาะของที่ยังมีสต็อก ไม่งั้นจะได้ลุคที่กดซื้อไม่ครบ
+    const pickRandom = (list) => {
+      const pool = list.filter((item) => item.inStock);
+      const source = pool.length ? pool : list;
+      return source[Math.floor(Math.random() * source.length)];
+    };
 
-    setSelectedTop(randomTop);
-    setSelectedBottom(randomBottom);
-    setSelectedFootwear(randomFootwear);
-    setSelectedAccessory(randomAcc);
+    setSelectedTop(pickRandom(tops));
+    setSelectedBottom(pickRandom(bottoms));
+    setSelectedFootwear(pickRandom(footwear));
+    setSelectedAccessory(pickRandom(accessories));
     setActivePresetId(null);
   };
 
   // Pricing & Combo Discount (12% Full 4-Piece Bundle Discount)
+  // ราคาที่โชว์ต้องเท่ากับที่จะโดนตัดจริง จึงนับเฉพาะชิ้นที่ยังมีของ
+  // และส่วนลดจะใช้ได้ก็ต่อเมื่อซื้อครบทั้ง 4 ชิ้นจริง ๆ ตามเงื่อนไข bundle
   const itemsInOutfit = [selectedTop, selectedBottom, selectedFootwear, selectedAccessory].filter(Boolean);
-  const bundleSubtotal = itemsInOutfit.reduce((sum, item) => sum + Number(item.price), 0);
-  const comboDiscount = bundleSubtotal * 0.12;
+  const buyableItems = itemsInOutfit.filter((item) => item.inStock);
+  const outOfStockItems = itemsInOutfit.filter((item) => !item.inStock);
+  const isCompleteBundle = buyableItems.length === 4;
+  const bundleSubtotal = buyableItems.reduce((sum, item) => sum + Number(item.price), 0);
+  const comboDiscount = isCompleteBundle ? bundleSubtotal * BUNDLE_DISCOUNT_RATE : 0;
   const finalBundleTotal = Math.max(0, bundleSubtotal - comboDiscount);
 
   // Dynamic Computational Color Harmony Engine (Grounded Theory)
@@ -194,10 +216,7 @@ export default function MixMatchStudioPage() {
 
   // 1-Click Add Entire Outfit to Cart
   const handleAddBundleToCart = () => {
-    const availableItems = itemsInOutfit.filter(item => item && item.inStock);
-    const outOfStockItems = itemsInOutfit.filter(item => !item || !item.inStock);
-
-    if (availableItems.length === 0) {
+    if (buyableItems.length === 0) {
       showToast('ไม่สามารถเพิ่มชุดได้ เนื่องจากสินค้าทั้งหมดในเซ็ตนี้หมดสต็อกชั่วคราว', 'error');
       return;
     }
@@ -205,9 +224,16 @@ export default function MixMatchStudioPage() {
     setJustAddedBundle(true);
     setTimeout(() => setJustAddedBundle(false), 1200);
 
-    availableItems.forEach(item => {
+    buyableItems.forEach(item => {
+      const unitPrice = isCompleteBundle
+        ? Number((Number(item.price) * (1 - BUNDLE_DISCOUNT_RATE)).toFixed(2))
+        : Number(item.price);
+
       addToCart({
         ...item,
+        // ส่วนลดต้องติดไปกับราคาจริง ไม่งั้นตะกร้าจะเก็บเงินเต็มทั้งที่หน้านี้โฆษณาว่าลด
+        price: unitPrice,
+        originalPrice: Number(item.price),
         quantity: 1,
         size: item.sizes?.[0] || (item.category === 'Accessories' ? 'OS' : item.category === 'Shoes' ? 'EU 40' : 'M')
       });
@@ -215,17 +241,25 @@ export default function MixMatchStudioPage() {
 
     if (outOfStockItems.length > 0) {
       const oosNames = outOfStockItems.map(i => i.name).join(', ');
-      showToast(`⚠️ เพิ่มลงตะกร้า ${availableItems.length} ชิ้น (ยกเว้น ${oosNames} เนื่องจากหมดสต็อก)`, 'info');
+      showToast(`⚠️ เพิ่มลงตะกร้า ${buyableItems.length} ชิ้น (ยกเว้น ${oosNames} เนื่องจากหมดสต็อก) — ส่วนลดเซ็ต ${BUNDLE_DISCOUNT_PERCENT}% ใช้ได้เมื่อครบ 4 ชิ้นเท่านั้น`, 'info');
     } else {
-      showToast(`✨ เพิ่มเซ็ตชุดครบ ${availableItems.length} ชิ้น (Head-to-Toe) ลงตะกร้าพร้อมรับส่วนลด 12% เรียบร้อยแล้ว!`, 'success');
+      showToast(`✨ เพิ่มเซ็ตชุดครบ ${buyableItems.length} ชิ้น (Head-to-Toe) ลงตะกร้าพร้อมส่วนลด ${BUNDLE_DISCOUNT_PERCENT}% เรียบร้อยแล้ว!`, 'success');
     }
   };
 
   // Currently active items for the right-side picker
-  const currentSlotItems = 
-    activeSlotTab === 'tops' ? tops :
-    activeSlotTab === 'bottoms' ? bottoms :
-    activeSlotTab === 'footwear' ? footwear : accessories;
+  // เรียงของฤดูผู้ใช้ขึ้นก่อน และดันของหมดสต็อกไปท้ายสุด
+  const currentSlotItems = useMemo(() => {
+    const list =
+      activeSlotTab === 'tops' ? tops :
+      activeSlotTab === 'bottoms' ? bottoms :
+      activeSlotTab === 'footwear' ? footwear : accessories;
+
+    const rank = (item) =>
+      (item.inStock ? 0 : 2) + (userSeason && item.season === userSeason ? 0 : 1);
+
+    return [...list].sort((a, b) => rank(a) - rank(b));
+  }, [activeSlotTab, tops, bottoms, footwear, accessories, userSeason]);
 
   return (
     <div className="w-full bg-[#FAF8F5] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
@@ -306,7 +340,7 @@ export default function MixMatchStudioPage() {
                           : 'bg-[#E2ECE9] text-[#2D5A27]'
                       }`}
                     >
-                      {preset.harmonyScore}% Harmony
+                      {PRESET_HARMONY[preset.id]}% Harmony
                     </span>
                   </div>
                   <p className={`text-[11px] line-clamp-2 leading-relaxed transition-colors ${
@@ -339,8 +373,12 @@ export default function MixMatchStudioPage() {
                 <Layers size={18} className="text-[#2D5A27]" />
                 <h3 className="font-serif text-lg font-bold text-[#2D231E]">Head-to-Toe Canvas</h3>
               </div>
-              <span className="text-xs font-mono font-bold px-2.5 py-1 rounded-lg bg-[#2D5A27] text-white">
-                {itemsInOutfit.length} ชิ้นครบเซ็ต
+              <span className={`text-xs font-mono font-bold px-2.5 py-1 rounded-lg ${
+                isCompleteBundle ? 'bg-[#2D5A27] text-white' : 'bg-[#FEE4E2] text-[#B42318]'
+              }`}>
+                {isCompleteBundle
+                  ? `${buyableItems.length} ชิ้นครบเซ็ต`
+                  : `ซื้อได้ ${buyableItems.length}/${itemsInOutfit.length} ชิ้น`}
               </span>
             </div>
 
@@ -370,6 +408,9 @@ export default function MixMatchStudioPage() {
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="w-2.5 h-2.5 rounded-full border border-black/10" style={{ backgroundColor: selectedTop?.colorHex }} />
                     <span className="text-[11px] font-mono text-[#6B5E55]">${selectedTop?.price}</span>
+                    {selectedTop && !selectedTop.inStock && (
+                      <span className="text-[9px] font-mono font-bold text-[#B42318] bg-[#FEE4E2] px-1.5 py-0.5 rounded">หมดสต็อก</span>
+                    )}
                     <span className="text-[10px] font-mono text-[#8C7E74]">({selectedTop?.fit || 'Regular'})</span>
                   </div>
                 </div>
@@ -398,6 +439,9 @@ export default function MixMatchStudioPage() {
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="w-2.5 h-2.5 rounded-full border border-black/10" style={{ backgroundColor: selectedBottom?.colorHex }} />
                     <span className="text-[11px] font-mono text-[#6B5E55]">${selectedBottom?.price}</span>
+                    {selectedBottom && !selectedBottom.inStock && (
+                      <span className="text-[9px] font-mono font-bold text-[#B42318] bg-[#FEE4E2] px-1.5 py-0.5 rounded">หมดสต็อก</span>
+                    )}
                     <span className="text-[10px] font-mono text-[#8C7E74]">({selectedBottom?.fit || 'Regular'})</span>
                   </div>
                 </div>
@@ -426,6 +470,9 @@ export default function MixMatchStudioPage() {
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="w-2.5 h-2.5 rounded-full border border-black/10" style={{ backgroundColor: selectedFootwear?.colorHex }} />
                     <span className="text-[11px] font-mono text-[#6B5E55]">${selectedFootwear?.price}</span>
+                    {selectedFootwear && !selectedFootwear.inStock && (
+                      <span className="text-[9px] font-mono font-bold text-[#B42318] bg-[#FEE4E2] px-1.5 py-0.5 rounded">หมดสต็อก</span>
+                    )}
                     <span className="text-[10px] font-mono text-[#8C7E74]">({selectedFootwear?.color})</span>
                   </div>
                 </div>
@@ -454,6 +501,9 @@ export default function MixMatchStudioPage() {
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="w-2.5 h-2.5 rounded-full border border-black/10" style={{ backgroundColor: selectedAccessory?.colorHex }} />
                     <span className="text-[11px] font-mono text-[#6B5E55]">${selectedAccessory?.price}</span>
+                    {selectedAccessory && !selectedAccessory.inStock && (
+                      <span className="text-[9px] font-mono font-bold text-[#B42318] bg-[#FEE4E2] px-1.5 py-0.5 rounded">หมดสต็อก</span>
+                    )}
                     <span className="text-[10px] font-mono text-[#8C7E74]">({selectedAccessory?.color})</span>
                   </div>
                 </div>
@@ -548,12 +598,23 @@ export default function MixMatchStudioPage() {
             {/* Pricing & 1-Click Bundle Button */}
             <div className="space-y-3 pt-2">
               <div className="flex items-baseline justify-between font-mono">
-                <span className="text-xs text-[#6B5E55] uppercase font-bold">Total Bundle (4 Items):</span>
+                <span className="text-xs text-[#6B5E55] uppercase font-bold">
+                  Total Bundle ({buyableItems.length} Item{buyableItems.length === 1 ? '' : 's'}):
+                </span>
                 <div className="text-right">
-                  <span className="text-xs line-through text-[#6B5E55] mr-2">${bundleSubtotal.toFixed(2)}</span>
+                  {isCompleteBundle && (
+                    <span className="text-xs line-through text-[#6B5E55] mr-2">${bundleSubtotal.toFixed(2)}</span>
+                  )}
                   <span className="text-xl font-black text-[#2D231E]">${finalBundleTotal.toFixed(2)}</span>
                 </div>
               </div>
+
+              {outOfStockItems.length > 0 && (
+                <p className="text-[10px] font-mono text-[#B42318] bg-[#FEE4E2] px-2.5 py-1.5 rounded-lg leading-relaxed">
+                  {outOfStockItems.map((i) => i.name).join(', ')} หมดสต็อก — ไม่ถูกนับในราคานี้
+                  {` และส่วนลดเซ็ต ${BUNDLE_DISCOUNT_PERCENT}% ใช้ได้เมื่อครบ 4 ชิ้น`}
+                </p>
+              )}
 
               <button
                 onClick={handleAddBundleToCart}
@@ -571,7 +632,11 @@ export default function MixMatchStudioPage() {
                 ) : (
                   <>
                     <ShoppingBag size={16} />
-                    <span>Add Complete Outfit (4 Pcs) • ${finalBundleTotal.toFixed(2)}</span>
+                    <span>
+                      {isCompleteBundle
+                        ? `Add Complete Outfit (4 Pcs) • $${finalBundleTotal.toFixed(2)}`
+                        : `Add ${buyableItems.length} Available Pcs • $${finalBundleTotal.toFixed(2)}`}
+                    </span>
                   </>
                 )}
               </button>
@@ -687,6 +752,11 @@ export default function MixMatchStudioPage() {
                       <span className="absolute bottom-2 left-2 text-[9px] font-mono px-2 py-0.5 bg-white/90 rounded backdrop-blur-xs font-bold text-[#2D231E]">
                         {item.season}
                       </span>
+                      {!item.inStock && (
+                        <span className="absolute top-2 left-2 text-[9px] font-mono px-2 py-0.5 bg-[#B42318] text-white rounded font-bold">
+                          หมดสต็อก
+                        </span>
+                      )}
                     </div>
 
                     <div className="space-y-1">
