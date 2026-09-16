@@ -182,15 +182,17 @@ export default function MixMatchStudioPage() {
 
   // Randomize Outfit
   const handleRandomize = () => {
-    const randomTop = tops[Math.floor(Math.random() * tops.length)];
-    const randomBottom = bottoms[Math.floor(Math.random() * bottoms.length)];
-    const randomFootwear = footwear[Math.floor(Math.random() * footwear.length)];
-    const randomAcc = accessories[Math.floor(Math.random() * accessories.length)];
+    // สุ่มเฉพาะของที่ยังมีสต็อก ไม่งั้นจะได้ลุคที่กดซื้อไม่ครบ
+    const pickRandom = (list) => {
+      const pool = list.filter((item) => item.inStock);
+      const source = pool.length ? pool : list;
+      return source[Math.floor(Math.random() * source.length)];
+    };
 
-    setSelectedTop(randomTop);
-    setSelectedBottom(randomBottom);
-    setSelectedFootwear(randomFootwear);
-    setSelectedAccessory(randomAcc);
+    setSelectedTop(pickRandom(tops));
+    setSelectedBottom(pickRandom(bottoms));
+    setSelectedFootwear(pickRandom(footwear));
+    setSelectedAccessory(pickRandom(accessories));
     setActivePresetId(null);
   };
 
