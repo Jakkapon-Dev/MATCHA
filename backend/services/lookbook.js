@@ -1,7 +1,11 @@
-// One canonical dataset, inside the frontend deployment root.
-const defaults = require('../../frontend/src/data/editorialSpreads.json');
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-function defaultLookbooks() {
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+export const defaults = JSON.parse(fs.readFileSync(path.join(__dirname, '../../frontend/src/data/editorialSpreads.json'), 'utf8'));
+
+export function defaultLookbooks() {
   return defaults.map(({ hotspots, shoppableItems, ...editorial }) => ({
     id: editorial.id, title: editorial.title, heroImage: editorial.heroImage,
     editorial, published: true, revision: 0,
@@ -9,7 +13,7 @@ function defaultLookbooks() {
   }));
 }
 
-function resolveLookbooks(looks, products) {
+export function resolveLookbooks(looks, products) {
   const productMap = new Map(products.flatMap(p => [[String(p._id), p], [p.id, p]]));
   const fallbackMap = new Map(defaults.flatMap(s => s.shoppableItems.map(i => [i.id, i])));
   return looks.filter(l => l.published).map(look => {
@@ -37,4 +41,5 @@ function resolveLookbooks(looks, products) {
       hotspots: items.map((i, index) => ({ ...i, id: `HS-${look.id}-${index}` })), shoppableItems: items };
   });
 }
-module.exports = { defaultLookbooks, resolveLookbooks, defaults };
+
+export default { defaultLookbooks, resolveLookbooks, defaults };

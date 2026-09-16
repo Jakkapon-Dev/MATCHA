@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
+
 const schema = new mongoose.Schema(
   {
     id: { type: String, required: true, unique: true },
@@ -20,4 +21,8 @@ const schema = new mongoose.Schema(
   },
   { timestamps: true },
 );
-module.exports = mongoose.model("Lookbook", schema);
+
+const Lookbook = mongoose.models.Lookbook || mongoose.model("Lookbook", schema);
+
+export default Lookbook;
+export { Lookbook };

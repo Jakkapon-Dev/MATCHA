@@ -1,12 +1,12 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const userStore = require('../services/userStore');
-const { requireAuth, requireRole, getJwtSecret } = require('../middleware/auth');
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import userStore from '../services/userStore.js';
+import { requireAuth, requireRole, getJwtSecret } from '../middleware/auth.js';
 
 const router = express.Router();
 
-const safeUser = (u) => {
+export const safeUser = (u) => {
   if (!u) return null;
   return {
     _id: u._id,
@@ -20,7 +20,7 @@ const safeUser = (u) => {
   };
 };
 
-const signToken = (user) =>
+export const signToken = (user) =>
   jwt.sign({ id: user._id, role: user.role }, getJwtSecret(), {
     expiresIn: process.env.JWT_EXPIRES_IN || '7d',
   });
@@ -95,4 +95,5 @@ router.get('/admin/check', requireAuth, requireRole('Admin'), (req, res) => {
   res.json({ success: true, data: { id: req.user._id, role: req.user.role, message: 'Admin access granted' } });
 });
 
-module.exports = router;
+export default router;
+export { router };

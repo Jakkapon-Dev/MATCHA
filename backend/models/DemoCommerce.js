@@ -1,7 +1,8 @@
-const mongoose = require('mongoose');
-const { randomUUID } = require('node:crypto');
-const Order = require('./Order');
-const Cart = require('./Cart');
+import mongoose from 'mongoose';
+import { randomUUID } from 'node:crypto';
+import Order from './Order.js';
+import Cart from './Cart.js';
+
 const orderSchema = Order.schema.clone();
 orderSchema.add({ 
   isDemo: { type: Boolean, default: true }, 
@@ -11,7 +12,8 @@ orderSchema.add({
 if (orderSchema.path('orderNumber')) {
   orderSchema.path('orderNumber').default(() => `DEMO-${randomUUID()}`);
 }
-module.exports = {
-  DemoOrder: mongoose.models.DemoOrder || mongoose.model('DemoOrder', orderSchema, 'demo_orders'),
-  DemoCart: mongoose.models.DemoCart || mongoose.model('DemoCart', Cart.schema.clone(), 'demo_carts')
-};
+
+export const DemoOrder = mongoose.models.DemoOrder || mongoose.model('DemoOrder', orderSchema, 'demo_orders');
+export const DemoCart = mongoose.models.DemoCart || mongoose.model('DemoCart', Cart.schema.clone(), 'demo_carts');
+
+export default { DemoOrder, DemoCart };

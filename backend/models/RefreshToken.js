@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const crypto = require('crypto');
+import mongoose from 'mongoose';
+import crypto from 'node:crypto';
 
 const { Schema, model } = mongoose;
 
@@ -67,6 +67,7 @@ refreshTokenSchema.virtual('isActive').get(function isActive() {
 refreshTokenSchema.index({ userId: 1 });
 refreshTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-const RefreshToken = model('RefreshToken', refreshTokenSchema);
+const RefreshToken = mongoose.models.RefreshToken || model('RefreshToken', refreshTokenSchema);
 
-module.exports = RefreshToken;
+export default RefreshToken;
+export { RefreshToken };

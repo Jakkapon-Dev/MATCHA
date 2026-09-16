@@ -1,13 +1,15 @@
-const path = require('node:path');
-const fs = require('node:fs/promises');
-const { randomUUID } = require('node:crypto');
-const sharp = require('sharp');
+import path from 'node:path';
+import fs from 'node:fs/promises';
+import { randomUUID } from 'node:crypto';
+import sharp from 'sharp';
+import { fileURLToPath } from 'node:url';
 
-const storageRoot = path.resolve(process.env.MEDIA_STORAGE_DIR || path.join(__dirname, '../storage/media'));
-const MAX_BYTES = 8 * 1024 * 1024;
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+export const storageRoot = path.resolve(process.env.MEDIA_STORAGE_DIR || path.join(__dirname, '../storage/media'));
+export const MAX_BYTES = 8 * 1024 * 1024;
 const allowedFormats = new Set(['jpeg', 'png', 'webp']);
 
-async function prepareImage(buffer) {
+export async function prepareImage(buffer) {
   if (!Buffer.isBuffer(buffer) || !buffer.length || buffer.length > MAX_BYTES) {
     throw Object.assign(new Error('กรุณาเลือกรูปขนาดไม่เกิน 8 MB'), { status: 400 });
   }
@@ -23,7 +25,7 @@ async function prepareImage(buffer) {
   }
 }
 
-async function storeImage(buffer, root = storageRoot) {
+export async function storeImage(buffer, root = storageRoot) {
   const prepared = await prepareImage(buffer);
   const key = randomUUID();
   await fs.mkdir(root, { recursive: true });
@@ -41,4 +43,5 @@ async function storeImage(buffer, root = storageRoot) {
     width: prepared.width, height: prepared.height, bytes: prepared.main.length, mimeType: 'image/webp'
   };
 }
-module.exports = { storageRoot, MAX_BYTES, prepareImage, storeImage };
+
+export default { storageRoot, MAX_BYTES, prepareImage, storeImage };

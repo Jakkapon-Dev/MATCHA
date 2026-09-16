@@ -1,20 +1,20 @@
-const fs = require('node:fs/promises');
-const path = require('node:path');
-const mongoose = require('mongoose');
-const Media = require('../models/MediaAsset');
-const { storeImage } = require('./mediaStorage');
-const { defaults } = require('./lookbook');
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import mongoose from 'mongoose';
+import { fileURLToPath } from 'node:url';
+import Media from '../models/MediaAsset.js';
+import { storeImage } from './mediaStorage.js';
+import { defaults } from './lookbook.js';
+import Product from '../models/Product.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const getProductModel = () => {
-  try {
-    return require('../models/Product');
-  } catch {
-    return mongoose.models.Product || mongoose.model('Product', new mongoose.Schema({}, { strict: false }));
-  }
+  return mongoose.models.Product || Product;
 };
 
-async function importLookbookMedia(uploadedBy) {
-  const Product = getProductModel();
+export async function importLookbookMedia(uploadedBy) {
+  const ProductModel = getProductModel();
   let imported = 0;
   for (const spread of defaults) {
     for (const item of spread.shoppableItems) {
@@ -24,7 +24,7 @@ async function importLookbookMedia(uploadedBy) {
         const stored = await storeImage(buffer);
         asset = await Media.findOneAndUpdate({ sourcePath: item.image }, { $setOnInsert: { ...stored, sourcePath: item.image, alt: item.name, originalName: path.basename(item.image), uploadedBy } }, { upsert: true, returnDocument: 'after' });
       }
-      await Product.updateOne({ id: item.id }, { $setOnInsert: {
+      await ProductModel.updateOne({ id: item.id }, { $setOnInsert: {
         id: item.id, name: item.name, description: `Editorial garment: ${item.name}. Product details pending confirmation.`,
         category: item.category, price: item.price, color: item.color, season: spread.season,
         tag: 'Editorial', quantity: 0, inStock: false, sizes: [], image: asset.url,
@@ -35,4 +35,5 @@ async function importLookbookMedia(uploadedBy) {
   }
   return { imported };
 }
-module.exports = { importLookbookMedia };
+
+export default { importLookbookMedia };

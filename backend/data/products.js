@@ -2731,5 +2731,5 @@ const products = [
     "createdAt": "2026-02-09"
   }
 ];
-
-module.exports = products;
+export default products;
+export { products };

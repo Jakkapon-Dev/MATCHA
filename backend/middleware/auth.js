@@ -1,12 +1,14 @@
 // Auth middleware: verify the JWT and attach the matching user to the request.
 // Authorization: Bearer <token>  →  jwt.verify  →  req.user
-const jwt = require('jsonwebtoken');
-const { findById } = require('../services/userStore');
+import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
+import { findById } from '../services/userStore.js';
+import User from '../models/User.js';
 
-const getJwtSecret = () => process.env.JWT_SECRET || 'matcha-dev-secret-change-me';
+export const getJwtSecret = () => process.env.JWT_SECRET || 'matcha-dev-secret-change-me';
 
 // 1. ใส่ async และ await ป้องกัน Promise Bug
-async function requireAuth(req, res, next) {
+export async function requireAuth(req, res, next) {
   const header = req.headers.authorization || '';
   const token = header.startsWith('Bearer ') ? header.slice(7) : null;
   if (!token) {
@@ -21,8 +23,7 @@ async function requireAuth(req, res, next) {
 
     // 1.1 ลองค้นหาจาก Mongoose User model ก่อน (ถ้ามี)
     try {
-      const mongoose = require('mongoose');
-      const UserModel = mongoose.models.User || require('../models/User');
+      const UserModel = mongoose.models.User || User;
       if (UserModel?.findById) {
         const doc = await UserModel.findById(userId);
         if (doc) user = typeof doc.select === 'function' ? await doc.select('+role') : doc;
@@ -50,7 +51,7 @@ async function requireAuth(req, res, next) {
 }
 
 // Use after requireAuth: block anyone who is not the given role (case-insensitive)
-function requireRole(...roles) {
+export function requireRole(...roles) {
   const expected = roles.flat().map(r => String(r).toLowerCase());
   return (req, res, next) => {
     const userRole = String(req.user?.role || '').toLowerCase();
@@ -62,14 +63,13 @@ function requireRole(...roles) {
 }
 
 // 2. กำหนด Alias ให้เข้ากับ Route อื่นๆ ในโปรเจกต์
-const authRequired = requireAuth;
-const adminOnly = requireRole('Admin', 'admin');
+export const authRequired = requireAuth;
+export const adminOnly = requireRole('Admin', 'admin');
 
-// 3. Export ทั้งแบบของเพื่อน และแบบที่ระบบเดิมใช้
-module.exports = { 
+export default { 
   requireAuth, 
   requireRole, 
   getJwtSecret,
-  authRequired, // <-- เพิ่มตัวนี้
-  adminOnly     // <-- เพิ่มตัวนี้
+  authRequired,
+  adminOnly 
 };

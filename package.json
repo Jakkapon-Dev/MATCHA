@@ -2,6 +2,7 @@
   "name": "matcha-fullstack",
   "version": "1.0.0",
   "private": true,
+  "type": "module",
   "description": "MatchA - Modern Artisan Tea & Beverage Full-Stack App (React Vite + Express)",
   "scripts": {
     "build": "npm run build --prefix frontend",

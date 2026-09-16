@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const { Schema, model } = mongoose;
 
@@ -66,7 +66,7 @@ const orderSchema = new Schema(
     paymentMethod: {
       type: String,
       required: true,
-      enum: ['visa', 'mastercard', 'cod', 'qr']
+      enum: ['visa', 'mastercard', 'cod', 'qr', 'demo']
     },
     shippingOption: {
       type: String,
@@ -109,6 +109,7 @@ orderSchema.pre('validate', function recomputeTotal(next) {
 orderSchema.index({ userId: 1, createdAt: -1 });
 orderSchema.index({ status: 1 });
 
-const Order = model('Order', orderSchema);
+const Order = mongoose.models.Order || model('Order', orderSchema);
 
-module.exports = Order;
+export default Order;
+export { Order };

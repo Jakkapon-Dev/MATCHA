@@ -1,12 +1,23 @@
-require('dotenv').config();
-const dns = require('dns');
+import 'dotenv/config';
+import dns from 'node:dns';
+
 // Windows / Node.js c-ares DNS SRV lookup fix for MongoDB Atlas
 dns.setServers(['8.8.8.8', '1.1.1.1']);
 
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const { isDemo, demoProduct } = require('./config/storeMode');
+import express from 'express';
+import cors from 'cors';
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+import { isDemo, demoProduct } from './config/storeMode.js';
+import productsData from './data/products.js';
+import { init as initUserStore } from './services/userStore.js';
+import authRoutes from './routes/auth.js';
+import lookbookRoutes from './routes/lookbookRoutes.js';
+import mediaRoutes from './routes/mediaRoutes.js';
+import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -47,20 +58,15 @@ app.get(['/api/health', '/health'], (req, res) => {
 // Store Config
 app.get('/api/store-config', (req, res) => res.json({ success: true, data: { mode: isDemo ? 'demo' : 'live', realPayments: false } }));
 
-const productsData = require('./data/products');
-
 // Auth system: JSON-file user store (seeds admin@matcha.com on first start)
 // + JWT routes mounted at /api/auth. See routes/auth.js and middleware/auth.js.
-const bcrypt = require('bcryptjs');
-const { init: initUserStore } = require('./services/userStore');
 initUserStore({ bcrypt, adminPassword: process.env.ADMIN_SEED_PASSWORD });
 
-const authRoutes = require('./routes/auth');
 app.use('/api/auth', authRoutes);
 
 // Modular Feature Routes (Lookbook & Media Management)
-app.use('/api', require('./routes/lookbookRoutes'));
-app.use('/api', require('./routes/mediaRoutes'));
+app.use('/api', lookbookRoutes);
+app.use('/api', mediaRoutes);
 
 // Sample Starter API endpoint
 app.get('/api/items', (req, res) => {
@@ -213,7 +219,7 @@ app.use((req, res) => {
 });
 
 // Centralized Error Handling Middleware
-app.use(require('./middleware/errorHandler'));
+app.use(errorHandler);
 
 // Error handling fallback
 app.use((err, req, res, next) => {
@@ -221,17 +227,20 @@ app.use((err, req, res, next) => {
   res.status(500).json({ success: false, message: 'Internal Server Error', error: err.message });
 });
 
+const isMain = process.argv[1] && path.resolve(fileURLToPath(import.meta.url)).toLowerCase() === path.resolve(process.argv[1]).toLowerCase();
+
 // MongoDB Non-blocking Connection
-if (require.main === module && process.env.MONGODB_URI) {
+if (isMain && process.env.MONGODB_URI) {
   mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('🍃 [MongoDB] Connected successfully!'))
     .catch(err => console.error('❌ [MongoDB] Connection error:', err.message));
 }
 
-if (require.main === module) {
+if (isMain) {
   app.listen(PORT, () => {
     console.log(`🚀 Backend Server running on http://localhost:${PORT}`);
   });
 }
 
-module.exports = app;
+export default app;
+export { app };

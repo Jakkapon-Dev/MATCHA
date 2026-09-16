@@ -1,30 +1,40 @@
-const { test, before, after, mock } = require('node:test');
-const assert = require('node:assert/strict');
-const os = require('node:os');
-const fs = require('node:fs');
-const path = require('node:path');
+import { test, before, after, mock } from 'node:test';
+import assert from 'node:assert/strict';
+import os from 'node:os';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 // No .env is loaded. All database calls below are replaced in memory.
 process.env.JWT_SECRET = 'isolated-media-test-key-not-for-production';
 process.env.MEDIA_STORAGE_DIR = fs.mkdtempSync(path.join(os.tmpdir(), 'matcha-media-test-'));
-const sharp = require('sharp');
-const express = require('express');
-const mongoose = require('mongoose');
-const { prepareImage } = require('../services/mediaStorage');
-const { defaultLookbooks, resolveLookbooks } = require('../services/lookbook');
-const router = require('../routes/mediaLookbook');
-const Media = require('../models/MediaAsset');
-const Lookbook = require('../models/Lookbook');
+
+import sharp from 'sharp';
+import express from 'express';
+import mongoose from 'mongoose';
+import jwt from 'jsonwebtoken';
+
+import { prepareImage } from '../services/mediaStorage.js';
+import { defaultLookbooks, resolveLookbooks } from '../services/lookbook.js';
+import router from '../routes/mediaLookbook.js';
+import { setAuthGuards } from '../routes/mediaRoutes.js';
+import Media from '../models/MediaAsset.js';
+import Lookbook from '../models/Lookbook.js';
+
 const User = mongoose.models.User || mongoose.model('User', new mongoose.Schema({ email: String, role: String }));
 const Product = mongoose.models.Product || mongoose.model('Product', new mongoose.Schema({ id: String, name: String, image: String, price: Number, color: String, quantity: Number, sizes: Array, variants: Array, gallery: Array, mediaRevision: Number }, { strict: false }));
-const jwt = require('jsonwebtoken');
+
 const issueToken = u => jwt.sign({ _id: u._id, email: u.email, role: u.role }, process.env.JWT_SECRET);
 const admin = { _id: new mongoose.Types.ObjectId(), email: 'media-test@example.invalid', role: 'Admin' };
 const user = { _id: new mongoose.Types.ObjectId(), email: 'viewer-test@example.invalid', role: 'User' };
 let server, base, image;
 const query = data => ({ sort() { return this; }, skip() { return this; }, limit() { return this; }, select() { return this; }, lean: async () => data });
 const headers = { Authorization: `Bearer ${issueToken(admin)}`, 'Content-Type': 'application/json' };
+
 before(async () => {
-  require('../routes/mediaRoutes').setAuthGuards({
+  setAuthGuards({
     authRequired: (req, res, next) => {
       const auth = req.headers.authorization;
       if (!auth?.startsWith('Bearer ')) return res.status(401).json({ success: false, message: 'Unauthorized' });
@@ -66,7 +76,7 @@ test('missing products remain visible as editorial but never become sellable', (
 });
 
 test('fresh host serves every bundled demo image without runtime uploads', async () => {
-  const manifest = require('../demo-media/manifest.json');
+  const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '../demo-media/manifest.json'), 'utf8'));
   for (const file of manifest) {
     const response = await fetch(`${base}/media/files/${file.name}`);
     assert.equal(response.status, 200, file.name);

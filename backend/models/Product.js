@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const { Schema, model } = mongoose;
 
@@ -144,6 +144,7 @@ productSchema.pre('validate', function syncIdentifiers(next) {
 productSchema.index({ category: 1, season: 1 });
 productSchema.index({ name: 'text', description: 'text', color: 'text', tag: 'text' });
 
-const Product = model('Product', productSchema);
+const Product = mongoose.models.Product || model('Product', productSchema);
 
-module.exports = Product;
+export default Product;
+export { Product };

@@ -1,7 +1,7 @@
-const express = require('express');
-const lookbookRoutes = require('./lookbookRoutes');
-const mediaRoutes = require('./mediaRoutes');
-const errorHandler = require('../middleware/errorHandler');
+import express from 'express';
+import lookbookRoutes from './lookbookRoutes.js';
+import mediaRoutes from './mediaRoutes.js';
+import errorHandler from '../middleware/errorHandler.js';
 
 const router = express.Router();
 
@@ -9,5 +9,4 @@ router.use(lookbookRoutes);
 router.use(mediaRoutes);
 router.use(errorHandler);
 
-module.exports = router;
-
+export default router;

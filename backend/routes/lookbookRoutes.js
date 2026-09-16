@@ -1,25 +1,14 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const { z } = require('zod');
-const Lookbook = require('../models/Lookbook');
-const { defaultLookbooks, resolveLookbooks, defaults } = require('../services/lookbook');
-const { isDemo, demoProduct } = require('../config/storeMode');
+import express from 'express';
+import mongoose from 'mongoose';
+import { z } from 'zod';
+import Lookbook from '../models/Lookbook.js';
+import DefaultProduct from '../models/Product.js';
+import { defaultLookbooks, resolveLookbooks, defaults } from '../services/lookbook.js';
+import { isDemo, demoProduct } from '../config/storeMode.js';
+import errorHandler from '../middleware/errorHandler.js';
+import { assertActiveUrls, getAuthGuards } from './mediaRoutes.js';
 
-// Dynamic hooks for Product model and Auth middleware (in development by teammates)
-const getProductModel = () => {
-  try {
-    return require('../models/Product');
-  } catch {
-    return mongoose.models.Product || mongoose.model('Product', new mongoose.Schema({}, { strict: false }));
-  }
-};
-const getAuthGuards = () => {
-  try {
-    return require('../middleware/auth');
-  } catch {
-    return { authRequired: (req, res, next) => next(), adminOnly: (req, res, next) => next() };
-  }
-};
+const getProductModel = () => mongoose.models.Product || DefaultProduct;
 const authRequired = (req, res, next) => getAuthGuards().authRequired(req, res, next);
 const adminOnly = (req, res, next) => getAuthGuards().adminOnly(req, res, next);
 
@@ -52,13 +41,13 @@ router.use(['/lookbooks', '/admin/lookbooks'], (req, res, next) => {
   next();
 });
 
-async function allLooks() {
+export async function allLooks() {
   const saved = await Lookbook.find().sort({ id: 1 }).lean();
   const byId = new Map(saved.map(l => [l.id, l]));
   return defaultLookbooks().map(l => byId.get(l.id) || l).concat(saved.filter(l => !defaults.some(d => d.id === l.id)));
 }
 
-async function findLinkedProducts(items) {
+export async function findLinkedProducts(items) {
   const Product = getProductModel();
   const ids = [...new Set(items.map(i => i.productId))];
   const objectIds = ids.filter(id => mongoose.Types.ObjectId.isValid(id));
@@ -83,7 +72,6 @@ router.put('/admin/lookbooks/:id', authRequired, adminOnly, asyncRoute(async (re
   const id = z.string().regex(/^[\w-]{1,100}$/).parse(req.params.id);
   const input = lookInput.parse(req.body);
 
-  const { assertActiveUrls } = require('./mediaRoutes');
   await assertActiveUrls([input.heroImage]);
 
   const products = await findLinkedProducts(input.items);
@@ -116,8 +104,6 @@ router.put('/admin/lookbooks/:id', authRequired, adminOnly, asyncRoute(async (re
   res.json({ success: true, data: saved });
 }));
 
-router.use(require('../middleware/errorHandler'));
+router.use(errorHandler);
 
-module.exports = router;
-module.exports.allLooks = allLooks;
-module.exports.findLinkedProducts = findLinkedProducts;
+export default router;

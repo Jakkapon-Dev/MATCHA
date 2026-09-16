@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+
 const schema = new mongoose.Schema({
   url: { type: String, required: true, unique: true },
   thumbnailUrl: String,
@@ -12,4 +13,8 @@ const schema = new mongoose.Schema({
   archived: { type: Boolean, default: false },
   uploadedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
-module.exports = mongoose.model('MediaAsset', schema);
+
+const MediaAsset = mongoose.models.MediaAsset || mongoose.model('MediaAsset', schema);
+
+export default MediaAsset;
+export { MediaAsset };

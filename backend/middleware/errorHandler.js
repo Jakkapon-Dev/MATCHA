@@ -1,7 +1,7 @@
-const { z } = require('zod');
-const multer = require('multer');
+import { z } from 'zod';
+import multer from 'multer';
 
-function errorHandler(error, req, res, next) {
+export function errorHandler(error, req, res, next) {
   if (res.headersSent) return next(error);
   const status =
     error instanceof z.ZodError
@@ -30,4 +30,4 @@ function errorHandler(error, req, res, next) {
   });
 }
 
-module.exports = errorHandler;
+export default errorHandler;

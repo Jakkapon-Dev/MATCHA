@@ -1,14 +1,16 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const crypto = require('node:crypto');
-const bcrypt = require('bcryptjs'); // require เข้ามาโดยตรงเพื่อ auto-seed ได้เอง
+import fs from 'node:fs';
+import path from 'node:path';
+import crypto from 'node:crypto';
+import bcrypt from 'bcryptjs';
+import { fileURLToPath } from 'node:url';
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const STORE_DIR = path.join(__dirname, '..', 'data');
 const STORE_FILE = path.join(STORE_DIR, 'users.json');
 
 let users = [];
 
-function load() {
+export function load() {
   try {
     users = fs.existsSync(STORE_FILE) ? JSON.parse(fs.readFileSync(STORE_FILE, 'utf8')) : [];
   } catch (err) {
@@ -17,27 +19,27 @@ function load() {
   }
 }
 
-function persist() {
+export function persist() {
   fs.mkdirSync(STORE_DIR, { recursive: true });
   fs.writeFileSync(STORE_FILE, JSON.stringify(users, null, 2));
 }
 
-function normalizeEmail(email) {
+export function normalizeEmail(email) {
   return (email || '').trim().toLowerCase();
 }
 
-function findByEmail(email) {
+export function findByEmail(email) {
   return users.find((u) => u.email === normalizeEmail(email)) || null;
 }
 
-function findById(id) {
+export function findById(id) {
   return users.find((u) => u._id === id || u.id === id) || null;
 }
 
-function createUser({ name, firstName, lastName, email, passwordHash, role = 'Member', tier = 'Regular Member' }) {
+export function createUser({ name, firstName, lastName, email, passwordHash, role = 'Member', tier = 'Regular Member' }) {
   const user = {
     _id: `u_${crypto.randomUUID().replace(/-/g, '')}`,
-    id: undefined, // ให้ fallback ใช้ _id
+    id: undefined,
     name,
     firstName: firstName || '',
     lastName: lastName || '',
@@ -54,7 +56,7 @@ function createUser({ name, firstName, lastName, email, passwordHash, role = 'Me
   return user;
 }
 
-function ensureAdminSeed(adminPassword = 'admin1234') {
+export function ensureAdminSeed(adminPassword = 'admin1234') {
   if (findByEmail('admin@matcha.com')) return null;
   const passwordHash = bcrypt.hashSync(adminPassword, 12);
   const admin = createUser({
@@ -76,9 +78,9 @@ load();
 // 2. ถ้ายังไม่มี admin ให้ seed ทันทีโดยไม่ต้องรอสั่ง init
 ensureAdminSeed(process.env.SEED_ADMIN_PASSWORD || 'admin1234');
 
-function init(opts = {}) {
+export function init(opts = {}) {
   load();
   ensureAdminSeed(opts.adminPassword || process.env.SEED_ADMIN_PASSWORD || 'admin1234');
 }
 
-module.exports = { init, findByEmail, findById, createUser, ensureAdminSeed };
+export default { init, findByEmail, findById, createUser, ensureAdminSeed, load, persist, normalizeEmail };

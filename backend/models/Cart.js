@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const { Schema, model } = mongoose;
 
@@ -21,7 +21,7 @@ const cartItemSchema = new Schema(
 const cartSchema = new Schema(
   {
     userId: {
-      type: Schema.Types.ObjectId, // อย่าลืมเช็กเรื่อง ObjectId vs String ID กับฝั่ง Auth
+      type: Schema.Types.ObjectId,
       ref: 'User',
       default: null
     },
@@ -62,6 +62,7 @@ cartSchema.index({ userId: 1 }, { unique: true, partialFilterExpression: { userI
 cartSchema.index({ guestId: 1 }, { unique: true, partialFilterExpression: { guestId: { $type: 'string' } } });
 cartSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-const Cart = model('Cart', cartSchema);
+const Cart = mongoose.models.Cart || model('Cart', cartSchema);
 
-module.exports = Cart;
+export default Cart;
+export { Cart };

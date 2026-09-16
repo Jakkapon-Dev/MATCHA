@@ -1,33 +1,34 @@
-const express = require('express');
-const multer = require('multer');
-const rateLimit = require('express-rate-limit');
-const mongoose = require('mongoose');
-const path = require('node:path');
-const { z } = require('zod');
-const Media = require('../models/MediaAsset');
-const Lookbook = require('../models/Lookbook');
-const { MAX_BYTES, storeImage, storageRoot } = require('../services/mediaStorage');
+import express from 'express';
+import multer from 'multer';
+import rateLimit from 'express-rate-limit';
+import mongoose from 'mongoose';
+import path from 'node:path';
+import fs from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { z } from 'zod';
+import Media from '../models/MediaAsset.js';
+import Lookbook from '../models/Lookbook.js';
+import DefaultProduct from '../models/Product.js';
+import { MAX_BYTES, storeImage, storageRoot } from '../services/mediaStorage.js';
+import { authRequired as defaultAuthRequired, adminOnly as defaultAdminOnly } from '../middleware/auth.js';
+import errorHandler from '../middleware/errorHandler.js';
+import { allLooks } from './lookbookRoutes.js';
+import { importLookbookMedia } from '../services/importLookbookMedia.js';
 
-// Dynamic hooks for Product model and Auth middleware (in development by teammates)
-const getProductModel = () => {
-  try {
-    return require('../models/Product');
-  } catch {
-    return mongoose.models.Product || mongoose.model('Product', new mongoose.Schema({}, { strict: false }));
-  }
-};
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Dynamic hooks for Product model
+const getProductModel = () => mongoose.models.Product || DefaultProduct;
 const Product = new Proxy({}, { get: (_, prop) => getProductModel()[prop] });
 
 let customAuthGuards = null;
-const setAuthGuards = g => { customAuthGuards = g; };
-const getAuthGuards = () => {
+export function setAuthGuards(g) {
+  customAuthGuards = g;
+}
+export function getAuthGuards() {
   if (customAuthGuards) return customAuthGuards;
-  try {
-    return require('../middleware/auth');
-  } catch {
-    return { authRequired: (req, res, next) => next(), adminOnly: (req, res, next) => next() };
-  }
-};
+  return { authRequired: defaultAuthRequired, adminOnly: defaultAdminOnly };
+}
 const authRequired = (req, res, next) => getAuthGuards().authRequired(req, res, next);
 const adminOnly = (req, res, next) => getAuthGuards().adminOnly(req, res, next);
 
@@ -56,7 +57,12 @@ router.use('/media/files', express.static(storageRoot, {
 }));
 
 // Committed demo assets keep existing MongoDB image URLs working on a fresh host.
-const demoFiles = new Set(require('../demo-media/manifest.json').map(file => `/${file.name}`));
+const manifestPath = path.join(__dirname, '../demo-media/manifest.json');
+let demoFiles = new Set();
+try {
+  demoFiles = new Set(JSON.parse(fs.readFileSync(manifestPath, 'utf8')).map(file => `/${file.name}`));
+} catch {}
+
 router.use('/media/files', (req, res, next) => {
   if (!demoFiles.has(req.path)) return next();
   res.sendFile(path.join(__dirname, '../demo-media', req.path.slice(1)));
@@ -106,13 +112,12 @@ router.post('/admin/media', rateLimit({ windowMs: 60_000, limit: 20, standardHea
   res.status(201).json({ success: true, data: asset });
 }));
 
-async function usage(asset) {
+export async function usage(asset) {
   const urls = [asset.url, asset.thumbnailUrl, asset.sourcePath].filter(Boolean);
   const [products, looks] = await Promise.all([
     Product.find({ $or: [{ image: { $in: urls } }, { 'gallery.url': { $in: urls } }, { 'variants.image': { $in: urls } }] }).select('id name').lean(),
     Lookbook.find({ $or: [{ heroImage: { $in: urls } }, { 'editorial.detailImages': { $in: urls } }] }).select('id title').lean()
   ]);
-  const { allLooks } = require('./lookbookRoutes');
   const inherited = (await allLooks()).filter(l => urls.includes(l.heroImage) || l.editorial?.detailImages?.some(u => urls.includes(u)));
   return [...products.map(p => ({ type: 'product', id: p.id, name: p.name })), ...new Map([...looks, ...inherited].map(l => [l.id, { type: 'lookbook', id: l.id, name: l.title }])).values()];
 }
@@ -136,7 +141,7 @@ router.patch('/admin/media/:id', asyncRoute(async (req, res) => {
   res.json({ success: true, data: asset });
 }));
 
-async function assertActiveUrls(urls) {
+export async function assertActiveUrls(urls) {
   const managed = urls.filter(u => u?.startsWith('/api/media/files/'));
   const assets = await Media.find({ url: { $in: managed }, archived: false }).select('url').lean();
   if (managed.some(u => !assets.some(a => a.url === u))) {
@@ -169,14 +174,10 @@ router.put('/admin/media/products/:id/gallery', asyncRoute(async (req, res) => {
 
 // Repeatable import: never overwrite existing product facts or stock.
 router.post('/admin/media/import-lookbook', asyncRoute(async (req, res) => {
-  const data = await require('../services/importLookbookMedia').importLookbookMedia(req.user._id);
+  const data = await importLookbookMedia(req.user._id);
   res.json({ success: true, data, message: 'นำเข้าภาพเดิมแล้ว สินค้าใหม่รอระบุสต็อกและไซซ์' });
 }));
 
-router.use(require('../middleware/errorHandler'));
+router.use(errorHandler);
 
-
-module.exports = router;
-module.exports.assertActiveUrls = assertActiveUrls;
-module.exports.usage = usage;
-module.exports.setAuthGuards = setAuthGuards;
+export default router;

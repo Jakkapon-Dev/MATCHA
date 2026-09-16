@@ -1,9 +1,12 @@
-const { test } = require('node:test');
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const path = require('node:path');
-const { createHash } = require('node:crypto');
-const { readStoreMode } = require('../../test-support/store-mode');
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { createHash } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+import { readStoreMode } from '../../test-support/store-mode.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 test('E2E rejects missing, invalid and failed store-config before any writes', () => {
   for (const response of [{ status: 500, body: { data: { mode: 'demo' } } }, { status: 200, body: {} }, { status: 200, body: { success: true, data: { mode: 'unknown' } } }]) {
@@ -14,7 +17,7 @@ test('E2E rejects missing, invalid and failed store-config before any writes', (
 
 test('all bundled public demo assets are present and match their checksums', () => {
   const root = path.join(__dirname, '../demo-media');
-  const manifest = require('../demo-media/manifest.json');
+  const manifest = JSON.parse(fs.readFileSync(path.join(__dirname, '../demo-media/manifest.json'), 'utf8'));
   assert.equal(manifest.length, 32);
   for (const file of manifest) {
     assert.match(file.name, /^[a-f\d-]+(?:-thumb)?\.webp$/);

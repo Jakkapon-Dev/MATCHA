@@ -1,9 +1,12 @@
 // Package only public Lookbook images, never the entire upload directory.
 // Reads the catalogue and local files; does not modify MongoDB.
-const fs = require('node:fs/promises');
-const path = require('node:path');
-const { createHash } = require('node:crypto');
-const { storageRoot } = require('../services/mediaStorage');
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { createHash } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
+import { storageRoot } from '../services/mediaStorage.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const bundleRoot = path.resolve(__dirname, '../demo-media');
 
 async function bundle() {
