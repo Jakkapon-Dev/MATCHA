@@ -1,6 +1,8 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const mongoose = require('mongoose');
+const { isDemo, demoProduct } = require('./config/storeMode');
 
 const app = express();
 const PORT = process.env.PORT || 5001;
@@ -15,27 +17,31 @@ app.use((req, res, next) => {
   next();
 });
 
-
 // Root endpoint info
 app.get('/', (req, res) => {
   res.json({
     app: 'MatchA API Server',
     status: 'online',
     frontendUrl: 'http://localhost:5173',
-    message: 'Backend API is running. Please visit http://localhost:5173 to view the Landing Page UI.',
-    endpoints: ['/api/health', '/api/items']
+    message: 'Backend API is running.',
+    endpoints: ['/api/health', '/api/lookbooks', '/api/admin/lookbooks', '/api/admin/media']
   });
 });
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
+app.get(['/api/health', '/health'], (req, res) => {
   res.json({
-    status: 'online',
+    status: 'ok',
+    state: 'online',
     message: 'Backend server is running smoothly',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
   });
 });
 
+// Store Config
+app.get('/api/store-config', (req, res) => res.json({ success: true, data: { mode: isDemo ? 'demo' : 'live', realPayments: false } }));
 
 const productsData = require('./data/products');
 
@@ -194,9 +200,12 @@ app.use((req, res) => {
   res.status(404).json({
     success: false,
     message: `Cannot GET ${req.originalUrl}. Route not found on API server.`,
-    availableRoutes: ['/api/health', '/api/items']
+    availableRoutes: ['/api/health', '/api/lookbooks', '/api/admin/lookbooks', '/api/admin/media']
   });
 });
+
+// Centralized Error Handling Middleware
+app.use(require('./middleware/errorHandler'));
 
 // Error handling fallback
 app.use((err, req, res, next) => {
@@ -204,6 +213,17 @@ app.use((err, req, res, next) => {
   res.status(500).json({ success: false, message: 'Internal Server Error', error: err.message });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Backend Server running on http://localhost:${PORT}`);
-});
+// MongoDB Non-blocking Connection
+if (require.main === module && process.env.MONGODB_URI) {
+  mongoose.connect(process.env.MONGODB_URI)
+    .then(() => console.log('🍃 [MongoDB] Connected successfully!'))
+    .catch(err => console.error('❌ [MongoDB] Connection error:', err.message));
+}
+
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🚀 Backend Server running on http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

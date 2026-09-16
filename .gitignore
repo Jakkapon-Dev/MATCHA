@@ -4,6 +4,9 @@
 # ==============================================================================
 
 # 1. Project Documentation, Internal Specifications & Requirement Docs (Local Only)
+docs/
+docs/*
+*.visual-check.*
 Requirement/
 Requirement/*
 Requirement
@@ -157,3 +160,12 @@ MatchA_Full_Store_Backup_*.json
 
 # 13. Local Auth User Store (contains password hashes — never commit)
 backend/data/users.json
+
+# Runtime media: back up this directory together with MongoDB.
+backend/storage/media/
+
+# Reproducible public Lookbook bundle for the demo host.
+!backend/scripts/
+backend/scripts/*
+!backend/scripts/bundle-demo-media.js
+
