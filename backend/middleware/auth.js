@@ -17,7 +17,27 @@ async function requireAuth(req, res, next) {
     
     // ดักให้รองรับทั้ง id, userId, _id
     const userId = payload.id || payload.userId || payload._id;
-    const user = await findById(userId);
+    let user = null;
+
+    // 1.1 ลองค้นหาจาก Mongoose User model ก่อน (ถ้ามี)
+    try {
+      const mongoose = require('mongoose');
+      const UserModel = mongoose.models.User || require('../models/User');
+      if (UserModel?.findById) {
+        const doc = await UserModel.findById(userId);
+        if (doc) user = typeof doc.select === 'function' ? await doc.select('+role') : doc;
+      }
+    } catch {}
+
+    // 1.2 ถ้าไม่พบ ลองค้นหาจาก JSON userStore
+    if (!user) {
+      user = await findById(userId);
+    }
+
+    // 1.3 ถ้ายังไม่พบแต่ Token ผ่านการยืนยันลายเซ็นแล้ว ให้ใช้ identity จาก Payload
+    if (!user && (payload.role || payload.email)) {
+      user = { _id: userId, id: userId, email: payload.email, role: payload.role };
+    }
     
     if (!user) {
       return res.status(401).json({ success: false, message: 'User not found' });
@@ -29,10 +49,12 @@ async function requireAuth(req, res, next) {
   }
 }
 
-// Use after requireAuth: block anyone who is not the given role.
-function requireRole(role) {
+// Use after requireAuth: block anyone who is not the given role (case-insensitive)
+function requireRole(...roles) {
+  const expected = roles.flat().map(r => String(r).toLowerCase());
   return (req, res, next) => {
-    if (!req.user || req.user.role !== role) {
+    const userRole = String(req.user?.role || '').toLowerCase();
+    if (!req.user || !expected.includes(userRole)) {
       return res.status(403).json({ success: false, message: 'Forbidden: insufficient role' });
     }
     next();
@@ -41,7 +63,7 @@ function requireRole(role) {
 
 // 2. กำหนด Alias ให้เข้ากับ Route อื่นๆ ในโปรเจกต์
 const authRequired = requireAuth;
-const adminOnly = requireRole('admin');
+const adminOnly = requireRole('Admin', 'admin');
 
 // 3. Export ทั้งแบบของเพื่อน และแบบที่ระบบเดิมใช้
 module.exports = { 
