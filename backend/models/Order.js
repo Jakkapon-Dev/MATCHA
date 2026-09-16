@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const { Schema, model } = mongoose;
 
@@ -94,8 +94,9 @@ const orderSchema = new Schema(
 orderSchema.pre('validate', function assignOrderNumber(next) {
   if (!this.orderNumber) {
     const year = new Date().getFullYear();
-    const random = Math.floor(1000 + Math.random() * 9000);
-    this.orderNumber = `MTA-${year}-${random}`;
+    const stamp = Date.now().toString().slice(-6);
+    const random = Math.floor(100 + Math.random() * 900);
+    this.orderNumber = `MTA-${year}-${stamp}-${random}`;
   }
   next();
 });
@@ -110,4 +111,4 @@ orderSchema.index({ status: 1 });
 
 const Order = model('Order', orderSchema);
 
-export default Order;
+module.exports = Order;
