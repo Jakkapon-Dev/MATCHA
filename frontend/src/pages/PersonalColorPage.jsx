@@ -17,11 +17,8 @@ import {
   Droplet, 
   Layers 
 } from 'lucide-react';
-import { productsData } from '../data/productsData';
-import { useCart } from '../context/CartContext.jsx';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
-import ProductCard from '../components/product/ProductCard';
 
 // 4 Master Personal Color Profiles with Grounded Theory
 const SEASON_PROFILES = {
@@ -349,13 +346,6 @@ export default function PersonalColorPage() {
     setDiagnosedSeason(null);
   };
 
-  // Filter curated products matching the current active season view
-  const curatedSeason = activeTab === 'theory' 
-    ? selectedSeasonTab 
-    : (diagnosedSeason || selectedSeasonTab);
-
-  const recommendedProducts = productsData.filter(p => p.season.toLowerCase() === curatedSeason.toLowerCase()).slice(0, 8);
-  const wardrobeMotionRef = useChangeMotion(curatedSeason, 'grid');
 
   return (
     <div className="w-full bg-[#FAF8F5] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
@@ -692,55 +682,6 @@ export default function PersonalColorPage() {
           </div>
         )}
 
-        {/* 3. CURATED OUTFIT SHOWCASE: Products matching the Season */}
-        <div className="space-y-6 pt-8 border-t border-[#D9D3C7]">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <div className="inline-flex items-center gap-1.5 text-xs font-mono font-bold text-[#2D5A27] uppercase">
-                <Sparkles size={14} />
-                <span>Curated Wardrobe ({recommendedProducts.length} Looks)</span>
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-[#2D231E] font-serif mt-1">
-                เสื้อผ้าที่คัดสรรสำหรับโทน {SEASON_PROFILES[curatedSeason]?.season || curatedSeason}
-              </h3>
-              <p className="text-xs font-mono text-[#6B5E55] mt-0.5">
-                {SEASON_PROFILES[curatedSeason]?.undertone}
-              </p>
-            </div>
-
-            {/* Quick Season Switcher Chips */}
-            <div className="flex items-center gap-2 flex-wrap">
-              {Object.keys(SEASON_PROFILES).map((sKey) => (
-                <button
-                  key={sKey}
-                  onClick={() => {
-                    setSelectedSeasonTab(sKey);
-                    if (activeTab !== 'theory') {
-                      setDiagnosedSeason(sKey);
-                    }
-                  }}
-                  className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer ${
-                    curatedSeason.toLowerCase() === sKey.toLowerCase()
-                      ? 'bg-[#2D5A27] text-white shadow-sm scale-105'
-                      : 'bg-white border border-[#D9D3C7] text-[#6B5E55] hover:text-[#2D231E] hover:border-[#2D5A27]'
-                  }`}
-                >
-                  {sKey}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div ref={wardrobeMotionRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {recommendedProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onQuickView={(p) => navigate('/catalog')}
-              />
-            ))}
-          </div>
-        </div>
 
       </div>
     </div>
