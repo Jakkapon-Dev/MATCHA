@@ -1,8 +1,7 @@
-// Simple JSON-file user store so the auth demo runs without a database.
-// Swap this module for a MongoDB store once the backend grows a real database.
 const fs = require('node:fs');
 const path = require('node:path');
 const crypto = require('node:crypto');
+const bcrypt = require('bcryptjs'); // require เข้ามาโดยตรงเพื่อ auto-seed ได้เอง
 
 const STORE_DIR = path.join(__dirname, '..', 'data');
 const STORE_FILE = path.join(STORE_DIR, 'users.json');
@@ -32,12 +31,13 @@ function findByEmail(email) {
 }
 
 function findById(id) {
-  return users.find((u) => u._id === id) || null;
+  return users.find((u) => u._id === id || u.id === id) || null;
 }
 
 function createUser({ name, firstName, lastName, email, passwordHash, role = 'Member', tier = 'Regular Member' }) {
   const user = {
     _id: `u_${crypto.randomUUID().replace(/-/g, '')}`,
+    id: undefined, // ให้ fallback ใช้ _id
     name,
     firstName: firstName || '',
     lastName: lastName || '',
@@ -48,12 +48,13 @@ function createUser({ name, firstName, lastName, email, passwordHash, role = 'Me
     addresses: [],
     createdAt: new Date().toISOString(),
   };
+  user.id = user._id;
   users.push(user);
   persist();
   return user;
 }
 
-function ensureAdminSeed(bcrypt, adminPassword) {
+function ensureAdminSeed(adminPassword = 'admin1234') {
   if (findByEmail('admin@matcha.com')) return null;
   const passwordHash = bcrypt.hashSync(adminPassword, 12);
   const admin = createUser({
@@ -65,15 +66,19 @@ function ensureAdminSeed(bcrypt, adminPassword) {
     role: 'Admin',
     tier: 'VIP Connoisseur',
   });
-  console.log('[auth] Seeded admin account: admin@matcha.com');
+  console.log('[auth] Seeded admin account: admin@matcha.com (pass: ' + adminPassword + ')');
   return admin;
 }
 
+// 1. เรียก load() ทันทีที่ไฟล์นี้ถูก import
+load();
+
+// 2. ถ้ายังไม่มี admin ให้ seed ทันทีโดยไม่ต้องรอสั่ง init
+ensureAdminSeed(process.env.SEED_ADMIN_PASSWORD || 'admin1234');
+
 function init(opts = {}) {
   load();
-  if (opts.bcrypt) {
-    ensureAdminSeed(opts.bcrypt, opts.adminPassword || 'admin1234');
-  }
+  ensureAdminSeed(opts.adminPassword || process.env.SEED_ADMIN_PASSWORD || 'admin1234');
 }
 
-module.exports = { init, findByEmail, findById, createUser };
+module.exports = { init, findByEmail, findById, createUser, ensureAdminSeed };
