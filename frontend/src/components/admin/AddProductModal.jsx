@@ -3,8 +3,8 @@ import { X, Upload, Plus, Sparkles, Image as ImageIcon, Check, Calendar, Tag as 
 import { webpSrc } from '../../utils/imageFallback';
 
 export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
-  // The form is initialized once when this component mounts. Defaults provide a
-  // testable product shape, while the generated SKU distinguishes new entries.
+  // The form is initialized once when this component mounts. Defaults provide a testable product shape, 
+  // while the generated SKU distinguishes new entries.
   const [formData, setFormData] = useState({
     name: '',
     id: `SKU-${Math.floor(100 + Math.random() * 900)}`,
