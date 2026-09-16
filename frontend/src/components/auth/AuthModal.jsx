@@ -6,19 +6,25 @@ import { useToast } from '../../context/ToastContext';
 export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
   const { login } = useAuth();
   const { showToast } = useToast();
+  // Mode controls both the copy and whether the name field is rendered. Form values
+  // are retained when switching tabs so QA can move between modes without retyping.
   const [mode, setMode] = useState(initialMode); // 'login' or 'signup'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
+  // Removing a closed modal from the DOM prevents hidden controls from receiving focus.
   if (!isOpen) return null;
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setSubmitted(true);
 
+    // This modal currently provides demo authentication: an email containing "admin"
+    // receives the Admin role; every other email becomes a Member.
     const userRole = email.toLowerCase().includes('admin') ? 'Admin' : 'Member';
+    // Signup names take priority. Login falls back to the email prefix, then a role label.
     const userName = name.trim() || email.split('@')[0] || (userRole === 'Admin' ? 'MatchA Admin' : 'MatchA Collector');
 
     const user = {
@@ -28,8 +34,10 @@ export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
       avatar: `https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80`,
     };
 
+    // AuthContext owns session persistence and distributes the authenticated user.
     login(user);
 
+    // Briefly render the success state before the parent removes the modal.
     setTimeout(() => {
       setSubmitted(false);
       onClose();

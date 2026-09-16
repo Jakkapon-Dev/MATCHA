@@ -23,11 +23,13 @@ export default function TopFilterBar({
   activeFilterCount,
   totalResults
 }) {
-  // Dropdown Open States (Only one open at a time)
+  // Filter values live in CatalogPage; this component owns only which popover is open.
+  // A single state key guarantees that no two dropdowns can be open simultaneously.
   const [openDropdown, setOpenDropdown] = useState(null); // 'season' | 'color' | 'fit' | 'price' | null
   const barRef = useRef(null);
 
-  // Close dropdown when clicking outside
+  // Close a popover for clicks outside the complete bar and remove the document-level
+  // listener on unmount so remounting the catalog cannot accumulate handlers.
   useEffect(() => {
     function handleClickOutside(event) {
       if (barRef.current && !barRef.current.contains(event.target)) {
@@ -39,16 +41,18 @@ export default function TopFilterBar({
   }, []);
 
   const toggleDropdown = (name) => {
+    // Clicking the active pill closes it; clicking another pill switches directly.
     setOpenDropdown(prev => prev === name ? null : name);
   };
 
+  // Fall back to the first configured option if parent state contains an unknown value.
   const selectedSeasonObj = seasonOptions.find(s => s.value === selectedSeason) || seasonOptions[0];
   const selectedColorObj = colorOptions.find(c => c.value === selectedColor) || colorOptions[0];
 
   return (
     <div ref={barRef} className="w-full relative z-30 mb-6">
 
-      {/* Backdrop overlay when any dropdown is open for crisp click-away */}
+      {/* The overlay provides click-away behavior; popovers sit above it via z-index. */}
       {openDropdown && (
         <div 
           className="fixed inset-0 z-20 cursor-default" 

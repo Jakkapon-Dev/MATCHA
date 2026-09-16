@@ -2,6 +2,8 @@ import React from 'react';
 import { MapPin, Plus, Check } from 'lucide-react';
 
 export default function AddressesTab({ addresses = [] }) {
+  // The parent may supply persisted addresses. Until that integration is available,
+  // an empty list deliberately renders sample cards so the tab is still testable.
   const defaultAddresses = addresses.length > 0 ? addresses : [
     {
       id: 'addr-1',

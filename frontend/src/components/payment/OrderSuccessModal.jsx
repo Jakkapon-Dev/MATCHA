@@ -12,8 +12,11 @@ export default function OrderSuccessModal({
   onDone
 }) {
   const navigate = useNavigate();
+  // Keep the confirmation out of the DOM until checkout reports a completed order.
   if (!isOpen) return null;
 
+  // Prefer server timestamps and identifiers. Fallback values keep the test-mode
+  // confirmation usable when a simulated order supplies only local checkout data.
   const currentDateTime = purchaseDateTime || (order?.createdAt 
     ? new Date(order.createdAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'medium' })
     : new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'medium' }));
@@ -24,10 +27,13 @@ export default function OrderSuccessModal({
   const paymentMethod = order?.paymentMethod || 'visa';
 
   const handleFinish = () => {
+    // Give the parent a chance to clear checkout/cart state before leaving the page.
     if (onDone) onDone();
     navigate('/catalog');
   };
 
+  // Translate known backend states for the bilingual UI, but preserve unknown values
+  // so new server statuses remain visible to QA rather than disappearing.
   const statusLabel = {
     pending: 'รอดำเนินการ (Pending)',
     processing: 'กำลังประมวลผล (Processing)',

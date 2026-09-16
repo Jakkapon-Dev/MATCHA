@@ -6,6 +6,8 @@ import { handleImageError, webpSrc } from '../../utils/imageFallback';
 export default function OrdersTab({ orders = [], isLoaded = true }) {
   const navigate = useNavigate();
 
+  // Convert backend fulfillment values into a complete badge class. Unknown or
+  // missing values intentionally use the pending style as the safest fallback.
   const getStatusBadge = (status = '') => {
     const s = status.toLowerCase();
     if (s === 'delivered' || s === 'completed') {
@@ -25,6 +27,8 @@ export default function OrdersTab({ orders = [], isLoaded = true }) {
   };
 
   const getPaymentStatusBadge = (paymentStatus = '') => {
+    // Payment state is styled independently from fulfillment state because an order
+    // can be shipped, cancelled, or refunded on a separate timeline.
     const ps = paymentStatus.toLowerCase();
     if (ps === 'paid') {
       return 'bg-emerald-100 text-emerald-800 border border-emerald-300';
@@ -47,7 +51,7 @@ export default function OrdersTab({ orders = [], isLoaded = true }) {
         </div>
       </div>
 
-      {/* Empty State */}
+      {/* Empty State: displayed when the parent has no orders to provide. */}
       {orders.length === 0 && (
         <div className="py-12 px-4 text-center rounded-2xl border border-dashed border-[#D9D3C7] bg-[#FAF8F5]/60 space-y-3">
           <div className="w-12 h-12 mx-auto rounded-2xl bg-[#FAF8F5] border border-[#D9D3C7] flex items-center justify-center text-[#6B5E55]">
@@ -68,7 +72,7 @@ export default function OrdersTab({ orders = [], isLoaded = true }) {
         </div>
       )}
 
-      {/* Orders List */}
+      {/* Orders List: each order can contain multiple independently rendered items. */}
       {orders.length > 0 && (
         <div className="space-y-4">
           {orders.map((order) => (

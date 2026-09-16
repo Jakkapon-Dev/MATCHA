@@ -8,7 +8,10 @@ export default function JoinDropList({ onSubscribe }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // The browser validates the email format through type="email" and required; this
+    // guard also prevents programmatic submissions with an empty value.
     if (!email) return;
+    // Switch to the success panel immediately, then let the parent persist the address.
     setSubscribed(true);
     if (onSubscribe) onSubscribe(email);
   };

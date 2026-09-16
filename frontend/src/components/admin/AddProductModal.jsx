@@ -3,6 +3,8 @@ import { X, Upload, Plus, Sparkles, Image as ImageIcon, Check, Calendar, Tag as 
 import { webpSrc } from '../../utils/imageFallback';
 
 export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
+  // The form is initialized once when this component mounts. Defaults provide a
+  // testable product shape, while the generated SKU distinguishes new entries.
   const [formData, setFormData] = useState({
     name: '',
     id: `SKU-${Math.floor(100 + Math.random() * 900)}`,
@@ -22,23 +24,32 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
   const [imagePreview, setImagePreview] = useState(formData.image);
   const [errors, setErrors] = useState({});
 
+  // Keep the modal out of the DOM while closed so it cannot capture focus or clicks.
+  // Closing does not reset local state; reopening the same mounted instance restores it.
   if (!isOpen) return null;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    // Every input is controlled by formData and uses its name as the object key.
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    // The preview mirrors the image field, including manually entered URLs.
     if (name === 'image') {
       setImagePreview(value);
     }
+
+    // Clear only the edited field's error; a full validation runs again on submit.
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }));
     }
   };
 
   const validate = () => {
+    // Collect all validation failures in one pass so QA can verify every invalid
+    // field and message after a single submission attempt.
     const errs = {};
 
     // 1. Name validation
@@ -81,8 +92,11 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Invalid submissions remain open and do not notify the parent inventory page.
     if (!validate()) return;
 
+    // Form controls store numeric values as strings. Normalize them here and derive
+    // the inventory flags/status expected by product lists and catalog consumers.
     const stockNum = parseInt(formData.stock, 10);
     const newProduct = {
       ...formData,
@@ -97,6 +111,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
       inStock: stockNum > 0,
     };
 
+    // The parent persists/inserts the completed product before the modal is closed.
     onAddProduct(newProduct);
     onClose();
   };
@@ -350,6 +365,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
                 />
               </div>
               <div className="w-12 h-12 rounded-xl bg-[#EFECE6] border border-[#D9D3C7] overflow-hidden flex items-center justify-center shrink-0">
+                {/* Hide a broken thumbnail while retaining the typed URL for correction. */}
                 {imagePreview ? (
                   <img src={webpSrc(imagePreview)} data-original-src={imagePreview} alt="Preview" className="w-full h-full object-cover" onError={() => setImagePreview('')} />
                 ) : (
@@ -366,6 +382,8 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
                   type="button"
                   key={s.label}
                   onClick={() => {
+                    // Presets update both values because the form payload and preview
+                    // are intentionally maintained as separate pieces of state.
                     setFormData((p) => ({ ...p, image: s.url }));
                     setImagePreview(s.url);
                   }}

@@ -8,9 +8,13 @@ import { api } from '../../services/api';
 // the decision comes from /auth/me, which is reached with the signed token.
 export default function RequireRole({ role, children }) {
   const location = useLocation();
+  // The verdict forms a small state machine: checking -> allowed, wrong-role,
+  // or signed-out. Protected children render only after an allowed result.
   const [verdict, setVerdict] = useState('checking');
 
   useEffect(() => {
+    // Ignore late responses after unmount/navigation so an obsolete request cannot
+    // update this guard. Path changes intentionally trigger a fresh authorization check.
     let active = true;
     api.me()
       .then((res) => {
@@ -34,6 +38,7 @@ export default function RequireRole({ role, children }) {
   }
 
   if (verdict === 'signed-out') {
+    // Preserve the attempted path so the login flow can return the user afterward.
     return <Navigate to="/login" state={{ from: location.pathname }} replace />;
   }
 
@@ -59,5 +64,6 @@ export default function RequireRole({ role, children }) {
     );
   }
 
+  // Reaching this point means the server confirmed the required role.
   return children;
 }

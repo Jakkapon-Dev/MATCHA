@@ -13,12 +13,15 @@ export default function PaymentMethodStep({
   totalAmount
 }) {
   const handleCardChange = (e) => {
+    // Card fields are controlled by the checkout page so values survive step changes.
     onCardDataChange({
       ...cardData,
       [e.target.name]: e.target.value
     });
   };
 
+  // Only card methods require these fields. QR and COD are immediately eligible to
+  // submit; card validation currently checks presence and minimum string lengths.
   const isCardValid = selectedPayment !== 'visa' && selectedPayment !== 'mastercard' 
     ? true 
     : (cardData.cardNumber.length >= 16 && cardData.cardHolder && cardData.expiryDate && cardData.cvv.length >= 3);
@@ -73,6 +76,7 @@ export default function PaymentMethodStep({
         </div>
 
         {/* Card Input Form (For Visa / Mastercard) */}
+        {/* Method-specific panels keep irrelevant fields out of the visible checkout. */}
         {(selectedPayment === 'visa' || selectedPayment === 'mastercard') && (
           <div className="space-y-4 pt-4 border-t border-[#D9D3C7]">
             <div>
@@ -175,6 +179,7 @@ export default function PaymentMethodStep({
         >
           ← Edit Shipping Address
         </button>
+        {/* Block duplicate requests while processing and incomplete card submissions. */}
         <button
           type="button"
           onClick={onPlaceOrder}

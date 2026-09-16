@@ -2,6 +2,8 @@ import React from 'react';
 import { Sliders, Bell } from 'lucide-react';
 
 export default function PreferencesTab({ preferences, onTogglePreference }) {
+  // Keeping labels and descriptions in configuration makes every switch use the same
+  // rendering and click path. The key links a row to its boolean in parent state.
   const prefItems = [
     { key: 'vipAlerts', title: 'VIP Early Drop Alerts', desc: 'Get notified 30 minutes before limited seasonal collections drop.' },
     { key: 'orderUpdates', title: 'Order & Shipping Notifications', desc: 'Receive real-time tracking updates via SMS & Email.' },
@@ -27,6 +29,7 @@ export default function PreferencesTab({ preferences, onTogglePreference }) {
               <h4 className="text-xs font-bold text-[#2D231E] uppercase font-mono">{item.title}</h4>
               <p className="text-[11px] font-mono text-[#6B5E55] mt-0.5">{item.desc}</p>
             </div>
+            {/* State is owned by the account page; this tab reports which key changed. */}
             <button
               type="button"
               onClick={() => onTogglePreference(item.key)}

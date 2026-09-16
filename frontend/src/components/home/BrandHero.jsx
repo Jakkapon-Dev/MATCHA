@@ -58,10 +58,11 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
     }
   ];
 
-  // Each slice model index (Initialized with a dynamic multi-color random mix)
+  // Each array position selects the source look for one quarter of the composite model.
   const [sliceModels, setSliceModels] = useState([0, 4, 2, 5]);
 
-  // Every slice reshuffles to a different look on its own, every 1.3 seconds.
+  // Reshuffle all four slices every 1.3 seconds. The collision check guarantees that
+  // every visible slice changes on each tick, and cleanup prevents a leaked timer.
   useEffect(() => {
     const interval = setInterval(() => {
       setSliceModels((prev) => prev.map((currentIdx) => {
@@ -75,7 +76,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
 
 
 
-  // Click on a single slice to cycle to a random new look
+  // Manual slice changes use the same collision rule without affecting other slices.
   const cycleSingleSlice = (sliceIndex) => {
     setSliceModels((prev) => {
       const next = [...prev];
@@ -97,6 +98,8 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
 
 
   const handleAction = () => {
+    // Landing-screen entry takes priority when provided; the normal home hero falls
+    // back to its catalog/shop action.
     if (onEnterWebsite) {
       onEnterWebsite();
     } else if (onShopNow) {

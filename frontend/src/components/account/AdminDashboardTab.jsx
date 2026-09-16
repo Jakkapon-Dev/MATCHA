@@ -16,6 +16,8 @@ import { useToast } from '../../context/ToastContext';
 export default function AdminDashboardTab() {
   const { showToast } = useToast();
 
+  // Inventory is local state because the restock control updates the table immediately;
+  // replacing this seed data with an API response should not require changing the UI.
   const [inventory, setInventory] = useState([
     { id: 'SKU-001', name: 'MatchA Heavyweight Boxy Tee', category: 'Tops', price: 48, stock: 45, status: 'In Stock' },
     { id: 'SKU-002', name: 'MatchA Pleated Relaxed Trousers', category: 'Bottoms', price: 88, stock: 12, status: 'Low Stock' },
@@ -25,6 +27,7 @@ export default function AdminDashboardTab() {
     { id: 'SKU-006', name: 'MatchA Kimono Wrap Cardigan', category: 'Outerwear', price: 125, stock: 19, status: 'In Stock' },
   ]);
 
+  // Dashboard chart inputs are currently fixtures used to exercise the visual states.
   const monthlySales = [
     { month: 'Jan', sales: 24, revenue: 24000 },
     { month: 'Feb', sales: 32, revenue: 32000 },
@@ -42,6 +45,8 @@ export default function AdminDashboardTab() {
   ];
 
   const handleRestock = (id) => {
+    // Update only the selected SKU and force it into the healthy stock state. The
+    // functional setter prevents this click from reading a stale inventory snapshot.
     setInventory((prev) =>
       prev.map((item) =>
         item.id === id ? { ...item, stock: item.stock + 10, status: 'In Stock' } : item

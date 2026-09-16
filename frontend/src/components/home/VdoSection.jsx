@@ -2,7 +2,7 @@ import React from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
 
 export default function VdoSection({ onClaimPromo }) {
-  // High-definition fashion streetwear lookbook cinematic loop
+  // Remote video is a fallback: the browser tries the local lookbook source first.
   const videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-stylish-model-posing-outdoors-in-the-city-41222-large.mp4";
 
   return (
@@ -59,6 +59,7 @@ export default function VdoSection({ onClaimPromo }) {
             Mix and match any tops and bottoms from our new MatchA series to unlock your discount automatically at checkout.
           </p>
 
+          {/* Promo behavior is owned by the parent (for example, navigation or cart rules). */}
           <button 
             onClick={onClaimPromo}
             className="mt-6 w-full py-4 bg-[#BC5A36] hover:bg-[#A64C2B] text-white font-bold font-mono text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-[#BC5A36]/30 active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"

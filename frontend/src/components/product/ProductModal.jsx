@@ -20,7 +20,8 @@ import { SHIPPING_OPTIONS as SHIPPING_RATES, FREE_SHIPPING_THRESHOLD } from '../
 export default function ProductModal({ product, onClose, onAddToCart, onToggleWishlist, isWishlisted = false }) {
   const { addToCart: contextAddToCart } = useCart();
 
-  // Extract variants from product
+  // Normalize products without explicit variants so all image/color controls can use
+  // one consistent list shape.
   const variants = product?.variants && product.variants.length > 0
     ? product.variants
     : [
@@ -31,6 +32,8 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
         }
       ];
 
+  // Missing size data is not guessed. Only a single supplied size is preselected;
+  // multiple options require an explicit customer choice.
   const sizeList = Array.isArray(product?.sizes) ? product.sizes.filter(Boolean) : [];
   const [activeVariant, setActiveVariant] = useState(variants[0]);
   const [selectedSize, setSelectedSize] = useState(
@@ -41,7 +44,9 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
   const [addedAnimation, setAddedAnimation] = useState(false);
   const [imageFade, setImageFade] = useState(false);
   const [galleryImage, setGalleryImage] = useState(null);
+  // Gallery entries may be global or tied to the currently selected color.
   const gallery = (product?.gallery || []).filter(g => !g.color || g.color === activeVariant.color);
+  // Changing product or color returns the main frame to its primary variant image.
   useEffect(() => { setGalleryImage(null); }, [product?.id, activeVariant.image, activeVariant.color]);
   const [showFitGuide, setShowFitGuide] = useState(false);
   const [activeAccordion, setActiveAccordion] = useState(null); // 'materials' | 'care' | 'status'
@@ -63,7 +68,8 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
     },
   ];
 
-  // Sync when product changes
+  // Reset transient modal choices when a different product opens. A variant selected
+  // on the source card is preserved through product.initialVariant.
   useEffect(() => {
     if (product) {
       const initialVariant = product.initialVariant || (product.variants && product.variants.length > 0
@@ -78,7 +84,8 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
     }
   }, [product]);
 
-  // Handle ESC key press & body scroll lock
+  // Support Escape-to-close and lock background scrolling while open. Cleanup removes
+  // the global listener and restores the page's previous overflow value.
   useEffect(() => {
     if (!product) return;
 
@@ -98,10 +105,12 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
     };
   }, [product, onClose]);
 
+  // No selected product means there is no modal or backdrop to render.
   if (!product) return null;
 
   const handleVariantChange = (v) => {
     if (v.image === activeVariant.image && v.color === activeVariant.color) return;
+    // Fade the old image before committing the new variant.
     setImageFade(true);
     setTimeout(() => {
       setActiveVariant(v);
@@ -110,6 +119,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
   };
 
   const handleAdd = () => {
+    // Enforce explicit sizing in the handler as well as through the disabled button.
     if (!selectedSize) return;
 
     setAddedAnimation(true);
@@ -124,6 +134,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
       quantity: Number(quantity)
     };
 
+    // Prefer a caller-supplied cart action; otherwise use the shared cart context.
     if (onAddToCart) {
       onAddToCart(itemToAdd);
     } else if (contextAddToCart) {
@@ -132,6 +143,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
   };
 
   const handleWishlist = (e) => {
+    // Reflect the selection immediately and delegate persistence when provided.
     e.stopPropagation();
     setWishlistActive(!wishlistActive);
     if (onToggleWishlist) onToggleWishlist(product);
@@ -139,9 +151,11 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
 
   const itemPrice = typeof product.price === 'number' ? product.price : 59.99;
   const currentTotal = itemPrice * quantity;
+  // Shipping messaging uses the same shared threshold/rate configuration as checkout.
   const isFreeShippingEligible = currentTotal >= FREE_SHIPPING_THRESHOLD;
   const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - currentTotal);
 
+  // The backdrop closes the modal; the inner panel stops click and wheel propagation.
   return (
     <div 
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 md:p-6 bg-black/80 backdrop-blur-md animate-fade-in select-none"
