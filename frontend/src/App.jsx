@@ -45,9 +45,30 @@ function PageSkeleton() {
   );
 }
 
+// ชื่อหน้าแยกตาม route — เดิมทุกหน้าใช้ <title> เดียวกันจาก index.html
+const PAGE_TITLES = {
+  '/': 'MatchA • Modern Artisan Experience',
+  '/catalog': 'Catalog • MatchA',
+  '/personal-color': 'ค้นหาโทนสีผิว 4 ฤดูกาล • MatchA Personal Color Lab',
+  '/mix-match': 'Mix & Match Fashion Studio • MatchA',
+  '/lookbook': 'Editorial Lookbook • MatchA',
+  '/editorial': 'Editorial Lookbook • MatchA',
+  '/cart': 'ตะกร้าสินค้า • MatchA',
+  '/payment': 'ชำระเงิน • MatchA',
+  '/login': 'เข้าสู่ระบบ • MatchA',
+  '/signup': 'สมัครสมาชิก • MatchA',
+  '/account': 'บัญชีของฉัน • MatchA',
+  '/admin': 'Admin Console • MatchA'
+};
+
 function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // อัปเดต <title> ตามหน้าที่เปิดอยู่
+  useEffect(() => {
+    document.title = PAGE_TITLES[location.pathname] || PAGE_TITLES['/'];
+  }, [location.pathname]);
 
   // Context Hooks
   const { cartItems, setCartItems, addToCart, updateQty, removeItem, cartCount } = useCart();
