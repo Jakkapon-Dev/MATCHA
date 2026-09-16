@@ -6,8 +6,8 @@ import { useToast } from '../../context/ToastContext';
 export default function AuthModal({ isOpen, onClose, initialMode = 'login' }) {
   const { login } = useAuth();
   const { showToast } = useToast();
-  // Mode controls both the copy and whether the name field is rendered. Form values
-  // are retained when switching tabs so QA can move between modes without retyping.
+  // Mode controls both the copy and whether the name field is rendered. Form values are retained 
+  // when switching tabs so QA can move between modes without retyping.
   const [mode, setMode] = useState(initialMode); // 'login' or 'signup'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
