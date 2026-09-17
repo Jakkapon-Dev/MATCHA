@@ -6,8 +6,16 @@ import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 import productsData from '../data/products.js';
 import { getJwtSecret } from '../middleware/auth.js';
+import { isDemo } from '../config/storeMode.js';
 
 const router = express.Router();
+
+// หน้าชำระเงินฝั่งเว็บจะแสดงหน้ายืนยันก็ต่อเมื่อคำตอบบอกว่าร้านยังอยู่ในโหมดทดลอง
+// (features/demo/DemoCheckout.jsx) — ทุกทางที่คืนออเดอร์จึงต้องแนบค่านี้ไปด้วย
+const withStoreMode = (order) => ({
+  ...(order?.toObject ? order.toObject() : order),
+  isDemo
+});
 
 // Fallback store in memory if database is disconnected during local evaluation
 const memoryOrders = [];
@@ -59,12 +67,12 @@ router.post('/', async (req, res) => {
     if (mongoose.connection.readyState === 1) {
       const existing = await Order.findOne({ idempotencyKey: effectiveKey });
       if (existing) {
-        return res.status(200).json({ success: true, data: existing, message: 'Existing order returned (Idempotency)' });
+        return res.status(200).json({ success: true, data: withStoreMode(existing), message: 'Existing order returned (Idempotency)' });
       }
     } else {
       const existingMem = memoryOrders.find(o => o.idempotencyKey === effectiveKey);
       if (existingMem) {
-        return res.status(200).json({ success: true, data: existingMem, message: 'Existing order returned (Idempotency)' });
+        return res.status(200).json({ success: true, data: withStoreMode(existingMem), message: 'Existing order returned (Idempotency)' });
       }
     }
 
@@ -191,7 +199,7 @@ router.post('/', async (req, res) => {
 
     res.status(201).json({
       success: true,
-      data: savedOrder,
+      data: withStoreMode(savedOrder),
       message: 'บันทึกคำสั่งซื้อเรียบร้อยแล้ว'
     });
   } catch (err) {
@@ -208,7 +216,7 @@ router.post('/', async (req, res) => {
         if (existing) {
           return res.status(200).json({
             success: true,
-            data: existing,
+            data: withStoreMode(existing),
             message: 'Existing order returned (Idempotency)'
           });
         }
@@ -313,7 +321,7 @@ router.get('/:id', async (req, res) => {
 
     res.json({
       success: true,
-      data: order
+      data: withStoreMode(order)
     });
   } catch (err) {
     console.error('Error fetching order by ID:', err);
