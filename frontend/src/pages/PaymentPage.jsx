@@ -10,7 +10,7 @@ import OrderSuccessModal from '../components/payment/OrderSuccessModal';
 import { api } from '../services/api';
 import { useStoreMode } from '../context/StoreModeContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, shippingCostFor } from '../config/shipping';
-import DemoCheckout from '../features/demo/DemoCheckout';
+import PreviewNote from '../components/ui/PreviewNote';
 import { QrCode, Truck, Shield, AlertTriangle, RotateCcw } from 'lucide-react';
 
 const PAYMENT_METHODS = [
@@ -79,10 +79,10 @@ export default function PaymentPage() {
   // โหมดเดโมมีขั้นตอนของตัวเองและล้างตะกร้าทันทีที่ออเดอร์ถูกบันทึก
   // ถ้าปล่อยให้ guard นี้ทำงานด้วย หน้ายืนยันจะถูกเด้งทิ้งก่อนผู้ซื้อได้เห็นเลขออเดอร์
   useEffect(() => {
-    if (!isDemo && cartItems.length === 0 && !showSuccessModal) {
+    if (cartItems.length === 0 && !showSuccessModal) {
       navigate('/cart');
     }
-  }, [isDemo, cartItems, showSuccessModal, navigate]);
+  }, [cartItems, showSuccessModal, navigate]);
 
   // Pricing calculations
   const subtotal = cartItems.reduce(
@@ -160,7 +160,9 @@ export default function PaymentPage() {
     }
   };
 
-  if (isDemo) return <DemoCheckout />;
+  // โหมดทดลองใช้ฟอร์มกรอกที่อยู่และบัตรชุดเดียวกับโหมดร้านจริง เพื่อให้ผู้ที่มาลองใช้
+  // เห็นขั้นตอนการสั่งซื้อครบตามจริง — ต่างกันแค่ไม่มีการตัดเงินและไม่มีการจัดส่ง
+  // เลขบัตรอยู่ใน state ของหน้านี้เท่านั้น ไม่ถูกส่งไปกับ orderPayload และไม่ถูกบันทึกที่ใด
   return (
     <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
@@ -197,6 +199,16 @@ export default function PaymentPage() {
           
           {/* Main Form Steps (Left Column) */}
           <div ref={stepMotionRef} className="lg:col-span-7">
+            {isDemo && (
+              <PreviewNote className="mb-5">
+                <strong>โหมดทดลอง</strong> — ขั้นตอนและฟอร์มเหมือนการสั่งซื้อจริงทุกอย่าง
+                แต่ไม่มีการตัดเงินและไม่มีการจัดส่ง
+                <br />
+                กรุณา<strong>ใช้ข้อมูลสมมติเท่านั้น</strong> อย่ากรอกเลขบัตรจริง
+                (เลขบัตรที่กรอกอยู่ในหน้าจอนี้เท่านั้น ไม่ถูกส่งออกและไม่ถูกบันทึกที่ใด)
+              </PreviewNote>
+            )}
+
             {step === 'shipping' ? (
               <ShippingStep
                 formData={formData}
