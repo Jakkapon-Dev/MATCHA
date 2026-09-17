@@ -164,7 +164,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
 
   // The hook owns remote loading and retry behavior; this component selects which
   // loading, error, empty, or product-list state to render.
-  const { products, loading, error, retry } = useStreetProducts();
+  const { products, loading, error, slow, retry } = useStreetProducts();
 
   const categories = [
     { key: 'ALL', label: 'ALL DROPS' },
@@ -255,7 +255,14 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
             ref={scrollRef}
             className="flex overflow-x-auto scrollbar-none divide-x-2 divide-[#C91D1D] scroll-smooth"
           >
-            {loading ? <div role="status" aria-label="กำลังโหลดสินค้า" className="flex gap-4 p-5">{[0, 1, 2, 3].map(i => <div key={i} className="w-64 sm:w-72 lg:w-80 shrink-0"><ProductCardSkeleton /></div>)}</div>
+            {loading ? <div role="status" aria-label="กำลังโหลดสินค้า" className="p-5">
+                {slow && (
+                  <p className="mb-4 text-xs font-mono text-[#666666] leading-relaxed">
+                    ⏳ กำลังปลุกเซิร์ฟเวอร์ ครั้งแรกหลังไม่มีคนเข้าสักพักอาจใช้เวลาถึงหนึ่งนาที
+                  </p>
+                )}
+                <div className="flex gap-4">{[0, 1, 2, 3].map(i => <div key={i} className="w-64 sm:w-72 lg:w-80 shrink-0"><ProductCardSkeleton /></div>)}</div>
+              </div>
               : error ? <div role="alert" className="p-6 text-red-900"><p>{error}</p><button onClick={retry} className="mt-3 px-4 py-2 rounded-lg bg-[#042509] text-white hover:bg-[#021505]">ลองใหม่</button></div>
               : !filteredProducts.length ? <div className="m-5 p-6 border border-dashed border-[#DCDCDC] rounded-xl"><ShoppingBag aria-hidden="true" /><p className="my-3">ยังไม่มีสินค้าในหมวดนี้</p><button onClick={onExploreCatalog} className="px-4 py-2 rounded-lg bg-[#042509] text-white hover:bg-[#021505]">ดูสินค้าทั้งหมด</button></div>
               : filteredProducts.map((item) => (
