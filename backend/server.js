@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
   res.json({
     app: 'MatchA API Server',
     status: 'online',
-    frontendUrl: 'http://localhost:5173',
+    frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
     message: 'Backend API is running.',
     endpoints: ['/api/health', '/api/lookbooks', '/api/admin/lookbooks', '/api/admin/media']
   });

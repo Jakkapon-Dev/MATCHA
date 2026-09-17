@@ -60,20 +60,24 @@ out/
 # 6. Environment Variables & Secret Credentials (NEVER COMMIT)
 .env
 .env.*
+!.env.example
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 backend/.env
 backend/.env.*
+!backend/.env.example
 backend/.env.local
 backend/.env.production
 frontend/.env
 frontend/.env.*
+!frontend/.env.example
 frontend/.env.local
 frontend/.env.production
 app/backend/.env
 app/backend/.env.*
+!app/backend/.env.example
 app/frontend/.env
 app/frontend/.env.*
 *.pem

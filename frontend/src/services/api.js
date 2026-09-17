@@ -235,7 +235,7 @@ export const api = {
       const res = await fetchWithFallback('/categories');
       if (res && res.data) return res.data;
     } catch (err) {
-      console.warn('Backend categories fetch failed, using local dataset fallback');
+      console.warn('Backend categories fetch failed, using local dataset fallback:', err);
     }
 
     const categoryCounts = productsData.reduce((acc, p) => {
@@ -269,8 +269,8 @@ export const api = {
       const res = await fetchWithFallback(endpoint);
       if (res && res.data) return res;
     } catch (err) {
+      console.warn('Backend products fetch failed, using local filtering fallback:', err);
       if (!allowFallback) throw err;
-      console.warn('Backend products fetch failed, using local filtering fallback');
     }
 
     // Local in-browser filtering fallback
