@@ -18,6 +18,7 @@ import { init as initUserStore } from './services/userStore.js';
 import authRoutes from './routes/auth.js';
 import lookbookRoutes from './routes/lookbookRoutes.js';
 import mediaRoutes from './routes/mediaRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
@@ -64,6 +65,7 @@ app.get('/api/store-config', (req, res) => res.json({ success: true, data: { mod
 initUserStore({ bcrypt, adminPassword: process.env.ADMIN_SEED_PASSWORD });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Modular Feature Routes (Lookbook & Media Management)
 app.use('/api', lookbookRoutes);

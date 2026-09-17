@@ -2,7 +2,7 @@ const products = [
   {
     "id": "AUT-ACC-001",
     "name": "MatchA Autumn Bags",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระเป๋าสะพายสไตล์เอิร์ธโทน ดีไซน์มินิมอลผสานช่องใส่สัมภาระอเนกประสงค์ เหมาะสำหรับลุคสตรีทและวันเดินทางในฤดูใบไม้ร่วง",
     "price": 43.99,
     "originalPrice": 51.5,
     "tag": "New Drop",
@@ -47,7 +47,7 @@ const products = [
   {
     "id": "AUT-ACC-002",
     "name": "MatchA Autumn Scarves",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "ผ้าพันคอเนื้อนุ่มสัมผัสสบาย ถักทอลวดลายเรียบหรู เสริมเลเยอร์ความอบอุ่นและสไตล์มินิมอลสำหรับฤดูใบไม้ร่วง",
     "price": 57.99,
     "originalPrice": 66.99,
     "tag": "Limited 2026",
@@ -92,7 +92,7 @@ const products = [
   {
     "id": "AUT-BOT-003",
     "name": "MatchA Autumn Chinos",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงชิโน่ขากระบอกตรง ทรง Relaxed สวมใส่สบาย คัตติ้งเนี้ยบในโทนสีธรรมชาติที่ผสมผสานความคลาสสิกกับความทันสมัย",
     "price": 81.99,
     "originalPrice": 108.5,
     "tag": "Essentials",
@@ -146,7 +146,7 @@ const products = [
   {
     "id": "AUT-BOT-004",
     "name": "MatchA Autumn Jeans",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "ยีนส์เดนิมฟอกสีพิเศษ ทรงตรงสไตล์สตรีทวินเทจ สวมใส่สบายและคงทน เข้ากับเสื้อผ้าได้หลากหลายสไตล์",
     "price": 70.99,
     "originalPrice": 95,
     "tag": "Trending",
@@ -200,7 +200,7 @@ const products = [
   {
     "id": "AUT-BOT-005",
     "name": "MatchA Autumn Pants",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงขายาวผ้าทอพรีเมียม สไตล์ Tailored เรียบง่าย ให้ลุคภูมิฐานแต่ผ่อนคลาย เหมาะสำหรับการแมตช์เลเยอร์",
     "price": 74.99,
     "originalPrice": 86.99,
     "tag": "Popular",
@@ -254,7 +254,7 @@ const products = [
   {
     "id": "AUT-BOT-006",
     "name": "MatchA Autumn Skirts",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระโปรงสไตล์โมเดิร์นมินิมอล ทรงพลิ้วไหวในโทนสีอบอุ่นของฤดูกาล เสริมความสง่างามอย่างเป็นธรรมชาติ",
     "price": 68.99,
     "originalPrice": 78.5,
     "tag": "Best Seller",
@@ -308,7 +308,7 @@ const products = [
   {
     "id": "AUT-ACC-007",
     "name": "MatchA Autumn Boots",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "รองเท้าบูทหุ้มข้อสไตล์ออทัมน์ ดีไซน์ร่วมสมัย ทรงหัวมน พื้นรองเท้าทนทานรับแรงกระแทกได้ดี เหมาะสำหรับการเดินในเมือง",
     "price": 102.99,
     "originalPrice": 125.5,
     "tag": "New Drop",
@@ -353,7 +353,7 @@ const products = [
   {
     "id": "AUT-ACC-008",
     "name": "MatchA Autumn Loafers",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "รองเท้าโลฟเฟอร์หนังคลาสสิก ตกแต่งสไตล์มินิมอล พื้นนุ่มรองรับสรีระเท้า สวมใส่ง่ายเข้าได้กับทุกลุค",
     "price": 61.99,
     "originalPrice": 73.99,
     "tag": "Limited 2026",
@@ -398,7 +398,7 @@ const products = [
   {
     "id": "AUT-TOP-009",
     "name": "MatchA Autumn Hoodies",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อฮู้ดดี้ทรงโอเวอร์ไซส์ ดีไซน์สตรีทญี่ปุ่น ผ้านุ่มสบายพร้อมกระเป๋าจิงโจ้และเชือกปรับระดับ",
     "price": 65.99,
     "originalPrice": 87.5,
     "tag": "Essentials",
@@ -447,7 +447,7 @@ const products = [
   {
     "id": "AUT-OUT-010",
     "name": "MatchA Autumn Jackets",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อแจ็กเก็ตทรงหลวม คัตติ้งคมชัด เสริมลุคเอาต์ดอร์ด้วยดีเทลกระเป๋าฟังก์ชันและซิปคู่",
     "price": 139.99,
     "originalPrice": 159.99,
     "tag": "Trending",
@@ -501,7 +501,7 @@ const products = [
   {
     "id": "AUT-TOP-011",
     "name": "MatchA Autumn Shirts",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อเชิ้ตแขนยาวผ้าเนื้อละเอียด ทรง Relaxed สวมใส่เดี่ยวหรือเป็นเลเยอร์ตัวนอกได้ตลอดวัน",
     "price": 63.99,
     "originalPrice": 78,
     "tag": "Popular",
@@ -555,7 +555,7 @@ const products = [
   {
     "id": "AUT-TOP-012",
     "name": "MatchA Autumn Sweaters",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สเวตเตอร์ผ้าถักเนื้อนุ่ม คอกลมทรงโมเดิร์น ให้ความอบอุ่นและมีมิติของเนื้อผ้าที่โดดเด่น",
     "price": 92.99,
     "originalPrice": 109.5,
     "tag": "Best Seller",
@@ -609,7 +609,7 @@ const products = [
   {
     "id": "SPR-ACC-013",
     "name": "MatchA Spring Bags",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระเป๋าสะพายผ้าแคนวาสและหนัง ผสมผสานโทนสีพาสเทลสดใส พกพาง่าย จุของได้จุใจ",
     "price": 46.99,
     "originalPrice": 63.5,
     "tag": "New Drop",
@@ -654,7 +654,7 @@ const products = [
   {
     "id": "SPR-ACC-014",
     "name": "MatchA Spring Scarves",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "ผ้าพันคอบางเบา สีสันอ่อนโยน เหมาะสำหรับวันสบาย ๆ ในฤดูใบไม้ผลิ เสริมลุคละมุนตา",
     "price": 60.99,
     "originalPrice": 70,
     "tag": "Limited 2026",
@@ -699,7 +699,7 @@ const products = [
   {
     "id": "SPR-BOT-015",
     "name": "MatchA Spring Jeans",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "ยีนส์เดนิมฟอกสีสว่าง ลุคสดใสต้อนรับฤดูใบไม้ผลิ สวมใส่สบายด้วยเนื้อผ้ายืดหยุ่นปานกลาง",
     "price": 69.99,
     "originalPrice": 82.5,
     "tag": "Essentials",
@@ -748,7 +748,7 @@ const products = [
   {
     "id": "SPR-BOT-016",
     "name": "MatchA Spring Pants",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงผ้าเนื้อเบาระบายอากาศ ทรงกระบอกตรง ใส่สบายคล่องตัวในทุกกิจกรรมประจำวัน",
     "price": 73.99,
     "originalPrice": 84.99,
     "tag": "Trending",
@@ -797,7 +797,7 @@ const products = [
   {
     "id": "SPR-BOT-017",
     "name": "MatchA Spring Shorts",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงขาสั้นลำลอง ทรงพอดีตัว โทนสีพาสเทลสดใส เหมาะกับกิจกรรมกลางแจ้งและวันพักผ่อน",
     "price": 57.99,
     "originalPrice": 66,
     "tag": "Popular",
@@ -846,7 +846,7 @@ const products = [
   {
     "id": "SPR-BOT-018",
     "name": "MatchA Spring Skirts",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระโปรงทรงเอโทนสว่าง ดีไซน์พลิ้วไหวสดใส ตัดเย็บประณีตขับเน้นความอ่อนหวาน",
     "price": 71.99,
     "originalPrice": 97.5,
     "tag": "Best Seller",
@@ -895,7 +895,7 @@ const products = [
   {
     "id": "SPR-ACC-019",
     "name": "MatchA Spring Loafers",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "รองเท้าโลฟเฟอร์สไตล์ลำลอง โทนสีอ่อนสบายตา สวมใส่ง่าย น้ำหนักเบา ระบายอากาศดี",
     "price": 60.99,
     "originalPrice": 80.5,
     "tag": "New Drop",
@@ -940,7 +940,7 @@ const products = [
   {
     "id": "SPR-ACC-020",
     "name": "MatchA Spring Sneakers",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สนีกเกอร์ข้อสั้นโทนสีสดใส พื้นยางยึดเกาะดีเยี่ยม นุ่มเบาทุกย่างก้าวสำหรับไลฟ์สไตล์คนเมือง",
     "price": 64.99,
     "originalPrice": 87,
     "tag": "Limited 2026",
@@ -985,7 +985,7 @@ const products = [
   {
     "id": "SPR-TOP-021",
     "name": "MatchA Spring Band Collar Shirts",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อเชิ้ตคอจีนมินิมอล ดีไซน์เรียบเท่ สะอาดตา เข้ากับสภาพอากาศฤดูใบไม้ผลิได้สมบูรณ์แบบ",
     "price": 58.99,
     "originalPrice": 71.5,
     "tag": "Essentials",
@@ -1034,7 +1034,7 @@ const products = [
   {
     "id": "SPR-TOP-022",
     "name": "MatchA Spring Cardigans",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "คาร์ดิแกนผ้าถักบางเบา กระดุมหน้าลายไม้ เสริมความอบอุ่นกำลังดีและลุคน่ารักสดใส",
     "price": 62.99,
     "originalPrice": 80,
     "tag": "Trending",
@@ -1083,7 +1083,7 @@ const products = [
   {
     "id": "SPR-TOP-023",
     "name": "MatchA Spring Polo Shirts",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อโปโลผ้าปีเก้สัมผัสนุ่ม คอปกเนี้ยบ ทรงสมาร์ทแคชชวลที่ใส่ได้ทั้งวันทำงานและวันพักผ่อน",
     "price": 51.99,
     "originalPrice": 68.99,
     "tag": "Popular",
@@ -1132,7 +1132,7 @@ const products = [
   {
     "id": "SPR-TOP-024",
     "name": "MatchA Spring Shirts",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อเชิ้ตผ้าคอตตอนเบาสบาย ระบายอากาศได้ดีเยี่ยม ลายเส้นและสีสันโปร่งโล่งสบายตา",
     "price": 55.99,
     "originalPrice": 75.5,
     "tag": "Best Seller",
@@ -1181,7 +1181,7 @@ const products = [
   {
     "id": "ART-OUT-025",
     "name": "MatchA Artisan Cobalt Coat",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "โค้ตยาวสีน้ำเงินโคบอลต์ คัตติ้งเชิงสถาปัตยกรรมระดับงานฝีมือ สวยเด่นสง่างามทุกมุมมอง",
     "price": 139.99,
     "originalPrice": 170.99,
     "tag": "New Drop",
@@ -1215,7 +1215,7 @@ const products = [
   {
     "id": "ART-TOP-026",
     "name": "MatchA Artisan Cognac Boots",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "บูทหนังแท้สีคอนญัก งานเย็บมือประณีต ทรงคลาสสิกเหนือกาลเวลา ยิ่งใส่ยิ่งนุ่มกระชับเท้า",
     "price": 103.99,
     "originalPrice": 137,
     "tag": "Limited 2026",
@@ -1249,7 +1249,7 @@ const products = [
   {
     "id": "ART-TOP-027",
     "name": "MatchA Artisan Coral Bag",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระเป๋าถือทรงมินิมอลสีคอรัล ดีไซน์งานฝีมือโดดเด่นสะดุดตา สายสะพายปรับระดับได้",
     "price": 42.99,
     "originalPrice": 55.5,
     "tag": "Essentials",
@@ -1283,7 +1283,7 @@ const products = [
   {
     "id": "ART-TOP-028",
     "name": "MatchA Artisan Coral Blouse",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อเบลาส์สีคอรัลผ้าทอมือ คอปกเอกลักษณ์ พลิ้วไหวหรูหราสะท้อนเสน่ห์ของงานคราฟต์",
     "price": 56.99,
     "originalPrice": 69.99,
     "tag": "Trending",
@@ -1317,7 +1317,7 @@ const products = [
   {
     "id": "ART-TOP-029",
     "name": "MatchA Artisan Coral Sneakers",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สนีกเกอร์งานคราฟต์สีคอรัล ดีเทลตัดเย็บละเอียดพิเศษ พื้นรองเท้าซัพพอร์ตสรีระอย่างดีเยี่ยม",
     "price": 70.99,
     "originalPrice": 83,
     "tag": "Popular",
@@ -1351,7 +1351,7 @@ const products = [
   {
     "id": "ART-TOP-030",
     "name": "MatchA Artisan Cream Bag",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระเป๋าสะพายโทนสีครีม มินิมอลเรียบหรู แมตช์ได้กับทุกลุค พร้อมช่องใส่ของแบบแบ่งสัดส่วน",
     "price": 39.99,
     "originalPrice": 45.5,
     "tag": "Best Seller",
@@ -1385,7 +1385,7 @@ const products = [
   {
     "id": "ART-TOP-031",
     "name": "MatchA Artisan Gold Necklace",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สร้อยคอทองเหลืองชุบทองคำแท้สไตล์อาร์ติซาน เส้นเรียบเก๋ มีเสน่ห์ความหรูหราแบบพอดี",
     "price": 53.99,
     "originalPrice": 62.99,
     "tag": "New Drop",
@@ -1419,7 +1419,7 @@ const products = [
   {
     "id": "ART-TOP-032",
     "name": "MatchA Artisan Mustard Sweater",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สเวตเตอร์ผ้าทอเนื้อหนาสีมัสตาร์ด โทนสีอบอุ่นเป็นเอกลักษณ์ สร้างความโดดเด่นในทุกโอกาส",
     "price": 97.99,
     "originalPrice": 132,
     "tag": "Limited 2026",
@@ -1453,7 +1453,7 @@ const products = [
   {
     "id": "ART-TOP-033",
     "name": "MatchA Artisan Peach Skirt",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระโปรงผ้าทอมือสีพีช คัตติ้งละเอียดอ่อน ละมุนทุกการเคลื่อนไหว ดีไซน์เอวสูงเสริมทรวดทรง",
     "price": 71.99,
     "originalPrice": 95.5,
     "tag": "Essentials",
@@ -1487,7 +1487,7 @@ const products = [
   {
     "id": "ART-TOP-034",
     "name": "MatchA Artisan Silk Scarf",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "ผ้าพันคอผ้าไหมธรรมชาติพิมพ์ลายสไตล์ญี่ปุ่น ผิวสัมผัสเนียนลื่น อ่อนโยนต่อผิวพรรณ",
     "price": 29.99,
     "originalPrice": 38.99,
     "tag": "Trending",
@@ -1521,7 +1521,7 @@ const products = [
   {
     "id": "ART-TOP-035",
     "name": "MatchA Artisan Silver Earrings",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "ต่างหูเงินแท้ดีไซน์เรขาคณิต เรียบหรูน้ำหนักเบา สวมใส่สบายไม่ถ่วงหู ไม่ระคายเคือง",
     "price": 54.99,
     "originalPrice": 67,
     "tag": "Popular",
@@ -1555,7 +1555,7 @@ const products = [
   {
     "id": "ART-TOP-036",
     "name": "MatchA Artisan Teal Pants",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงเทเลอร์สีเขียวทีล คัตติ้งเนี้ยบ ทรงสวยสง่างาม เพิ่มความมั่นใจในสไตล์ของคุณ",
     "price": 78.99,
     "originalPrice": 93.5,
     "tag": "Best Seller",
@@ -1589,7 +1589,7 @@ const products = [
   {
     "id": "SUM-ACC-037",
     "name": "MatchA Summer Hats",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "หมวกสานปีกกว้างกันแดด ดีไซน์ธรรมชาติ ช่วยปกป้องรังสียูวี เหมาะสำหรับทริปทะเลและวันแดดจัด",
     "price": 52.99,
     "originalPrice": 60.5,
     "tag": "New Drop",
@@ -1634,7 +1634,7 @@ const products = [
   {
     "id": "SUM-ACC-038",
     "name": "MatchA Summer Sunglasses",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "แว่นตากันแดดทรงคลาสสิก เลนส์กรองแสง UV400 กรอบน้ำหนักเบา สวมใส่สบายตลอดวัน",
     "price": 41.99,
     "originalPrice": 47,
     "tag": "Limited 2026",
@@ -1679,7 +1679,7 @@ const products = [
   {
     "id": "SUM-BOT-039",
     "name": "MatchA Summer Jeans",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงยีนส์เดนิมฟอกบาง สวมใส่สบายไม่อึดอัดในหน้าร้อน ระบายเหงื่อได้ดีเยี่ยม",
     "price": 75.99,
     "originalPrice": 100.99,
     "tag": "Essentials",
@@ -1728,7 +1728,7 @@ const products = [
   {
     "id": "SUM-BOT-040",
     "name": "MatchA Summer Linen Pants",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงผ้าลินินแท้ 100% ระบายอากาศยอดเยี่ยม แห้งไว เบาสบาย ทรงหลวมสไตล์รีสอร์ต",
     "price": 79.99,
     "originalPrice": 107.5,
     "tag": "Trending",
@@ -1777,7 +1777,7 @@ const products = [
   {
     "id": "SUM-BOT-041",
     "name": "MatchA Summer Shorts",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงขาสั้นผ้าเบา คล่องตัวในทุกกิจกรรมริมหาดและในเมือง มาพร้อมขอบเอวยางยืดปรับได้",
     "price": 63.99,
     "originalPrice": 73,
     "tag": "Popular",
@@ -1826,7 +1826,7 @@ const products = [
   {
     "id": "SUM-BOT-042",
     "name": "MatchA Summer Skirts",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระโปรงผ้าเบาพลิ้วไหวรับลมทะเล ดีไซน์สดใสให้ความรู้สึกสดชื่นตลอดฤดูร้อน",
     "price": 62.99,
     "originalPrice": 71.99,
     "tag": "Best Seller",
@@ -1875,7 +1875,7 @@ const products = [
   {
     "id": "SUM-ACC-043",
     "name": "MatchA Summer Sandals",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "รองเท้าแตะแซนดัลสไตล์สตรีท สายรัดปรับระดับได้ พื้นนุ่มกันลื่น สบายเท้าในทุกก้าว",
     "price": 43.99,
     "originalPrice": 59.5,
     "tag": "New Drop",
@@ -1920,7 +1920,7 @@ const products = [
   {
     "id": "SUM-ACC-044",
     "name": "MatchA Summer Sneakers",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สนีกเกอร์ผ้าตาข่ายระบายอากาศ เบาพิเศษ ป้องกันกลิ่นอับ เหมาะกับสภาพอากาศร้อน",
     "price": 70.99,
     "originalPrice": 81,
     "tag": "Limited 2026",
@@ -1965,7 +1965,7 @@ const products = [
   {
     "id": "SUM-TOP-045",
     "name": "MatchA Summer Crop Tops",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อครอปท็อปผ้าคอตตอนสัมผัสนุ่ม สดใส มิกซ์แอนด์แมตช์กับกางเกงเอวสูงได้อย่างลงตัว",
     "price": 36.99,
     "originalPrice": 47.5,
     "tag": "Essentials",
@@ -2014,7 +2014,7 @@ const products = [
   {
     "id": "SUM-TOP-046",
     "name": "MatchA Summer Shirts",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อเชิ้ตเปิดคอรับลมร้อน สไตล์รีสอร์ต ลายพิมพ์และสีสันโปร่งโล่งสบายตา",
     "price": 53.99,
     "originalPrice": 71,
     "tag": "Trending",
@@ -2063,7 +2063,7 @@ const products = [
   {
     "id": "SUM-TOP-047",
     "name": "MatchA Summer T Shirts",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อยืดคอกลมผ้าฝ้ายระบายอากาศดี เบาสบายตลอดวัน ดีไซน์มินิมอลใส่ง่ายได้ทุกวัน",
     "price": 57.99,
     "originalPrice": 78.99,
     "tag": "Popular",
@@ -2112,7 +2112,7 @@ const products = [
   {
     "id": "SUM-TOP-048",
     "name": "MatchA Summer Tank Tops",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อกล้ามทรงสวย คอกลมกว้าง ระบายเหงื่อได้ดีเยี่ยม เหมาะกับกิจกรรมกลางแจ้ง",
     "price": 48.99,
     "originalPrice": 56.5,
     "tag": "Best Seller",
@@ -2161,7 +2161,7 @@ const products = [
   {
     "id": "WIN-ACC-049",
     "name": "MatchA Winter Beanies",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "หมวกบีนนี่ไหมพรมหนานุ่ม กระชับศีรษะ กักเก็บความอบอุ่นและกันลมหนาวได้ดีเยี่ยม",
     "price": 29.99,
     "originalPrice": 34,
     "tag": "New Drop",
@@ -2206,7 +2206,7 @@ const products = [
   {
     "id": "WIN-ACC-050",
     "name": "MatchA Winter Gloves",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "ถุงมือไหมพรมถักทอแน่นหนา พร้อมปลายนิ้วสัมผัสหน้าจอสมาร์ตโฟน ใช้งานสะดวก",
     "price": 33.99,
     "originalPrice": 39.5,
     "tag": "Limited 2026",
@@ -2251,7 +2251,7 @@ const products = [
   {
     "id": "WIN-BOT-051",
     "name": "MatchA Winter Jeans",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงยีนส์ผ้าเดนิมหนาพิเศษ ทนทาน กักเก็บความอบอุ่นในวันที่อากาศเย็นยะเยือก",
     "price": 78.99,
     "originalPrice": 96.99,
     "tag": "Essentials",
@@ -2300,7 +2300,7 @@ const products = [
   {
     "id": "WIN-BOT-052",
     "name": "MatchA Winter Joggers",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงจ็อกเกอร์บุผ้าฟลีซด้านใน อบอุ่น นุ่มสบาย คล่องตัว เหมาะกับวันพักผ่อนฤดูหนาว",
     "price": 82.99,
     "originalPrice": 97,
     "tag": "Trending",
@@ -2349,7 +2349,7 @@ const products = [
   {
     "id": "WIN-BOT-053",
     "name": "MatchA Winter Pants",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงสแล็คผ้าทอเนื้อหนากันลม ทรงสมาร์ทเนี้ยบสำหรับฤดูหนาวทั้งทางการและลำลอง",
     "price": 71.99,
     "originalPrice": 82.5,
     "tag": "Popular",
@@ -2398,7 +2398,7 @@ const products = [
   {
     "id": "WIN-BOT-054",
     "name": "MatchA Winter Skirts",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระโปรงผ้าวูลผสมทรงตรง ลุคอบอุ่นภูมิฐานในฤดูหนาว ตัดเย็บสวยงามเข้ารูปพอดีตัว",
     "price": 65.99,
     "originalPrice": 75.99,
     "tag": "Best Seller",
@@ -2447,7 +2447,7 @@ const products = [
   {
     "id": "WIN-ACC-055",
     "name": "MatchA Winter Boots",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "รองเท้าบูทกันหนาวบุซับในนุ่ม พื้นดอกยางลึกกันลื่นบนพื้นเปียก ทนทานต่อทุกสภาพอากาศ",
     "price": 99.99,
     "originalPrice": 117,
     "tag": "New Drop",
@@ -2492,7 +2492,7 @@ const products = [
   {
     "id": "WIN-ACC-056",
     "name": "MatchA Winter Sneakers",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สนีกเกอร์หุ้มข้อผ้ากันละอองน้ำ ดีไซน์ไฮสตรีทรับลมหนาว ซัพพอร์ตข้อเท้าได้มั่นคง",
     "price": 73.99,
     "originalPrice": 84.5,
     "tag": "Limited 2026",
@@ -2537,7 +2537,7 @@ const products = [
   {
     "id": "WIN-OUT-057",
     "name": "MatchA Winter Coats",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "โค้ตผ้าวูลตัวยาว คัตติ้งเนี้ยบ ปกคอสูงกันลมหนาวได้อย่างสมบูรณ์แบบ เพิ่มความภูมิฐาน",
     "price": 132.99,
     "originalPrice": 151,
     "tag": "Essentials",
@@ -2586,7 +2586,7 @@ const products = [
   {
     "id": "WIN-TOP-058",
     "name": "MatchA Winter Hoodies",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อฮู้ดผ้าหนานุ่มพิเศษ ทรงโอเวอร์ไซส์ บุซับในกันหนาว อบอุ่นมั่นใจในทุกทริป",
     "price": 66.99,
     "originalPrice": 81.5,
     "tag": "Trending",
@@ -2635,7 +2635,7 @@ const products = [
   {
     "id": "WIN-OUT-059",
     "name": "MatchA Winter Jackets",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "แจ็กเก็ตดาวน์น้ำหนักเบา เก็บกักอุณหภูมิร่างกายได้ดีเยี่ยม พกพาสะดวกพร้อมลุยทุกความหนาว",
     "price": 140.99,
     "originalPrice": 190.99,
     "tag": "Popular",
@@ -2684,7 +2684,7 @@ const products = [
   {
     "id": "WIN-TOP-060",
     "name": "MatchA Winter Sweaters",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สเวตเตอร์คอกลมไหมพรมเนื้อหนา สัมผัสนุ่มละมุน ลายถักคลาสสิกสร้างลุคฤดูหนาวที่อบอุ่น",
     "price": 89.99,
     "originalPrice": 102,
     "tag": "Best Seller",
