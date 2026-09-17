@@ -144,7 +144,9 @@ export default function PulsePerks() {
                 className="absolute bottom-4 right-4 px-3 py-1 bg-black/80 text-[#F1F1F1] text-[9px] font-mono tracking-wider uppercase backdrop-blur-md shadow-lg"
                 style={{ transform: 'translateZ(30px)' }}
               >
-                <span>↻ MOVE MOUSE TO ROTATE</span>
+                {/* การ์ดหมุนได้ทั้งด้วยเมาส์และการลากนิ้ว ข้อความจึงต้องไม่สั่งให้ใช้เมาส์
+                    อย่างเดียว ไม่งั้นคนเปิดจากมือถือจะเห็นคำสั่งที่ทำตามไม่ได้ */}
+                <span>↻ MOVE OR DRAG TO ROTATE</span>
               </div>
             </div>
           </div>
