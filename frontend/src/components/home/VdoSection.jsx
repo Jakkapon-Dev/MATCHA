@@ -1,9 +1,41 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
 
 export default function VdoSection({ onClaimPromo }) {
   // Remote video is a fallback: the browser tries the local lookbook source first.
   const videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-stylish-model-posing-outdoors-in-the-city-41222-large.mp4";
+
+  const videoRef = useRef(null);
+
+  // ไฟล์วิดีโอไม่ถูกดาวน์โหลดตอนเปิดหน้าแรก (preload="none") จนกว่าส่วนนี้จะเลื่อนมาถึงจอ
+  // ระหว่างนั้นคนดูเห็นภาพ poster ไปก่อน — พอเลื่อนพ้นไปแล้วก็หยุดเล่นเพื่อไม่ให้กินแบตฟรี ๆ
+  //
+  // ต้องสั่ง play() เองเพราะ preload="none" กับ attribute autoplay ทำงานขัดกัน
+  // (เบราว์เซอร์จะโหลดไฟล์ทันทีถ้าเจอ autoplay) การเล่นแบบเงียบด้วยสคริปต์ไม่ต้องรอ
+  // ให้ผู้ใช้แตะก่อน ตราบใดที่ยังมี muted + playsInline ครบ จึงเล่นเองได้บนมือถือด้วย
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+
+    if (typeof IntersectionObserver !== 'function') {
+      el.play().catch(() => {});
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.play().catch(() => {});
+        } else {
+          el.pause();
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const handleClaim = (e) => {
     if (navigator?.clipboard?.writeText) {
@@ -22,10 +54,12 @@ export default function VdoSection({ onClaimPromo }) {
       
       {/* 1. Full-Height Background Video (Anchored to top to prevent head crop) */}
       <video
-        autoPlay
+        ref={videoRef}
         loop
         muted
         playsInline
+        preload="none"
+        poster="/videos/lookbook_reel_poster.webp"
         className="absolute inset-0 w-full h-full object-cover object-top sm:object-[center_15%] opacity-90 pointer-events-none"
       >
         <source src="/videos/lookbook_reel.mp4" type="video/mp4" />
