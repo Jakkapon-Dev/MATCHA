@@ -52,22 +52,10 @@ export default function LoginPage({ onLoginSuccess }) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       if (err.message && (err.message.includes('ติดต่อเซิร์ฟเวอร์ไม่ได้') || err.message.includes('Failed to communicate') || err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))) {
-        const isAdmin = email.toLowerCase().includes('admin');
-        const user = {
-          id: isAdmin ? 'demo-admin-01' : 'demo-member-01',
-          name: email.split('@')[0],
-          email: email.trim(),
-          role: isAdmin ? 'Admin' : 'Member',
-          tier: isAdmin ? 'VIP Connoisseur' : 'Regular Member'
-        };
-        login(user, rememberMe, 'demo-offline-token');
-        setSuccessMsg(`Welcome, ${user.name}! (${user.role} — Demo Mode) ✨`);
-        if (onLoginSuccess) onLoginSuccess(user);
-        navigate(user.role === 'Admin' ? '/admin' : '/');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
+        setErrorMsg('ตอนนี้เชื่อมต่อระบบไม่ได้ กรุณาลองใหม่');
+      } else {
+        setErrorMsg(err.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
       }
-      setErrorMsg(err.message || 'Unable to sign in right now. Please try again.');
     } finally {
       setIsLoading(false);
     }

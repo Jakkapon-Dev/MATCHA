@@ -33,14 +33,15 @@ export default function UserAccount() {
   const accountMotionRef = useChangeMotion(activeTab);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+  const [justLoggedOut, setJustLoggedOut] = useState(false);
   const [orders, setOrders] = useState([]);
   const [ordersLoaded, setOrdersLoaded] = useState(false);
 
   const [profile, setProfile] = useState({
-    firstName: currentUser?.firstName || currentUser?.name?.split(' ')[0] || 'Alex',
-    lastName: currentUser?.lastName || currentUser?.name?.split(' ').slice(1).join(' ') || 'Collector',
-    email: currentUser?.email || 'alex@matcha.vip',
-    phone: '081-999-8888',
+    firstName: currentUser?.firstName || currentUser?.name?.split(' ')[0] || '',
+    lastName: currentUser?.lastName || currentUser?.name?.split(' ').slice(1).join(' ') || '',
+    email: currentUser?.email || '',
+    phone: '',
   });
 
   const [preferences, setPreferences] = useState({
@@ -143,37 +144,69 @@ export default function UserAccount() {
 
   const handleConfirmLogout = () => {
     setShowLogoutConfirm(false);
+    setJustLoggedOut(true);
     logout();
-    navigate('/');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast('ออกจากระบบเรียบร้อยแล้ว', 'info');
   };
 
-  // If user is logged out while on /account, display graceful prompt
+  // If user is not logged in, display appropriate prompt based on whether they just logged out
   if (!currentUser) {
+    if (justLoggedOut) {
+      return (
+        <div className="min-h-[70vh] flex items-center justify-center p-4 bg-[#F1F1F1]">
+          <div className="bg-white border border-[#DCDCDC] rounded-3xl p-8 sm:p-12 max-w-md w-full text-center space-y-6 shadow-xl">
+            <div data-enter className="w-16 h-16 rounded-2xl bg-[#518F5C]/20 text-[#042509] flex items-center justify-center mx-auto text-2xl font-bold">
+              🍵
+            </div>
+            <div data-enter style={{ '--enter-delay': '70ms' }} className="space-y-2">
+              <h1 className="text-2xl font-black uppercase text-[#000000]">ออกจากระบบแล้ว</h1>
+              <p className="text-xs font-mono text-[#666666]">
+                คุณได้ออกจากระบบ MatchA เรียบร้อยแล้ว สามารถกลับมาเข้าสู่ระบบได้ทุกเมื่อ
+              </p>
+            </div>
+            <div data-enter style={{ '--enter-delay': '190ms' }} className="flex flex-col sm:flex-row gap-3">
+              <button
+                onClick={() => navigate('/login')}
+                className="flex-1 py-3 bg-[#000000] text-white text-xs font-bold font-mono uppercase rounded-xl shadow-md hover:bg-black/80 transition-all cursor-pointer"
+              >
+                เข้าสู่ระบบอีกครั้ง
+              </button>
+              <button
+                onClick={() => navigate('/')}
+                className="flex-1 py-3 border border-[#DCDCDC] text-xs font-bold font-mono uppercase text-[#000000] hover:bg-[#F1F1F1] rounded-xl transition-all cursor-pointer"
+              >
+                กลับสู่หน้าร้าน
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="min-h-[70vh] flex items-center justify-center p-4 bg-[#F1F1F1]">
         <div className="bg-white border border-[#DCDCDC] rounded-3xl p-8 sm:p-12 max-w-md w-full text-center space-y-6 shadow-xl">
-          <div data-enter className="w-16 h-16 rounded-2xl bg-[#518F5C] text-[#042509] flex items-center justify-center mx-auto text-2xl font-bold">
-            🍵
+          <div data-enter className="w-16 h-16 rounded-2xl bg-[#000000] text-white flex items-center justify-center mx-auto">
+            <User size={28} />
           </div>
           <div data-enter style={{ '--enter-delay': '70ms' }} className="space-y-2">
-            <h1 className="text-2xl font-black uppercase text-[#000000]">Signed Out</h1>
+            <h1 className="text-2xl font-black uppercase text-[#000000]">กรุณาเข้าสู่ระบบ</h1>
             <p className="text-xs font-mono text-[#666666]">
-              You have been successfully logged out of MatchA.
+              เข้าสู่ระบบสมาชิก MatchA เพื่อดูข้อมูลโปรไฟล์ ประวัติคำสั่งซื้อ และจัดการบัญชีของคุณ
             </p>
           </div>
           <div data-enter style={{ '--enter-delay': '190ms' }} className="flex flex-col sm:flex-row gap-3">
             <button
-              onClick={() => navigate('/login')}
-              className="flex-1 py-3 bg-[#042509] text-white text-xs font-bold font-mono uppercase rounded-xl shadow-md hover:bg-[#021505] transition-all cursor-pointer"
+              onClick={() => navigate('/login', { state: { from: '/account' } })}
+              className="flex-1 py-3 bg-[#000000] text-white text-xs font-bold font-mono uppercase rounded-xl shadow-md hover:bg-black/80 transition-all cursor-pointer"
             >
-              Sign In Again
+              เข้าสู่ระบบทันที
             </button>
             <button
-              onClick={() => navigate('/')}
+              onClick={() => navigate('/signup')}
               className="flex-1 py-3 border border-[#DCDCDC] text-xs font-bold font-mono uppercase text-[#000000] hover:bg-[#F1F1F1] rounded-xl transition-all cursor-pointer"
             >
-              Back to Store
+              สมัครสมาชิก
             </button>
           </div>
         </div>

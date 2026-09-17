@@ -51,6 +51,27 @@ function guestId() {
   }
 }
 
+function mapHttpError(status, serverMessage) {
+  console.warn(`[API] Request failed (${status}):`, serverMessage || 'No server message');
+
+  if (status === 401) {
+    return 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
+  }
+  if (status === 403) {
+    return 'คุณไม่มีสิทธิ์เข้าถึงส่วนนี้';
+  }
+  if (status === 404) {
+    return serverMessage || 'ไม่พบข้อมูลที่ต้องการในระบบ';
+  }
+  if (status === 400) {
+    return serverMessage || 'ข้อมูลที่ส่งไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง';
+  }
+  if (status === 405 || (status >= 500 && status <= 599)) {
+    return 'ระบบขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง';
+  }
+  return serverMessage || 'เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง';
+}
+
 async function fetchWithFallback(endpoint, options = {}) {
   const token = getToken();
   const headers = {
@@ -63,28 +84,45 @@ async function fetchWithFallback(endpoint, options = {}) {
 
   try {
     const res = await fetch(`${API_BASE}${endpoint}`, config);
-    if (res.ok) return await res.json();
+    if (res.ok) {
+      try {
+        return await res.json();
+      } catch (parseErr) {
+        console.warn(`[API] JSON parse error on ${endpoint}:`, parseErr);
+        throw new Error('ระบบขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง');
+      }
+    }
     const errorData = await res.json().catch(() => ({}));
-    throw new Error(errorData.message || `Request failed with status ${res.status}`);
+    throw new Error(mapHttpError(res.status, errorData.message));
   } catch (err) {
-    if (err.message && !err.message.includes('Failed to fetch') && !err.message.includes('NetworkError')) {
+    if (err.message && !err.message.includes('Failed to fetch') && !err.message.includes('NetworkError') && !err.message.includes('Failed to communicate')) {
       throw err;
     }
   }
 
-  // Fallback to direct backend URL. A deployed build has none — sending the
-  // visitor's browser to its own localhost would only fail more slowly.
+  // Fallback to direct backend URL (local development only)
   if (!DIRECT_API) {
-    throw new Error(`ติดต่อเซิร์ฟเวอร์ไม่ได้ (${endpoint})`);
+    throw new Error('ตอนนี้เชื่อมต่อระบบไม่ได้ กรุณาลองใหม่อีกครั้ง');
   }
 
   try {
     const directRes = await fetch(`${DIRECT_API}${endpoint}`, config);
-    if (directRes.ok) return await directRes.json();
+    if (directRes.ok) {
+      try {
+        return await directRes.json();
+      } catch (parseErr) {
+        console.warn(`[API] JSON parse error on ${DIRECT_API}${endpoint}:`, parseErr);
+        throw new Error('ระบบขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง');
+      }
+    }
     const errorData = await directRes.json().catch(() => ({}));
-    throw new Error(errorData.message || `Direct request failed with status ${directRes.status}`);
+    throw new Error(mapHttpError(directRes.status, errorData.message));
   } catch (err) {
-    throw new Error(err.message || `Failed to communicate with backend at ${endpoint}`);
+    if (err.message && !err.message.includes('Failed to fetch') && !err.message.includes('NetworkError')) {
+      throw err;
+    }
+    console.warn(`[API] Network failure at ${endpoint}:`, err.message);
+    throw new Error('ตอนนี้เชื่อมต่อระบบไม่ได้ กรุณาลองใหม่อีกครั้ง');
   }
 }
 

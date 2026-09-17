@@ -19,6 +19,7 @@ const EditorialLookbookPage = React.lazy(() => import('./pages/EditorialLookbook
 import Layout from './components/layout/Layout';
 import ProductModal from './components/product/ProductModal';
 import RequireRole from './components/auth/RequireRole';
+import RequireAuth from './components/auth/RequireAuth';
 import ErrorBoundary from './components/ui/ErrorBoundary';
 
 // Context Providers and Hooks
@@ -360,15 +361,17 @@ function AppContent() {
           <Route
             path="/account"
             element={
-              <UserAccount
-                cartCount={cartCount}
-                onOpenCart={handleOpenCart}
-                onNavigate={handleNavigate}
-                onGoToLanding={handleGoToHome}
-                user={currentUser}
-                onAddToCart={addToCart}
-                onLogout={logout}
-              />
+              <RequireAuth>
+                <UserAccount
+                  cartCount={cartCount}
+                  onOpenCart={handleOpenCart}
+                  onNavigate={handleNavigate}
+                  onGoToLanding={handleGoToHome}
+                  user={currentUser}
+                  onAddToCart={addToCart}
+                  onLogout={logout}
+                />
+              </RequireAuth>
             }
           />
 
