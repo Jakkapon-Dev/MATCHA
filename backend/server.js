@@ -13,6 +13,7 @@ import { fileURLToPath } from 'node:url';
 
 import { isDemo, demoProduct } from './config/storeMode.js';
 import productsData from './data/products.js';
+import Product from './models/Product.js';
 import { init as initUserStore } from './services/userStore.js';
 import authRoutes from './routes/auth.js';
 import lookbookRoutes from './routes/lookbookRoutes.js';
@@ -79,8 +80,61 @@ app.get('/api/items', (req, res) => {
   });
 });
 
-// Categories list with counts
-app.get('/api/categories', (req, res) => {
+// Standard Display Names for Categories
+const CATEGORY_NAMES = {
+  ALL: 'All Products',
+  Tops: 'Tops & Knitwear',
+  Bottoms: 'Bottoms & Denim',
+  Outerwear: 'Outerwear & Coats',
+  Shoes: 'Shoes & Footwear',
+  Accessories: 'Accessories & Bags'
+};
+
+// Categories list with counts (Atlas Connected + Fallback)
+app.get('/api/categories', async (req, res) => {
+  try {
+    if (mongoose.connection.readyState === 1) {
+      const counts = await Product.aggregate([
+        { $group: { _id: '$category', count: { $sum: 1 } } }
+      ]);
+      const totalCount = await Product.countDocuments();
+      const countMap = {};
+      counts.forEach(c => {
+        if (c._id) countMap[c._id] = c.count;
+      });
+
+      const categoryOrder = ['Tops', 'Bottoms', 'Outerwear', 'Shoes', 'Accessories'];
+      const categories = [
+        { id: 'ALL', name: 'All Products', count: totalCount }
+      ];
+
+      for (const id of categoryOrder) {
+        if (countMap[id] !== undefined) {
+          categories.push({
+            id,
+            name: CATEGORY_NAMES[id] || id,
+            count: countMap[id]
+          });
+        }
+      }
+
+      for (const [catId, count] of Object.entries(countMap)) {
+        if (!categoryOrder.includes(catId) && catId !== 'ALL') {
+          categories.push({
+            id: catId,
+            name: CATEGORY_NAMES[catId] || catId,
+            count
+          });
+        }
+      }
+
+      return res.json({ success: true, data: categories });
+    }
+  } catch (err) {
+    console.warn('MongoDB categories query error, using static fallback:', err.message);
+  }
+
+  // Safe fallback to static productsData
   const categoryCounts = productsData.reduce((acc, p) => {
     acc[p.category] = (acc[p.category] || 0) + 1;
     return acc;
@@ -91,14 +145,15 @@ app.get('/api/categories', (req, res) => {
     { id: 'Tops', name: 'Tops & Knitwear', count: categoryCounts['Tops'] || 0 },
     { id: 'Bottoms', name: 'Bottoms & Denim', count: categoryCounts['Bottoms'] || 0 },
     { id: 'Outerwear', name: 'Outerwear & Coats', count: categoryCounts['Outerwear'] || 0 },
+    { id: 'Shoes', name: 'Shoes & Footwear', count: categoryCounts['Shoes'] || 0 },
     { id: 'Accessories', name: 'Accessories & Bags', count: categoryCounts['Accessories'] || 0 }
   ];
 
   res.json({ success: true, data: categories });
 });
 
-// Full Catalog API with search, category, sort, price, inStock, and pagination
-app.get('/api/products', (req, res) => {
+// Full Catalog API with search, category, sort, price, inStock, and pagination (Atlas Connected + Fallback)
+app.get('/api/products', async (req, res) => {
   try {
     let {
       category = 'ALL',
@@ -114,6 +169,108 @@ app.get('/api/products', (req, res) => {
       limit = 24
     } = req.query;
 
+    if (mongoose.connection.readyState === 1) {
+      const filter = {};
+
+      if (category && category !== 'ALL') {
+        filter.category = new RegExp(`^${category.trim()}$`, 'i');
+      }
+
+      if (season && season !== 'ALL') {
+        filter.season = new RegExp(`^${season.trim()}$`, 'i');
+      }
+
+      if (search && search.trim()) {
+        const escaped = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const searchRegex = new RegExp(escaped, 'i');
+        filter.$or = [
+          { name: searchRegex },
+          { id: searchRegex },
+          { sku: searchRegex },
+          { description: searchRegex },
+          { color: searchRegex },
+          { tag: searchRegex }
+        ];
+      }
+
+      if (color && color !== 'ALL') {
+        filter.color = new RegExp(`^${color.trim()}$`, 'i');
+      }
+
+      if (fit && fit !== 'ALL') {
+        filter.fit = new RegExp(`^${fit.trim()}$`, 'i');
+      }
+
+      if (inStockOnly === 'true' || inStockOnly === true) {
+        filter.inStock = true;
+      }
+
+      const minP = parseFloat(minPrice) || 0;
+      const maxP = parseFloat(maxPrice) || 1000;
+      filter.price = { $gte: minP, $lte: maxP };
+
+      let sortObj = {};
+      switch (sort) {
+        case 'price-asc':
+          sortObj = { price: 1 };
+          break;
+        case 'price-desc':
+          sortObj = { price: -1 };
+          break;
+        case 'newest':
+          sortObj = { createdAt: -1, _id: -1 };
+          break;
+        case 'rating':
+          sortObj = { rating: -1, _id: -1 };
+          break;
+        case 'featured':
+        default:
+          sortObj = { isFeatured: -1, createdAt: -1, _id: -1 };
+          break;
+      }
+
+      const pageNum = Math.max(1, parseInt(page, 10) || 1);
+      const limitNum = Math.max(1, parseInt(limit, 10) || 24);
+      const skip = (pageNum - 1) * limitNum;
+
+      const [totalItems, paginatedProducts, stats] = await Promise.all([
+        Product.countDocuments(filter),
+        Product.find(filter).sort(sortObj).skip(skip).limit(limitNum).lean(),
+        Product.aggregate([
+          {
+            $group: {
+              _id: null,
+              minPrice: { $min: '$price' },
+              maxPrice: { $max: '$price' },
+              totalAll: { $sum: 1 }
+            }
+          }
+        ])
+      ]);
+
+      const totalPages = Math.ceil(totalItems / limitNum) || 1;
+      const priceStats = stats[0] || { minPrice: 0, maxPrice: 1000, totalAll: totalItems };
+
+      return res.json({
+        success: true,
+        data: paginatedProducts,
+        pagination: {
+          total: totalItems,
+          page: pageNum,
+          totalPages,
+          limit: limitNum,
+          hasNextPage: pageNum < totalPages,
+          hasPrevPage: pageNum > 1
+        },
+        availableFilters: {
+          totalAll: priceStats.totalAll,
+          priceMin: priceStats.minPrice,
+          priceMax: priceStats.maxPrice
+        }
+      });
+    }
+
+    // Fallback: Local array filtering when MongoDB is offline
     let filtered = [...productsData];
 
     // 1. Category Filter
@@ -149,7 +306,7 @@ app.get('/api/products', (req, res) => {
     }
 
     // 5. In-Stock Only Filter
-    if (inStockOnly === 'true') {
+    if (inStockOnly === 'true' || inStockOnly === true) {
       filtered = filtered.filter(p => p.inStock);
     }
 
@@ -182,7 +339,7 @@ app.get('/api/products', (req, res) => {
     const pageNum = parseInt(page, 10) || 1;
     const limitNum = parseInt(limit, 10) || 12;
     const totalItems = filtered.length;
-    const totalPages = Math.ceil(totalItems / limitNum);
+    const totalPages = Math.ceil(totalItems / limitNum) || 1;
     const startIndex = (pageNum - 1) * limitNum;
     const paginatedProducts = filtered.slice(startIndex, startIndex + limitNum);
 
@@ -206,6 +363,112 @@ app.get('/api/products', (req, res) => {
   } catch (error) {
     console.error('Error fetching products:', error);
     res.status(500).json({ success: false, message: 'Failed to retrieve products' });
+  }
+});
+
+// Single Product Detail API
+app.get('/api/products/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (mongoose.connection.readyState === 1) {
+      const isOid = mongoose.Types.ObjectId.isValid(id);
+      const doc = await Product.findOne({
+        $or: [
+          { id: id },
+          { sku: id.toUpperCase() },
+          ...(isOid ? [{ _id: id }] : [])
+        ]
+      }).lean();
+
+      if (doc) {
+        return res.json({ success: true, data: doc });
+      }
+    }
+
+    const localItem = productsData.find(p => p.id === id || p.sku === id);
+    if (localItem) {
+      return res.json({ success: true, data: localItem });
+    }
+
+    res.status(404).json({ success: false, message: `Product ${id} not found` });
+  } catch (err) {
+    console.error(`Error fetching product ${req.params.id}:`, err);
+    res.status(500).json({ success: false, message: 'Failed to retrieve product' });
+  }
+});
+
+// Create Garment (Admin)
+app.post('/api/products', async (req, res) => {
+  try {
+    const data = { ...req.body };
+    if (!data.id && !data.sku) {
+      data.id = `PROD-${Date.now().toString().slice(-6)}`;
+    }
+    if (data.stock !== undefined && data.quantity === undefined) {
+      data.quantity = data.stock;
+    }
+    if (mongoose.connection.readyState === 1) {
+      const product = new Product(data);
+      const saved = await product.save();
+      return res.status(201).json({ success: true, data: saved });
+    }
+    res.status(201).json({ success: true, data });
+  } catch (err) {
+    console.error('Error creating product:', err);
+    res.status(400).json({ success: false, message: err.message });
+  }
+});
+
+// Update Garment (Admin)
+app.put('/api/products/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = { ...req.body };
+    if (updates.stock !== undefined && updates.quantity === undefined) {
+      updates.quantity = updates.stock;
+    }
+    if (mongoose.connection.readyState === 1) {
+      const isOid = mongoose.Types.ObjectId.isValid(id);
+      const updated = await Product.findOneAndUpdate(
+        {
+          $or: [
+            { id: id },
+            { sku: id.toUpperCase() },
+            ...(isOid ? [{ _id: id }] : [])
+          ]
+        },
+        { $set: updates },
+        { new: true }
+      );
+      if (updated) {
+        return res.json({ success: true, data: updated });
+      }
+    }
+    res.json({ success: true, data: { id, ...updates } });
+  } catch (err) {
+    console.error(`Error updating product ${req.params.id}:`, err);
+    res.status(400).json({ success: false, message: err.message });
+  }
+});
+
+// Delete Garment (Admin)
+app.delete('/api/products/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (mongoose.connection.readyState === 1) {
+      const isOid = mongoose.Types.ObjectId.isValid(id);
+      await Product.findOneAndDelete({
+        $or: [
+          { id: id },
+          { sku: id.toUpperCase() },
+          ...(isOid ? [{ _id: id }] : [])
+        ]
+      });
+    }
+    res.json({ success: true, message: `Product ${id} deleted successfully` });
+  } catch (err) {
+    console.error(`Error deleting product ${req.params.id}:`, err);
+    res.status(400).json({ success: false, message: err.message });
   }
 });
 
