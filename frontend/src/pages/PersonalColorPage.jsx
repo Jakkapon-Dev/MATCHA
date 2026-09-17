@@ -62,9 +62,9 @@ const SEASON_PROFILES = {
       { name: 'Burnt Orange', hex: '#C05C2B' },
       { name: 'Mustard Earth', hex: '#C29B38' },
       { name: 'Deep Olive', hex: '#556B2F' },
-      { name: 'Warm Terracotta', hex: '#BC5A36' },
+      { name: 'Warm Terracotta', hex: '#C91D1D' },
       { name: 'Espresso Brown', hex: '#4B3621' },
-      { name: 'Matcha Forest', hex: '#2D5A27' }
+      { name: 'Matcha Forest', hex: '#042509' }
     ],
     avoidColors: ['สีนีออน (Vivid Neon)', 'ชมพูบาร์บี้ (Cool Magenta)', 'ขาวโอโม่สะท้อนแสง'],
     recommendedFabrics: 'ผ้าวูลหนานุ่ม (Merino Wool), ผ้าลูกฟูก (Corduroy), หนังกลับ (Suede)'
@@ -114,7 +114,7 @@ const QUIZ_QUESTIONS = [
     question: 'ดูเส้นเลือดที่ข้อมือใต้แสงธรรมชาติ คุณเห็นเป็นสีอะไร?',
     subtitle: 'เลือกคำตอบที่ใกล้เคียงกับคุณที่สุด',
     image: '/images/personal_test/undertone.jpg',
-    icon: <Droplet size={18} className="text-[#2D5A27]" />,
+    icon: <Droplet size={18} className="text-[#042509]" />,
     options: [
       { 
         letter: 'A',
@@ -148,7 +148,7 @@ const QUIZ_QUESTIONS = [
     question: 'เมื่อสวมใส่เครื่องประดับ โลหะชนิดใดทำให้ผิวของคุณดูสว่างและเปล่งปลั่งที่สุด?',
     subtitle: 'สังเกตความเปล่งประกายของใบหน้าและผิวเมื่อทาบเครื่องประดับ',
     image: '/images/personal_test/acc.jpg',
-    icon: <Sun size={18} className="text-[#BC5A36]" />,
+    icon: <Sun size={18} className="text-[#C91D1D]" />,
     options: [
       { 
         letter: 'A', 
@@ -216,7 +216,7 @@ const QUIZ_QUESTIONS = [
     question: 'ระหว่างเสื้อสีขาวนวล (Off-White/Ivory) กับ เสื้อสีขาวโอโม่สว่าง (Pure White) ตัวไหนใส่แล้วหน้าไม่ดูโทรม?',
     subtitle: 'เลือกสีเสื้อเชิ้ตหรือผ้าทาบที่ทำให้ใบหน้าดูสดใสที่สุด',
     image: '/images/personal_test/fabric.jpg',
-    icon: <Layers size={18} className="text-[#2D5A27]" />,
+    icon: <Layers size={18} className="text-[#042509]" />,
     options: [
       { 
         letter: 'A', 
@@ -250,7 +250,7 @@ const QUIZ_QUESTIONS = [
     question: 'สีผมตามธรรมชาติ สีตา และริมฝีปากของคุณมีลักษณะอย่างไร?',
     subtitle: 'พิจารณาความเข้มอ่อนและความคมชัดตามธรรมชาติขององค์ประกอบใบหน้า',
     image: '/images/personal_test/intensity-tone.jpg',
-    icon: <Eye size={18} className="text-[#2D231E]" />,
+    icon: <Eye size={18} className="text-[#000000]" />,
     options: [
       { 
         letter: 'A', 
@@ -382,19 +382,19 @@ export default function PersonalColorPage() {
 
 
   return (
-    <div className="w-full bg-[#FAF8F5] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-12 sm:space-y-16">
 
         {/* 1. HERO HEADER: Personal Color Studio */}
         <div className="text-center max-w-3xl mx-auto space-y-4">
-          <div data-enter className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E2ECE9] border border-[#2D5A27]/20 text-[#2D5A27] text-xs font-mono font-bold uppercase tracking-wider">
+          <div data-enter className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F1F1F1] border border-[#042509]/20 text-[#042509] text-xs font-mono font-bold uppercase tracking-wider">
             <Sparkles size={14} />
             <span>Artisan Personal Color Lab & Styling Science</span>
           </div>
-          <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-3xl sm:text-5xl font-black uppercase text-[#2D231E] tracking-tight font-serif">
+          <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-3xl sm:text-5xl font-black uppercase text-[#000000] tracking-tight font-serif">
             ค้นหาโทนสีผิวประจำตัว 4 ฤดูกาล
           </h1>
-          <p data-enter style={{ '--enter-delay': '190ms' }} className="text-[#6B5E55] text-sm sm:text-base leading-relaxed">
+          <p data-enter style={{ '--enter-delay': '190ms' }} className="text-[#666666] text-sm sm:text-base leading-relaxed">
             เลือกใส่เสื้อผ้าที่ขับออร่าของคุณด้วย <strong>ทฤษฎี Personal Color สากล</strong> จำแนกตาม 4 ฤดู ช่วยให้ทุกชุดที่คุณสวมใส่เสริมบุคลิกและสะท้อนเสน่ห์ที่เป็นเอกลักษณ์
           </p>
 
@@ -406,8 +406,8 @@ export default function PersonalColorPage() {
               onClick={handleQuizTabClick}
               className={`px-5 py-2.5 rounded-full text-xs font-mono font-bold uppercase transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'quiz'
-                  ? 'bg-[#2D5A27] text-white shadow-md'
-                  : 'bg-white border border-[#D9D3C7] text-[#6B5E55] hover:text-[#2D231E]'
+                  ? 'bg-[#042509] text-white shadow-md'
+                  : 'bg-white border border-[#DCDCDC] text-[#666666] hover:text-[#000000]'
               }`}
             >
               <Sparkles size={14} />
@@ -419,8 +419,8 @@ export default function PersonalColorPage() {
               onClick={() => setActiveTab('theory')}
               className={`px-5 py-2.5 rounded-full text-xs font-mono font-bold uppercase transition-all flex items-center gap-2 cursor-pointer ${
                 activeTab === 'theory'
-                  ? 'bg-[#2D5A27] text-white shadow-md'
-                  : 'bg-white border border-[#D9D3C7] text-[#6B5E55] hover:text-[#2D231E]'
+                  ? 'bg-[#042509] text-white shadow-md'
+                  : 'bg-white border border-[#DCDCDC] text-[#666666] hover:text-[#000000]'
               }`}
             >
               <BookOpen size={14} />
@@ -437,13 +437,13 @@ export default function PersonalColorPage() {
               <div ref={quizAnchorRef} className="max-w-4xl mx-auto space-y-6 animate-fade-in">
                 
                 {/* Progress Bar */}
-                <div className="bg-white rounded-2xl border border-[#D9D3C7] p-4 sm:p-5 shadow-xs">
-                  <div className="flex justify-between text-xs font-mono text-[#6B5E55] mb-2 font-bold">
+                <div className="bg-white rounded-2xl border border-[#DCDCDC] p-4 sm:p-5 shadow-xs">
+                  <div className="flex justify-between text-xs font-mono text-[#666666] mb-2 font-bold">
                     <span>คำถามที่ {currentStep + 1} จาก {QUIZ_QUESTIONS.length}</span>
-                    <span className="text-[#2D5A27]">{Math.round(((currentStep + 1) / QUIZ_QUESTIONS.length) * 100)}%</span>
+                    <span className="text-[#042509]">{Math.round(((currentStep + 1) / QUIZ_QUESTIONS.length) * 100)}%</span>
                   </div>
                   <div
-                    className="w-full h-2 rounded-full bg-[#FAF8F5] overflow-hidden border border-[#D9D3C7]/60"
+                    className="w-full h-2 rounded-full bg-[#F1F1F1] overflow-hidden border border-[#DCDCDC]/60"
                     role="progressbar"
                     aria-valuemin={1}
                     aria-valuemax={QUIZ_QUESTIONS.length}
@@ -451,7 +451,7 @@ export default function PersonalColorPage() {
                     aria-valuetext={`คำถามที่ ${currentStep + 1} จาก ${QUIZ_QUESTIONS.length}`}
                   >
                     <div 
-                      className="h-full bg-[#2D5A27] transition-all duration-300"
+                      className="h-full bg-[#042509] transition-all duration-300"
                       style={{ width: `${((currentStep + 1) / QUIZ_QUESTIONS.length) * 100}%` }}
                     />
                   </div>
@@ -461,13 +461,13 @@ export default function PersonalColorPage() {
                 <div ref={questionMotionRef} className="space-y-6" aria-live="polite">
                   {/* Question Banner Card */}
                   {QUIZ_QUESTIONS[currentStep].image ? (
-                    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#D9D3C7] overflow-hidden shadow-sm flex flex-col md:flex-row items-stretch min-h-[220px]">
+                    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#DCDCDC] overflow-hidden shadow-sm flex flex-col md:flex-row items-stretch min-h-[220px]">
                       <div className="flex-1 p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
-                        <span className="text-[11px] font-mono font-bold uppercase text-[#BC5A36] tracking-wider flex items-center gap-1.5 mb-2">
+                        <span className="text-[11px] font-mono font-bold uppercase text-[#C91D1D] tracking-wider flex items-center gap-1.5 mb-2">
                           {QUIZ_QUESTIONS[currentStep].icon}
                           <span>{QUIZ_QUESTIONS[currentStep].category}</span>
                         </span>
-                        <h2 className="text-xl sm:text-2xl font-bold text-[#2D231E] leading-snug">
+                        <h2 className="text-xl sm:text-2xl font-bold text-[#000000] leading-snug">
                           {QUIZ_QUESTIONS[currentStep].question}
                         </h2>
                         {QUIZ_QUESTIONS[currentStep].subtitle && (
@@ -476,7 +476,7 @@ export default function PersonalColorPage() {
                           </p>
                         )}
                       </div>
-                      <div className="w-full md:w-[320px] lg:w-[350px] h-[200px] sm:h-[220px] md:h-auto shrink-0 self-stretch relative overflow-hidden bg-[#FAF8F5] flex items-center justify-center border-t md:border-t-0 md:border-l border-[#D9D3C7]/60">
+                      <div className="w-full md:w-[320px] lg:w-[350px] h-[200px] sm:h-[220px] md:h-auto shrink-0 self-stretch relative overflow-hidden bg-[#F1F1F1] flex items-center justify-center border-t md:border-t-0 md:border-l border-[#DCDCDC]/60">
                         <img 
                           src={QUIZ_QUESTIONS[currentStep].image} 
                           alt={QUIZ_QUESTIONS[currentStep].question}
@@ -488,12 +488,12 @@ export default function PersonalColorPage() {
                       </div>
                     </div>
                   ) : (
-                    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#D9D3C7] p-6 sm:p-8 shadow-sm">
-                      <span className="text-[11px] font-mono font-bold uppercase text-[#BC5A36] tracking-wider flex items-center gap-1.5 mb-2">
+                    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#DCDCDC] p-6 sm:p-8 shadow-sm">
+                      <span className="text-[11px] font-mono font-bold uppercase text-[#C91D1D] tracking-wider flex items-center gap-1.5 mb-2">
                         {QUIZ_QUESTIONS[currentStep].icon}
                         <span>{QUIZ_QUESTIONS[currentStep].category}</span>
                       </span>
-                      <h2 className="text-lg sm:text-2xl font-extrabold text-[#2D231E] leading-snug">
+                      <h2 className="text-lg sm:text-2xl font-extrabold text-[#000000] leading-snug">
                         {QUIZ_QUESTIONS[currentStep].question}
                       </h2>
                       {QUIZ_QUESTIONS[currentStep].subtitle && (
@@ -512,19 +512,19 @@ export default function PersonalColorPage() {
                         <button
                           key={idx}
                           onClick={() => handleSelectOption(QUIZ_QUESTIONS[currentStep].id, option)}
-                          className="group w-full bg-white hover:bg-[#FAF8F5] border border-[#D9D3C7] hover:border-[#2D5A27] rounded-2xl overflow-hidden text-left transition-all hover:shadow-md cursor-pointer flex items-stretch justify-between h-[105px] sm:h-[115px]"
+                          className="group w-full bg-white hover:bg-[#F1F1F1] border border-[#DCDCDC] hover:border-[#042509] rounded-2xl overflow-hidden text-left transition-all hover:shadow-md cursor-pointer flex items-stretch justify-between h-[105px] sm:h-[115px]"
                         >
                           <div className="p-4 sm:p-5 flex-1 flex flex-col justify-center min-w-0 pr-3">
-                            <span className="text-xs font-mono font-bold text-[#6F655C] group-hover:text-[#2D5A27] transition-colors mb-1">
+                            <span className="text-xs font-mono font-bold text-[#6F655C] group-hover:text-[#042509] transition-colors mb-1">
                               {letter}
                             </span>
-                            <span className="text-xs sm:text-sm md:text-base font-bold text-[#2D231E] leading-snug line-clamp-2">
+                            <span className="text-xs sm:text-sm md:text-base font-bold text-[#000000] leading-snug line-clamp-2">
                               {option.label}
                             </span>
                           </div>
 
                           {option.image ? (
-                            <div className="w-32 sm:w-44 md:w-52 h-full shrink-0 border-l border-[#D9D3C7]/40 overflow-hidden relative bg-white flex items-center justify-center">
+                            <div className="w-32 sm:w-44 md:w-52 h-full shrink-0 border-l border-[#DCDCDC]/40 overflow-hidden relative bg-white flex items-center justify-center">
                               <img 
                                 src={option.image} 
                                 alt={option.label}
@@ -536,7 +536,7 @@ export default function PersonalColorPage() {
                             </div>
                           ) : (
                             <div className="p-5 flex items-center">
-                              <ArrowRight size={18} className="text-[#6B5E55] group-hover:text-[#2D5A27] group-hover:translate-x-1 transition-all" />
+                              <ArrowRight size={18} className="text-[#666666] group-hover:text-[#042509] group-hover:translate-x-1 transition-all" />
                             </div>
                           )}
                         </button>
@@ -549,7 +549,7 @@ export default function PersonalColorPage() {
                     <div className="pt-2">
                       <button
                         onClick={() => setCurrentStep(prev => prev - 1)}
-                        className="text-xs font-mono text-[#6B5E55] hover:text-[#2D231E] font-bold cursor-pointer underline inline-flex items-center gap-1"
+                        className="text-xs font-mono text-[#666666] hover:text-[#000000] font-bold cursor-pointer underline inline-flex items-center gap-1"
                       >
                         ← ย้อนกลับข้อก่อนหน้า
                       </button>
@@ -560,26 +560,26 @@ export default function PersonalColorPage() {
               </div>
             ) : isScanning ? (
               /* Scanning Animation */
-              <div className="max-w-md mx-auto py-20 text-center space-y-4 bg-white rounded-3xl border border-[#D9D3C7] p-8 shadow-xl">
-                <div className="w-16 h-16 rounded-full bg-[#E2ECE9] text-[#2D5A27] flex items-center justify-center mx-auto animate-spin">
+              <div className="max-w-md mx-auto py-20 text-center space-y-4 bg-white rounded-3xl border border-[#DCDCDC] p-8 shadow-xl">
+                <div className="w-16 h-16 rounded-full bg-[#F1F1F1] text-[#042509] flex items-center justify-center mx-auto animate-spin">
                   <Compass size={32} />
                 </div>
-                <h3 className="font-serif text-xl font-bold text-[#2D231E]">กำลังวิเคราะห์ข้อมูล Personal Color...</h3>
-                <p className="text-xs font-mono text-[#6B5E55]">ประมวลผลความสอดคล้องของ Undertone, Contrast และเฉดสีผ้า</p>
+                <h3 className="font-serif text-xl font-bold text-[#000000]">กำลังวิเคราะห์ข้อมูล Personal Color...</h3>
+                <p className="text-xs font-mono text-[#666666]">ประมวลผลความสอดคล้องของ Undertone, Contrast และเฉดสีผ้า</p>
               </div>
             ) : (
               /* Quiz Result Presentation Card */
-              <div ref={resultMotionRef} className="bg-white rounded-3xl border border-[#D9D3C7] p-6 sm:p-10 shadow-2xl space-y-8" aria-live="polite">
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-[#D9D3C7]">
+              <div ref={resultMotionRef} className="bg-white rounded-3xl border border-[#DCDCDC] p-6 sm:p-10 shadow-2xl space-y-8" aria-live="polite">
+                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-[#DCDCDC]">
                   <div className="space-y-2">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#2D5A27] text-white text-[11px] font-mono font-bold uppercase">
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#042509] text-white text-[11px] font-mono font-bold uppercase">
                       <CheckCircle2 size={13} />
                       <span>ผลการวิเคราะห์สีผิวของคุณ</span>
                     </div>
-                    <h2 className="text-3xl sm:text-4xl font-black font-serif text-[#2D231E]">
+                    <h2 className="text-3xl sm:text-4xl font-black font-serif text-[#000000]">
                       {SEASON_PROFILES[diagnosedSeason].season} — {SEASON_PROFILES[diagnosedSeason].thaiName}
                     </h2>
-                    <p className="text-xs font-mono text-[#BC5A36] font-bold">
+                    <p className="text-xs font-mono text-[#C91D1D] font-bold">
                       {SEASON_PROFILES[diagnosedSeason].undertone}
                     </p>
                   </div>
@@ -587,14 +587,14 @@ export default function PersonalColorPage() {
                   <div className="flex items-center gap-3">
                     <button
                       onClick={handleResetQuiz}
-                      className="px-4 py-2 rounded-xl border border-[#D9D3C7] bg-[#FAF8F5] hover:bg-white text-[#2D231E] font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                      className="px-4 py-2 rounded-xl border border-[#DCDCDC] bg-[#F1F1F1] hover:bg-white text-[#000000] font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
                     >
                       <RotateCcw size={13} />
                       <span>ทำแบบทดสอบใหม่</span>
                     </button>
                     <button
                       onClick={() => navigate('/mix-match')}
-                      className="px-5 py-2.5 rounded-xl bg-[#2D5A27] hover:bg-[#1E3D1A] text-white font-mono text-xs font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer"
+                      className="px-5 py-2.5 rounded-xl bg-[#042509] hover:bg-[#1E3D1A] text-white font-mono text-xs font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer"
                     >
                       <span>ไปที่ Mix & Match Studio</span>
                       <ArrowRight size={14} />
@@ -607,18 +607,18 @@ export default function PersonalColorPage() {
                   {/* Left: Description & Characteristics */}
                   <div className="md:col-span-2 space-y-5">
                     <div>
-                      <h4 className="font-mono text-xs font-bold uppercase text-[#6B5E55] tracking-wider mb-2">ลักษณะเด่นของสีผิวคุณ:</h4>
-                      <p className="text-sm text-[#2D231E] leading-relaxed">
+                      <h4 className="font-mono text-xs font-bold uppercase text-[#666666] tracking-wider mb-2">ลักษณะเด่นของสีผิวคุณ:</h4>
+                      <p className="text-sm text-[#000000] leading-relaxed">
                         {SEASON_PROFILES[diagnosedSeason].description}
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#D9D3C7] space-y-2">
-                      <h5 className="font-mono text-xs font-bold text-[#2D5A27] uppercase">จุดสังเกตตามธรรมชาติ:</h5>
-                      <ul className="space-y-1 text-xs text-[#6B5E55]">
+                    <div className="p-4 rounded-2xl bg-[#F1F1F1] border border-[#DCDCDC] space-y-2">
+                      <h5 className="font-mono text-xs font-bold text-[#042509] uppercase">จุดสังเกตตามธรรมชาติ:</h5>
+                      <ul className="space-y-1 text-xs text-[#666666]">
                         {SEASON_PROFILES[diagnosedSeason].characteristics.map((c, i) => (
                           <li key={i} className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#2D5A27]" />
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#042509]" />
                             <span>{c}</span>
                           </li>
                         ))}
@@ -626,37 +626,37 @@ export default function PersonalColorPage() {
                     </div>
 
                     <div>
-                      <h4 className="font-mono text-xs font-bold uppercase text-[#2D5A27] tracking-wider mb-2">เนื้อผ้าที่แนะนำ (Recommended Fabrics):</h4>
-                      <p className="text-xs font-mono text-[#2D231E] bg-[#E2ECE9] p-3 rounded-xl border border-[#2D5A27]/20">
+                      <h4 className="font-mono text-xs font-bold uppercase text-[#042509] tracking-wider mb-2">เนื้อผ้าที่แนะนำ (Recommended Fabrics):</h4>
+                      <p className="text-xs font-mono text-[#000000] bg-[#F1F1F1] p-3 rounded-xl border border-[#042509]/20">
                         {SEASON_PROFILES[diagnosedSeason].recommendedFabrics}
                       </p>
                     </div>
                   </div>
 
                   {/* Right: Signature Swatches Palette */}
-                  <div className="bg-[#FAF8F5] p-5 rounded-2xl border border-[#D9D3C7] space-y-4">
-                    <h4 className="font-mono text-xs font-bold uppercase text-[#2D231E] flex items-center justify-between">
+                  <div className="bg-[#F1F1F1] p-5 rounded-2xl border border-[#DCDCDC] space-y-4">
+                    <h4 className="font-mono text-xs font-bold uppercase text-[#000000] flex items-center justify-between">
                       <span>Signature Palette (สีที่ขับผิวที่สุด)</span>
-                      <Palette size={14} className="text-[#2D5A27]" aria-hidden="true" focusable="false" />
+                      <Palette size={14} className="text-[#042509]" aria-hidden="true" focusable="false" />
                     </h4>
                     <div ref={paletteMotionRef} className="grid grid-cols-2 gap-2">
                       {SEASON_PROFILES[diagnosedSeason].palette.map((color, i) => (
-                        <div key={i} className="p-2 bg-white rounded-xl border border-[#D9D3C7]/60 flex items-center gap-2">
+                        <div key={i} className="p-2 bg-white rounded-xl border border-[#DCDCDC]/60 flex items-center gap-2">
                           <span 
                             className="w-5 h-5 rounded-full border border-black/15 shrink-0 shadow-2xs" 
                             style={{ backgroundColor: color.hex }}
                           />
                           <div className="min-w-0">
-                            <p className="text-[11px] font-bold text-[#2D231E] truncate">{color.name}</p>
-                            <p className="text-[9px] font-mono text-[#6B5E55]">{color.hex}</p>
+                            <p className="text-[11px] font-bold text-[#000000] truncate">{color.name}</p>
+                            <p className="text-[9px] font-mono text-[#666666]">{color.hex}</p>
                           </div>
                         </div>
                       ))}
                     </div>
 
-                    <div className="pt-2 border-t border-[#D9D3C7]/60">
-                      <h5 className="font-mono text-[10px] font-bold uppercase text-[#BC5A36] mb-1">สีที่ควรหลีกเลี่ยง (Avoid):</h5>
-                      <p className="text-xs text-[#6B5E55]">
+                    <div className="pt-2 border-t border-[#DCDCDC]/60">
+                      <h5 className="font-mono text-[10px] font-bold uppercase text-[#C91D1D] mb-1">สีที่ควรหลีกเลี่ยง (Avoid):</h5>
+                      <p className="text-xs text-[#666666]">
                         {SEASON_PROFILES[diagnosedSeason].avoidColors.join(', ')}
                       </p>
                     </div>
@@ -677,8 +677,8 @@ export default function PersonalColorPage() {
                   onClick={() => setSelectedSeasonTab(seasonKey)}
                   className={`px-5 py-2.5 rounded-2xl font-mono text-xs font-bold uppercase transition-all cursor-pointer ${
                     selectedSeasonTab === seasonKey
-                      ? 'bg-[#2D231E] text-white shadow-lg scale-105'
-                      : 'bg-white border border-[#D9D3C7] text-[#6B5E55] hover:border-[#2D5A27]'
+                      ? 'bg-[#000000] text-white shadow-lg scale-105'
+                      : 'bg-white border border-[#DCDCDC] text-[#666666] hover:border-[#042509]'
                   }`}
                 >
                   {seasonKey} Palette
@@ -687,38 +687,38 @@ export default function PersonalColorPage() {
             </div>
 
             {/* Selected Season Card */}
-            <div ref={seasonMotionRef} className="bg-white rounded-3xl border border-[#D9D3C7] p-6 sm:p-10 shadow-xl space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D9D3C7]">
+            <div ref={seasonMotionRef} className="bg-white rounded-3xl border border-[#DCDCDC] p-6 sm:p-10 shadow-xl space-y-6">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#DCDCDC]">
                 <div>
-                  <span className="text-xs font-mono font-bold text-[#2D5A27] uppercase">The 12-Season Architecture</span>
-                  <h3 className="text-2xl sm:text-3xl font-black font-serif text-[#2D231E] mt-1">
+                  <span className="text-xs font-mono font-bold text-[#042509] uppercase">The 12-Season Architecture</span>
+                  <h3 className="text-2xl sm:text-3xl font-black font-serif text-[#000000] mt-1">
                     {SEASON_PROFILES[selectedSeasonTab].season} — {SEASON_PROFILES[selectedSeasonTab].thaiName}
                   </h3>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-[#FAF8F5] border border-[#D9D3C7] font-mono text-xs font-bold text-[#BC5A36]">
+                <span className="px-3 py-1 rounded-full bg-[#F1F1F1] border border-[#DCDCDC] font-mono text-xs font-bold text-[#C91D1D]">
                   {SEASON_PROFILES[selectedSeasonTab].undertone}
                 </span>
               </div>
 
-              <p className="text-sm text-[#2D231E] leading-relaxed">
+              <p className="text-sm text-[#000000] leading-relaxed">
                 {SEASON_PROFILES[selectedSeasonTab].description}
               </p>
 
               {/* Color Swatches Grid */}
               <div>
-                <h4 className="font-mono text-xs font-bold uppercase text-[#6B5E55] tracking-wider mb-3">
+                <h4 className="font-mono text-xs font-bold uppercase text-[#666666] tracking-wider mb-3">
                   เฉดสีประจำฤดูกาล {selectedSeasonTab} ({SEASON_PROFILES[selectedSeasonTab].palette.length} Colors):
                 </h4>
                 <div ref={paletteMotionRef} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
                   {SEASON_PROFILES[selectedSeasonTab].palette.map((c, i) => (
-                    <div key={i} className="p-3 bg-[#FAF8F5] rounded-2xl border border-[#D9D3C7] text-center space-y-2">
+                    <div key={i} className="p-3 bg-[#F1F1F1] rounded-2xl border border-[#DCDCDC] text-center space-y-2">
                       <div 
                         className="w-12 h-12 rounded-xl mx-auto shadow-sm border border-black/10" 
                         style={{ backgroundColor: c.hex }}
                       />
                       <div>
-                        <p className="text-xs font-bold text-[#2D231E] truncate">{c.name}</p>
-                        <p className="text-[10px] font-mono text-[#6B5E55]">{c.hex}</p>
+                        <p className="text-xs font-bold text-[#000000] truncate">{c.name}</p>
+                        <p className="text-[10px] font-mono text-[#666666]">{c.hex}</p>
                       </div>
                     </div>
                   ))}

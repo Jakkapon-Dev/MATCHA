@@ -119,16 +119,16 @@ export default function Payment() {
   };
 
   return (
-    <div className="w-full bg-[#FAF8F5] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         
         {/* Step Indicator Header */}
-        <div className="mb-10 pb-6 border-b border-[#D9D3C7] flex items-center justify-between">
+        <div className="mb-10 pb-6 border-b border-[#DCDCDC] flex items-center justify-between">
           <div>
-            <span className="text-xs font-mono font-bold text-[#2D5A27] uppercase tracking-widest">
+            <span className="text-xs font-mono font-bold text-[#042509] uppercase tracking-widest">
               Checkout Flow
             </span>
-            <h1 className="text-2xl sm:text-4xl font-black uppercase text-[#2D231E] tracking-tight mt-1">
+            <h1 className="text-2xl sm:text-4xl font-black uppercase text-[#000000] tracking-tight mt-1">
               {step === 'shipping' ? 'Shipping Details' : 'Payment Method'}
             </h1>
           </div>
@@ -136,13 +136,13 @@ export default function Payment() {
           {/* Stepper Progress */}
           <div className="flex items-center gap-2 font-mono text-xs">
             <span className={`px-3 py-1 rounded-lg font-bold ${
-              step === 'shipping' ? 'bg-[#2D5A27] text-white' : 'bg-[#D0DEC6] text-[#2D5A27]'
+              step === 'shipping' ? 'bg-[#042509] text-white' : 'bg-[#518F5C] text-[#042509]'
             }`}>
               1. Address
             </span>
-            <span className="text-[#D9D3C7]">→</span>
+            <span className="text-[#DCDCDC]">→</span>
             <span className={`px-3 py-1 rounded-lg font-bold ${
-              step === 'payment' ? 'bg-[#2D5A27] text-white' : 'bg-white border border-[#D9D3C7] text-[#6B5E55]'
+              step === 'payment' ? 'bg-[#042509] text-white' : 'bg-white border border-[#DCDCDC] text-[#666666]'
             }`}>
               2. Payment
             </span>

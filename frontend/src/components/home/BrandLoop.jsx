@@ -17,17 +17,17 @@ export default function BrandLoop() {
   ];
 
   return (
-    <div className="relative w-full overflow-hidden bg-[#2D231E] py-4 border-y border-[#3D312A] select-none">
+    <div className="relative w-full overflow-hidden bg-[#000000] py-4 border-y border-[#3D312A] select-none">
       
       {/* Left and Right Edge Fade Masks */}
-      <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-24 bg-linear-to-r from-[#2D231E] to-transparent z-10" />
-      <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-24 bg-linear-to-l from-[#2D231E] to-transparent z-10" />
+      <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-24 bg-linear-to-r from-[#000000] to-transparent z-10" />
+      <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-24 bg-linear-to-l from-[#000000] to-transparent z-10" />
 
       {/* Repeating the same sequence three times lets the CSS marquee loop without a visible gap. */}
-      <div className="flex w-max animate-marquee space-x-8 font-mono text-xs sm:text-sm font-bold tracking-[0.25em] uppercase text-[#D0DEC6]">
+      <div className="flex w-max animate-marquee space-x-8 font-mono text-xs sm:text-sm font-bold tracking-[0.25em] uppercase text-[#518F5C]">
         {[...items, ...items, ...items].map((text, idx) => (
           <div key={idx} className="flex items-center gap-6">
-            <span className={idx % 2 === 0 ? 'text-[#FAF8F5]' : 'text-[#BC5A36]'}>
+            <span className={idx % 2 === 0 ? 'text-[#F1F1F1]' : 'text-[#C91D1D]'}>
               {text}
             </span>
           </div>

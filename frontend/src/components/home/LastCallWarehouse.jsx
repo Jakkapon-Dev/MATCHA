@@ -36,7 +36,7 @@ export default function LastCallWarehouse({ onAddToCart, onQuickView, onExploreW
   ];
 
   return (
-    <section id="warehouse-sale" className="w-full bg-[#FAF8F5] text-[#2D231E] py-16 sm:py-24 px-4 sm:px-8 lg:px-12 border-b border-[#D9D3C7] overflow-hidden select-none">
+    <section id="warehouse-sale" className="w-full bg-[#F1F1F1] text-[#000000] py-16 sm:py-24 px-4 sm:px-8 lg:px-12 border-b border-[#DCDCDC] overflow-hidden select-none">
       <div className="max-w-7xl mx-auto">
         
         {/* Main Grid: Left side has Title + Product list; Right side has Lookbook Model + Black Cutout Typography */}
@@ -47,7 +47,7 @@ export default function LastCallWarehouse({ onAddToCart, onQuickView, onExploreW
             
             {/* Title matching reference */}
             <div className="mb-8 sm:mb-12">
-              <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black text-[#BC5A36] tracking-tight font-sans leading-none">
+              <h2 className="text-4xl sm:text-6xl lg:text-7xl font-black text-[#C91D1D] tracking-tight font-sans leading-none">
                 Last Call<br />Warehouse
               </h2>
             </div>
@@ -62,7 +62,7 @@ export default function LastCallWarehouse({ onAddToCart, onQuickView, onExploreW
                   className="flex flex-col group cursor-pointer"
                 >
                   {/* Clean White Image Box with Bottom-Right '+' Button */}
-                  <div className="relative w-full aspect-4/5 bg-white border border-[#D9D3C7] overflow-hidden p-3 flex items-center justify-center shadow-xs group-hover:border-[#BC5A36] transition-colors">
+                  <div className="relative w-full aspect-4/5 bg-white border border-[#DCDCDC] overflow-hidden p-3 flex items-center justify-center shadow-xs group-hover:border-[#C91D1D] transition-colors">
                     <img
                       src={item.image}
                       alt={item.name}
@@ -76,14 +76,14 @@ export default function LastCallWarehouse({ onAddToCart, onQuickView, onExploreW
                         onAddToCart && onAddToCart(item);
                       }}
                       title="Quick Add"
-                      className="absolute bottom-2 right-2 w-6 h-6 bg-white hover:bg-[#BC5A36] text-[#BC5A36] hover:text-white border border-[#BC5A36]/40 flex items-center justify-center transition-colors shadow-xs active:scale-90 cursor-pointer"
+                      className="absolute bottom-2 right-2 w-6 h-6 bg-white hover:bg-[#C91D1D] text-[#C91D1D] hover:text-white border border-[#C91D1D]/40 flex items-center justify-center transition-colors shadow-xs active:scale-90 cursor-pointer"
                     >
                       <Plus size={14} />
                     </button>
                   </div>
 
                   {/* Product Title and Price underneath in Terracotta Orange */}
-                  <div className="mt-2 flex justify-between items-baseline gap-1 text-[10px] sm:text-xs font-mono text-[#BC5A36] font-medium">
+                  <div className="mt-2 flex justify-between items-baseline gap-1 text-[10px] sm:text-xs font-mono text-[#C91D1D] font-medium">
                     <span className="truncate group-hover:underline">{item.name}</span>
                     <span className="font-bold shrink-0">{item.price}</span>
                   </div>
@@ -94,7 +94,7 @@ export default function LastCallWarehouse({ onAddToCart, onQuickView, onExploreW
           </div>
 
           {/* Right Column (Col 8-12): Impactful Lookbook Model with Stacked Black Highlight Cutout Typography */}
-          <div className="lg:col-span-6 relative aspect-4/5 sm:aspect-square lg:aspect-4/5 max-h-160 rounded-none overflow-hidden bg-[#FAF8F5] flex items-center justify-center">
+          <div className="lg:col-span-6 relative aspect-4/5 sm:aspect-square lg:aspect-4/5 max-h-160 rounded-none overflow-hidden bg-[#F1F1F1] flex items-center justify-center">
             
             {/* Background Model Image */}
             <img

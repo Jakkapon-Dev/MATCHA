@@ -50,7 +50,7 @@ export default function CatalogPage({
   ];
 
   const colorOptions = [
-    { label: 'All Colors', value: 'ALL', hex: 'linear-gradient(135deg, #2D5A27, #BC5A36, #1B3B6F)' },
+    { label: 'All Colors', value: 'ALL', hex: 'linear-gradient(135deg, #042509, #C91D1D, #1B3B6F)' },
     { label: 'Olive Green', value: 'Olive', hex: '#556B2F' },
     { label: 'Mustard Gold', value: 'Mustard', hex: '#D4A338' },
     { label: 'Burnt Orange', value: 'Orange', hex: '#C05C2B' },
@@ -162,24 +162,24 @@ export default function CatalogPage({
   }[gridCols] || 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4';
 
   return (
-    <div className="w-full bg-[#FAF8F5] min-h-screen py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
 
         {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-6 border-b border-[#D9D3C7]">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-6 border-b border-[#DCDCDC]">
           <div>
-            <div data-enter className="flex items-center gap-2 text-xs font-mono font-bold text-[#2D5A27] uppercase tracking-widest mb-1.5">
+            <div data-enter className="flex items-center gap-2 text-xs font-mono font-bold text-[#042509] uppercase tracking-widest mb-1.5">
               <span>MatchA Catalog Archive</span>
               <span>✦</span>
               <span>2026 Collection</span>
             </div>
-            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-3xl sm:text-5xl font-black uppercase text-[#2D231E] tracking-tight">
+            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-3xl sm:text-5xl font-black uppercase text-[#000000] tracking-tight">
               Artisan Apparel
             </h1>
           </div>
 
-          <div data-enter style={{ '--enter-delay': '190ms' }} className="text-xs font-mono text-[#6B5E55]">
-            Total <strong className="text-[#2D231E]">{totalItems}</strong> pieces available
+          <div data-enter style={{ '--enter-delay': '190ms' }} className="text-xs font-mono text-[#666666]">
+            Total <strong className="text-[#000000]">{totalItems}</strong> pieces available
           </div>
         </div>
 
@@ -220,43 +220,43 @@ export default function CatalogPage({
 
         {/* Active Filters Pill Bar (When filters applied) */}
         {activeFilterCount > 0 && (
-          <div className="mb-6 p-3 rounded-2xl bg-[#D0DEC6]/30 border border-[#B8CBAE]/60 flex items-center justify-between gap-3 text-xs font-mono">
+          <div className="mb-6 p-3 rounded-2xl bg-[#518F5C]/30 border border-[#3E7047]/60 flex items-center justify-between gap-3 text-xs font-mono">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-bold text-[#2D5A27]">Active Filters ({activeFilterCount}):</span>
+              <span className="font-bold text-[#042509]">Active Filters ({activeFilterCount}):</span>
               {selectedSeason !== 'ALL' && (
-                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E] flex items-center gap-1.5 shadow-2xs">
+                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#DCDCDC] text-[#000000] flex items-center gap-1.5 shadow-2xs">
                   <span>Season: {selectedSeason}</span>
-                  <button onClick={() => setSelectedSeason('ALL')} className="text-[#BC5A36] hover:text-[#2D231E] cursor-pointer">×</button>
+                  <button onClick={() => setSelectedSeason('ALL')} className="text-[#C91D1D] hover:text-[#000000] cursor-pointer">×</button>
                 </span>
               )}
               {selectedColor !== 'ALL' && (
-                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E] flex items-center gap-1.5 shadow-2xs">
+                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#DCDCDC] text-[#000000] flex items-center gap-1.5 shadow-2xs">
                   <span>Color: {selectedColor}</span>
-                  <button onClick={() => setSelectedColor('ALL')} className="text-[#BC5A36] hover:text-[#2D231E] cursor-pointer">×</button>
+                  <button onClick={() => setSelectedColor('ALL')} className="text-[#C91D1D] hover:text-[#000000] cursor-pointer">×</button>
                 </span>
               )}
               {selectedFit !== 'ALL' && (
-                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E] flex items-center gap-1.5 shadow-2xs">
+                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#DCDCDC] text-[#000000] flex items-center gap-1.5 shadow-2xs">
                   <span>Fit: {selectedFit}</span>
-                  <button onClick={() => setSelectedFit('ALL')} className="text-[#BC5A36] hover:text-[#2D231E] cursor-pointer">×</button>
+                  <button onClick={() => setSelectedFit('ALL')} className="text-[#C91D1D] hover:text-[#000000] cursor-pointer">×</button>
                 </span>
               )}
               {priceRange < 200 && (
-                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E] flex items-center gap-1.5 shadow-2xs">
+                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#DCDCDC] text-[#000000] flex items-center gap-1.5 shadow-2xs">
                   <span>Max: ${priceRange}</span>
-                  <button onClick={() => setPriceRange(200)} className="text-[#BC5A36] hover:text-[#2D231E] cursor-pointer">×</button>
+                  <button onClick={() => setPriceRange(200)} className="text-[#C91D1D] hover:text-[#000000] cursor-pointer">×</button>
                 </span>
               )}
               {inStockOnly && (
-                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#D9D3C7] text-[#2D231E] flex items-center gap-1.5 shadow-2xs">
+                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#DCDCDC] text-[#000000] flex items-center gap-1.5 shadow-2xs">
                   <span>In Stock Only</span>
-                  <button onClick={() => setInStockOnly(false)} className="text-[#BC5A36] hover:text-[#2D231E] cursor-pointer">×</button>
+                  <button onClick={() => setInStockOnly(false)} className="text-[#C91D1D] hover:text-[#000000] cursor-pointer">×</button>
                 </span>
               )}
             </div>
             <button
               onClick={handleResetFilters}
-              className="text-[#BC5A36] font-bold hover:underline cursor-pointer flex items-center gap-1 shrink-0"
+              className="text-[#C91D1D] font-bold hover:underline cursor-pointer flex items-center gap-1 shrink-0"
             >
               <RotateCcw size={12} />
               <span>Clear All</span>

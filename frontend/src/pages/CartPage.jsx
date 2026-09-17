@@ -18,19 +18,19 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
   if (cartItems.length === 0) {
     return (
       <div className="max-w-3xl mx-auto px-6 py-24 text-center">
-        <div data-enter className="w-24 h-24 mx-auto rounded-3xl bg-[#D0DEC6]/60 border border-[#B8CBAE] flex items-center justify-center text-5xl shadow-md">
+        <div data-enter className="w-24 h-24 mx-auto rounded-3xl bg-[#518F5C]/60 border border-[#3E7047] flex items-center justify-center text-5xl shadow-md">
           🛒
         </div>
-        <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="mt-8 text-3xl sm:text-4xl font-extrabold tracking-tight text-[#2D231E]">
+        <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="mt-8 text-3xl sm:text-4xl font-extrabold tracking-tight text-[#000000]">
           Your cart is empty
         </h1>
-        <p data-enter style={{ '--enter-delay': '190ms' }} className="mt-3 text-sm font-mono text-[#6B5E55]">
+        <p data-enter style={{ '--enter-delay': '190ms' }} className="mt-3 text-sm font-mono text-[#666666]">
           Looks like you haven't dropped anything in yet.
         </p>
         <button
           onClick={onBackToStore}
           data-enter style={{ '--enter-delay': '290ms' }}
-          className="mt-8 inline-flex items-center gap-2 px-6 py-3.5 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-bold uppercase tracking-widest rounded-xl shadow-md transition-all active:scale-95 cursor-pointer"
+          className="mt-8 inline-flex items-center gap-2 px-6 py-3.5 bg-[#042509] hover:bg-[#021505] text-white text-xs font-bold uppercase tracking-widest rounded-xl shadow-md transition-all active:scale-95 cursor-pointer"
         >
           <ArrowLeft size={14} />
           <span>Continue Shopping</span>
@@ -40,18 +40,18 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
   }
 
   return (
-    <div className="w-full bg-[#FAF8F5]">
+    <div className="w-full bg-[#F1F1F1]">
       <div className="max-w-6xl mx-auto px-6 md:px-12 py-12">
 
         {/* Page Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 mb-10">
           <div>
-            <span data-enter className="text-xs uppercase tracking-widest text-[#2D5A27] font-bold font-mono">Your Selection</span>
-            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-3xl sm:text-5xl font-extrabold text-[#2D231E] tracking-tight mt-1">
+            <span data-enter className="text-xs uppercase tracking-widest text-[#042509] font-bold font-mono">Your Selection</span>
+            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-3xl sm:text-5xl font-extrabold text-[#000000] tracking-tight mt-1">
               Shopping cart
             </h1>
           </div>
-          <p data-enter style={{ '--enter-delay': '190ms' }} className="text-xs text-[#6B5E55] font-mono">
+          <p data-enter style={{ '--enter-delay': '190ms' }} className="text-xs text-[#666666] font-mono">
             {cartItems.length} {cartItems.length === 1 ? 'style' : 'styles'} in your bag
           </p>
         </div>
@@ -69,10 +69,10 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                   key={key}
                   data-motion-slot={key} data-motion-item={`${key}:${item.quantity}`}
                   data-enter style={{ '--enter-delay': `${Math.min(index * 60, 300)}ms` }}
-                  className="flex gap-4 p-5 bg-white rounded-3xl border border-[#D9D3C7] shadow-sm hover:shadow-md transition-shadow"
+                  className="flex gap-4 p-5 bg-white rounded-3xl border border-[#DCDCDC] shadow-sm hover:shadow-md transition-shadow"
                 >
                   {/* Thumbnail */}
-                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#FAF8F5] border border-[#D9D3C7] flex items-center justify-center shrink-0 overflow-hidden relative shadow-2xs">
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-[#F1F1F1] border border-[#DCDCDC] flex items-center justify-center shrink-0 overflow-hidden relative shadow-2xs">
                     {item.image ? (
                       <img 
                         src={webpSrc(item.image)} data-original-src={item.image} 
@@ -82,9 +82,9 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                         className="w-full h-full object-cover" 
                       />
                     ) : (
-                      <div className="w-full h-full bg-[#2D5A27] flex flex-col items-center justify-center text-white">
+                      <div className="w-full h-full bg-[#042509] flex flex-col items-center justify-center text-white">
                         <span className="text-2xl">🍵</span>
-                        <span className="text-[9px] font-mono tracking-widest text-[#D0DEC6] mt-0.5">{item.id}</span>
+                        <span className="text-[9px] font-mono tracking-widest text-[#518F5C] mt-0.5">{item.id}</span>
                       </div>
                     )}
                   </div>
@@ -93,17 +93,17 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <h3 className="font-bold text-[#2D231E] truncate">{item.name}</h3>
-                        <p className="text-[11px] font-mono text-[#6B5E55] mt-0.5 uppercase tracking-wider">
+                        <h3 className="font-bold text-[#000000] truncate">{item.name}</h3>
+                        <p className="text-[11px] font-mono text-[#666666] mt-0.5 uppercase tracking-wider">
                           {item.size || 'One Size'} / {item.color || 'Matcha Green'}
                         </p>
-                        <p className="text-xs font-bold text-[#BC5A36] mt-1">{item.price}</p>
+                        <p className="text-xs font-bold text-[#C91D1D] mt-1">{item.price}</p>
                       </div>
                       <button
                         onClick={() => onRemove(key)}
                         aria-label={`Remove ${item.name}`}
                         title="Remove item"
-                        className="p-2 rounded-xl text-[#6B5E55] hover:text-white hover:bg-[#BC5A36] transition-all cursor-pointer shrink-0"
+                        className="p-2 rounded-xl text-[#666666] hover:text-white hover:bg-[#C91D1D] transition-all cursor-pointer shrink-0"
                       >
                         <Trash2 size={16} />
                       </button>
@@ -111,24 +111,24 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
 
                     <div className="flex items-end justify-between mt-4">
                       {/* Quantity Counter */}
-                      <div className="inline-flex items-center border border-[#D9D3C7] rounded-xl bg-[#FAF8F5] p-1">
+                      <div className="inline-flex items-center border border-[#DCDCDC] rounded-xl bg-[#F1F1F1] p-1">
                         <button
                           onClick={() => onUpdateQty(key, -1)}
                           aria-label="Decrease quantity"
-                          className="w-7 h-7 flex items-center justify-center text-sm font-bold hover:bg-[#D0DEC6] rounded-lg cursor-pointer transition-colors"
+                          className="w-7 h-7 flex items-center justify-center text-sm font-bold hover:bg-[#518F5C] rounded-lg cursor-pointer transition-colors"
                         >
                           −
                         </button>
-                        <span className="px-4 text-xs font-mono font-bold text-[#2D231E]">{qty}</span>
+                        <span className="px-4 text-xs font-mono font-bold text-[#000000]">{qty}</span>
                         <button
                           onClick={() => onUpdateQty(key, 1)}
                           aria-label="Increase quantity"
-                          className="w-7 h-7 flex items-center justify-center text-sm font-bold hover:bg-[#D0DEC6] rounded-lg cursor-pointer transition-colors"
+                          className="w-7 h-7 flex items-center justify-center text-sm font-bold hover:bg-[#518F5C] rounded-lg cursor-pointer transition-colors"
                         >
                           +
                         </button>
                       </div>
-                      <span className="font-mono font-extrabold text-sm text-[#2D231E]">${lineTotal}</span>
+                      <span className="font-mono font-extrabold text-sm text-[#000000]">${lineTotal}</span>
                     </div>
                   </div>
                 </div>
@@ -138,7 +138,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
             {/* Continue Shopping */}
             <button
               onClick={onBackToStore}
-              className="self-start inline-flex items-center gap-2 mt-2 px-5 py-2.5 bg-transparent border border-[#D9D3C7] hover:border-[#2D5A27] text-[#2D231E] hover:text-[#2D5A27] text-xs font-bold uppercase tracking-widest rounded-xl transition-all active:scale-95 cursor-pointer"
+              className="self-start inline-flex items-center gap-2 mt-2 px-5 py-2.5 bg-transparent border border-[#DCDCDC] hover:border-[#042509] text-[#000000] hover:text-[#042509] text-xs font-bold uppercase tracking-widest rounded-xl transition-all active:scale-95 cursor-pointer"
             >
               <ArrowLeft size={13} />
               <span>Keep Browsing</span>
@@ -147,45 +147,45 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
 
           {/* Order Summary */}
           <div className="lg:col-span-5">
-            <div className="lg:sticky lg:top-32 p-6 sm:p-7 bg-white rounded-3xl border border-[#D9D3C7] shadow-md h-fit">
-              <h3 className="text-lg font-extrabold text-[#2D231E] tracking-tight">Order Summary</h3>
+            <div className="lg:sticky lg:top-32 p-6 sm:p-7 bg-white rounded-3xl border border-[#DCDCDC] shadow-md h-fit">
+              <h3 className="text-lg font-extrabold text-[#000000] tracking-tight">Order Summary</h3>
 
               <div className="mt-5 flex flex-col gap-3 text-xs font-mono">
-                <div className="flex justify-between text-[#6B5E55]">
+                <div className="flex justify-between text-[#666666]">
                   <span>SUBTOTAL</span>
-                  <span className="font-bold text-[#2D231E]">${subtotal.toFixed(2)}</span>
+                  <span className="font-bold text-[#000000]">${subtotal.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-[#6B5E55]">
+                <div className="flex justify-between text-[#666666]">
                   <span>SHIPPING</span>
                   {shipping === 0 ? (
-                    <span className="font-bold text-[#2D5A27] uppercase">FREE</span>
+                    <span className="font-bold text-[#042509] uppercase">FREE</span>
                   ) : (
-                    <span className="font-bold text-[#2D231E]">${shipping.toFixed(2)}</span>
+                    <span className="font-bold text-[#000000]">${shipping.toFixed(2)}</span>
                   )}
                 </div>
               </div>
 
               {awayFromFreeShipping > 0 && (
-                <div className="mt-4 p-3 rounded-xl bg-[#BC5A36]/10 border border-[#BC5A36]/30">
-                  <p className="text-[11px] font-mono text-[#BC5A36] font-bold leading-relaxed">
+                <div className="mt-4 p-3 rounded-xl bg-[#C91D1D]/10 border border-[#C91D1D]/30">
+                  <p className="text-[11px] font-mono text-[#C91D1D] font-bold leading-relaxed">
                     ✦ Add ${awayFromFreeShipping.toFixed(2)} more to unlock FREE express shipping!
                   </p>
                 </div>
               )}
 
-              <div className="mt-5 pt-4 border-t border-dashed border-[#D9D3C7] flex justify-between items-center">
-                <span className="text-xs font-bold uppercase tracking-widest text-[#2D231E]">Total</span>
-                <span className="text-xl font-extrabold text-[#2D5A27] font-mono">${total.toFixed(2)}</span>
+              <div className="mt-5 pt-4 border-t border-dashed border-[#DCDCDC] flex justify-between items-center">
+                <span className="text-xs font-bold uppercase tracking-widest text-[#000000]">Total</span>
+                <span className="text-xl font-extrabold text-[#042509] font-mono">${total.toFixed(2)}</span>
               </div>
 
               <button
                 onClick={onCheckout}
-                className="mt-6 w-full py-4 bg-[#BC5A36] hover:bg-[#A64C2B] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-[#BC5A36]/30 active:scale-95 cursor-pointer"
+                className="mt-6 w-full py-4 bg-[#C91D1D] hover:bg-[#A81515] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-[#C91D1D]/30 active:scale-95 cursor-pointer"
               >
                 Checkout → ${total.toFixed(2)}
               </button>
 
-              <p className="mt-4 flex items-center justify-center gap-1.5 text-[10px] font-mono text-[#6B5E55] uppercase tracking-wider">
+              <p className="mt-4 flex items-center justify-center gap-1.5 text-[10px] font-mono text-[#666666] uppercase tracking-wider">
                 <Lock size={11} />
                 Secure checkout • Free returns within 30 days
               </p>

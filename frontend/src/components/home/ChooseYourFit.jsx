@@ -69,7 +69,7 @@ export default function ChooseYourFit({ onSelectFit }) {
   ];
 
   return (
-    <section className="relative w-full min-h-240 lg:min-h-screen bg-white overflow-hidden select-none flex items-center justify-center border-b border-[#D9D3C7] py-12">
+    <section className="relative w-full min-h-240 lg:min-h-screen bg-white overflow-hidden select-none flex items-center justify-center border-b border-[#DCDCDC] py-12">
       {/* 1. Full-Bleed Center Model Canvas (เห็นครบทั้งตัว 100% ไม่ขาด) */}
       <div className="absolute inset-0 w-full h-full pointer-events-none z-0 flex items-center justify-center p-2 sm:p-6">
         <img
@@ -81,12 +81,12 @@ export default function ChooseYourFit({ onSelectFit }) {
 
       {/* 2. Independent Title & Badge: คุมโทนสี MatchA Espresso & Terracotta */}
       <div className="absolute top-12 left-[24%] z-30 pointer-events-none">
-        <div className="bg-[#2D231E] px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block border-l-4 border-[#BC5A36]">
+        <div className="bg-[#000000] px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block border-l-4 border-[#C91D1D]">
           <span className="animate-text-shimmer-light inline-block">
             Choose Your Fit
           </span>
         </div>
-        <p className="text-[10px] sm:text-xs font-mono text-[#BC5A36] tracking-[0.25em] uppercase mt-1.5 font-bold">
+        <p className="text-[10px] sm:text-xs font-mono text-[#C91D1D] tracking-[0.25em] uppercase mt-1.5 font-bold">
           SIGNATURE SILHOUETTES & FIT GUIDE
         </p>
       </div>
@@ -107,7 +107,7 @@ export default function ChooseYourFit({ onSelectFit }) {
               onClick={() => onSelectFit && onSelectFit(item)}
               className={`absolute ${item.positionClass} w-36 sm:w-48 lg:w-56 xl:w-60 aspect-3/4 z-20 cursor-pointer transition-all duration-300 transform ${
                 isHovered
-                  ? "scale-108 z-40 shadow-2xl -translate-y-1.5 ring-2 ring-[#BC5A36]"
+                  ? "scale-108 z-40 shadow-2xl -translate-y-1.5 ring-2 ring-[#C91D1D]"
                   : "shadow-md hover:shadow-xl"
               } overflow-hidden bg-transparent border-0`}
             >
@@ -120,17 +120,17 @@ export default function ChooseYourFit({ onSelectFit }) {
 
               {/* Dark Hover Tint Overlay (คุมโทนสี MatchA Espresso & Terracotta) */}
               <div
-                className={`absolute inset-0 bg-[#2D231E]/90 backdrop-blur-[2px] transition-opacity duration-300 flex flex-col items-center justify-center p-3 text-center ${
+                className={`absolute inset-0 bg-[#000000]/90 backdrop-blur-[2px] transition-opacity duration-300 flex flex-col items-center justify-center p-3 text-center ${
                   isHovered ? "opacity-95" : "opacity-0"
                 }`}
               >
-                <span className="text-[10px] sm:text-xs font-mono text-[#D0DEC6] tracking-wider uppercase font-bold">
+                <span className="text-[10px] sm:text-xs font-mono text-[#518F5C] tracking-wider uppercase font-bold">
                   {item.count}
                 </span>
-                <h4 className="text-xs sm:text-base font-extrabold text-[#FAF8F5] uppercase tracking-tight mt-1 leading-tight">
+                <h4 className="text-xs sm:text-base font-extrabold text-[#F1F1F1] uppercase tracking-tight mt-1 leading-tight">
                   {item.category}
                 </h4>
-                <span className="mt-2.5 inline-flex items-center gap-1 text-[10px] font-mono text-white font-bold uppercase bg-[#BC5A36] hover:bg-[#9E4423] px-3 py-1 rounded shadow-sm transition-colors">
+                <span className="mt-2.5 inline-flex items-center gap-1 text-[10px] font-mono text-white font-bold uppercase bg-[#C91D1D] hover:bg-[#A81515] px-3 py-1 rounded shadow-sm transition-colors">
                   <span>Explore Fit</span>
                   <ArrowUpRight size={11} />
                 </span>
@@ -138,7 +138,7 @@ export default function ChooseYourFit({ onSelectFit }) {
 
               {/* Code Label in Top Left Corner */}
               {!isHovered && (
-                <div className="absolute top-2 left-2 px-2 py-0.5 bg-[#2D231E]/90 text-[9px] sm:text-[10px] font-mono text-[#D0DEC6] font-bold shadow-sm">
+                <div className="absolute top-2 left-2 px-2 py-0.5 bg-[#000000]/90 text-[9px] sm:text-[10px] font-mono text-[#518F5C] font-bold shadow-sm">
                   {item.code}
                 </div>
               )}

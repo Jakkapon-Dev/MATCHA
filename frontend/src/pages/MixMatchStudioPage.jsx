@@ -262,20 +262,20 @@ export default function MixMatchStudioPage() {
   }, [activeSlotTab, tops, bottoms, footwear, accessories, userSeason]);
 
   return (
-    <div className="w-full bg-[#FAF8F5] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-10 sm:space-y-14">
 
         {/* 1. HEADER */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#D9D3C7]">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#DCDCDC]">
           <div>
-            <div data-enter className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E2ECE9] border border-[#2D5A27]/20 text-[#2D5A27] text-xs font-mono font-bold uppercase tracking-wider mb-2">
+            <div data-enter className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F1F1F1] border border-[#042509]/20 text-[#042509] text-xs font-mono font-bold uppercase tracking-wider mb-2">
               <Sparkles size={14} />
               <span>Head-to-Toe 4-Slot Wardrobe Canvas</span>
             </div>
-            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-3xl sm:text-5xl font-black uppercase text-[#2D231E] tracking-tight font-serif">
+            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-3xl sm:text-5xl font-black uppercase text-[#000000] tracking-tight font-serif">
               Mix & Match Fashion Studio
             </h1>
-            <p data-enter style={{ '--enter-delay': '190ms' }} className="text-[#6B5E55] text-xs sm:text-sm mt-1">
+            <p data-enter style={{ '--enter-delay': '190ms' }} className="text-[#666666] text-xs sm:text-sm mt-1">
               จับคู่ลุคสมบูรณ์แบบ เสื้อ • กางเกง • รองเท้า • เครื่องประดับ พร้อมระบบคำนวณ Color Harmony ตามทฤษฎีสากล
             </p>
           </div>
@@ -283,14 +283,14 @@ export default function MixMatchStudioPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={handleRandomize}
-              className="px-4 py-2.5 rounded-xl border border-[#D9D3C7] bg-white hover:bg-[#FAF8F5] text-[#2D231E] font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs"
+              className="px-4 py-2.5 rounded-xl border border-[#DCDCDC] bg-white hover:bg-[#F1F1F1] text-[#000000] font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs"
             >
               <Shuffle size={14} />
               <span>สุ่มชุดใหม่ (Shuffle)</span>
             </button>
             <button
               onClick={() => navigate('/personal-color')}
-              className="px-4 py-2.5 rounded-xl bg-[#2D231E] text-[#D0DEC6] hover:text-white font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs"
+              className="px-4 py-2.5 rounded-xl bg-[#000000] text-[#518F5C] hover:text-white font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs"
             >
               <Palette size={14} />
               <span>Personal Color Lab</span>
@@ -301,13 +301,13 @@ export default function MixMatchStudioPage() {
         {/* 2. EDITORIAL PRESET CHIPS */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-mono font-bold uppercase text-[#6B5E55] tracking-wider block">
+            <span className="text-[11px] font-mono font-bold uppercase text-[#666666] tracking-wider block">
               {userSeason
                 ? `ลุคแนะนำตามโทนสีผิวของคุณ (${userSeason}) 4-Piece Presets:`
                 : 'ลุคแฟชั่นยอดนิยม 4-Piece Presets:'}
             </span>
             {activePresetId && (
-              <span className="text-[10px] font-mono text-[#2D5A27] font-bold bg-[#E2ECE9] px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] font-mono text-[#042509] font-bold bg-[#F1F1F1] px-2.5 py-0.5 rounded-full">
                 ✓ กำลังแสดงลุคที่เลือก
               </span>
             )}
@@ -322,13 +322,13 @@ export default function MixMatchStudioPage() {
                   onClick={() => handleApplyPreset(preset)}
                   className={`p-3.5 rounded-2xl border-2 text-left transition-all duration-200 cursor-pointer group relative ${
                     isActive
-                      ? 'border-[#2D5A27] bg-[#2D5A27]/8 shadow-lg ring-2 ring-[#2D5A27]/25 scale-[1.02]'
-                      : 'border-[#D9D3C7] bg-white hover:border-[#2D5A27]/50 hover:bg-[#FAF8F5] hover:shadow-md'
+                      ? 'border-[#042509] bg-[#042509]/8 shadow-lg ring-2 ring-[#042509]/25 scale-[1.02]'
+                      : 'border-[#DCDCDC] bg-white hover:border-[#042509]/50 hover:bg-[#F1F1F1] hover:shadow-md'
                   }`}
                 >
                   <div className="flex items-center justify-between text-xs font-bold font-mono mb-1.5">
                     <span className={`truncate font-bold transition-colors ${
-                      isActive ? 'text-[#2D5A27]' : 'text-[#2D231E] group-hover:text-[#2D5A27]'
+                      isActive ? 'text-[#042509]' : 'text-[#000000] group-hover:text-[#042509]'
                     }`}>
                       {preset.name}
                     </span>
@@ -336,20 +336,20 @@ export default function MixMatchStudioPage() {
                       title={`Color Harmony: ${preset.harmonyType}`}
                       className={`text-[10px] font-bold px-2 py-0.5 rounded-md transition-colors shrink-0 ${
                         isActive
-                          ? 'bg-[#2D5A27] text-white shadow-xs'
-                          : 'bg-[#E2ECE9] text-[#2D5A27]'
+                          ? 'bg-[#042509] text-white shadow-xs'
+                          : 'bg-[#F1F1F1] text-[#042509]'
                       }`}
                     >
                       {PRESET_HARMONY[preset.id]}% Harmony
                     </span>
                   </div>
                   <p className={`text-[11px] line-clamp-2 leading-relaxed transition-colors ${
-                    isActive ? 'text-[#2D231E] font-medium' : 'text-[#6B5E55]'
+                    isActive ? 'text-[#000000] font-medium' : 'text-[#666666]'
                   }`}>
                     {preset.description}
                   </p>
                   {isUserSeason && (
-                    <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-mono font-bold text-[#2D5A27] bg-[#E2ECE9] px-2 py-0.5 rounded-full">
+                    <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-mono font-bold text-[#042509] bg-[#F1F1F1] px-2 py-0.5 rounded-full">
                       ✓ ตรงกับผลวิเคราะห์ของคุณ
                     </span>
                   )}
@@ -365,16 +365,16 @@ export default function MixMatchStudioPage() {
           {/* LEFT COLUMN: 4-Slot Interactive Fitting Canvas (5 Cols - Sourced Height) */}
           <div 
             ref={leftColRef}
-            className="lg:col-span-5 bg-white rounded-3xl border border-[#D9D3C7] p-6 shadow-xl space-y-6"
+            className="lg:col-span-5 bg-white rounded-3xl border border-[#DCDCDC] p-6 shadow-xl space-y-6"
           >
             
-            <div className="flex items-center justify-between border-b border-[#D9D3C7]/60 pb-3">
+            <div className="flex items-center justify-between border-b border-[#DCDCDC]/60 pb-3">
               <div className="flex items-center gap-2">
-                <Layers size={18} className="text-[#2D5A27]" />
-                <h3 className="font-serif text-lg font-bold text-[#2D231E]">Head-to-Toe Canvas</h3>
+                <Layers size={18} className="text-[#042509]" />
+                <h3 className="font-serif text-lg font-bold text-[#000000]">Head-to-Toe Canvas</h3>
               </div>
               <span className={`text-xs font-mono font-bold px-2.5 py-1 rounded-lg ${
-                isCompleteBundle ? 'bg-[#2D5A27] text-white' : 'bg-[#FEE4E2] text-[#B42318]'
+                isCompleteBundle ? 'bg-[#042509] text-white' : 'bg-[#FEE4E2] text-[#B42318]'
               }`}>
                 {isCompleteBundle
                   ? `${buyableItems.length} ชิ้นครบเซ็ต`
@@ -383,31 +383,31 @@ export default function MixMatchStudioPage() {
             </div>
 
             {/* Visual Canvas Stack (4 Slots) */}
-            <div ref={outfitMotionRef} className="space-y-2.5 bg-[#FAF8F5] p-3.5 rounded-2xl border border-[#D9D3C7]">
+            <div ref={outfitMotionRef} className="space-y-2.5 bg-[#F1F1F1] p-3.5 rounded-2xl border border-[#DCDCDC]">
               
               {/* Slot 1: Top / Upper Body */}
               <div 
                 onClick={() => setActiveSlotTab('tops')}
                 data-motion-slot="tops" data-motion-item={selectedTop?.id}
                 className={`p-2.5 bg-white rounded-xl border-2 transition-all cursor-pointer flex items-center gap-3 ${
-                  activeSlotTab === 'tops' ? 'border-[#2D5A27] ring-2 ring-[#2D5A27]/20 shadow-sm' : 'border-[#D9D3C7]'
+                  activeSlotTab === 'tops' ? 'border-[#042509] ring-2 ring-[#042509]/20 shadow-sm' : 'border-[#DCDCDC]'
                 }`}
               >
                 <img 
                   src={webpSrc(selectedTop?.image)} data-original-src={selectedTop?.image} 
                   alt={selectedTop?.name} 
                   onError={handleImageError}
-                  className="w-14 h-16 object-contain bg-[#FAF8F5] rounded-lg p-1" 
+                  className="w-14 h-16 object-contain bg-[#F1F1F1] rounded-lg p-1" 
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-[#2D5A27]">
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-[#042509]">
                     <Shirt size={12} />
                     <span>1. Upper Body (30%)</span>
                   </div>
-                  <h4 className="font-bold text-xs text-[#2D231E] truncate">{selectedTop?.name}</h4>
+                  <h4 className="font-bold text-xs text-[#000000] truncate">{selectedTop?.name}</h4>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="w-2.5 h-2.5 rounded-full border border-black/10" style={{ backgroundColor: selectedTop?.colorHex }} />
-                    <span className="text-[11px] font-mono text-[#6B5E55]">${selectedTop?.price}</span>
+                    <span className="text-[11px] font-mono text-[#666666]">${selectedTop?.price}</span>
                     {selectedTop && !selectedTop.inStock && (
                       <span className="text-[9px] font-mono font-bold text-[#B42318] bg-[#FEE4E2] px-1.5 py-0.5 rounded">หมดสต็อก</span>
                     )}
@@ -421,24 +421,24 @@ export default function MixMatchStudioPage() {
                 onClick={() => setActiveSlotTab('bottoms')}
                 data-motion-slot="bottoms" data-motion-item={selectedBottom?.id}
                 className={`p-2.5 bg-white rounded-xl border-2 transition-all cursor-pointer flex items-center gap-3 ${
-                  activeSlotTab === 'bottoms' ? 'border-[#2D5A27] ring-2 ring-[#2D5A27]/20 shadow-sm' : 'border-[#D9D3C7]'
+                  activeSlotTab === 'bottoms' ? 'border-[#042509] ring-2 ring-[#042509]/20 shadow-sm' : 'border-[#DCDCDC]'
                 }`}
               >
                 <img 
                   src={webpSrc(selectedBottom?.image)} data-original-src={selectedBottom?.image} 
                   alt={selectedBottom?.name} 
                   onError={handleImageError}
-                  className="w-14 h-16 object-contain bg-[#FAF8F5] rounded-lg p-1" 
+                  className="w-14 h-16 object-contain bg-[#F1F1F1] rounded-lg p-1" 
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-[#2D5A27]">
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-[#042509]">
                     <Scissors size={12} />
                     <span>2. Lower Body (60% Base)</span>
                   </div>
-                  <h4 className="font-bold text-xs text-[#2D231E] truncate">{selectedBottom?.name}</h4>
+                  <h4 className="font-bold text-xs text-[#000000] truncate">{selectedBottom?.name}</h4>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="w-2.5 h-2.5 rounded-full border border-black/10" style={{ backgroundColor: selectedBottom?.colorHex }} />
-                    <span className="text-[11px] font-mono text-[#6B5E55]">${selectedBottom?.price}</span>
+                    <span className="text-[11px] font-mono text-[#666666]">${selectedBottom?.price}</span>
                     {selectedBottom && !selectedBottom.inStock && (
                       <span className="text-[9px] font-mono font-bold text-[#B42318] bg-[#FEE4E2] px-1.5 py-0.5 rounded">หมดสต็อก</span>
                     )}
@@ -452,24 +452,24 @@ export default function MixMatchStudioPage() {
                 onClick={() => setActiveSlotTab('footwear')}
                 data-motion-slot="footwear" data-motion-item={selectedFootwear?.id}
                 className={`p-2.5 bg-white rounded-xl border-2 transition-all cursor-pointer flex items-center gap-3 ${
-                  activeSlotTab === 'footwear' ? 'border-[#2D5A27] ring-2 ring-[#2D5A27]/20 shadow-sm' : 'border-[#D9D3C7]'
+                  activeSlotTab === 'footwear' ? 'border-[#042509] ring-2 ring-[#042509]/20 shadow-sm' : 'border-[#DCDCDC]'
                 }`}
               >
                 <img 
                   src={webpSrc(selectedFootwear?.image)} data-original-src={selectedFootwear?.image} 
                   alt={selectedFootwear?.name} 
                   onError={handleImageError}
-                  className="w-14 h-16 object-contain bg-[#FAF8F5] rounded-lg p-1" 
+                  className="w-14 h-16 object-contain bg-[#F1F1F1] rounded-lg p-1" 
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-[#BC5A36]">
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-[#C91D1D]">
                     <Footprints size={12} />
                     <span>3. Footwear Anchor (5%)</span>
                   </div>
-                  <h4 className="font-bold text-xs text-[#2D231E] truncate">{selectedFootwear?.name}</h4>
+                  <h4 className="font-bold text-xs text-[#000000] truncate">{selectedFootwear?.name}</h4>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="w-2.5 h-2.5 rounded-full border border-black/10" style={{ backgroundColor: selectedFootwear?.colorHex }} />
-                    <span className="text-[11px] font-mono text-[#6B5E55]">${selectedFootwear?.price}</span>
+                    <span className="text-[11px] font-mono text-[#666666]">${selectedFootwear?.price}</span>
                     {selectedFootwear && !selectedFootwear.inStock && (
                       <span className="text-[9px] font-mono font-bold text-[#B42318] bg-[#FEE4E2] px-1.5 py-0.5 rounded">หมดสต็อก</span>
                     )}
@@ -483,24 +483,24 @@ export default function MixMatchStudioPage() {
                 onClick={() => setActiveSlotTab('accessories')}
                 data-motion-slot="accessories" data-motion-item={selectedAccessory?.id}
                 className={`p-2.5 bg-white rounded-xl border-2 transition-all cursor-pointer flex items-center gap-3 ${
-                  activeSlotTab === 'accessories' ? 'border-[#2D5A27] ring-2 ring-[#2D5A27]/20 shadow-sm' : 'border-[#D9D3C7]'
+                  activeSlotTab === 'accessories' ? 'border-[#042509] ring-2 ring-[#042509]/20 shadow-sm' : 'border-[#DCDCDC]'
                 }`}
               >
                 <img 
                   src={webpSrc(selectedAccessory?.image)} data-original-src={selectedAccessory?.image} 
                   alt={selectedAccessory?.name} 
                   onError={handleImageError}
-                  className="w-14 h-16 object-contain bg-[#FAF8F5] rounded-lg p-1" 
+                  className="w-14 h-16 object-contain bg-[#F1F1F1] rounded-lg p-1" 
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-[#2D5A27]">
+                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-[#042509]">
                     <Briefcase size={12} />
                     <span>4. Accent Accessory (5%)</span>
                   </div>
-                  <h4 className="font-bold text-xs text-[#2D231E] truncate">{selectedAccessory?.name}</h4>
+                  <h4 className="font-bold text-xs text-[#000000] truncate">{selectedAccessory?.name}</h4>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="w-2.5 h-2.5 rounded-full border border-black/10" style={{ backgroundColor: selectedAccessory?.colorHex }} />
-                    <span className="text-[11px] font-mono text-[#6B5E55]">${selectedAccessory?.price}</span>
+                    <span className="text-[11px] font-mono text-[#666666]">${selectedAccessory?.price}</span>
                     {selectedAccessory && !selectedAccessory.inStock && (
                       <span className="text-[9px] font-mono font-bold text-[#B42318] bg-[#FEE4E2] px-1.5 py-0.5 rounded">หมดสต็อก</span>
                     )}
@@ -512,36 +512,36 @@ export default function MixMatchStudioPage() {
             </div>
 
             {/* Color Harmony Score Metric (Computational Fashion Engine) */}
-            <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#D9D3C7] space-y-3">
+            <div className="p-4 rounded-2xl bg-[#F1F1F1] border border-[#DCDCDC] space-y-3">
               <div className="flex items-center justify-between text-xs font-mono font-bold">
-                <span className="uppercase text-[#6B5E55]">Color Harmony Index:</span>
-                <span className="text-[#2D5A27] font-black text-sm">{harmonyScore}% Synergy</span>
+                <span className="uppercase text-[#666666]">Color Harmony Index:</span>
+                <span className="text-[#042509] font-black text-sm">{harmonyScore}% Synergy</span>
               </div>
-              <div className="w-full h-2 rounded-full bg-white border border-[#D9D3C7] overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-white border border-[#DCDCDC] overflow-hidden">
                 <div 
-                  className="h-full bg-linear-to-r from-[#8F9779] to-[#2D5A27] transition-all duration-500" 
+                  className="h-full bg-linear-to-r from-[#8F9779] to-[#042509] transition-all duration-500" 
                   style={{ width: `${harmonyScore}%` }}
                 />
               </div>
 
               {/* Harmony Type & Season Tag */}
               <div className="flex items-center justify-between text-[11px] font-mono">
-                <span className="px-2 py-0.5 rounded-md bg-[#2D5A27]/10 text-[#2D5A27] font-bold">
+                <span className="px-2 py-0.5 rounded-md bg-[#042509]/10 text-[#042509] font-bold">
                   {synergy.harmonyType}
                 </span>
-                <span className="text-[#6B5E55]">
+                <span className="text-[#666666]">
                   {synergy.dominantSeason} Capsule
                 </span>
               </div>
 
               {/* 60-30-10 Color Proportion Rule (4-Piece Distribution) */}
               {synergy.proportion60_30_10 && (
-                <div className="pt-2 border-t border-[#D9D3C7]/60 space-y-1.5">
-                  <div className="flex items-center justify-between text-[10px] font-mono font-bold text-[#6B5E55]">
+                <div className="pt-2 border-t border-[#DCDCDC]/60 space-y-1.5">
+                  <div className="flex items-center justify-between text-[10px] font-mono font-bold text-[#666666]">
                     <span>RULE 60-30-10 PROPORTION</span>
-                    <span className="text-[#2D5A27]">Base • Top • Shoes • Bag</span>
+                    <span className="text-[#042509]">Base • Top • Shoes • Bag</span>
                   </div>
-                  <div className="flex h-3 w-full rounded-md overflow-hidden border border-[#D9D3C7] shadow-xs">
+                  <div className="flex h-3 w-full rounded-md overflow-hidden border border-[#DCDCDC] shadow-xs">
                     <div 
                       style={{ width: '60%', backgroundColor: synergy.proportion60_30_10.base.hex }} 
                       title={`60% Base (Lower Body): ${synergy.proportion60_30_10.base.name}`} 
@@ -559,7 +559,7 @@ export default function MixMatchStudioPage() {
                       title={`5% Accessory: ${synergy.proportion60_30_10.accent.name}`} 
                     />
                   </div>
-                  <div className="flex justify-between text-[9px] font-mono text-[#6B5E55]">
+                  <div className="flex justify-between text-[9px] font-mono text-[#666666]">
                     <span className="truncate max-w-[28%]">60% {synergy.proportion60_30_10.base.color}</span>
                     <span className="truncate max-w-[28%] text-center">30% {synergy.proportion60_30_10.secondary.color}</span>
                     <span className="truncate max-w-[22%] text-center">5% {synergy.proportion60_30_10.footwear.color}</span>
@@ -569,28 +569,28 @@ export default function MixMatchStudioPage() {
               )}
 
               {/* Detected Itten Optical Contrasts & Delta E */}
-              <div className="pt-2 border-t border-[#D9D3C7]/60 space-y-1.5">
-                <span className="text-[10px] font-mono font-bold uppercase text-[#6B5E55] block">
+              <div className="pt-2 border-t border-[#DCDCDC]/60 space-y-1.5">
+                <span className="text-[10px] font-mono font-bold uppercase text-[#666666] block">
                   Optical Contrasts (Johannes Itten):
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {synergy.ittenContrasts && synergy.ittenContrasts.map((contrast) => (
                     <span 
                       key={contrast.id} 
-                      className="text-[9px] font-mono px-2 py-0.5 rounded-md bg-[#E2ECE9] text-[#2D5A27] font-semibold"
+                      className="text-[9px] font-mono px-2 py-0.5 rounded-md bg-[#F1F1F1] text-[#042509] font-semibold"
                       title={contrast.description}
                     >
                       {contrast.name}: {contrast.badge}
                     </span>
                   ))}
-                  <span className="text-[9px] font-mono px-2 py-0.5 rounded-md bg-white border border-[#D9D3C7] text-[#6B5E55]" title="CIELAB Color Distance (ΔE)">
+                  <span className="text-[9px] font-mono px-2 py-0.5 rounded-md bg-white border border-[#DCDCDC] text-[#666666]" title="CIELAB Color Distance (ΔE)">
                     ΔE: {synergy.deltaE}
                   </span>
                 </div>
               </div>
 
               {/* Styling Critique Advice */}
-              <p className="text-[11px] text-[#2D231E] leading-relaxed pt-1 font-medium bg-white/60 p-2 rounded-lg border border-[#D9D3C7]/50">
+              <p className="text-[11px] text-[#000000] leading-relaxed pt-1 font-medium bg-white/60 p-2 rounded-lg border border-[#DCDCDC]/50">
                 💡 {synergy.stylingAdvice}
               </p>
             </div>
@@ -598,14 +598,14 @@ export default function MixMatchStudioPage() {
             {/* Pricing & 1-Click Bundle Button */}
             <div className="space-y-3 pt-2">
               <div className="flex items-baseline justify-between font-mono">
-                <span className="text-xs text-[#6B5E55] uppercase font-bold">
+                <span className="text-xs text-[#666666] uppercase font-bold">
                   Total Bundle ({buyableItems.length} Item{buyableItems.length === 1 ? '' : 's'}):
                 </span>
                 <div className="text-right">
                   {isCompleteBundle && (
-                    <span className="text-xs line-through text-[#6B5E55] mr-2">${bundleSubtotal.toFixed(2)}</span>
+                    <span className="text-xs line-through text-[#666666] mr-2">${bundleSubtotal.toFixed(2)}</span>
                   )}
-                  <span className="text-xl font-black text-[#2D231E]">${finalBundleTotal.toFixed(2)}</span>
+                  <span className="text-xl font-black text-[#000000]">${finalBundleTotal.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -621,7 +621,7 @@ export default function MixMatchStudioPage() {
                 className={`w-full py-4 rounded-2xl font-mono font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer ${
                   justAddedBundle 
                     ? 'bg-emerald-600 text-white' 
-                    : 'bg-[#2D5A27] hover:bg-[#1E3D1A] text-white shadow-[#2D5A27]/25'
+                    : 'bg-[#042509] hover:bg-[#1E3D1A] text-white shadow-[#042509]/25'
                 }`}
               >
                 {justAddedBundle ? (
@@ -650,17 +650,17 @@ export default function MixMatchStudioPage() {
           {/* RIGHT COLUMN: Interactive Slot Item Pickers (7 Cols - Equal Height to Left Column) */}
           <div 
             style={isLgScreen && leftColHeight ? { height: `${leftColHeight}px` } : undefined}
-            className="lg:col-span-7 bg-white rounded-3xl border border-[#D9D3C7] p-6 sm:p-8 shadow-xl flex flex-col transition-[height] duration-150"
+            className="lg:col-span-7 bg-white rounded-3xl border border-[#DCDCDC] p-6 sm:p-8 shadow-xl flex flex-col transition-[height] duration-150"
           >
             
             {/* Slot Tab Switches (4 Tabs) */}
-            <div className="flex items-center gap-1.5 sm:gap-2 border-b border-[#D9D3C7] pb-4 overflow-x-auto shrink-0 mb-6">
+            <div className="flex items-center gap-1.5 sm:gap-2 border-b border-[#DCDCDC] pb-4 overflow-x-auto shrink-0 mb-6">
               <button
                 onClick={() => setActiveSlotTab('tops')}
                 className={`px-3 sm:px-4 py-2 rounded-xl font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeSlotTab === 'tops' 
-                    ? 'bg-[#2D231E] text-white shadow-sm' 
-                    : 'bg-[#FAF8F5] text-[#6B5E55] hover:text-[#2D231E]'
+                    ? 'bg-[#000000] text-white shadow-sm' 
+                    : 'bg-[#F1F1F1] text-[#666666] hover:text-[#000000]'
                 }`}
               >
                 <Shirt size={14} />
@@ -671,8 +671,8 @@ export default function MixMatchStudioPage() {
                 onClick={() => setActiveSlotTab('bottoms')}
                 className={`px-3 sm:px-4 py-2 rounded-xl font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeSlotTab === 'bottoms' 
-                    ? 'bg-[#2D231E] text-white shadow-sm' 
-                    : 'bg-[#FAF8F5] text-[#6B5E55] hover:text-[#2D231E]'
+                    ? 'bg-[#000000] text-white shadow-sm' 
+                    : 'bg-[#F1F1F1] text-[#666666] hover:text-[#000000]'
                 }`}
               >
                 <Scissors size={14} />
@@ -683,8 +683,8 @@ export default function MixMatchStudioPage() {
                 onClick={() => setActiveSlotTab('footwear')}
                 className={`px-3 sm:px-4 py-2 rounded-xl font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeSlotTab === 'footwear' 
-                    ? 'bg-[#2D231E] text-white shadow-sm' 
-                    : 'bg-[#FAF8F5] text-[#6B5E55] hover:text-[#2D231E]'
+                    ? 'bg-[#000000] text-white shadow-sm' 
+                    : 'bg-[#F1F1F1] text-[#666666] hover:text-[#000000]'
                 }`}
               >
                 <Footprints size={14} />
@@ -695,8 +695,8 @@ export default function MixMatchStudioPage() {
                 onClick={() => setActiveSlotTab('accessories')}
                 className={`px-3 sm:px-4 py-2 rounded-xl font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeSlotTab === 'accessories' 
-                    ? 'bg-[#2D231E] text-white shadow-sm' 
-                    : 'bg-[#FAF8F5] text-[#6B5E55] hover:text-[#2D231E]'
+                    ? 'bg-[#000000] text-white shadow-sm' 
+                    : 'bg-[#F1F1F1] text-[#666666] hover:text-[#000000]'
                 }`}
               >
                 <Briefcase size={14} />
@@ -731,11 +731,11 @@ export default function MixMatchStudioPage() {
                     }}
                     className={`p-3.5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between group ${
                       isSelected 
-                        ? 'border-[#2D5A27] bg-[#FAF8F5] ring-2 ring-[#2D5A27]/20 shadow-md' 
-                        : 'border-[#D9D3C7] bg-white hover:border-[#6B5E55]'
+                        ? 'border-[#042509] bg-[#F1F1F1] ring-2 ring-[#042509]/20 shadow-md' 
+                        : 'border-[#DCDCDC] bg-white hover:border-[#666666]'
                     }`}
                   >
-                    <div className="relative aspect-4/5 w-full bg-[#FAF8F5] rounded-xl overflow-hidden mb-2.5 p-2 flex items-center justify-center">
+                    <div className="relative aspect-4/5 w-full bg-[#F1F1F1] rounded-xl overflow-hidden mb-2.5 p-2 flex items-center justify-center">
                       <img 
                         src={webpSrc(item.image)} data-original-src={item.image} 
                         loading="lazy"
@@ -745,11 +745,11 @@ export default function MixMatchStudioPage() {
                         className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200" 
                       />
                       {isSelected && (
-                        <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[#2D5A27] text-white flex items-center justify-center shadow-md">
+                        <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[#042509] text-white flex items-center justify-center shadow-md">
                           <Check size={14} />
                         </div>
                       )}
-                      <span className="absolute bottom-2 left-2 text-[9px] font-mono px-2 py-0.5 bg-white/90 rounded backdrop-blur-xs font-bold text-[#2D231E]">
+                      <span className="absolute bottom-2 left-2 text-[9px] font-mono px-2 py-0.5 bg-white/90 rounded backdrop-blur-xs font-bold text-[#000000]">
                         {item.season}
                       </span>
                       {!item.inStock && (
@@ -760,14 +760,14 @@ export default function MixMatchStudioPage() {
                     </div>
 
                     <div className="space-y-1">
-                      <h5 className="font-bold text-xs text-[#2D231E] line-clamp-1 group-hover:text-[#2D5A27]">
+                      <h5 className="font-bold text-xs text-[#000000] line-clamp-1 group-hover:text-[#042509]">
                         {item.name}
                       </h5>
                       <div className="flex items-center justify-between text-[11px] font-mono">
-                        <span className="font-bold text-[#2D231E]">${Number(item.price).toFixed(2)}</span>
+                        <span className="font-bold text-[#000000]">${Number(item.price).toFixed(2)}</span>
                         <div className="flex items-center gap-1">
                           <span className="w-2 h-2 rounded-full border border-black/10" style={{ backgroundColor: item.colorHex }} />
-                          <span className="text-[10px] text-[#6B5E55] truncate max-w-16">{item.color}</span>
+                          <span className="text-[10px] text-[#666666] truncate max-w-16">{item.color}</span>
                         </div>
                       </div>
                     </div>

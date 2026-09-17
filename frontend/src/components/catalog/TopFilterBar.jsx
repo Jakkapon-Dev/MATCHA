@@ -69,10 +69,10 @@ export default function TopFilterBar({
             onClick={() => toggleDropdown('season')}
             className={`px-4 py-2 rounded-full border text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
               selectedSeason !== 'ALL'
-                ? 'bg-[#2D5A27] text-white border-[#2D5A27]'
+                ? 'bg-[#042509] text-white border-[#042509]'
                 : openDropdown === 'season'
-                ? 'bg-white text-[#2D5A27] border-[#2D5A27] ring-2 ring-[#2D5A27]/20 shadow-md'
-                : 'bg-white text-[#2D231E] border-[#D9D3C7] hover:border-[#2D5A27]'
+                ? 'bg-white text-[#042509] border-[#042509] ring-2 ring-[#042509]/20 shadow-md'
+                : 'bg-white text-[#000000] border-[#DCDCDC] hover:border-[#042509]'
             }`}
           >
             <span>{selectedSeasonObj.icon}</span>
@@ -84,9 +84,9 @@ export default function TopFilterBar({
           {openDropdown === 'season' && (
             <div 
               onWheel={(e) => e.stopPropagation()}
-              className="absolute left-0 mt-2 w-60 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-2.5 z-30 font-mono text-xs animate-fade-in"
+              className="absolute left-0 mt-2 w-60 bg-white rounded-2xl border border-[#DCDCDC] shadow-2xl p-2.5 z-30 font-mono text-xs animate-fade-in"
             >
-              <div className="text-[10px] font-bold uppercase text-[#6B5E55] px-3 py-1.5 tracking-wider border-b border-[#D9D3C7]/40 mb-1.5 flex items-center justify-between">
+              <div className="text-[10px] font-bold uppercase text-[#666666] px-3 py-1.5 tracking-wider border-b border-[#DCDCDC]/40 mb-1.5 flex items-center justify-between">
                 <span>Seasonal Drop</span>
                 {selectedSeason !== 'ALL' && (
                   <button
@@ -94,7 +94,7 @@ export default function TopFilterBar({
                       onSelectSeason('ALL');
                       setOpenDropdown(null);
                     }}
-                    className="text-[10px] text-[#BC5A36] hover:underline font-bold cursor-pointer"
+                    className="text-[10px] text-[#C91D1D] hover:underline font-bold cursor-pointer"
                   >
                     Reset
                   </button>
@@ -112,8 +112,8 @@ export default function TopFilterBar({
                       }}
                       className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
                         isSelected
-                          ? 'bg-[#2D5A27] text-white font-bold'
-                          : 'hover:bg-[#FAF8F5] text-[#2D231E]'
+                          ? 'bg-[#042509] text-white font-bold'
+                          : 'hover:bg-[#F1F1F1] text-[#000000]'
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -135,10 +135,10 @@ export default function TopFilterBar({
             onClick={() => toggleDropdown('color')}
             className={`px-4 py-2 rounded-full border text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
               selectedColor !== 'ALL'
-                ? 'bg-[#2D5A27] text-white border-[#2D5A27]'
+                ? 'bg-[#042509] text-white border-[#042509]'
                 : openDropdown === 'color'
-                ? 'bg-white text-[#2D5A27] border-[#2D5A27] ring-2 ring-[#2D5A27]/20 shadow-md'
-                : 'bg-white text-[#2D231E] border-[#D9D3C7] hover:border-[#2D5A27]'
+                ? 'bg-white text-[#042509] border-[#042509] ring-2 ring-[#042509]/20 shadow-md'
+                : 'bg-white text-[#000000] border-[#DCDCDC] hover:border-[#042509]'
             }`}
           >
             <div 
@@ -153,12 +153,12 @@ export default function TopFilterBar({
           {openDropdown === 'color' && (
             <div 
               onWheel={(e) => e.stopPropagation()}
-              className="absolute left-0 mt-2 w-80 sm:w-115 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-3.5 z-30 font-mono text-xs animate-fade-in"
+              className="absolute left-0 mt-2 w-80 sm:w-115 bg-white rounded-2xl border border-[#DCDCDC] shadow-2xl p-3.5 z-30 font-mono text-xs animate-fade-in"
             >
-              <div className="flex items-center justify-between px-1.5 py-1 border-b border-[#D9D3C7]/40 mb-2.5">
+              <div className="flex items-center justify-between px-1.5 py-1 border-b border-[#DCDCDC]/40 mb-2.5">
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-bold uppercase text-[#6B5E55] tracking-wider">Color Swatches</span>
-                  <span className="text-[10px] text-[#6B5E55]/70">({colorOptions.length} Shades)</span>
+                  <span className="text-[10px] font-bold uppercase text-[#666666] tracking-wider">Color Swatches</span>
+                  <span className="text-[10px] text-[#666666]/70">({colorOptions.length} Shades)</span>
                 </div>
                 {selectedColor !== 'ALL' && (
                   <button 
@@ -166,7 +166,7 @@ export default function TopFilterBar({
                       onSelectColor('ALL');
                       setOpenDropdown(null);
                     }}
-                    className="text-[10px] text-[#BC5A36] hover:underline font-bold cursor-pointer"
+                    className="text-[10px] text-[#C91D1D] hover:underline font-bold cursor-pointer"
                   >
                     Reset to All
                   </button>
@@ -186,8 +186,8 @@ export default function TopFilterBar({
                       }}
                       className={`flex items-center gap-2 px-2.5 py-2 rounded-xl border text-left text-[11px] transition-all cursor-pointer ${
                         isSelected
-                          ? 'border-[#2D5A27] bg-[#D0DEC6]/30 text-[#2D5A27] font-bold shadow-xs'
-                          : 'border-transparent hover:bg-[#FAF8F5] text-[#2D231E] hover:border-[#D9D3C7]/60'
+                          ? 'border-[#042509] bg-[#518F5C]/30 text-[#042509] font-bold shadow-xs'
+                          : 'border-transparent hover:bg-[#F1F1F1] text-[#000000] hover:border-[#DCDCDC]/60'
                       }`}
                     >
                       <div 
@@ -209,10 +209,10 @@ export default function TopFilterBar({
             onClick={() => toggleDropdown('fit')}
             className={`px-4 py-2 rounded-full border text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
               selectedFit !== 'ALL'
-                ? 'bg-[#2D5A27] text-white border-[#2D5A27]'
+                ? 'bg-[#042509] text-white border-[#042509]'
                 : openDropdown === 'fit'
-                ? 'bg-white text-[#2D5A27] border-[#2D5A27] ring-2 ring-[#2D5A27]/20 shadow-md'
-                : 'bg-white text-[#2D231E] border-[#D9D3C7] hover:border-[#2D5A27]'
+                ? 'bg-white text-[#042509] border-[#042509] ring-2 ring-[#042509]/20 shadow-md'
+                : 'bg-white text-[#000000] border-[#DCDCDC] hover:border-[#042509]'
             }`}
           >
             <span>{selectedFit === 'ALL' ? 'Silhouette & Fit' : `Fit: ${selectedFit}`}</span>
@@ -223,9 +223,9 @@ export default function TopFilterBar({
           {openDropdown === 'fit' && (
             <div 
               onWheel={(e) => e.stopPropagation()}
-              className="absolute left-0 mt-2 w-60 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-2.5 z-30 font-mono text-xs animate-fade-in"
+              className="absolute left-0 mt-2 w-60 bg-white rounded-2xl border border-[#DCDCDC] shadow-2xl p-2.5 z-30 font-mono text-xs animate-fade-in"
             >
-              <div className="text-[10px] font-bold uppercase text-[#6B5E55] px-3 py-1.5 tracking-wider border-b border-[#D9D3C7]/40 mb-1.5 flex items-center justify-between">
+              <div className="text-[10px] font-bold uppercase text-[#666666] px-3 py-1.5 tracking-wider border-b border-[#DCDCDC]/40 mb-1.5 flex items-center justify-between">
                 <span>Garment Silhouette</span>
                 {selectedFit !== 'ALL' && (
                   <button
@@ -233,7 +233,7 @@ export default function TopFilterBar({
                       onSelectFit('ALL');
                       setOpenDropdown(null);
                     }}
-                    className="text-[10px] text-[#BC5A36] hover:underline font-bold cursor-pointer"
+                    className="text-[10px] text-[#C91D1D] hover:underline font-bold cursor-pointer"
                   >
                     Reset
                   </button>
@@ -251,8 +251,8 @@ export default function TopFilterBar({
                       }}
                       className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-left transition-colors cursor-pointer ${
                         isSelected
-                          ? 'bg-[#2D5A27] text-white font-bold'
-                          : 'hover:bg-[#FAF8F5] text-[#2D231E]'
+                          ? 'bg-[#042509] text-white font-bold'
+                          : 'hover:bg-[#F1F1F1] text-[#000000]'
                       }`}
                     >
                       <span>{fit === 'ALL' ? 'All Silhouettes' : fit}</span>
@@ -271,10 +271,10 @@ export default function TopFilterBar({
             onClick={() => toggleDropdown('price')}
             className={`px-4 py-2 rounded-full border text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
               priceRange < 200
-                ? 'bg-[#2D5A27] text-white border-[#2D5A27]'
+                ? 'bg-[#042509] text-white border-[#042509]'
                 : openDropdown === 'price'
-                ? 'bg-white text-[#2D5A27] border-[#2D5A27] ring-2 ring-[#2D5A27]/20 shadow-md'
-                : 'bg-white text-[#2D231E] border-[#D9D3C7] hover:border-[#2D5A27]'
+                ? 'bg-white text-[#042509] border-[#042509] ring-2 ring-[#042509]/20 shadow-md'
+                : 'bg-white text-[#000000] border-[#DCDCDC] hover:border-[#042509]'
             }`}
           >
             <span>{priceRange < 200 ? `Max: $${priceRange}` : 'Price Range'}</span>
@@ -285,11 +285,11 @@ export default function TopFilterBar({
           {openDropdown === 'price' && (
             <div 
               onWheel={(e) => e.stopPropagation()}
-              className="absolute left-0 mt-2 w-72 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-4 z-30 font-mono text-xs animate-fade-in"
+              className="absolute left-0 mt-2 w-72 bg-white rounded-2xl border border-[#DCDCDC] shadow-2xl p-4 z-30 font-mono text-xs animate-fade-in"
             >
-              <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#D9D3C7]/40">
-                <span className="text-[10px] font-bold uppercase text-[#6B5E55] tracking-wider">Maximum Price</span>
-                <span className="text-base font-black text-[#2D5A27]">${priceRange}</span>
+              <div className="flex items-center justify-between mb-3 pb-2 border-b border-[#DCDCDC]/40">
+                <span className="text-[10px] font-bold uppercase text-[#666666] tracking-wider">Maximum Price</span>
+                <span className="text-base font-black text-[#042509]">${priceRange}</span>
               </div>
               <input
                 type="range"
@@ -298,27 +298,27 @@ export default function TopFilterBar({
                 step="5"
                 value={priceRange}
                 onChange={(e) => onChangePrice(Number(e.target.value))}
-                className="w-full accent-[#2D5A27] cursor-pointer"
+                className="w-full accent-[#042509] cursor-pointer"
               />
-              <div className="flex items-center justify-between text-[10px] text-[#6B5E55] mt-2 font-mono">
+              <div className="flex items-center justify-between text-[10px] text-[#666666] mt-2 font-mono">
                 <span>$30</span>
                 <span>$100</span>
                 <span>$200</span>
               </div>
-              <div className="mt-4 pt-2.5 border-t border-[#D9D3C7]/40 flex items-center justify-between">
+              <div className="mt-4 pt-2.5 border-t border-[#DCDCDC]/40 flex items-center justify-between">
                 {priceRange < 200 ? (
                   <button
                     onClick={() => {
                       onChangePrice(200);
                     }}
-                    className="text-[10px] text-[#BC5A36] hover:underline font-bold cursor-pointer"
+                    className="text-[10px] text-[#C91D1D] hover:underline font-bold cursor-pointer"
                   >
                     Reset Max
                   </button>
                 ) : <span />}
                 <button
                   onClick={() => setOpenDropdown(null)}
-                  className="px-3.5 py-1.5 rounded-lg bg-[#2D5A27] text-white font-bold text-xs cursor-pointer hover:bg-[#23471E]"
+                  className="px-3.5 py-1.5 rounded-lg bg-[#042509] text-white font-bold text-xs cursor-pointer hover:bg-[#021505]"
                 >
                   Apply
                 </button>
@@ -332,11 +332,11 @@ export default function TopFilterBar({
           onClick={onToggleInStock}
           className={`px-4 py-2 rounded-full border text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs ${
             inStockOnly
-              ? 'bg-[#2D5A27] text-white border-[#2D5A27]'
-              : 'bg-white text-[#2D231E] border-[#D9D3C7] hover:border-[#2D5A27]'
+              ? 'bg-[#042509] text-white border-[#042509]'
+              : 'bg-white text-[#000000] border-[#DCDCDC] hover:border-[#042509]'
           }`}
         >
-          <div className={`w-2 h-2 rounded-full ${inStockOnly ? 'bg-[#85E369]' : 'bg-[#BC5A36]'}`} />
+          <div className={`w-2 h-2 rounded-full ${inStockOnly ? 'bg-[#85E369]' : 'bg-[#C91D1D]'}`} />
           <span>In Stock Only</span>
         </button>
 
@@ -344,7 +344,7 @@ export default function TopFilterBar({
         {activeFilterCount > 0 && (
           <button
             onClick={onResetFilters}
-            className="px-3 py-2 rounded-full text-xs font-mono font-bold text-[#BC5A36] hover:bg-[#BC5A36]/10 flex items-center gap-1.5 transition-colors cursor-pointer ml-auto"
+            className="px-3 py-2 rounded-full text-xs font-mono font-bold text-[#C91D1D] hover:bg-[#C91D1D]/10 flex items-center gap-1.5 transition-colors cursor-pointer ml-auto"
           >
             <RotateCcw size={12} />
             <span>Clear Filters</span>

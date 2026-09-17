@@ -74,7 +74,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
     if (product) {
       const initialVariant = product.initialVariant || (product.variants && product.variants.length > 0
         ? product.variants[0]
-        : { color: product.color || 'Signature', colorHex: product.colorHex || '#2D5A27', image: product.image });
+        : { color: product.color || 'Signature', colorHex: product.colorHex || '#042509', image: product.image });
       setActiveVariant(initialVariant);
       const list = Array.isArray(product.sizes) ? product.sizes.filter(Boolean) : [];
       setSelectedSize(list.length === 1 ? list[0] : null);
@@ -164,24 +164,24 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
       <div 
         data-lenis-prevent="true"
         onWheel={(e) => e.stopPropagation()}
-        className="bg-[#FAF8F5] text-[#2D231E] rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto overscroll-contain shadow-2xl border border-[#D9D3C7] relative animate-modal-pop flex flex-col md:flex-row overflow-hidden"
+        className="bg-[#F1F1F1] text-[#000000] rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto overscroll-contain shadow-2xl border border-[#DCDCDC] relative animate-modal-pop flex flex-col md:flex-row overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button 
           onClick={onClose}
           aria-label="Close modal"
-          className="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-white/90 hover:bg-[#2D231E] hover:text-white border border-[#D9D3C7] flex items-center justify-center text-sm font-bold text-[#2D231E] transition-all cursor-pointer shadow-md"
+          className="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-white/90 hover:bg-[#000000] hover:text-white border border-[#DCDCDC] flex items-center justify-center text-sm font-bold text-[#000000] transition-all cursor-pointer shadow-md"
         >
           <X size={18} />
         </button>
 
         {/* LEFT COLUMN: Clean Framed Product Card */}
-        <div className="md:w-1/2 bg-[#FAF8F5] p-3 sm:p-4 flex flex-col justify-between items-center relative border-b md:border-b-0 md:border-r border-[#D9D3C7]">
+        <div className="md:w-1/2 bg-[#F1F1F1] p-3 sm:p-4 flex flex-col justify-between items-center relative border-b md:border-b-0 md:border-r border-[#DCDCDC]">
           
           {/* Top Bar inside Left Column: Tag & Wishlist */}
           <div className="w-full flex items-center justify-between z-10 mb-2.5 px-1">
-            <span className="px-3 py-1 bg-[#2D231E] text-[#D0DEC6] text-[10px] font-mono font-bold tracking-widest uppercase rounded-lg shadow-2xs">
+            <span className="px-3 py-1 bg-[#000000] text-[#518F5C] text-[10px] font-mono font-bold tracking-widest uppercase rounded-lg shadow-2xs">
               {product.tag || `${product.season} COLLECTION`}
             </span>
             <button
@@ -189,7 +189,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
               className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all cursor-pointer shadow-xs ${
                 wishlistActive 
                   ? 'bg-rose-50 border-rose-300 text-rose-600' 
-                  : 'bg-white border-[#D9D3C7] text-[#6B5E55] hover:text-rose-500 hover:border-rose-300'
+                  : 'bg-white border-[#DCDCDC] text-[#666666] hover:text-rose-500 hover:border-rose-300'
               }`}
             >
               <Heart size={16} className={wishlistActive ? 'fill-rose-500 text-rose-500' : ''} />
@@ -197,7 +197,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
           </div>
 
           {/* MAIN PRODUCT PHOTO FRAME */}
-          <div className="w-full flex-1 aspect-4/5 min-h-75 sm:min-h-90 md:min-h-100 rounded-2xl overflow-hidden bg-white border border-[#D9D3C7] shadow-sm flex items-center justify-center relative group p-4 sm:p-6">
+          <div className="w-full flex-1 aspect-4/5 min-h-75 sm:min-h-90 md:min-h-100 rounded-2xl overflow-hidden bg-white border border-[#DCDCDC] shadow-sm flex items-center justify-center relative group p-4 sm:p-6">
             <img 
               src={webpSrc(galleryImage?.url || activeVariant.image)} data-original-src={galleryImage?.url || activeVariant.image}
               alt={galleryImage?.alt || `${product.name} - ${activeVariant.color}`}
@@ -208,7 +208,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             />
             
             {/* Color Overlay Badge on Image */}
-            <div className="absolute bottom-3 left-3 px-2.5 py-1 bg-[#2D231E]/85 backdrop-blur-xs text-white text-[10px] font-mono rounded-lg flex items-center gap-1.5 shadow-sm">
+            <div className="absolute bottom-3 left-3 px-2.5 py-1 bg-[#000000]/85 backdrop-blur-xs text-white text-[10px] font-mono rounded-lg flex items-center gap-1.5 shadow-sm">
               <span 
                 className="w-2.5 h-2.5 rounded-full border border-white/50"
                 style={{ backgroundColor: activeVariant.colorHex }}
@@ -218,8 +218,8 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
 
             {/* Sold Out Overlay */}
             {!product.inStock && (
-              <div className="absolute inset-0 bg-[#2D231E]/60 backdrop-blur-[1px] flex items-center justify-center z-25">
-                <span className="px-4 py-2 bg-white text-[#2D231E] text-xs font-mono font-bold uppercase tracking-wider rounded-xl shadow-lg">
+              <div className="absolute inset-0 bg-[#000000]/60 backdrop-blur-[1px] flex items-center justify-center z-25">
+                <span className="px-4 py-2 bg-white text-[#000000] text-xs font-mono font-bold uppercase tracking-wider rounded-xl shadow-lg">
                   Sold Out • สินค้าหมดชั่วคราว
                 </span>
               </div>
@@ -227,7 +227,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
           </div>
 
           {/* COLOR VARIANT THUMBNAILS */}
-          {gallery.length > 0 && <div className="flex flex-wrap gap-2 mt-3" aria-label="รูปเพิ่มเติมของสินค้า">{gallery.map((g, i) => <button key={g.url} type="button" aria-label={`ดูรูป ${i + 1}: ${g.alt || product.name}`} aria-pressed={galleryImage?.url === g.url} onClick={() => setGalleryImage(g)} className="w-14 h-16 border border-[#D9D3C7] rounded-lg overflow-hidden hover:border-[#2D5A27] focus-visible:ring-2 focus-visible:ring-[#2D5A27]"><img src={webpSrc(g.url)} alt={g.alt || product.name} className="w-full h-full object-contain" /></button>)}</div>}
+          {gallery.length > 0 && <div className="flex flex-wrap gap-2 mt-3" aria-label="รูปเพิ่มเติมของสินค้า">{gallery.map((g, i) => <button key={g.url} type="button" aria-label={`ดูรูป ${i + 1}: ${g.alt || product.name}`} aria-pressed={galleryImage?.url === g.url} onClick={() => setGalleryImage(g)} className="w-14 h-16 border border-[#DCDCDC] rounded-lg overflow-hidden hover:border-[#042509] focus-visible:ring-2 focus-visible:ring-[#042509]"><img src={webpSrc(g.url)} alt={g.alt || product.name} className="w-full h-full object-contain" /></button>)}</div>}
           {variants.length > 1 && (
             <div className="w-full flex items-center justify-center gap-2 pt-2.5 overflow-x-auto pb-0.5">
               {variants.map((v, i) => {
@@ -239,8 +239,8 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                     title={v.color}
                     className={`w-11 h-13 rounded-lg overflow-hidden border-2 transition-all cursor-pointer relative shrink-0 ${
                       isActive 
-                        ? 'border-[#2D5A27] scale-105 shadow-md ring-2 ring-[#2D5A27]/30' 
-                        : 'border-[#D9D3C7] opacity-70 hover:opacity-100 hover:scale-105'
+                        ? 'border-[#042509] scale-105 shadow-md ring-2 ring-[#042509]/30' 
+                        : 'border-[#DCDCDC] opacity-70 hover:opacity-100 hover:scale-105'
                     }`}
                   >
                     <img src={webpSrc(v.image)} data-original-src={v.image} alt={v.color} className="w-full h-full object-cover" />
@@ -266,25 +266,25 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             
             {/* Header: Title, Category, Rating, Price */}
             <div>
-              <div className="flex items-center gap-2 text-xs font-mono text-[#6B5E55] mb-1.5 flex-wrap">
-                <span className="text-[#2D5A27] font-bold uppercase">{product.season} Drop</span>
+              <div className="flex items-center gap-2 text-xs font-mono text-[#666666] mb-1.5 flex-wrap">
+                <span className="text-[#042509] font-bold uppercase">{product.season} Drop</span>
                 <span>•</span>
                 <span className="uppercase">{product.category}</span>
                 <span>•</span>
                 <span>{product.id}</span>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2D231E] uppercase tracking-tight leading-tight">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#000000] uppercase tracking-tight leading-tight">
                 {product.name}
               </h2>
 
               <div className="flex items-center gap-4 mt-2 flex-wrap">
                 <div className="flex items-baseline gap-2 font-mono">
-                  <span className="text-2xl sm:text-3xl font-black text-[#2D231E]">
+                  <span className="text-2xl sm:text-3xl font-black text-[#000000]">
                     ${itemPrice.toFixed(2)}
                   </span>
                   {product.originalPrice && (
-                    <span className="text-sm line-through text-[#6B5E55]">
+                    <span className="text-sm line-through text-[#666666]">
                       ${(typeof product.originalPrice === 'number' ? product.originalPrice : Number(product.originalPrice)).toFixed(2)}
                     </span>
                   )}
@@ -297,7 +297,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                     <span>{product.rating} ({product.reviewsCount} reviews)</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1 text-[10px] font-mono text-[#8C7E74] bg-[#FAF8F5] border border-[#D9D3C7] px-2 py-0.5 rounded-lg">
+                  <div className="flex items-center gap-1 text-[10px] font-mono text-[#8C7E74] bg-[#F1F1F1] border border-[#DCDCDC] px-2 py-0.5 rounded-lg">
                     <span>ยังไม่มีคะแนนรีวิว</span>
                   </div>
                 )}
@@ -305,15 +305,15 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             </div>
 
             {/* Description */}
-            <p className="text-xs sm:text-sm text-[#6B5E55] leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#666666] leading-relaxed">
               {product.description}
             </p>
 
             {/* 1. Interactive Color Swatches */}
             <div>
               <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-2">
-                <span>Color: <strong className="text-[#2D5A27]">{activeVariant.color}</strong></span>
-                <span className="text-[10px] font-mono text-[#6B5E55]">{variants.length} Tones Available</span>
+                <span>Color: <strong className="text-[#042509]">{activeVariant.color}</strong></span>
+                <span className="text-[10px] font-mono text-[#666666]">{variants.length} Tones Available</span>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
                 {variants.map((v, idx) => {
@@ -325,8 +325,8 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                       title={v.color}
                       className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-mono transition-all cursor-pointer ${
                         isSelected
-                          ? 'border-[#2D5A27] bg-[#2D5A27]/10 text-[#2D5A27] font-bold shadow-2xs ring-1 ring-[#2D5A27]'
-                          : 'border-[#D9D3C7] bg-white text-[#2D231E] hover:border-[#6B5E55]'
+                          ? 'border-[#042509] bg-[#042509]/10 text-[#042509] font-bold shadow-2xs ring-1 ring-[#042509]'
+                          : 'border-[#DCDCDC] bg-white text-[#000000] hover:border-[#666666]'
                       }`}
                     >
                       <span 
@@ -343,12 +343,12 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             {/* 2. Interactive Size Selector with Functional Fit Guide Button */}
             <div>
               <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-2">
-                <span>Size: <strong className="text-[#2D5A27]">{selectedSize}</strong></span>
+                <span>Size: <strong className="text-[#042509]">{selectedSize}</strong></span>
                 <button
                   type="button"
                   onClick={() => setShowFitGuide(prev => !prev)}
                   aria-expanded={showFitGuide}
-                  className="text-[11px] font-mono font-bold text-[#BC5A36] hover:text-[#9E4423] underline cursor-pointer flex items-center gap-1 transition-colors"
+                  className="text-[11px] font-mono font-bold text-[#C91D1D] hover:text-[#A81515] underline cursor-pointer flex items-center gap-1 transition-colors"
                 >
                   <Ruler size={13} />
                   <span>{showFitGuide ? 'ซ่อนคำแนะนำไซซ์ (Hide Fit Guide)' : 'Fit Guide (คำแนะนำไซซ์)'}</span>
@@ -362,8 +362,8 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                     onClick={() => setSelectedSize(sz)}
                     className={`min-w-10 h-10 px-2 rounded-xl text-xs font-mono font-bold uppercase transition-all cursor-pointer ${
                       selectedSize === sz
-                        ? 'bg-[#2D231E] text-white shadow-sm scale-105'
-                        : 'bg-white border border-[#D9D3C7] text-[#2D231E] hover:border-[#2D5A27]'
+                        ? 'bg-[#000000] text-white shadow-sm scale-105'
+                        : 'bg-white border border-[#DCDCDC] text-[#000000] hover:border-[#042509]'
                     }`}
                   >
                     {sz}
@@ -373,7 +373,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
 
               {/* Functional Interactive Fit Guide View (Requirement 3) */}
               {showFitGuide && (
-                <div className="mt-3 p-3.5 sm:p-4 rounded-2xl bg-white border border-[#D9D3C7] shadow-sm space-y-3 animate-fade-in text-xs">
+                <div className="mt-3 p-3.5 sm:p-4 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm space-y-3 animate-fade-in text-xs">
                   {/* Mandatory Sample Sizing Badge Attached to Table */}
                   <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[11px] font-mono flex items-start gap-2">
                     <AlertCircle size={14} className="shrink-0 text-amber-600 mt-0.5" />
@@ -383,10 +383,10 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   </div>
 
                   <div className="flex items-center justify-between font-mono">
-                    <span className="font-bold text-[#2D231E] uppercase">
+                    <span className="font-bold text-[#000000] uppercase">
                       {product.specs?.sizeGuide?.system || 'Size & Fit Specification'}
                     </span>
-                    <span className="text-[10px] text-[#6B5E55]">หน่วยวัด: เซนติเมตร (cm)</span>
+                    <span className="text-[10px] text-[#666666]">หน่วยวัด: เซนติเมตร (cm)</span>
                   </div>
 
                   {/* Shoes Size Guide */}
@@ -394,16 +394,16 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                     <div className="overflow-x-auto">
                       <table className="w-full text-left font-mono text-[10px] sm:text-xs border-collapse">
                         <thead>
-                          <tr className="border-b border-[#D9D3C7] text-[#6B5E55] bg-[#FAF8F5]">
+                          <tr className="border-b border-[#DCDCDC] text-[#666666] bg-[#F1F1F1]">
                             <th className="py-1.5 px-2">EU Size</th>
                             <th className="py-1.5 px-2">US Men</th>
                             <th className="py-1.5 px-2">US Women</th>
                             <th className="py-1.5 px-2">ความยาวเท้า (cm)</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-[#D9D3C7]/50">
+                        <tbody className="divide-y divide-[#DCDCDC]/50">
                           {product.specs?.sizeGuide?.rows?.map((r, i) => (
-                            <tr key={i} className={selectedSize === r.size ? 'bg-[#2D5A27]/10 font-bold text-[#2D5A27]' : 'text-[#2D231E]'}>
+                            <tr key={i} className={selectedSize === r.size ? 'bg-[#042509]/10 font-bold text-[#042509]' : 'text-[#000000]'}>
                               <td className="py-1.5 px-2">{r.size}</td>
                               <td className="py-1.5 px-2">{r.usMen}</td>
                               <td className="py-1.5 px-2">{r.usWomen}</td>
@@ -414,11 +414,11 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                       </table>
                     </div>
                   ) : product.category === 'Accessories' ? (
-                    <div className="p-3 bg-[#FAF8F5] rounded-xl border border-[#D9D3C7]/70 space-y-1.5">
-                      <div className="font-bold text-[#2D231E] text-xs">
-                        ขนาดและสัดส่วน: <span className="text-[#2D5A27]">{product.specs?.sizeGuide?.dimensionText || 'One Size (OS)'}</span>
+                    <div className="p-3 bg-[#F1F1F1] rounded-xl border border-[#DCDCDC]/70 space-y-1.5">
+                      <div className="font-bold text-[#000000] text-xs">
+                        ขนาดและสัดส่วน: <span className="text-[#042509]">{product.specs?.sizeGuide?.dimensionText || 'One Size (OS)'}</span>
                       </div>
-                      <p className="text-[11px] text-[#6B5E55] leading-relaxed">
+                      <p className="text-[11px] text-[#666666] leading-relaxed">
                         {product.specs?.sizeGuide?.note || 'สินค้าหมวดเครื่องประดับและกระเป๋าออกแบบขนาด One Size เหมาะสำหรับสรีระทั่วไป'}
                       </p>
                     </div>
@@ -426,15 +426,15 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                     <div className="overflow-x-auto">
                       <table className="w-full text-left font-mono text-[10px] sm:text-xs border-collapse">
                         <thead>
-                          <tr className="border-b border-[#D9D3C7] text-[#6B5E55] bg-[#FAF8F5]">
+                          <tr className="border-b border-[#DCDCDC] text-[#666666] bg-[#F1F1F1]">
                             {product.specs?.sizeGuide?.headers?.map((h, i) => (
                               <th key={i} className="py-1.5 px-2">{h}</th>
                             ))}
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-[#D9D3C7]/50">
+                        <tbody className="divide-y divide-[#DCDCDC]/50">
                           {product.specs?.sizeGuide?.rows?.map((r, i) => (
-                            <tr key={i} className={selectedSize === r.size ? 'bg-[#2D5A27]/10 font-bold text-[#2D5A27]' : 'text-[#2D231E]'}>
+                            <tr key={i} className={selectedSize === r.size ? 'bg-[#042509]/10 font-bold text-[#042509]' : 'text-[#000000]'}>
                               <td className="py-1.5 px-2">{r.size}</td>
                               {r.chest && <td className="py-1.5 px-2">{r.chest}</td>}
                               {r.waist && <td className="py-1.5 px-2">{r.waist}</td>}
@@ -450,8 +450,8 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
 
                   {/* Measurement Instruction */}
                   {product.specs?.sizeGuide?.measureInstruction && (
-                    <div className="pt-2 border-t border-[#D9D3C7]/60 text-[10px] text-[#6B5E55] leading-relaxed">
-                      <strong className="text-[#2D231E]">วิธีวัดสัดส่วน:</strong> {product.specs.sizeGuide.measureInstruction}
+                    <div className="pt-2 border-t border-[#DCDCDC]/60 text-[10px] text-[#666666] leading-relaxed">
+                      <strong className="text-[#000000]">วิธีวัดสัดส่วน:</strong> {product.specs.sizeGuide.measureInstruction}
                     </div>
                   )}
                 </div>
@@ -459,7 +459,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             </div>
 
             {/* 3. Collapsible Accordion: Materials, Care & Store Status (Requirement 3) */}
-            <div className="border border-[#D9D3C7] rounded-2xl overflow-hidden bg-white divide-y divide-[#D9D3C7]/70 text-xs">
+            <div className="border border-[#DCDCDC] rounded-2xl overflow-hidden bg-white divide-y divide-[#DCDCDC]/70 text-xs">
               
               {/* Accordion 1: วัสดุและรูปทรง */}
               <div>
@@ -467,24 +467,24 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   type="button"
                   onClick={() => setActiveAccordion(activeAccordion === 'materials' ? null : 'materials')}
                   aria-expanded={activeAccordion === 'materials'}
-                  className="w-full px-4 py-3 text-left font-mono font-bold text-[#2D231E] flex items-center justify-between hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                  className="w-full px-4 py-3 text-left font-mono font-bold text-[#000000] flex items-center justify-between hover:bg-[#F1F1F1] transition-colors cursor-pointer"
                 >
                   <span className="flex items-center gap-2">
-                    <Sparkles size={14} className="text-[#2D5A27]" />
+                    <Sparkles size={14} className="text-[#042509]" />
                     <span>วัสดุและคุณลักษณะทรง (Materials & Silhouette)</span>
                   </span>
-                  <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'materials' ? 'rotate-180 text-[#2D5A27]' : 'text-[#6B5E55]'}`} />
+                  <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'materials' ? 'rotate-180 text-[#042509]' : 'text-[#666666]'}`} />
                 </button>
                 {activeAccordion === 'materials' && (
-                  <div className="px-4 pb-3.5 pt-1 space-y-2 text-[#6B5E55] font-mono text-[11px] bg-[#FAF8F5]/40 animate-fade-in">
+                  <div className="px-4 pb-3.5 pt-1 space-y-2 text-[#666666] font-mono text-[11px] bg-[#F1F1F1]/40 animate-fade-in">
                     <div>
-                      <span className="font-bold text-[#2D231E]">ลักษณะทรง (Silhouette):</span> {product.specs?.silhouette || product.fit || 'Relaxed Fit'}
+                      <span className="font-bold text-[#000000]">ลักษณะทรง (Silhouette):</span> {product.specs?.silhouette || product.fit || 'Relaxed Fit'}
                     </div>
                     <div>
-                      <span className="font-bold text-[#2D231E]">รายละเอียดความพอดี:</span> {product.specs?.fitDetails || 'สวมใส่สบาย คัตติ้งสไตล์มินิมอล'}
+                      <span className="font-bold text-[#000000]">รายละเอียดความพอดี:</span> {product.specs?.fitDetails || 'สวมใส่สบาย คัตติ้งสไตล์มินิมอล'}
                     </div>
                     <div>
-                      <span className="font-bold text-[#2D231E]">วัตถุดิบแนะนำ:</span> {product.specs?.materialHint || 'ผ้าทอคอลเลกชันคุณภาพดี (ข้อมูลตัวอย่าง)'}
+                      <span className="font-bold text-[#000000]">วัตถุดิบแนะนำ:</span> {product.specs?.materialHint || 'ผ้าทอคอลเลกชันคุณภาพดี (ข้อมูลตัวอย่าง)'}
                     </div>
                     <div className="p-2 rounded-lg bg-amber-50/70 border border-amber-200/60 text-amber-900 text-[10px]">
                       ⚠️ <strong>สัดส่วนเส้นใยผ้า:</strong> รอข้อมูลยืนยันจากร้านค้า (ไม่ระบุเป็นข้อเท็จจริงจนกว่าจะมีสเปกทางการ)
@@ -499,23 +499,23 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   type="button"
                   onClick={() => setActiveAccordion(activeAccordion === 'care' ? null : 'care')}
                   aria-expanded={activeAccordion === 'care'}
-                  className="w-full px-4 py-3 text-left font-mono font-bold text-[#2D231E] flex items-center justify-between hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                  className="w-full px-4 py-3 text-left font-mono font-bold text-[#000000] flex items-center justify-between hover:bg-[#F1F1F1] transition-colors cursor-pointer"
                 >
                   <span className="flex items-center gap-2">
-                    <RefreshCw size={14} className="text-[#2D5A27]" />
+                    <RefreshCw size={14} className="text-[#042509]" />
                     <span>วิธีดูแลรักษา (Garment Care)</span>
                   </span>
-                  <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'care' ? 'rotate-180 text-[#2D5A27]' : 'text-[#6B5E55]'}`} />
+                  <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'care' ? 'rotate-180 text-[#042509]' : 'text-[#666666]'}`} />
                 </button>
                 {activeAccordion === 'care' && (
-                  <div className="px-4 pb-3.5 pt-1 space-y-1.5 text-[#6B5E55] font-mono text-[11px] bg-[#FAF8F5]/40 animate-fade-in">
+                  <div className="px-4 pb-3.5 pt-1 space-y-1.5 text-[#666666] font-mono text-[11px] bg-[#F1F1F1]/40 animate-fade-in">
                     {(product.specs?.careInstructions || [
                       'ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า',
                       'หลีกเลี่ยงการใช้น้ำยาฟอกขาว',
                       'ตากในที่ร่ม หลีกเลี่ยงแดดจัด'
                     ]).map((item, idx) => (
                       <div key={idx} className="flex items-start gap-1.5">
-                        <span className="text-[#2D5A27] font-bold">✓</span>
+                        <span className="text-[#042509] font-bold">✓</span>
                         <span>{item}</span>
                       </div>
                     ))}
@@ -529,18 +529,18 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   type="button"
                   onClick={() => setActiveAccordion(activeAccordion === 'status' ? null : 'status')}
                   aria-expanded={activeAccordion === 'status'}
-                  className="w-full px-4 py-3 text-left font-mono font-bold text-[#2D231E] flex items-center justify-between hover:bg-[#FAF8F5] transition-colors cursor-pointer"
+                  className="w-full px-4 py-3 text-left font-mono font-bold text-[#000000] flex items-center justify-between hover:bg-[#F1F1F1] transition-colors cursor-pointer"
                 >
                   <span className="flex items-center gap-2">
-                    <ShieldCheck size={14} className="text-[#2D5A27]" />
+                    <ShieldCheck size={14} className="text-[#042509]" />
                     <span>สถานะข้อมูลสินค้า (Store Confirmation Status)</span>
                   </span>
-                  <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'status' ? 'rotate-180 text-[#2D5A27]' : 'text-[#6B5E55]'}`} />
+                  <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'status' ? 'rotate-180 text-[#042509]' : 'text-[#666666]'}`} />
                 </button>
                 {activeAccordion === 'status' && (
-                  <div className="px-4 pb-3.5 pt-1 space-y-2 text-[#6B5E55] font-mono text-[11px] bg-[#FAF8F5]/40 animate-fade-in">
-                    <div className="flex items-center justify-between py-1 border-b border-[#D9D3C7]/40">
-                      <span className="font-bold text-[#2D231E]">สถานะสเปก:</span>
+                  <div className="px-4 pb-3.5 pt-1 space-y-2 text-[#666666] font-mono text-[11px] bg-[#F1F1F1]/40 animate-fade-in">
+                    <div className="flex items-center justify-between py-1 border-b border-[#DCDCDC]/40">
+                      <span className="font-bold text-[#000000]">สถานะสเปก:</span>
                       <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">
                         {product.specs?.statusLabel || 'ข้อมูลตัวอย่าง รอยืนยันจากร้าน'}
                       </span>
@@ -548,11 +548,11 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                     {specRows.map(({ label, value }, i) => (
                       <div
                         key={label}
-                        className={`flex items-start justify-between gap-4 py-1 ${i < specRows.length - 1 ? 'border-b border-[#D9D3C7]/40' : ''}`}
+                        className={`flex items-start justify-between gap-4 py-1 ${i < specRows.length - 1 ? 'border-b border-[#DCDCDC]/40' : ''}`}
                       >
-                        <span className="font-bold text-[#2D231E] shrink-0">{label}:</span>
+                        <span className="font-bold text-[#000000] shrink-0">{label}:</span>
                         {value ? (
-                          <span className="text-right text-[#6B5E55] flex items-baseline justify-end gap-1.5 flex-wrap">
+                          <span className="text-right text-[#666666] flex items-baseline justify-end gap-1.5 flex-wrap">
                             <span>{value}</span>
                             {isSampleSpec && (
                               <span className="px-1 rounded bg-amber-100 text-amber-800 text-[9px] font-bold shrink-0">
@@ -574,17 +574,17 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             {/* 4. Quantity Selector */}
             <div className="flex items-center gap-3">
               <span className="text-xs font-bold uppercase tracking-wider">Quantity:</span>
-              <div className="flex items-center border border-[#D9D3C7] bg-white rounded-xl overflow-hidden font-mono text-xs shadow-2xs">
+              <div className="flex items-center border border-[#DCDCDC] bg-white rounded-xl overflow-hidden font-mono text-xs shadow-2xs">
                 <button 
                   onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                  className="px-3 py-1.5 hover:bg-[#FAF8F5] text-[#2D231E] font-bold cursor-pointer transition-colors"
+                  className="px-3 py-1.5 hover:bg-[#F1F1F1] text-[#000000] font-bold cursor-pointer transition-colors"
                 >
                   -
                 </button>
                 <span className="px-3.5 py-1.5 font-bold min-w-8 text-center">{quantity}</span>
                 <button 
                   onClick={() => setQuantity(q => q + 1)}
-                  className="px-3 py-1.5 hover:bg-[#FAF8F5] text-[#2D231E] font-bold cursor-pointer transition-colors"
+                  className="px-3 py-1.5 hover:bg-[#F1F1F1] text-[#000000] font-bold cursor-pointer transition-colors"
                 >
                   +
                 </button>
@@ -594,9 +594,9 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
           </div>
 
           {/* Bottom Actions: Add to Bag Button & Verified Shipping Rules (Requirement 5) */}
-          <div className="mt-6 pt-5 border-t border-[#D9D3C7] space-y-3">
+          <div className="mt-6 pt-5 border-t border-[#DCDCDC] space-y-3">
             {selectedSize === null && (
-              <p className="text-xs text-[#BC5A36] font-mono text-center">
+              <p className="text-xs text-[#C91D1D] font-mono text-center">
                 {sizeList.length > 1 ? 'กรุณาเลือกไซซ์ก่อน' : 'สินค้านี้ยังไม่มีข้อมูลไซซ์'}
               </p>
             )}
@@ -608,7 +608,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                 product.inStock && selectedSize !== null
                   ? addedAnimation 
                     ? 'bg-emerald-600 text-white' 
-                    : 'bg-[#2D5A27] hover:bg-[#23471E] text-white shadow-[#2D5A27]/25'
+                    : 'bg-[#042509] hover:bg-[#021505] text-white shadow-[#042509]/25'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
             >
@@ -623,9 +623,9 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             </button>
 
             {/* ค่าส่งมาจากตารางกลางเดียวกับเซิร์ฟเวอร์ — ตัวเลขที่นี่คือตัวแรกที่ผู้ซื้อเห็น */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] font-mono text-[#6B5E55] pt-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] font-mono text-[#666666] pt-1">
               <div className="flex items-center gap-1.5">
-                <Truck size={13} className={isFreeShippingEligible ? 'text-[#2D5A27]' : 'text-[#BC5A36]'} />
+                <Truck size={13} className={isFreeShippingEligible ? 'text-[#042509]' : 'text-[#C91D1D]'} />
                 <span>
                   {isFreeShippingEligible 
                     ? `ส่งฟรีทุกแบบ (ยอดถึงเกณฑ์ $${FREE_SHIPPING_THRESHOLD}+)` 
@@ -633,7 +633,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                 </span>
               </div>
               <div className="flex items-center gap-1.5">
-                <ShieldCheck size={13} className="text-[#2D5A27]" />
+                <ShieldCheck size={13} className="text-[#042509]" />
                 <span>MatchA Archive Prototype (ข้อมูลตัวอย่าง)</span>
               </div>
             </div>

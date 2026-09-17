@@ -50,7 +50,7 @@ export default function SpotlightCard({
       onBlur={handleBlur}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className={`relative overflow-hidden rounded-xl border border-[#D9D3C7] bg-white transition-colors duration-300 ${className}`}
+      className={`relative overflow-hidden rounded-xl border border-[#DCDCDC] bg-white transition-colors duration-300 ${className}`}
       {...props}
     >
       {/* Interactive Radial Spotlight Layer */}

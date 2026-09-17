@@ -30,7 +30,7 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
     if (product) {
       const initialVariant = product.initialVariant || (product.variants && product.variants.length > 0
         ? product.variants[0]
-        : { color: product.color || 'Signature', colorHex: product.colorHex || '#2D5A27', image: product.image });
+        : { color: product.color || 'Signature', colorHex: product.colorHex || '#042509', image: product.image });
       setActiveVariant(initialVariant);
       setSelectedSize(product.sizes?.[0] || (product.category === 'Accessories' ? 'OS' : 'M'));
       setQuantity(1);
@@ -106,24 +106,24 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
       onClick={onClose}
     >
       <div 
-        className="bg-[#FAF8F5] text-[#2D231E] rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-[#D9D3C7] relative animate-modal-pop flex flex-col md:flex-row overflow-hidden"
+        className="bg-[#F1F1F1] text-[#000000] rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto shadow-2xl border border-[#DCDCDC] relative animate-modal-pop flex flex-col md:flex-row overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button 
           onClick={onClose}
           aria-label="Close modal"
-          className="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-white/90 hover:bg-[#2D231E] hover:text-white border border-[#D9D3C7] flex items-center justify-center text-sm font-bold text-[#2D231E] transition-all cursor-pointer shadow-md"
+          className="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-white/90 hover:bg-[#000000] hover:text-white border border-[#DCDCDC] flex items-center justify-center text-sm font-bold text-[#000000] transition-all cursor-pointer shadow-md"
         >
           <X size={18} />
         </button>
 
         {/* LEFT COLUMN: Clean Framed Product Card */}
-        <div className="md:w-1/2 bg-[#FAF8F5] p-3 sm:p-4 flex flex-col justify-between items-center relative border-b md:border-b-0 md:border-r border-[#D9D3C7]">
+        <div className="md:w-1/2 bg-[#F1F1F1] p-3 sm:p-4 flex flex-col justify-between items-center relative border-b md:border-b-0 md:border-r border-[#DCDCDC]">
           
           {/* Top Bar inside Left Column: Tag & Wishlist */}
           <div className="w-full flex items-center justify-between z-10 mb-2.5 px-1">
-            <span className="px-3 py-1 bg-[#2D231E] text-[#D0DEC6] text-[10px] font-mono font-bold tracking-widest uppercase rounded-lg shadow-2xs">
+            <span className="px-3 py-1 bg-[#000000] text-[#518F5C] text-[10px] font-mono font-bold tracking-widest uppercase rounded-lg shadow-2xs">
               {product.tag || `${product.season} COLLECTION`}
             </span>
             <button
@@ -131,7 +131,7 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
               className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all cursor-pointer shadow-xs ${
                 wishlistActive 
                   ? 'bg-rose-50 border-rose-300 text-rose-600' 
-                  : 'bg-white border-[#D9D3C7] text-[#6B5E55] hover:text-rose-500 hover:border-rose-300'
+                  : 'bg-white border-[#DCDCDC] text-[#666666] hover:text-rose-500 hover:border-rose-300'
               }`}
             >
               <Heart size={16} className={wishlistActive ? 'fill-rose-500 text-rose-500' : ''} />
@@ -139,7 +139,7 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
           </div>
 
           {/* MAIN PRODUCT PHOTO FRAME */}
-          <div className="w-full flex-1 aspect-4/5 min-h-75 sm:min-h-90 md:min-h-100 rounded-2xl overflow-hidden bg-white border border-[#D9D3C7] shadow-sm flex items-center justify-center relative group p-4 sm:p-6">
+          <div className="w-full flex-1 aspect-4/5 min-h-75 sm:min-h-90 md:min-h-100 rounded-2xl overflow-hidden bg-white border border-[#DCDCDC] shadow-sm flex items-center justify-center relative group p-4 sm:p-6">
             <img 
               src={activeVariant.image} 
               alt={`${product.name} - ${activeVariant.color}`}
@@ -150,7 +150,7 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
             />
             
             {/* Color Overlay Badge on Image */}
-            <div className="absolute bottom-3 left-3 px-2.5 py-1 bg-[#2D231E]/85 backdrop-blur-xs text-white text-[10px] font-mono rounded-lg flex items-center gap-1.5 shadow-sm">
+            <div className="absolute bottom-3 left-3 px-2.5 py-1 bg-[#000000]/85 backdrop-blur-xs text-white text-[10px] font-mono rounded-lg flex items-center gap-1.5 shadow-sm">
               <span 
                 className="w-2.5 h-2.5 rounded-full border border-white/50" 
                 style={{ backgroundColor: activeVariant.colorHex }}
@@ -171,8 +171,8 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
                     title={v.color}
                     className={`w-11 h-13 rounded-lg overflow-hidden border-2 transition-all cursor-pointer relative shrink-0 ${
                       isActive 
-                        ? 'border-[#2D5A27] scale-105 shadow-md ring-2 ring-[#2D5A27]/30' 
-                        : 'border-[#D9D3C7] opacity-70 hover:opacity-100 hover:scale-105'
+                        ? 'border-[#042509] scale-105 shadow-md ring-2 ring-[#042509]/30' 
+                        : 'border-[#DCDCDC] opacity-70 hover:opacity-100 hover:scale-105'
                     }`}
                   >
                     <img src={v.image} alt={v.color} className="w-full h-full object-cover" />
@@ -190,25 +190,25 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
             
             {/* Header: Title, Category, Rating, Price */}
             <div>
-              <div className="flex items-center gap-2 text-xs font-mono text-[#6B5E55] mb-1.5">
-                <span className="text-[#2D5A27] font-bold uppercase">{product.season} Drop</span>
+              <div className="flex items-center gap-2 text-xs font-mono text-[#666666] mb-1.5">
+                <span className="text-[#042509] font-bold uppercase">{product.season} Drop</span>
                 <span>•</span>
                 <span className="uppercase">{product.category}</span>
                 <span>•</span>
                 <span>{product.id}</span>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#2D231E] uppercase tracking-tight leading-tight">
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#000000] uppercase tracking-tight leading-tight">
                 {product.name}
               </h2>
 
               <div className="flex items-center gap-4 mt-2">
                 <div className="flex items-baseline gap-2 font-mono">
-                  <span className="text-2xl sm:text-3xl font-black text-[#2D231E]">
+                  <span className="text-2xl sm:text-3xl font-black text-[#000000]">
                     ${typeof product.price === 'number' ? product.price.toFixed(2) : product.price}
                   </span>
                   {product.originalPrice && (
-                    <span className="text-sm line-through text-[#6B5E55]">
+                    <span className="text-sm line-through text-[#666666]">
                       ${typeof product.originalPrice === 'number' ? product.originalPrice.toFixed(2) : product.originalPrice}
                     </span>
                   )}
@@ -222,15 +222,15 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
             </div>
 
             {/* Description */}
-            <p className="text-xs sm:text-sm text-[#6B5E55] leading-relaxed">
+            <p className="text-xs sm:text-sm text-[#666666] leading-relaxed">
               {product.description}
             </p>
 
             {/* 1. Interactive Color Swatches */}
             <div>
               <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-2">
-                <span>Color: <strong className="text-[#2D5A27]">{activeVariant.color}</strong></span>
-                <span className="text-[10px] font-mono text-[#6B5E55]">{variants.length} Tones Available</span>
+                <span>Color: <strong className="text-[#042509]">{activeVariant.color}</strong></span>
+                <span className="text-[10px] font-mono text-[#666666]">{variants.length} Tones Available</span>
               </div>
               <div className="flex items-center gap-2 flex-wrap">
                 {variants.map((v, idx) => {
@@ -242,8 +242,8 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
                       title={v.color}
                       className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-mono transition-all cursor-pointer ${
                         isSelected
-                          ? 'border-[#2D5A27] bg-[#2D5A27]/10 text-[#2D5A27] font-bold shadow-2xs ring-1 ring-[#2D5A27]'
-                          : 'border-[#D9D3C7] bg-white text-[#2D231E] hover:border-[#6B5E55]'
+                          ? 'border-[#042509] bg-[#042509]/10 text-[#042509] font-bold shadow-2xs ring-1 ring-[#042509]'
+                          : 'border-[#DCDCDC] bg-white text-[#000000] hover:border-[#666666]'
                       }`}
                     >
                       <span 
@@ -260,8 +260,8 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
             {/* 2. Interactive Size Selector */}
             <div>
               <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-2">
-                <span>Size: <strong className="text-[#2D5A27]">{selectedSize}</strong></span>
-                <span className="text-[10px] font-mono text-[#BC5A36] cursor-pointer hover:underline">Fit Guide</span>
+                <span>Size: <strong className="text-[#042509]">{selectedSize}</strong></span>
+                <span className="text-[10px] font-mono text-[#C91D1D] cursor-pointer hover:underline">Fit Guide</span>
               </div>
               <div className="flex items-center gap-2">
                 {(product.sizes || ['S', 'M', 'L', 'XL', 'XXL']).map((sz) => (
@@ -270,8 +270,8 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
                     onClick={() => setSelectedSize(sz)}
                     className={`min-w-10 h-10 px-2 rounded-xl text-xs font-mono font-bold uppercase transition-all cursor-pointer ${
                       selectedSize === sz
-                        ? 'bg-[#2D231E] text-white shadow-sm scale-105'
-                        : 'bg-white border border-[#D9D3C7] text-[#2D231E] hover:border-[#2D5A27]'
+                        ? 'bg-[#000000] text-white shadow-sm scale-105'
+                        : 'bg-white border border-[#DCDCDC] text-[#000000] hover:border-[#042509]'
                     }`}
                   >
                     {sz}
@@ -283,17 +283,17 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
             {/* 3. Quantity Selector */}
             <div className="flex items-center gap-3">
               <span className="text-xs font-bold uppercase tracking-wider">Quantity:</span>
-              <div className="flex items-center border border-[#D9D3C7] bg-white rounded-xl overflow-hidden font-mono text-xs shadow-2xs">
+              <div className="flex items-center border border-[#DCDCDC] bg-white rounded-xl overflow-hidden font-mono text-xs shadow-2xs">
                 <button 
                   onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                  className="px-3 py-1.5 hover:bg-[#FAF8F5] text-[#2D231E] font-bold cursor-pointer transition-colors"
+                  className="px-3 py-1.5 hover:bg-[#F1F1F1] text-[#000000] font-bold cursor-pointer transition-colors"
                 >
                   -
                 </button>
                 <span className="px-3.5 py-1.5 font-bold min-w-8 text-center">{quantity}</span>
                 <button 
                   onClick={() => setQuantity(q => q + 1)}
-                  className="px-3 py-1.5 hover:bg-[#FAF8F5] text-[#2D231E] font-bold cursor-pointer transition-colors"
+                  className="px-3 py-1.5 hover:bg-[#F1F1F1] text-[#000000] font-bold cursor-pointer transition-colors"
                 >
                   +
                 </button>
@@ -303,14 +303,14 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
           </div>
 
           {/* Bottom Actions: Add to Bag Button & Trust Badges */}
-          <div className="mt-6 pt-5 border-t border-[#D9D3C7] space-y-3">
+          <div className="mt-6 pt-5 border-t border-[#DCDCDC] space-y-3">
             <button
               onClick={handleAdd}
               disabled={!product.inStock}
               className={`w-full py-4 rounded-2xl font-mono font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer ${
                 product.inStock 
                   ? addedAnimation 
-                  : 'bg-[#2D5A27] hover:bg-[#23471E] text-white shadow-[#2D5A27]/25'
+                  : 'bg-[#042509] hover:bg-[#021505] text-white shadow-[#042509]/25'
               }`}
             >
               <ShoppingBag size={16} />
@@ -324,13 +324,13 @@ export default function ProductQuickView({ product, onClose, onAddToCart, onTogg
             </button>
 
             {/* Micro Trust Perks */}
-            <div className="grid grid-cols-2 gap-2 text-[10px] font-mono text-[#6B5E55] pt-1">
+            <div className="grid grid-cols-2 gap-2 text-[10px] font-mono text-[#666666] pt-1">
               <div className="flex items-center gap-1.5">
-                <Truck size={12} className="text-[#2D5A27]" />
+                <Truck size={12} className="text-[#042509]" />
                 <span>Free Express Shipping</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <ShieldCheck size={12} className="text-[#2D5A27]" />
+                <ShieldCheck size={12} className="text-[#042509]" />
                 <span>Authentic MatchA Garment</span>
               </div>
             </div>

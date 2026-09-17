@@ -110,7 +110,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
 
   return (
     <section
-      className="relative w-full bg-[#FAF8F5] text-[#2D231E] min-h-[92svh] pt-2 pb-8 sm:pb-10 px-4 sm:px-8 lg:px-12 flex flex-col gap-2 sm:gap-4 select-none border-b border-[#D9D3C7]"
+      className="relative w-full bg-[#F1F1F1] text-[#000000] min-h-[92svh] pt-2 pb-8 sm:pb-10 px-4 sm:px-8 lg:px-12 flex flex-col gap-2 sm:gap-4 select-none border-b border-[#DCDCDC]"
     >
       
       {/* The masthead reveals once and keeps its size while scrolling. */}
@@ -118,8 +118,8 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
         className="w-full text-center z-0 pointer-events-none select-none pt-1 sm:pt-3 -mb-4 sm:-mb-6 md:-mb-8 relative origin-top home-masthead"
       >
         <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10.5rem] font-black tracking-tight uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm font-sans home-masthead-title">
-          <span className="text-[#2D5A27]">MATCH</span>
-          <span className="text-[#BC5A36]">A</span>
+          <span className="text-[#042509]">MATCH</span>
+          <span className="text-[#C91D1D]">A</span>
         </h1>
       </div>
 
@@ -136,7 +136,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
             {badgeLines.map((text, i) => (
               <span
                 key={i}
-                className="bg-[#2D231E] text-[#FAF8F5] px-3.5 py-1 text-xs sm:text-sm font-bold font-mono uppercase tracking-wider inline-block shadow-md select-none"
+                className="bg-[#000000] text-[#F1F1F1] px-3.5 py-1 text-xs sm:text-sm font-bold font-mono uppercase tracking-wider inline-block shadow-md select-none"
               >
                 {text}
               </span>
@@ -148,13 +148,13 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
         <div className="md:col-span-6 flex flex-col items-center justify-center order-1 md:order-2 z-20">
           
           <div 
-            className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl aspect-3/4 bg-white rounded-none overflow-hidden shadow-2xl border border-[#2D231E]/20 flex flex-col select-none group/card z-20"
+            className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl aspect-3/4 bg-white rounded-none overflow-hidden shadow-2xl border border-[#000000]/20 flex flex-col select-none group/card z-20"
           >
             
             {/* Slice 1: Head & Face (Top 25%) */}
             <div 
               onClick={() => cycleSingleSlice(0)}
-              className="relative w-full h-[25%] overflow-hidden border-b border-[#2D231E]/15 bg-neutral-100 cursor-pointer group"
+              className="relative w-full h-[25%] overflow-hidden border-b border-[#000000]/15 bg-neutral-100 cursor-pointer group"
               title="Click to randomize head slice"
             >
               <img 
@@ -167,7 +167,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
             {/* Slice 2: Torso & Apparel (25% - 50%) */}
             <div 
               onClick={() => cycleSingleSlice(1)}
-              className="relative w-full h-[25%] overflow-hidden border-b border-[#2D231E]/15 bg-neutral-100 cursor-pointer group"
+              className="relative w-full h-[25%] overflow-hidden border-b border-[#000000]/15 bg-neutral-100 cursor-pointer group"
               title="Click to randomize torso slice"
             >
               <img 
@@ -180,7 +180,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
             {/* Slice 3: Lower Body & Pants/Skirt (50% - 75%) */}
             <div 
               onClick={() => cycleSingleSlice(2)}
-              className="relative w-full h-[25%] overflow-hidden border-b border-[#2D231E]/15 bg-neutral-100 cursor-pointer group"
+              className="relative w-full h-[25%] overflow-hidden border-b border-[#000000]/15 bg-neutral-100 cursor-pointer group"
               title="Click to randomize pants/skirt slice"
             >
               <img 
@@ -216,10 +216,10 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
             style={{ '--enter-delay': '90ms' }}
             className="home-hero-enter text-center md:text-left font-mono"
           >
-            <p className="text-[11px] font-bold tracking-wider text-[#6B5E55]">
+            <p className="text-[11px] font-bold tracking-wider text-[#666666]">
               DROP_35 &nbsp;//&nbsp; URBAN
             </p>
-            <p className="text-[11px] font-bold tracking-wider text-[#6B5E55] mt-0.5">
+            <p className="text-[11px] font-bold tracking-wider text-[#666666] mt-0.5">
               CODE &nbsp;//&nbsp; LIMITED RUN
             </p>
           </div>
@@ -229,7 +229,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
             data-enter
             style={{ '--enter-delay': '180ms' }}
             onClick={handleAction}
-            className="home-hero-enter w-full sm:w-auto max-w-full px-8 py-4 bg-[#BC5A36] hover:bg-[#A64C2B] text-white font-mono text-sm font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-[#BC5A36]/30 active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
+            className="home-hero-enter w-full sm:w-auto max-w-full px-8 py-4 bg-[#C91D1D] hover:bg-[#A81515] text-white font-mono text-sm font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-[#C91D1D]/30 active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
           >
             <span>{onEnterWebsite ? 'เข้าสู่เว็บไซต์' : 'SHOP NEW DROPS'}</span>
             <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
@@ -237,7 +237,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
 
           {/* Barcode Graphic */}
           <div className="w-full max-w-[11rem] py-1 opacity-45">
-            <svg viewBox="0 0 200 40" className="w-full h-8 text-[#2D231E] fill-current">
+            <svg viewBox="0 0 200 40" className="w-full h-8 text-[#000000] fill-current">
               <rect x="0" y="0" width="3" height="40" />
               <rect x="5" y="0" width="2" height="40" />
               <rect x="9" y="0" width="4" height="40" />
@@ -272,7 +272,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
               <rect x="188" y="0" width="6" height="40" />
               <rect x="197" y="0" width="3" height="40" />
             </svg>
-            <p className="text-[10px] font-mono text-[#6B5E55] tracking-widest text-center mt-1">
+            <p className="text-[10px] font-mono text-[#666666] tracking-widest text-center mt-1">
               8 859012 345678
             </p>
           </div>

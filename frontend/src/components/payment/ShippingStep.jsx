@@ -26,17 +26,17 @@ export default function ShippingStep({
   return (
     <div className="space-y-8">
       {/* 1. Address Form */}
-      <div className="bg-white border border-[#D9D3C7] rounded-3xl p-6 sm:p-8 shadow-sm">
-        <div className="flex items-center gap-2 mb-6 pb-4 border-b border-[#D9D3C7]">
-          <MapPin size={18} className="text-[#2D5A27]" />
-          <h2 className="text-base font-extrabold uppercase tracking-tight text-[#2D231E]">
+      <div className="bg-white border border-[#DCDCDC] rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div className="flex items-center gap-2 mb-6 pb-4 border-b border-[#DCDCDC]">
+          <MapPin size={18} className="text-[#042509]" />
+          <h2 className="text-base font-extrabold uppercase tracking-tight text-[#000000]">
             1. Shipping & Contact Information
           </h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-[11px] font-mono font-bold uppercase text-[#6B5E55] mb-1">
+            <label className="block text-[11px] font-mono font-bold uppercase text-[#666666] mb-1">
               First Name *
             </label>
             <input
@@ -51,7 +51,7 @@ export default function ShippingStep({
           </div>
 
           <div>
-            <label className="block text-[11px] font-mono font-bold uppercase text-[#6B5E55] mb-1">
+            <label className="block text-[11px] font-mono font-bold uppercase text-[#666666] mb-1">
               Last Name *
             </label>
             <input
@@ -66,7 +66,7 @@ export default function ShippingStep({
           </div>
 
           <div>
-            <label className="block text-[11px] font-mono font-bold uppercase text-[#6B5E55] mb-1">
+            <label className="block text-[11px] font-mono font-bold uppercase text-[#666666] mb-1">
               Email Address *
             </label>
             <input
@@ -81,7 +81,7 @@ export default function ShippingStep({
           </div>
 
           <div>
-            <label className="block text-[11px] font-mono font-bold uppercase text-[#6B5E55] mb-1">
+            <label className="block text-[11px] font-mono font-bold uppercase text-[#666666] mb-1">
               Phone Number *
             </label>
             <input
@@ -96,7 +96,7 @@ export default function ShippingStep({
           </div>
 
           <div className="sm:col-span-2">
-            <label className="block text-[11px] font-mono font-bold uppercase text-[#6B5E55] mb-1">
+            <label className="block text-[11px] font-mono font-bold uppercase text-[#666666] mb-1">
               Street Address *
             </label>
             <input
@@ -111,7 +111,7 @@ export default function ShippingStep({
           </div>
 
           <div>
-            <label className="block text-[11px] font-mono font-bold uppercase text-[#6B5E55] mb-1">
+            <label className="block text-[11px] font-mono font-bold uppercase text-[#666666] mb-1">
               City *
             </label>
             <input
@@ -126,7 +126,7 @@ export default function ShippingStep({
           </div>
 
           <div>
-            <label className="block text-[11px] font-mono font-bold uppercase text-[#6B5E55] mb-1">
+            <label className="block text-[11px] font-mono font-bold uppercase text-[#666666] mb-1">
               Postal Code *
             </label>
             <input
@@ -143,10 +143,10 @@ export default function ShippingStep({
       </div>
 
       {/* 2. Shipping Method Selection */}
-      <div className="bg-white border border-[#D9D3C7] rounded-3xl p-6 sm:p-8 shadow-sm">
-        <div className="flex items-center gap-2 mb-6 pb-4 border-b border-[#D9D3C7]">
-          <Truck size={18} className="text-[#2D5A27]" />
-          <h2 className="text-base font-extrabold uppercase tracking-tight text-[#2D231E]">
+      <div className="bg-white border border-[#DCDCDC] rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div className="flex items-center gap-2 mb-6 pb-4 border-b border-[#DCDCDC]">
+          <Truck size={18} className="text-[#042509]" />
+          <h2 className="text-base font-extrabold uppercase tracking-tight text-[#000000]">
             2. Delivery Method
           </h2>
         </div>
@@ -159,8 +159,8 @@ export default function ShippingStep({
               onClick={() => onSelectShipping(option.id)}
               className={`p-4 rounded-2xl border flex items-center justify-between transition-all cursor-pointer ${
                 selectedShipping === option.id
-                  ? 'border-[#2D5A27] bg-[#D0DEC6]/30 shadow-xs ring-1 ring-[#2D5A27]'
-                  : 'border-[#D9D3C7] hover:border-[#2D5A27]'
+                  ? 'border-[#042509] bg-[#518F5C]/30 shadow-xs ring-1 ring-[#042509]'
+                  : 'border-[#DCDCDC] hover:border-[#042509]'
               }`}
             >
               <div className="flex items-center gap-3">
@@ -169,14 +169,14 @@ export default function ShippingStep({
                   name="shipping"
                   checked={selectedShipping === option.id}
                   onChange={() => onSelectShipping(option.id)}
-                  className="accent-[#2D5A27] cursor-pointer"
+                  className="accent-[#042509] cursor-pointer"
                 />
                 <div>
-                  <div className="text-xs font-bold font-mono text-[#2D231E]">{option.name}</div>
-                  <div className="text-[11px] font-mono text-[#6B5E55]">{option.days}</div>
+                  <div className="text-xs font-bold font-mono text-[#000000]">{option.name}</div>
+                  <div className="text-[11px] font-mono text-[#666666]">{option.days}</div>
                 </div>
               </div>
-              <div className="text-xs font-bold font-mono text-[#2D5A27]">
+              <div className="text-xs font-bold font-mono text-[#042509]">
                 {option.price === 0 ? 'FREE' : `$${option.price.toFixed(2)}`}
               </div>
             </label>
@@ -189,7 +189,7 @@ export default function ShippingStep({
         <button
           type="button"
           onClick={onBackToCart}
-          className="text-xs font-mono font-bold text-[#6B5E55] hover:text-[#2D231E] transition-colors cursor-pointer"
+          className="text-xs font-mono font-bold text-[#666666] hover:text-[#000000] transition-colors cursor-pointer"
         >
           ← Return to Cart
         </button>
@@ -197,7 +197,7 @@ export default function ShippingStep({
           type="button"
           onClick={onNext}
           disabled={!isFormValid}
-          className="px-8 py-3.5 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-bold uppercase tracking-widest rounded-xl shadow-md transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+          className="px-8 py-3.5 bg-[#042509] hover:bg-[#021505] text-white text-xs font-bold uppercase tracking-widest rounded-xl shadow-md transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
         >
           Proceed to Payment →
         </button>

@@ -12,11 +12,11 @@ export default function PreferencesTab({ preferences, onTogglePreference }) {
   ];
 
   return (
-    <div className="bg-white border border-[#D9D3C7] rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
-      <div className="flex items-center justify-between pb-4 border-b border-[#D9D3C7]">
+    <div className="bg-white border border-[#DCDCDC] rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+      <div className="flex items-center justify-between pb-4 border-b border-[#DCDCDC]">
         <div className="flex items-center gap-2">
-          <Sliders size={18} className="text-[#2D5A27]" />
-          <h2 className="text-base font-extrabold uppercase tracking-tight text-[#2D231E]">
+          <Sliders size={18} className="text-[#042509]" />
+          <h2 className="text-base font-extrabold uppercase tracking-tight text-[#000000]">
             Communication & Drop Preferences
           </h2>
         </div>
@@ -24,17 +24,17 @@ export default function PreferencesTab({ preferences, onTogglePreference }) {
 
       <div className="space-y-3">
         {prefItems.map((item) => (
-          <div key={item.key} className="flex items-center justify-between p-4 border border-[#D9D3C7] rounded-2xl bg-[#FAF8F5]/40">
+          <div key={item.key} className="flex items-center justify-between p-4 border border-[#DCDCDC] rounded-2xl bg-[#F1F1F1]/40">
             <div>
-              <h4 className="text-xs font-bold text-[#2D231E] uppercase font-mono">{item.title}</h4>
-              <p className="text-[11px] font-mono text-[#6B5E55] mt-0.5">{item.desc}</p>
+              <h4 className="text-xs font-bold text-[#000000] uppercase font-mono">{item.title}</h4>
+              <p className="text-[11px] font-mono text-[#666666] mt-0.5">{item.desc}</p>
             </div>
             {/* State is owned by the account page; this tab reports which key changed. */}
             <button
               type="button"
               onClick={() => onTogglePreference(item.key)}
               className={`w-12 h-6 rounded-full transition-colors p-1 cursor-pointer flex items-center ${
-                preferences[item.key] ? 'bg-[#2D5A27] justify-end' : 'bg-[#D9D3C7] justify-start'
+                preferences[item.key] ? 'bg-[#042509] justify-end' : 'bg-[#DCDCDC] justify-start'
               }`}
             >
               <div className="w-4 h-4 rounded-full bg-white shadow-xs" />

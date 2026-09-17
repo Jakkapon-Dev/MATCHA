@@ -29,15 +29,15 @@ export default function PaymentMethodStep({
   return (
     <div className="space-y-8">
       {/* 1. Payment Method Selection */}
-      <div className="bg-white border border-[#D9D3C7] rounded-3xl p-6 sm:p-8 shadow-sm">
-        <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#D9D3C7]">
+      <div className="bg-white border border-[#DCDCDC] rounded-3xl p-6 sm:p-8 shadow-sm">
+        <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#DCDCDC]">
           <div className="flex items-center gap-2">
-            <CreditCard size={18} className="text-[#2D5A27]" />
-            <h2 className="text-base font-extrabold uppercase tracking-tight text-[#2D231E]">
+            <CreditCard size={18} className="text-[#042509]" />
+            <h2 className="text-base font-extrabold uppercase tracking-tight text-[#000000]">
               3. Payment Selection
             </h2>
           </div>
-          <div className="flex items-center gap-1 text-[11px] font-mono text-[#2D5A27]">
+          <div className="flex items-center gap-1 text-[11px] font-mono text-[#042509]">
             <Lock size={12} />
             <span>256-Bit SSL Encrypted</span>
           </div>
@@ -65,8 +65,8 @@ export default function PaymentMethodStep({
               onClick={() => onSelectPayment(pm.id)}
               className={`p-3.5 rounded-2xl border text-xs font-mono font-bold flex flex-col items-center gap-1.5 transition-all cursor-pointer ${
                 selectedPayment === pm.id
-                  ? 'border-[#2D5A27] bg-[#D0DEC6]/40 text-[#2D231E] shadow-xs ring-1 ring-[#2D5A27]'
-                  : 'border-[#D9D3C7] text-[#6B5E55] hover:border-[#2D5A27]'
+                  ? 'border-[#042509] bg-[#518F5C]/40 text-[#000000] shadow-xs ring-1 ring-[#042509]'
+                  : 'border-[#DCDCDC] text-[#666666] hover:border-[#042509]'
               }`}
             >
               <span className="text-xl">{pm.icon}</span>
@@ -78,9 +78,9 @@ export default function PaymentMethodStep({
         {/* Card Input Form (For Visa / Mastercard) */}
         {/* Method-specific panels keep irrelevant fields out of the visible checkout. */}
         {(selectedPayment === 'visa' || selectedPayment === 'mastercard') && (
-          <div className="space-y-4 pt-4 border-t border-[#D9D3C7]">
+          <div className="space-y-4 pt-4 border-t border-[#DCDCDC]">
             <div>
-              <label className="block text-[11px] font-mono font-bold uppercase text-[#6B5E55] mb-1">
+              <label className="block text-[11px] font-mono font-bold uppercase text-[#666666] mb-1">
                 Card Number
               </label>
               <input
@@ -95,7 +95,7 @@ export default function PaymentMethodStep({
             </div>
 
             <div>
-              <label className="block text-[11px] font-mono font-bold uppercase text-[#6B5E55] mb-1">
+              <label className="block text-[11px] font-mono font-bold uppercase text-[#666666] mb-1">
                 Cardholder Name
               </label>
               <input
@@ -110,7 +110,7 @@ export default function PaymentMethodStep({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-[11px] font-mono font-bold uppercase text-[#6B5E55] mb-1">
+                <label className="block text-[11px] font-mono font-bold uppercase text-[#666666] mb-1">
                   Expiry Date
                 </label>
                 <input
@@ -124,7 +124,7 @@ export default function PaymentMethodStep({
                 />
               </div>
               <div>
-                <label className="block text-[11px] font-mono font-bold uppercase text-[#6B5E55] mb-1">
+                <label className="block text-[11px] font-mono font-bold uppercase text-[#666666] mb-1">
                   CVV / CVC
                 </label>
                 <input
@@ -143,11 +143,11 @@ export default function PaymentMethodStep({
 
         {/* QR Code Thai PromptPay Display */}
         {selectedPayment === 'qr' && (
-          <div className="text-center py-6 border-t border-[#D9D3C7] space-y-3">
-            <div className="w-36 h-36 mx-auto bg-white p-3 rounded-2xl border border-[#D9D3C7] shadow-sm flex items-center justify-center">
-              <QrCode size={110} className="text-[#2D231E]" />
+          <div className="text-center py-6 border-t border-[#DCDCDC] space-y-3">
+            <div className="w-36 h-36 mx-auto bg-white p-3 rounded-2xl border border-[#DCDCDC] shadow-sm flex items-center justify-center">
+              <QrCode size={110} className="text-[#000000]" />
             </div>
-            <p className="text-xs font-mono text-[#6B5E55]">
+            <p className="text-xs font-mono text-[#666666]">
               Scan PromptPay QR code with any mobile banking app
             </p>
             <p className="text-[11px] font-mono text-amber-800 bg-amber-50 py-1 px-3 rounded-lg border border-amber-200/80 inline-block">
@@ -158,12 +158,12 @@ export default function PaymentMethodStep({
 
         {/* Cash on Delivery Note */}
         {selectedPayment === 'cod' && (
-          <div className="p-4 rounded-2xl bg-[#D0DEC6]/30 border border-[#B8CBAE] text-xs font-mono text-[#2D231E] space-y-1 mt-4">
-            <div className="font-bold flex items-center gap-1.5 text-[#2D5A27]">
+          <div className="p-4 rounded-2xl bg-[#518F5C]/30 border border-[#3E7047] text-xs font-mono text-[#000000] space-y-1 mt-4">
+            <div className="font-bold flex items-center gap-1.5 text-[#042509]">
               <span>💵 Cash On Delivery (COD)</span>
-              <span className="px-2 py-0.5 rounded bg-[#2D5A27]/10 text-[#2D5A27] text-[10px]">ชำระเงินปลายทาง</span>
+              <span className="px-2 py-0.5 rounded bg-[#042509]/10 text-[#042509] text-[10px]">ชำระเงินปลายทาง</span>
             </div>
-            <p className="text-[11px] text-[#6B5E55]">
+            <p className="text-[11px] text-[#666666]">
               กรุณาเตรียมเงินสดจำนวน <strong>${totalAmount.toFixed(2)}</strong> ให้พนักงานจัดส่ง (ออเดอร์จะบันทึกในสถานะรอชำระเงินจนกว่าจะส่งมอบสินค้า)
             </p>
           </div>
@@ -175,7 +175,7 @@ export default function PaymentMethodStep({
         <button
           type="button"
           onClick={onBack}
-          className="text-xs font-mono font-bold text-[#6B5E55] hover:text-[#2D231E] transition-colors cursor-pointer"
+          className="text-xs font-mono font-bold text-[#666666] hover:text-[#000000] transition-colors cursor-pointer"
         >
           ← Edit Shipping Address
         </button>
@@ -184,7 +184,7 @@ export default function PaymentMethodStep({
           type="button"
           onClick={onPlaceOrder}
           disabled={!isCardValid || isProcessing}
-          className="px-8 py-3.5 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-bold uppercase tracking-widest rounded-xl shadow-lg transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer flex items-center gap-2"
+          className="px-8 py-3.5 bg-[#042509] hover:bg-[#021505] text-white text-xs font-bold uppercase tracking-widest rounded-xl shadow-lg transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer flex items-center gap-2"
         >
           {isProcessing ? (
             <span>Placing Order...</span>

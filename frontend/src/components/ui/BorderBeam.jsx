@@ -9,8 +9,8 @@ export default function BorderBeam({
   duration = 12,
   anchor = 90,
   borderWidth = 1.5,
-  colorFrom = '#BC5A36', // Terracotta
-  colorTo = '#2D5A27',   // Matcha Green
+  colorFrom = '#C91D1D', // Terracotta
+  colorTo = '#042509',   // Matcha Green
   delay = 0,
   className = '',
 }) {

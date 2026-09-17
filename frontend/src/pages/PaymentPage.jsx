@@ -162,16 +162,16 @@ export default function PaymentPage() {
 
   if (isDemo) return <DemoCheckout />;
   return (
-    <div className="w-full bg-[#FAF8F5] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         
         {/* Step Indicator Header */}
-        <div className="mb-10 pb-6 border-b border-[#D9D3C7] flex items-center justify-between">
+        <div className="mb-10 pb-6 border-b border-[#DCDCDC] flex items-center justify-between">
           <div>
-            <span data-enter className="text-xs font-mono font-bold text-[#2D5A27] uppercase tracking-widest">
+            <span data-enter className="text-xs font-mono font-bold text-[#042509] uppercase tracking-widest">
               Checkout Flow
             </span>
-            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-2xl sm:text-4xl font-black uppercase text-[#2D231E] tracking-tight mt-1">
+            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-2xl sm:text-4xl font-black uppercase text-[#000000] tracking-tight mt-1">
               {step === 'shipping' ? 'Shipping Details' : 'Payment Method'}
             </h1>
           </div>
@@ -179,13 +179,13 @@ export default function PaymentPage() {
           {/* Stepper Progress */}
           <div className="flex items-center gap-2 font-mono text-xs">
             <span className={`px-3 py-1 rounded-lg font-bold ${
-              step === 'shipping' ? 'bg-[#2D5A27] text-white' : 'bg-[#D0DEC6] text-[#2D5A27]'
+              step === 'shipping' ? 'bg-[#042509] text-white' : 'bg-[#518F5C] text-[#042509]'
             }`}>
               1. Address
             </span>
-            <span className="text-[#D9D3C7]">→</span>
+            <span className="text-[#DCDCDC]">→</span>
             <span className={`px-3 py-1 rounded-lg font-bold ${
-              step === 'payment' ? 'bg-[#2D5A27] text-white' : 'bg-white border border-[#D9D3C7] text-[#6B5E55]'
+              step === 'payment' ? 'bg-[#042509] text-white' : 'bg-white border border-[#DCDCDC] text-[#666666]'
             }`}>
               2. Payment
             </span>
@@ -227,27 +227,27 @@ export default function PaymentPage() {
             {step === 'payment' && orderError && (
               <div
                 role="alert"
-                className="mt-6 p-6 rounded-2xl border border-[#D9D3C7] bg-[#FAF8F5] shadow-sm space-y-4"
+                className="mt-6 p-6 rounded-2xl border border-[#DCDCDC] bg-[#F1F1F1] shadow-sm space-y-4"
               >
                 <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-xl bg-white border border-[#D9D3C7] text-[#BC5A36] shrink-0 mt-0.5">
+                  <div className="p-2 rounded-xl bg-white border border-[#DCDCDC] text-[#C91D1D] shrink-0 mt-0.5">
                     <AlertTriangle size={20} />
                   </div>
                   <div>
-                    <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#BC5A36] block">
+                    <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#C91D1D] block">
                       ORDER NOT PLACED
                     </span>
-                    <h3 className="text-lg font-black uppercase tracking-tight text-[#2D231E] mt-0.5">
+                    <h3 className="text-lg font-black uppercase tracking-tight text-[#000000] mt-0.5">
                       ออเดอร์ยังไม่ถูกสร้าง
                     </h3>
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-xl border border-[#D9D3C7] bg-white text-xs font-mono text-[#BC5A36] break-words">
+                <div className="p-3.5 rounded-xl border border-[#DCDCDC] bg-white text-xs font-mono text-[#C91D1D] break-words">
                   {orderError}
                 </div>
 
-                <p className="text-xs text-[#6B5E55] leading-relaxed">
+                <p className="text-xs text-[#666666] leading-relaxed">
                   สินค้าในตะกร้าและข้อมูลที่คุณกรอกไว้ยังอยู่ครบถ้วน ไม่มีการตัดเงินเกิดขึ้น
                 </p>
 
@@ -256,7 +256,7 @@ export default function PaymentPage() {
                     type="button"
                     onClick={handlePlaceOrder}
                     disabled={isProcessing}
-                    className="px-6 py-3 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-mono font-bold uppercase tracking-widest rounded-xl shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
+                    className="px-6 py-3 bg-[#042509] hover:bg-[#021505] text-white text-xs font-mono font-bold uppercase tracking-widest rounded-xl shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
                   >
                     <RotateCcw size={14} className={isProcessing ? 'animate-spin' : ''} />
                     <span>{isProcessing ? 'กำลังดำเนินการ...' : 'ลองสั่งซื้ออีกครั้ง'}</span>
@@ -264,7 +264,7 @@ export default function PaymentPage() {
                   <button
                     type="button"
                     onClick={() => setStep('shipping')}
-                    className="px-6 py-3 bg-white border border-[#D9D3C7] text-[#6B5E55] hover:text-[#2D231E] hover:border-[#2D231E] text-xs font-mono font-bold uppercase tracking-widest rounded-xl transition-colors cursor-pointer"
+                    className="px-6 py-3 bg-white border border-[#DCDCDC] text-[#666666] hover:text-[#000000] hover:border-[#000000] text-xs font-mono font-bold uppercase tracking-widest rounded-xl transition-colors cursor-pointer"
                   >
                     กลับไปแก้ข้อมูลจัดส่ง
                   </button>
