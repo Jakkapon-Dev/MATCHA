@@ -4,14 +4,21 @@ import { productsData } from '../data/productsData';
 
 // The static list controls editorial order only. Prices and selections come from API.
 const editorialOrder = productsData.map(p => p.id);
+// เซิร์ฟเวอร์อยู่บนโฮสต์ระดับฟรีที่พักเครื่องเมื่อไม่มีคนเข้าราวสิบห้านาที คำขอแรก
+// หลังจากนั้นจึงต้องรอเครื่องตื่นและอาจกินเวลาถึงหนึ่งนาที ระหว่างนั้นหน้าเว็บที่มีแต่
+// โครงโหลดเปล่า ๆ ดูเหมือนค้าง จึงบอกผู้ใช้ตามตรงเมื่อรอนานผิดปกติ
+const WAKE_UP_HINT_MS = 4000;
+
 export default function useStreetProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [slow, setSlow] = useState(false);
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     let active = true;
-    setLoading(true); setError('');
+    setLoading(true); setError(''); setSlow(false);
+    const slowTimer = setTimeout(() => { if (active) setSlow(true); }, WAKE_UP_HINT_MS);
     async function load() {
       const items = [];
       let page = 1, more = true;
@@ -31,8 +38,8 @@ export default function useStreetProducts() {
       setProducts([...curated, ...items.filter(p => !curatedIds.has(p.id))]);
     }
     load().catch(() => { if (active) setError('โหลดสินค้ายังไม่สำเร็จ กรุณาลองใหม่'); })
-      .finally(() => { if (active) setLoading(false); });
-    return () => { active = false; };
+      .finally(() => { if (active) { clearTimeout(slowTimer); setLoading(false); setSlow(false); } });
+    return () => { active = false; clearTimeout(slowTimer); };
   }, [attempt]);
-  return { products, loading, error, retry: () => setAttempt(n => n + 1) };
+  return { products, loading, error, slow, retry: () => setAttempt(n => n + 1) };
 }
