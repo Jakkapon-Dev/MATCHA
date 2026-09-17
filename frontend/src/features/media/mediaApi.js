@@ -9,8 +9,15 @@ export async function mediaRequest(path, { body, ...options } = {}) {
     headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(!multipart && body ? { 'Content-Type': 'application/json' } : {}) },
     body: body ? multipart ? body : JSON.stringify(body) : undefined
   });
-  const result = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(result.message || 'ติดต่อระบบไม่สำเร็จ กรุณาลองใหม่');
+  let result;
+  try {
+    result = await res.json();
+  } catch (err) {
+    if (!res.ok) throw new Error(`ระบบขัดข้องชั่วคราว (${res.status})`);
+    throw new Error('รูปแบบข้อมูลที่ตอบกลับจากเซิร์ฟเวอร์ไม่ถูกต้อง');
+  }
+
+  if (!res.ok) throw new Error(result?.message || 'ติดต่อระบบไม่สำเร็จ กรุณาลองใหม่');
   return result;
 }
 export async function uploadImage(file, alt) {

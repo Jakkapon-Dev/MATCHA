@@ -41,21 +41,24 @@ const cartSchema = new Schema(
   { timestamps: true }
 );
 
+// mongoose เวอร์ชันนี้ไม่ได้ส่ง next เข้ามาให้ hook เสมอไป เรียกตรง ๆ จะพังด้วย
+// "next is not a function" — โยน error ออกไปแทนการเรียก next(err) จึงปลอดภัยกว่า
+// (รูปแบบเดียวกับที่ models/Order.js ใช้อยู่)
 cartSchema.pre('validate', function requireOneOwner(next) {
   if (!this.userId && !this.guestId) {
-    return next(new Error('Cart must belong to either a userId or a guestId'));
+    throw new Error('Cart must belong to either a userId or a guestId');
   }
   if (this.userId && this.guestId) {
-    return next(new Error('Cart cannot have both a userId and a guestId'));
+    throw new Error('Cart cannot have both a userId and a guestId');
   }
-  next();
+  if (typeof next === 'function') next();
 });
 
 cartSchema.pre('save', function syncExpiry(next) {
   this.expiresAt = this.guestId
     ? new Date(Date.now() + GUEST_CART_TTL_SECONDS * 1000)
     : null;
-  next();
+  if (typeof next === 'function') next();
 });
 
 cartSchema.index({ userId: 1 }, { unique: true, partialFilterExpression: { userId: { $type: 'objectId' } } });

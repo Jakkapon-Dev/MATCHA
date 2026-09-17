@@ -22,8 +22,13 @@ export default function useStreetProducts() {
         more = Boolean(result.pagination?.hasNextPage);
         page++;
       }
+      // รายการคัดสรรมาก่อนตามลำดับที่ตั้งใจไว้ ส่วนสินค้าที่เพิ่มเข้าคลังทีหลัง
+      // (ยังไม่มีในลิสต์คัดสรร) ต่อท้ายไป — เดิมกรองทิ้งทั้งหมด ทำให้หน้าแรกค้างอยู่ที่
+      // จำนวนเดิมและขัดกับจำนวนที่หน้า catalog แสดง
       const byId = new Map(items.map(p => [p.id, p]));
-      setProducts(editorialOrder.map(id => byId.get(id)).filter(Boolean));
+      const curated = editorialOrder.map(id => byId.get(id)).filter(Boolean);
+      const curatedIds = new Set(curated.map(p => p.id));
+      setProducts([...curated, ...items.filter(p => !curatedIds.has(p.id))]);
     }
     load().catch(() => { if (active) setError('โหลดสินค้ายังไม่สำเร็จ กรุณาลองใหม่'); })
       .finally(() => { if (active) setLoading(false); });

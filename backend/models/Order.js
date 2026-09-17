@@ -37,6 +37,10 @@ const orderSchema = new Schema(
       required: true,
       unique: true
     },
+    orderId: {
+      type: String,
+      sparse: true
+    },
     idempotencyKey: {
       type: String,
       required: true,
@@ -98,12 +102,15 @@ orderSchema.pre('validate', function assignOrderNumber(next) {
     const random = Math.floor(100 + Math.random() * 900);
     this.orderNumber = `MTA-${year}-${stamp}-${random}`;
   }
-  next();
+  if (!this.orderId) {
+    this.orderId = this.orderNumber;
+  }
+  if (typeof next === 'function') next();
 });
 
 orderSchema.pre('validate', function recomputeTotal(next) {
   this.total = Math.max(0, this.subtotal + this.shippingCost - this.discount);
-  next();
+  if (typeof next === 'function') next();
 });
 
 orderSchema.index({ userId: 1, createdAt: -1 });

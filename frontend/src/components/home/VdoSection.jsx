@@ -1,19 +1,65 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
 
 export default function VdoSection({ onClaimPromo }) {
   // Remote video is a fallback: the browser tries the local lookbook source first.
   const videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-stylish-model-posing-outdoors-in-the-city-41222-large.mp4";
 
+  const videoRef = useRef(null);
+
+  // ไฟล์วิดีโอไม่ถูกดาวน์โหลดตอนเปิดหน้าแรก (preload="none") จนกว่าส่วนนี้จะเลื่อนมาถึงจอ
+  // ระหว่างนั้นคนดูเห็นภาพ poster ไปก่อน — พอเลื่อนพ้นไปแล้วก็หยุดเล่นเพื่อไม่ให้กินแบตฟรี ๆ
+  //
+  // ต้องสั่ง play() เองเพราะ preload="none" กับ attribute autoplay ทำงานขัดกัน
+  // (เบราว์เซอร์จะโหลดไฟล์ทันทีถ้าเจอ autoplay) การเล่นแบบเงียบด้วยสคริปต์ไม่ต้องรอ
+  // ให้ผู้ใช้แตะก่อน ตราบใดที่ยังมี muted + playsInline ครบ จึงเล่นเองได้บนมือถือด้วย
+  useEffect(() => {
+    const el = videoRef.current;
+    if (!el) return;
+
+    if (typeof IntersectionObserver !== 'function') {
+      el.play().catch(() => {});
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.play().catch(() => {});
+        } else {
+          el.pause();
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  const handleClaim = (e) => {
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText('MATCHA15').catch(() => {});
+    }
+    try {
+      localStorage.setItem('matcha_applied_coupon', 'MATCHA15');
+    } catch {}
+    if (onClaimPromo) {
+      onClaimPromo();
+    }
+  };
+
   return (
     <section className="relative w-full min-h-screen bg-[#1A2218] overflow-hidden flex items-center justify-center border-y border-[#042509]/30 select-none py-16 sm:py-24">
       
       {/* 1. Full-Height Background Video (Anchored to top to prevent head crop) */}
       <video
-        autoPlay
+        ref={videoRef}
         loop
         muted
         playsInline
+        preload="none"
+        poster="/videos/lookbook_reel_poster.webp"
         className="absolute inset-0 w-full h-full object-cover object-top sm:object-[center_15%] opacity-90 pointer-events-none"
       >
         <source src="/videos/lookbook_reel.mp4" type="video/mp4" />
@@ -61,7 +107,7 @@ export default function VdoSection({ onClaimPromo }) {
 
           {/* Promo behavior is owned by the parent (for example, navigation or cart rules). */}
           <button 
-            onClick={onClaimPromo}
+            onClick={handleClaim}
             className="mt-6 w-full py-4 bg-[#C91D1D] hover:bg-[#A81515] text-white font-bold font-mono text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-[#C91D1D]/30 active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
           >
             <span>Claim 15% Discount</span>

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Sparkles, Zap, RotateCcw, ShieldCheck } from 'lucide-react';
+import { webpSrc, handleImageError } from '../../utils/imageFallback';
 
 export default function PulsePerks() {
   // Rotation is stored in degrees and initialized to a readable resting perspective.
@@ -45,6 +46,29 @@ export default function PulsePerks() {
     setRotate({ x: rotateX, y: rotateY });
   };
 
+  const handleTouchMove = (e) => {
+    if (!cardRef.current || !e.touches || e.touches.length === 0) return;
+    const touch = e.touches[0];
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = touch.clientX - rect.left;
+    const y = touch.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = Math.max(-18, Math.min(18, ((y - centerY) / centerY) * -14));
+    const rotateY = Math.max(-25, Math.min(25, ((x - centerX) / centerX) * 22));
+
+    setRotate({ x: rotateX, y: rotateY });
+  };
+
+  const handleTouchStart = () => {
+    setIsHovered(true);
+  };
+
+  const handleTouchEnd = () => {
+    handleMouseLeave();
+  };
+
   const handleMouseLeave = () => {
     // Removing hover also returns the card to its designed resting angle.
     setIsHovered(false);
@@ -72,7 +96,10 @@ export default function PulsePerks() {
             onMouseEnter={() => setIsHovered(true)}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
-            className="lg:col-span-7 p-8 sm:p-12 lg:p-16 flex items-center justify-center border-b lg:border-b-0 lg:border-r-2 border-[#C91D1D]/80 bg-linear-to-b from-[#F1F1F1] to-white relative cursor-grab perspective-1000"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            className="lg:col-span-7 p-8 sm:p-12 lg:p-16 flex items-center justify-center border-b lg:border-b-0 lg:border-r-2 border-[#C91D1D]/80 bg-linear-to-b from-[#F1F1F1] to-white relative cursor-grab perspective-1000 touch-pan-y"
             style={{ perspective: '1200px' }}
           >
             {/* Subtle background glow effect */}
@@ -88,7 +115,11 @@ export default function PulsePerks() {
             >
               {/* Sitting Model Image */}
               <img
-                src="/images/studio_white_bg/fashion_pose/spring/studio_pose_spring_seated_on_minimalist_stool_001.jpeg"
+                src={webpSrc("/images/studio_white_bg/fashion_pose/spring/studio_pose_spring_seated_on_minimalist_stool_001.jpeg")}
+                data-original-src="/images/studio_white_bg/fashion_pose/spring/studio_pose_spring_seated_on_minimalist_stool_001.jpeg"
+                onError={handleImageError}
+                loading="lazy"
+                decoding="async"
                 alt="MatchA Seated Lookbook Model"
                 className="w-full h-full object-cover rounded-none border border-white/80 shadow-2xl"
               />
@@ -113,7 +144,9 @@ export default function PulsePerks() {
                 className="absolute bottom-4 right-4 px-3 py-1 bg-black/80 text-[#F1F1F1] text-[9px] font-mono tracking-wider uppercase backdrop-blur-md shadow-lg"
                 style={{ transform: 'translateZ(30px)' }}
               >
-                <span>↻ MOVE MOUSE TO ROTATE</span>
+                {/* การ์ดหมุนได้ทั้งด้วยเมาส์และการลากนิ้ว ข้อความจึงต้องไม่สั่งให้ใช้เมาส์
+                    อย่างเดียว ไม่งั้นคนเปิดจากมือถือจะเห็นคำสั่งที่ทำตามไม่ได้ */}
+                <span>↻ MOVE OR DRAG TO ROTATE</span>
               </div>
             </div>
           </div>

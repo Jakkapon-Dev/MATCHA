@@ -2,11 +2,15 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext.jsx';
-import { Mail, Lock, Eye, EyeOff, Sparkles, ShieldCheck, ArrowRight, Shield, User, CheckCircle2 } from 'lucide-react';
+import { useToast } from '../context/ToastContext.jsx';
+import PreviewBadge from '../components/ui/PreviewBadge';
+import PreviewNote from '../components/ui/PreviewNote';
+import { Mail, Lock, Eye, EyeOff, Sparkles, ShieldCheck, ArrowRight, Shield, User, CheckCircle2, TestTube2 } from 'lucide-react';
 
 export default function LoginPage({ onLoginSuccess }) {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { showToast } = useToast();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -18,6 +22,29 @@ export default function LoginPage({ onLoginSuccess }) {
   const [forgotModal, setForgotModal] = useState(false);
   const [forgotEmail, setForgotEmail] = useState('');
   const [forgotSent, setForgotSent] = useState(false);
+
+  const handleDemoLogin = (role) => {
+    const demoUser = role === 'Admin' ? {
+      id: 'demo-admin',
+      name: 'Demo Admin',
+      email: 'admin@matcha.com',
+      role: 'Admin',
+      tier: 'System Admin',
+      isDemoSession: true
+    } : {
+      id: 'demo-member',
+      name: 'Demo Member',
+      email: 'demo@matcha.com',
+      role: 'Member',
+      tier: 'VIP Connoisseur',
+      isDemoSession: true
+    };
+    login(demoUser, false, 'demo-offline-token');
+    showToast(`เข้าสู่ระบบโหมดสาธิตในฐานะ ${demoUser.name} (${demoUser.role})`, 'success');
+    if (onLoginSuccess) onLoginSuccess(demoUser);
+    navigate(role === 'Admin' ? '/admin' : '/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -52,22 +79,10 @@ export default function LoginPage({ onLoginSuccess }) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       if (err.message && (err.message.includes('ติดต่อเซิร์ฟเวอร์ไม่ได้') || err.message.includes('Failed to communicate') || err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))) {
-        const isAdmin = email.toLowerCase().includes('admin');
-        const user = {
-          id: isAdmin ? 'demo-admin-01' : 'demo-member-01',
-          name: email.split('@')[0],
-          email: email.trim(),
-          role: isAdmin ? 'Admin' : 'Member',
-          tier: isAdmin ? 'VIP Connoisseur' : 'Regular Member'
-        };
-        login(user, rememberMe, 'demo-offline-token');
-        setSuccessMsg(`Welcome, ${user.name}! (${user.role} — Demo Mode) ✨`);
-        if (onLoginSuccess) onLoginSuccess(user);
-        navigate(user.role === 'Admin' ? '/admin' : '/');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-        return;
+        setErrorMsg('ตอนนี้เชื่อมต่อระบบไม่ได้ กรุณาลองใหม่');
+      } else {
+        setErrorMsg(err.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
       }
-      setErrorMsg(err.message || 'Unable to sign in right now. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -221,16 +236,17 @@ export default function LoginPage({ onLoginSuccess }) {
 
           {/* Social Login Dividers */}
           <div className="mt-6 pt-5 border-t border-[#DCDCDC] text-center">
-            <span className="text-[10px] font-mono text-[#666666] uppercase tracking-widest bg-white px-2 relative -top-7.5">
-              social sign-in — coming soon
+            <span className="text-[10px] font-mono text-[#666666] uppercase tracking-widest bg-white px-2 relative -top-7.5 flex items-center justify-center gap-1.5 w-max mx-auto">
+              <span>social sign-in</span>
+              <PreviewBadge label="COMING SOON" />
             </span>
 
             <div className="grid grid-cols-2 gap-3 -mt-2">
               <button
                 type="button"
-                disabled
-                title="Social sign-in is not implemented yet"
-                className="py-2.5 px-3 border border-[#DCDCDC] rounded-xl text-xs font-mono font-bold text-[#000000]/40 bg-[#F1F1F1] flex items-center justify-center gap-2 cursor-not-allowed shadow-2xs"
+                aria-disabled="true"
+                onClick={() => showToast('ระบบ Google Sign-in อยู่ระหว่างการพัฒนา จะเปิดให้บริการในเวอร์ชันถัดไป', 'info')}
+                className="py-2.5 px-3 border border-[#DCDCDC] hover:border-[#000000]/30 rounded-xl text-xs font-mono font-bold text-[#000000]/70 bg-[#F1F1F1] hover:bg-[#EAEAEA] flex items-center justify-center gap-2 cursor-pointer shadow-2xs transition-all active:scale-98"
               >
                 <span>🌐</span>
                 <span>Google</span>
@@ -238,13 +254,44 @@ export default function LoginPage({ onLoginSuccess }) {
 
               <button
                 type="button"
-                disabled
-                title="Social sign-in is not implemented yet"
-                className="py-2.5 px-3 border border-[#DCDCDC] rounded-xl text-xs font-mono font-bold text-[#000000]/40 bg-[#F1F1F1] flex items-center justify-center gap-2 cursor-not-allowed shadow-2xs"
+                aria-disabled="true"
+                onClick={() => showToast('ระบบ GitHub Sign-in อยู่ระหว่างการพัฒนา จะเปิดให้บริการในเวอร์ชันถัดไป', 'info')}
+                className="py-2.5 px-3 border border-[#DCDCDC] hover:border-[#000000]/30 rounded-xl text-xs font-mono font-bold text-[#000000]/70 bg-[#F1F1F1] hover:bg-[#EAEAEA] flex items-center justify-center gap-2 cursor-pointer shadow-2xs transition-all active:scale-98"
               >
                 <span>🐙</span>
                 <span>GitHub</span>
               </button>
+            </div>
+          </div>
+
+          {/* Demo Mode Bypass for Academic Evaluation & Presentation */}
+          <div className="mt-6 pt-5 border-t border-[#DCDCDC]">
+            <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200 text-amber-900 shadow-xs">
+              <div className="flex items-center gap-2 mb-1.5 font-mono font-bold text-xs">
+                <span className="text-base">🧪</span>
+                <span>เข้าสู่ระบบโหมดสาธิต (Demo Mode)</span>
+              </div>
+              <p className="text-[11px] font-mono text-amber-800/80 mb-3 leading-relaxed">
+                สำหรับกรรมการตรวจหรือทดสอบ UX/UI ทันที โดยไม่ต้องพึ่งพาเซิร์ฟเวอร์
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleDemoLogin('Member')}
+                  className="py-2.5 px-3 bg-white hover:bg-amber-100/60 border border-amber-300 rounded-xl text-xs font-mono font-bold text-amber-900 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-95"
+                >
+                  <User size={13} className="text-amber-700" />
+                  <span>Member (Demo)</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleDemoLogin('Admin')}
+                  className="py-2.5 px-3 bg-[#042509] hover:bg-[#021505] text-white rounded-xl text-xs font-mono font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-95"
+                >
+                  <Shield size={13} className="text-[#518F5C]" />
+                  <span>Admin (Demo)</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -281,8 +328,13 @@ export default function LoginPage({ onLoginSuccess }) {
             </p>
 
             {forgotSent ? (
-              <div className="mt-4 p-4 rounded-xl bg-[#518F5C]/50 text-[#042509] text-xs font-mono font-bold text-center">
-                ✓ Reset link sent to {forgotEmail}!
+              <div className="mt-4 space-y-3">
+                <div className="p-3.5 rounded-xl bg-[#518F5C]/30 border border-[#042509]/20 text-[#042509] text-xs font-mono font-bold text-center">
+                  ✓ จำลองการส่งลิงก์รีเซ็ตรหัสผ่านไปยัง {forgotEmail}!
+                </div>
+                <PreviewNote>
+                  โหมดสาธิต — ยังไม่มีการส่งอีเมลจริง ตัวอย่างลิงก์: <span className="underline break-all">https://matcha.com/reset-password?token=demo-{Date.now()}</span>
+                </PreviewNote>
               </div>
             ) : (
               <form onSubmit={handleSendReset} className="mt-4 space-y-3">

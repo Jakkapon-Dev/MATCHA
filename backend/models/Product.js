@@ -113,7 +113,7 @@ const productSchema = new Schema(
       default: false
     },
     gallery: {
-      type: [String],
+      type: [Schema.Types.Mixed],
       default: []
     },
     specs: {
@@ -138,7 +138,7 @@ productSchema.pre('validate', function syncIdentifiers(next) {
   } else {
     this.inStock = (this.stock || 0) > 0;
   }
-  next();
+  if (typeof next === 'function') next();
 });
 
 productSchema.index({ category: 1, season: 1 });
