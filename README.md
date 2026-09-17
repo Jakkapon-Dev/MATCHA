@@ -1,7 +1,7 @@
 # 🍵 MatchA — Modern Artisan Apparel & Personal Color E-Commerce
 
 <p align="center">
-  <img src="frontend/public/images/home/matcha-logo.png" alt="MatchA Logo" width="120" onerror="this.style.display='none'"/>
+  <img src="frontend/public/images/brand/matcha-logo-primary.png" alt="MatchA Logo" width="220" onerror="this.style.display='none'"/>
 </p>
 
 <p align="center">
@@ -10,17 +10,32 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/React-18.2-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
-  <img src="https://img.shields.io/badge/Vite-5.1-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
-  <img src="https://img.shields.io/badge/TailwindCSS-4.0-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind" />
+  <img src="https://img.shields.io/badge/Vite-5.4-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/TailwindCSS-v4-000000?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind" />
   <img src="https://img.shields.io/badge/Node.js-Express_ESM-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node Express" />
-  <img src="https://img.shields.io/badge/MongoDB-Atlas_Mongoose-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
-  <img src="https://img.shields.io/badge/Sharp-Image_Processing-990000?style=for-the-badge" alt="Sharp" />
+  <img src="https://img.shields.io/badge/MongoDB-Atlas_Cloud-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
+  <img src="https://img.shields.io/badge/Deployed-Render.com-46E3B7?style=for-the-badge&logo=render&logoColor=black" alt="Render" />
 </p>
+
+---
+
+## 🌐 ลิงก์ระบบออนไลน์ (Live Production Demo)
+
+สำหรับผู้ทดสอบ สามารถเข้าชมและทดสอบระบบได้ทันที:
+
+- **Backend API Server**: [`https://matcha-gluk.onrender.com`](https://matcha-gluk.onrender.com)
+- **API Health Check**: [`https://matcha-gluk.onrender.com/api/health`](https://matcha-gluk.onrender.com/api/health)
+- **Database System**: MongoDB Atlas Cloud Cluster (Connected 🟢)
+- **API Documentation Root**: [`https://matcha-gluk.onrender.com/`](https://matcha-gluk.onrender.com/)
+
+> 💡 *หมายเหตุสำหรับ Render Free Tier*: หากไม่มีการใช้งานเกิน 15 นาที เซิร์ฟเวอร์จะเข้าสู่โหมดประหยัดพลังงาน (Sleep) การเรียกใช้งานครั้งแรกอาจใช้เวลาตื่น (Cold Start) ประมาณ 30–50 วินาที
 
 ---
 
 ## 📌 สารบัญ (Table of Contents)
 
+- [ลิงก์ระบบออนไลน์ (Live Production Demo)](#-ลิงก์ระบบออนไลน์-live-production-demo)
+- [เอกลักษณ์แบรนด์และธีมสี (Brand Identity & Palette)](#-เอกลักษณ์แบรนด์และธีมสี-brand-identity--palette)
 - [จุดเด่นและฟีเจอร์หลัก (Key Features)](#-จุดเด่นและฟีเจอร์หลัก-key-features)
 - [เทคโนโลยีที่ใช้ (Tech Stack)](#-เทคโนโลยีที่ใช้-tech-stack)
 - [โครงสร้างโฟลเดอร์ (Directory Structure)](#-โครงสร้างโฟลเดอร์-directory-structure)
@@ -29,6 +44,20 @@
 - [คำสั่งการรันและทดสอบ (Commands & Testing)](#-คำสั่งการรันและทดสอบ-commands--testing)
 - [แนวทางการขึ้นระบบจริง (Deployment Guide)](#-แนวทางการขึ้นระบบจริง-deployment-guide)
 - [API Endpoints สำคัญ](#-api-endpoints-สำคัญ)
+
+---
+
+## 🎨 เอกลักษณ์แบรนด์และธีมสี (Brand Identity & Palette)
+
+การออกแบบของ MatchA ยึดปรัชญา **"เขียวแดงแค่ MATCHA logo ที่เหลือ ขาว-ดำ"** (Monochrome High-Fashion with Signature Red & Green Logo Accents):
+
+| สี | รหัส Hex | บทบาทในระบบ (Usage) |
+| :--- | :---: | :--- |
+| **Deep Forest Green** | `#042509` | ตัวอักษร MATCH บน Hero Masthead, แบรนด์แอ็กเซนต์ |
+| **Pure Black** | `#000000` | ตัวอักษรหลัก, ปุ่ม CTA สำคัญ, Header Bar, เส้นขอบหลัก |
+| **Matcha Leaf Green** | `#518F5C` | ริบบิ้นด้านขวาของตัวอักษร **"A"** ในโลโก้, ป้ายและไอคอน |
+| **Clean Off-White** | `#F1F1F1` | พื้นหลังทั้งเว็บไซต์ (Canvas Background) สบายตาและโมเดิร์น |
+| **Crimson Red** | `#C91D1D` | ริบบิ้นด้านซ้ายของตัวอักษร **"A"** ในโลโก้, จุดแจ้งเตือน, ปุ่ม Shop Drops |
 
 ---
 
@@ -137,22 +166,24 @@ npm run install:all
 
 ## 🔑 ตัวแปรสภาพแวดล้อม (Environment Variables)
 
-สร้างไฟล์ `.env` ไว้ในโฟลเดอร์ `backend/`:
+คัดลอกไฟล์ตัวอย่าง `backend/.env.example` ไปเป็น `backend/.env`:
 
 ```env
 # backend/.env
 PORT=5001
-MONGODB_URI="mongodb+srv://<username>:<password>@cluster0.mongodb.net/MatchA?appName=Cluster0"
+MONGODB_URI="mongodb+srv://<username>:<password>@cluster0.hak50ja.mongodb.net/MatchA?appName=Cluster0"
 JWT_SECRET="your-super-secret-jwt-key"
-SEED_ADMIN_PASSWORD="your-admin-password"
-SEED_MEMBER_PASSWORD="your-member-password"
+JWT_EXPIRES_IN="7d"
+FRONTEND_URL="http://localhost:5173"
+ADMIN_SEED_PASSWORD="your-admin-password"
 ```
 
-สำหรับ `frontend/` (ทางเลือก เมื่อต้องการชี้ไปยัง Production Backend):
+สำหรับ `frontend/` (คัดลอก `frontend/.env.example` ไปเป็น `frontend/.env` เพื่อชี้ไปยัง Production Cloud Backend):
 ```env
 # frontend/.env
-VITE_API_URL="https://your-backend-api.onrender.com"
+VITE_API_URL="https://matcha-gluk.onrender.com"
 ```
+*(หากต้องการทดสอบแบบ Localhost ในเครื่องตนเอง สามารถลบหรือปล่อย `VITE_API_URL` ว่างไว้ได้ ระบบจะใช้ Proxy เชื่อมต่อไปยัง `localhost:5001` โดยอัตโนมัติ)*
 
 ---
 
@@ -163,7 +194,7 @@ VITE_API_URL="https://your-backend-api.onrender.com"
 npm run dev
 ```
 - **Frontend URL**: `http://localhost:5173`
-- **Backend API URL**: `http://localhost:5001`
+- **Backend API URL**: `http://localhost:5001` (หรือชี้ไปยัง `https://matcha-gluk.onrender.com`)
 
 ### รันแยกเฉพาะส่วน
 ```bash
@@ -185,20 +216,21 @@ npm test
 
 ## ☁️ แนวทางการขึ้นระบบจริง (Deployment Guide)
 
-### 1. หน้าบ้าน (Frontend) — แนะนำ Vercel / Cloudflare Pages
-- **Framework Preset**: `Vite`
-- **Root Directory**: `frontend`
-- **Build Command**: `npm run build`
-- **Output Directory**: `dist`
-- **Environment Variable**: `VITE_API_URL` = `<URL ของ Backend>`
-
-### 2. หลังบ้าน (Backend) — แนะนำ Render.com / Railway
+### 1. หลังบ้าน (Backend บน Render.com) 🟢 Active
+- **Live URL**: [`https://matcha-gluk.onrender.com`](https://matcha-gluk.onrender.com)
 - **Environment**: `Node`
 - **Root Directory**: `backend`
 - **Build Command**: `npm install`
 - **Start Command**: `npm start`
-- **Environment Variables**: ตั้งค่า `MONGODB_URI`, `JWT_SECRET` ใน Dashboard
-- ⚠️ *อย่าลืมเปิด Network Access ใน MongoDB Atlas เป็น `0.0.0.0/0` เพื่อให้เซิร์ฟเวอร์สามารถเชื่อมต่อได้*
+- **Environment Variables**: ตั้งค่า `MONGODB_URI`, `JWT_SECRET`, `FRONTEND_URL` ใน Render Dashboard
+- ⚠️ **การตั้งค่า MongoDB Atlas**: เข้าไปที่ [MongoDB Atlas](https://cloud.mongodb.com) -> **Network Access** -> เพิ่ม IP `0.0.0.0/0` (Allow Access from Anywhere) เพื่อให้ Render สามารถเชื่อมต่อฐานข้อมูลได้ตลอดเวลา
+
+### 2. หน้าบ้าน (Frontend) — Vercel / Cloudflare Pages / Render Static Site
+- **Framework Preset**: `Vite`
+- **Root Directory**: `frontend`
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+- **Environment Variable**: `VITE_API_URL=https://matcha-gluk.onrender.com`
 
 ---
 
@@ -207,14 +239,16 @@ npm test
 | Method | Endpoint | คำอธิบาย | สิทธิ์การเข้าถึง |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/health` | ตรวจสอบสถานะของ Server และ Database | Public |
+| `GET` | `/api/categories` | ดึงรายชื่อหมวดหมู่สินค้าพร้อมจำนวนสินค้า | Public |
+| `GET` | `/api/products` | ค้นหา กรอง และแบ่งหน้าสินค้า (Catalog Search & Filter) | Public |
 | `GET` | `/api/store-config` | ดึงโหมดการทำงานของร้าน (demo/live) | Public |
-| `POST` | `/api/auth/signup` | สมัครสมาชิกใหม่ | Public |
+| `POST` | `/api/auth/register` | สมัครสมาชิกใหม่พร้อมเข้ารหัส bcrypt | Public |
 | `POST` | `/api/auth/login` | เข้าสู่ระบบและรับ JWT Token | Public |
-| `GET` | `/api/auth/me` | ตรวจสอบข้อมูลผู้ใช้ปัจจุบัน | Member / Admin |
+| `GET` | `/api/auth/me` | ตรวจสอบข้อมูลผู้ใช้ปัจจุบันจาก JWT Token | Member / Admin |
 | `GET` | `/api/lookbooks` | ดึงรายการ Lookbook สำหรับแสดงผล | Public |
 | `GET` | `/api/media/files/:filename` | ดึงไฟล์รูปภาพ WebP | Public |
-| `POST` | `/api/admin/media/upload` | อัปโหลดและแปลงรูปภาพด้วย Sharp | Admin Only |
-| `POST` | `/api/admin/lookbooks` | สร้างหรือแก้ไข Editorial Lookbook | Admin Only |
+| `POST` | `/api/admin/media/upload` | อัปโหลดและแปลงรูปภาพด้วย Sharp Pipeline | Admin Only |
+| `POST` | `/api/admin/lookbooks` | สร้างหรือแก้ไข Editorial Lookbook และ Hotspots | Admin Only |
 
 ---
 
