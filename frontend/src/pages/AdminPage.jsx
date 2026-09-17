@@ -347,6 +347,7 @@ export default function AdminPage() {
 
   // Auth Guard
   const isAdmin = currentUser?.role === 'Admin' || currentUser?.email === 'admin@matcha.com';
+  const isDemo = Boolean(currentUser?.isDemoSession);
 
   // KPI Calculations
   const totalRevenue = useMemo(() => {
@@ -453,6 +454,18 @@ export default function AdminPage() {
 
   // Inventory Actions
   const handleAddProduct = async (newProduct) => {
+    if (isDemo) {
+      const normalizedItem = {
+        ...newProduct,
+        id: newProduct.id || `DEMO-${Date.now().toString().slice(-4)}`,
+        stock: Number(newProduct.stock) || 20,
+        status: Number(newProduct.stock) > 0 ? (Number(newProduct.stock) <= 10 ? 'Low Stock' : 'In Stock') : 'Out of Stock'
+      };
+      setInventory(prev => [normalizedItem, ...prev]);
+      showToast('โหมดสาธิต: เพิ่มสินค้าจำลองชั่วคราวสำเร็จ (ไม่บันทึกสู่ฐานข้อมูลจริง)', 'info');
+      return;
+    }
+
     try {
       const res = await api.createProduct({
         ...newProduct,
@@ -486,6 +499,11 @@ export default function AdminPage() {
 
     setInventory(prev => prev.map(i => i.id === id ? { ...i, stock: newStock, status: newStatus } : i));
 
+    if (isDemo) {
+      showToast(`โหมดสาธิต: อัปเดตสต็อกจำลอง (${amount > 0 ? `+${amount}` : amount})`, 'info');
+      return;
+    }
+
     try {
       await api.updateProduct(id, { quantity: newStock, stock: newStock });
       showToast(`Stock updated in MongoDB (${amount > 0 ? `+${amount}` : amount})`, 'success');
@@ -496,6 +514,11 @@ export default function AdminPage() {
   };
 
   const handleDeleteProduct = async (id) => {
+    if (isDemo) {
+      showToast('โหมดสาธิต: อ่านอย่างเดียว ไม่สามารถลบข้อมูลจริงได้', 'warning');
+      return;
+    }
+
     const item = inventory.find(i => i.id === id);
     setInventory(prev => prev.filter(i => i.id !== id));
 
@@ -693,6 +716,18 @@ export default function AdminPage() {
       {/* ========================================================================= */}
       <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         
+        {isDemo && (
+          <div className="bg-amber-100 border-b border-amber-300 text-amber-900 px-6 py-2.5 text-xs font-mono font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-inner">
+            <div className="flex items-center gap-2">
+              <span className="text-base">🧪</span>
+              <span>โหมดสาธิต (Demo Mode): จำลองข้อมูลบนเครื่องเท่านั้น — การแก้ไขหรือลบจะไม่กระทบฐานข้อมูลจริง</span>
+            </div>
+            <span className="text-[10px] uppercase tracking-wider bg-amber-200 text-amber-900 px-2 py-0.5 rounded border border-amber-400 font-extrabold w-fit">
+              READ-ONLY DEMO
+            </span>
+          </div>
+        )}
+
         {/* Top Header Bar with Universal Search & Action Buttons */}
         <header className="sticky top-0 z-20 bg-[#F1F1F1]/90 backdrop-blur-md border-b border-[#DCDCDC] px-6 py-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           

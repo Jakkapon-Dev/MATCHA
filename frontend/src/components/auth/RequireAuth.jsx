@@ -1,14 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { api } from '../../services/api';
+import { api, getToken } from '../../services/api';
 import { useAuth } from '../../context/AuthContext.jsx';
 
 export default function RequireAuth({ children }) {
   const location = useLocation();
   const { currentUser } = useAuth();
-  const [verdict, setVerdict] = useState(currentUser ? 'allowed' : 'checking');
+  const isDemo = Boolean(currentUser?.isDemoSession || getToken() === 'demo-offline-token');
+  const [verdict, setVerdict] = useState(currentUser || isDemo ? 'allowed' : 'checking');
 
   useEffect(() => {
+    if (isDemo || currentUser?.isDemoSession) {
+      setVerdict('allowed');
+      return;
+    }
+
     let active = true;
     // ถ้ามี session อยู่แล้วใน AuthContext ถือว่าผ่านเบื้องต้นและ re-validate
     api.me()
@@ -25,7 +31,7 @@ export default function RequireAuth({ children }) {
       });
 
     return () => { active = false; };
-  }, [location.pathname]);
+  }, [location.pathname, isDemo, currentUser]);
 
   if (verdict === 'checking') {
     return (

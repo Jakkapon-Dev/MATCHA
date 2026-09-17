@@ -1,18 +1,30 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { ShieldAlert } from 'lucide-react';
-import { api } from '../../services/api';
+import { api, getToken } from '../../services/api';
+import { useAuth } from '../../context/AuthContext.jsx';
 
-// Gate a route on the server's answer, not the browser's. The stored session is
-// only a convenience: anyone can write a role into their own localStorage, so
-// the decision comes from /auth/me, which is reached with the signed token.
+// Gate a route on the server's answer, not the browser's.
+// In demo sessions, evaluate immediately against local state to allow offline presentations.
 export default function RequireRole({ role, children }) {
   const location = useLocation();
-  // The verdict forms a small state machine: checking -> allowed, wrong-role,
-  // or signed-out. Protected children render only after an allowed result.
-  const [verdict, setVerdict] = useState('checking');
+  const { currentUser } = useAuth();
+  const isDemo = Boolean(currentUser?.isDemoSession || getToken() === 'demo-offline-token');
+
+  // The verdict forms a small state machine: checking -> allowed, wrong-role, or signed-out.
+  const [verdict, setVerdict] = useState(() => {
+    if (isDemo) {
+      return !role || currentUser?.role === role ? 'allowed' : 'wrong-role';
+    }
+    return 'checking';
+  });
 
   useEffect(() => {
+    if (isDemo) {
+      setVerdict(!role || currentUser?.role === role ? 'allowed' : 'wrong-role');
+      return;
+    }
+
     // Ignore late responses after unmount/navigation so an obsolete request cannot
     // update this guard. Path changes intentionally trigger a fresh authorization check.
     let active = true;
@@ -26,7 +38,7 @@ export default function RequireRole({ role, children }) {
         if (active) setVerdict('signed-out');
       });
     return () => { active = false; };
-  }, [role, location.pathname]);
+  }, [role, location.pathname, isDemo, currentUser?.role]);
 
   if (verdict === 'checking') {
     return (

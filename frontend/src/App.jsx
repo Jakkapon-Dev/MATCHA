@@ -15,6 +15,8 @@ const AdminPage = React.lazy(() => import('./pages/AdminPage.jsx'));
 const PersonalColorPage = React.lazy(() => import('./pages/PersonalColorPage.jsx'));
 const MixMatchStudioPage = React.lazy(() => import('./pages/MixMatchStudioPage.jsx'));
 const EditorialLookbookPage = React.lazy(() => import('./pages/EditorialLookbookPage.jsx'));
+const LegalPage = React.lazy(() => import('./pages/LegalPage.jsx'));
+const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage.jsx'));
 
 import Layout from './components/layout/Layout';
 import ProductModal from './components/product/ProductModal';
@@ -59,7 +61,8 @@ const PAGE_TITLES = {
   '/login': 'เข้าสู่ระบบ • MatchA',
   '/signup': 'สมัครสมาชิก • MatchA',
   '/account': 'บัญชีของฉัน • MatchA',
-  '/admin': 'Admin Console • MatchA'
+  '/admin': 'Admin Console • MatchA',
+  '/legal': 'ข้อกำหนดและนโยบาย • MatchA Legal',
 };
 
 function AppContent() {
@@ -271,7 +274,7 @@ function AppContent() {
             element={
               <HomePage
                 onSelectFit={handleSelectFit}
-                onClaimPromo={() => showToast('Claimed 15% discount code MATCHA15! 🎉')}
+                onClaimPromo={() => showToast('คัดลอกโค้ด MATCHA15 แล้ว! ใช้เป็นส่วนลด 15% ในหน้าชำระเงิน 🎉', 'success')}
                 onAddToCart={addToCart}
                 onQuickView={(prod) => setSelectedProduct(prod)}
                 onExploreCatalog={() => {
@@ -385,8 +388,12 @@ function AppContent() {
             }
           />
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* 9. Branded Legal and Policy Documentation */}
+          <Route path="/legal" element={<LegalPage />} />
+          <Route path="/legal/:topic" element={<LegalPage />} />
+
+          {/* 10. Branded 404 Fallback */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
         </Suspense>
         </ErrorBoundary>

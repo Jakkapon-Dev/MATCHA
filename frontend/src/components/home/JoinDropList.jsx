@@ -1,18 +1,30 @@
 import React, { useState } from 'react';
 import { Sparkles, ShieldCheck, ArrowRight, CreditCard, CheckCircle2 } from 'lucide-react';
 import BorderBeam from '../ui/BorderBeam';
+import { useToast } from '../../context/ToastContext.jsx';
 
 export default function JoinDropList({ onSubscribe }) {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const { showToast } = useToast();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // The browser validates the email format through type="email" and required; this
     // guard also prevents programmatic submissions with an empty value.
-    if (!email) return;
+    if (!email || !email.trim()) return;
+    try {
+      const existing = JSON.parse(localStorage.getItem('matcha_subscribers') || '[]');
+      if (!existing.includes(email.trim())) {
+        existing.push(email.trim());
+        localStorage.setItem('matcha_subscribers', JSON.stringify(existing));
+      }
+    } catch (err) {
+      console.warn('LocalStorage save failed:', err);
+    }
     // Switch to the success panel immediately, then let the parent persist the address.
     setSubscribed(true);
+    showToast('คุณได้เข้าร่วม VIP Drop List เรียบร้อยแล้ว (บันทึกในเครื่อง) ✨', 'success');
     if (onSubscribe) onSubscribe(email);
   };
 

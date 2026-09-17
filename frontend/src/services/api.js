@@ -244,6 +244,13 @@ export const api = {
   },
 
   me: async () => {
+    if (getToken() === 'demo-offline-token') {
+      try {
+        const saved = localStorage.getItem('matcha_user') || sessionStorage.getItem('matcha_user');
+        if (saved) return { success: true, data: JSON.parse(saved) };
+      } catch {}
+      return { success: true, data: { id: 'demo-user', name: 'Demo User', email: 'demo@matcha.com', role: 'Member', isDemoSession: true } };
+    }
     return fetchWithFallback('/auth/me');
   },
 

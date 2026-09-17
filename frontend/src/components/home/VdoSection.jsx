@@ -5,6 +5,18 @@ export default function VdoSection({ onClaimPromo }) {
   // Remote video is a fallback: the browser tries the local lookbook source first.
   const videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-stylish-model-posing-outdoors-in-the-city-41222-large.mp4";
 
+  const handleClaim = (e) => {
+    if (navigator?.clipboard?.writeText) {
+      navigator.clipboard.writeText('MATCHA15').catch(() => {});
+    }
+    try {
+      localStorage.setItem('matcha_applied_coupon', 'MATCHA15');
+    } catch {}
+    if (onClaimPromo) {
+      onClaimPromo();
+    }
+  };
+
   return (
     <section className="relative w-full min-h-screen bg-[#1A2218] overflow-hidden flex items-center justify-center border-y border-[#042509]/30 select-none py-16 sm:py-24">
       
@@ -61,7 +73,7 @@ export default function VdoSection({ onClaimPromo }) {
 
           {/* Promo behavior is owned by the parent (for example, navigation or cart rules). */}
           <button 
-            onClick={onClaimPromo}
+            onClick={handleClaim}
             className="mt-6 w-full py-4 bg-[#C91D1D] hover:bg-[#A81515] text-white font-bold font-mono text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-[#C91D1D]/30 active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
           >
             <span>Claim 15% Discount</span>

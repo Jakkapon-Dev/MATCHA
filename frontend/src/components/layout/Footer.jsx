@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Footer() {
   return (
@@ -17,10 +18,10 @@ export default function Footer() {
         {/* Contact Info (Frame 10) */}
         <div className="md:col-span-4 space-y-2 text-xs text-[#999999]">
           <h3 className="font-bold text-white text-sm uppercase tracking-wider mb-3">Contact</h3>
-          <p className="font-mono">500 Terry Francine St</p>
-          <p className="font-mono">San Francisco, CA 94158</p>
-          <p className="font-mono pt-2">123-456-7890</p>
-          <p className="font-mono text-[#F1F1F1] font-semibold">info@matcha.com</p>
+          <p className="font-mono">MatchA Flagship Studio</p>
+          <p className="font-mono">Thong Lo, Sukhumvit 55, Bangkok 10110</p>
+          <p className="font-mono pt-2">+66 (0) 2 712 8899</p>
+          <p className="font-mono text-[#F1F1F1] font-semibold">contact@matcha-archive.com</p>
         </div>
 
         {/* Center Tagline Quote (Frame 10) */}
@@ -39,20 +40,20 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-white text-sm uppercase tracking-wider mb-3">Follow</h3>
             <ul className="space-y-2 font-mono text-[#999999]">
-              <li><a href="#facebook" className="hover:text-white transition-colors">Facebook</a></li>
-              <li><a href="#instagram" className="hover:text-white transition-colors">Instagram</a></li>
-              <li><a href="#tiktok" className="hover:text-white transition-colors">TikTok</a></li>
+              <li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Facebook</a></li>
+              <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a></li>
+              <li><a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">TikTok</a></li>
             </ul>
           </div>
 
           <div>
             <h3 className="font-bold text-white text-sm uppercase tracking-wider mb-3">Legal</h3>
             <ul className="space-y-1.5 font-mono text-[11px] text-[#999999]">
-              <li><a href="#privacy" className="hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#terms" className="hover:text-white transition-colors">Terms & Conditions</a></li>
-              <li><a href="#refund" className="hover:text-white transition-colors">Refund Policy</a></li>
-              <li><a href="#shipping" className="hover:text-white transition-colors">Shipping Policy</a></li>
-              <li><a href="#accessibility" className="hover:text-white transition-colors">Accessibility Statement</a></li>
+              <li><Link to="/legal/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+              <li><Link to="/legal/terms" className="hover:text-white transition-colors">Terms & Conditions</Link></li>
+              <li><Link to="/legal/refund" className="hover:text-white transition-colors">Refund Policy</Link></li>
+              <li><Link to="/legal/shipping" className="hover:text-white transition-colors">Shipping Policy</Link></li>
+              <li><Link to="/legal/accessibility" className="hover:text-white transition-colors">Accessibility Statement</Link></li>
             </ul>
           </div>
         </div>
@@ -60,7 +61,9 @@ export default function Footer() {
         {/* Bottom Copyright */}
         <div className="md:col-span-12 pt-8 mt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#888888] font-mono">
           <p>© 2026 by MatchA. All rights reserved.</p>
-          <p className="text-[#518F5C] font-semibold mt-2 sm:mt-0">MatchA • Design System Active</p>
+          {import.meta.env.DEV && (
+            <p className="text-[#518F5C] font-semibold mt-2 sm:mt-0">MatchA • Design System Active</p>
+          )}
         </div>
 
       </div>

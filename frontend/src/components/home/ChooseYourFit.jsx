@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
-import { webpSrc } from '../../utils/imageFallback';
+import { webpSrc, handleImageError } from '../../utils/imageFallback';
 
 export default function ChooseYourFit({ onSelectFit }) {
   // Hover state controls the raised card and its overlay; selection is delegated to
@@ -73,7 +73,11 @@ export default function ChooseYourFit({ onSelectFit }) {
       {/* 1. Full-Bleed Center Model Canvas (เห็นครบทั้งตัว 100% ไม่ขาด) */}
       <div className="absolute inset-0 w-full h-full pointer-events-none z-0 flex items-center justify-center p-2 sm:p-6">
         <img
-          src="/images/studio_white_bg/standing_straight/spring/studio_straight_spring_nude_beige_wide_banner_2k_001.jpeg"
+          src={webpSrc("/images/studio_white_bg/standing_straight/spring/studio_straight_spring_nude_beige_wide_banner_2k_001.jpeg")}
+          data-original-src="/images/studio_white_bg/standing_straight/spring/studio_straight_spring_nude_beige_wide_banner_2k_001.jpeg"
+          onError={handleImageError}
+          loading="lazy"
+          decoding="async"
           alt="MatchA Choose Your Fit"
           className="w-full h-full object-contain object-center opacity-100"
         />
