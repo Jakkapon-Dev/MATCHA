@@ -52,22 +52,22 @@ export default function OrderSuccessModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in select-none">
       <div 
         data-lenis-prevent="true"
-        className="bg-white border border-[#D9D3C7] rounded-3xl p-6 sm:p-8 max-w-md w-full text-center shadow-2xl space-y-5 relative animate-scale-up"
+        className="bg-white border border-[#DCDCDC] rounded-3xl p-6 sm:p-8 max-w-md w-full text-center shadow-2xl space-y-5 relative animate-scale-up"
       >
         
         {/* Success Icon */}
-        <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-3xl bg-[#D0DEC6] text-[#2D5A27] flex items-center justify-center shadow-md animate-bounce">
+        <div className="w-16 h-16 sm:w-20 sm:h-20 mx-auto rounded-3xl bg-[#518F5C] text-[#042509] flex items-center justify-center shadow-md animate-bounce">
           <CheckCircle2 size={40} />
         </div>
 
         <div>
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#2D5A27]/10 text-[#2D5A27] font-mono text-[10px] font-bold uppercase tracking-wider">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#042509]/10 text-[#042509] font-mono text-[10px] font-bold uppercase tracking-wider">
             <span>Order Received • Drop 2026</span>
           </div>
-          <h2 className="text-xl sm:text-2xl font-black uppercase text-[#2D231E] tracking-tight mt-2">
+          <h2 className="text-xl sm:text-2xl font-black uppercase text-[#000000] tracking-tight mt-2">
             รับคำสั่งซื้อเรียบร้อยแล้ว
           </h2>
-          <p className="text-xs font-mono text-[#6B5E55] mt-1.5 leading-relaxed">
+          <p className="text-xs font-mono text-[#666666] mt-1.5 leading-relaxed">
             ขอบคุณคุณ <strong>{formData?.firstName || 'Collector'}</strong> บันทึกคำสั่งซื้อเข้าระบบเรียบร้อยแล้ว
           </p>
         </div>
@@ -86,45 +86,45 @@ export default function OrderSuccessModal({
         </div>
 
         {/* Order Details Card */}
-        <div className="p-4 rounded-2xl bg-[#FAF8F5] border border-[#D9D3C7] text-left text-xs font-mono space-y-2.5">
-          <div className="flex justify-between items-center text-[#6B5E55]">
+        <div className="p-4 rounded-2xl bg-[#F1F1F1] border border-[#DCDCDC] text-left text-xs font-mono space-y-2.5">
+          <div className="flex justify-between items-center text-[#666666]">
             <span>Order Number:</span>
-            <span className="font-bold text-[#2D231E]">#{activeOrderId}</span>
+            <span className="font-bold text-[#000000]">#{activeOrderId}</span>
           </div>
-          <div className="flex justify-between items-center text-[#6B5E55]">
+          <div className="flex justify-between items-center text-[#666666]">
             <span>Order Status:</span>
             <span className="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-100 text-amber-800 border border-amber-200">
               {statusLabel}
             </span>
           </div>
-          <div className="flex justify-between items-center text-[#6B5E55]">
+          <div className="flex justify-between items-center text-[#666666]">
             <span>Payment Status:</span>
             <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
               paymentStatus.toLowerCase() === 'paid'
-                ? 'bg-[#D0DEC6] text-[#2D5A27]'
+                ? 'bg-[#518F5C] text-[#042509]'
                 : 'bg-amber-100 text-amber-800 border border-amber-200'
             }`}>
               {paymentStatusLabel}
             </span>
           </div>
-          <div className="flex justify-between items-center text-[#6B5E55]">
+          <div className="flex justify-between items-center text-[#666666]">
             <span>Payment Method:</span>
-            <span className="font-bold text-[#2D231E] uppercase">{paymentMethod}</span>
+            <span className="font-bold text-[#000000] uppercase">{paymentMethod}</span>
           </div>
-          <div className="flex justify-between items-center text-[#6B5E55]">
+          <div className="flex justify-between items-center text-[#666666]">
             <span>Order Total:</span>
-            <span className="font-bold text-[#2D231E]">${totalAmount?.toFixed(2)}</span>
+            <span className="font-bold text-[#000000]">${totalAmount?.toFixed(2)}</span>
           </div>
-          <div className="flex justify-between items-center text-[#6B5E55]">
+          <div className="flex justify-between items-center text-[#666666]">
             <span>Date/Time:</span>
-            <span className="font-bold text-[#2D5A27]">{currentDateTime}</span>
+            <span className="font-bold text-[#042509]">{currentDateTime}</span>
           </div>
         </div>
 
         {/* CTA Button */}
         <button
           onClick={handleFinish}
-          className="w-full py-3.5 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-bold uppercase tracking-widest rounded-xl shadow-lg transition-transform active:scale-95 cursor-pointer flex items-center justify-center gap-2"
+          className="w-full py-3.5 bg-[#042509] hover:bg-[#021505] text-white text-xs font-bold uppercase tracking-widest rounded-xl shadow-lg transition-transform active:scale-95 cursor-pointer flex items-center justify-center gap-2"
         >
           <span>Continue Shopping</span>
           <ArrowRight size={14} />

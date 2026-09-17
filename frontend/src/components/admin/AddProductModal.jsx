@@ -127,23 +127,23 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-fade-in select-none">
-      <div className="bg-[#FAF8F5] border border-[#D9D3C7] rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
+      <div className="bg-[#F1F1F1] border border-[#DCDCDC] rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
         
         {/* Modal Header */}
-        <div className="sticky top-0 bg-[#FAF8F5]/95 backdrop-blur-md px-6 py-5 border-b border-[#D9D3C7] flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-[#F1F1F1]/95 backdrop-blur-md px-6 py-5 border-b border-[#DCDCDC] flex items-center justify-between z-10">
           <div>
-            <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#2D5A27] uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#042509] uppercase tracking-wider">
               <Sparkles size={14} />
               <span>Admin Inventory Control</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black uppercase text-[#2D231E] tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black uppercase text-[#000000] tracking-tight">
               Add New Garment Release
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-[#6B5E55] hover:text-[#2D231E] hover:bg-[#D9D3C7]/40 transition-colors cursor-pointer"
+            className="p-2 rounded-xl text-[#666666] hover:text-[#000000] hover:bg-[#DCDCDC]/40 transition-colors cursor-pointer"
           >
             <X size={20} />
           </button>
@@ -155,9 +155,9 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
           {/* 1. Garment Name & SKU */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-2 space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#2D231E] uppercase flex items-center justify-between">
-                <span>Garment Name <span className="text-[#BC5A36]">*</span></span>
-                <span className="text-[10px] font-normal text-[#6B5E55]">Min 3 chars</span>
+              <label className="font-bold text-[#000000] uppercase flex items-center justify-between">
+                <span>Garment Name <span className="text-[#C91D1D]">*</span></span>
+                <span className="text-[10px] font-normal text-[#666666]">Min 3 chars</span>
               </label>
               <input
                 type="text"
@@ -165,10 +165,10 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="e.g. MatchA Heavyweight Boxy Tee"
-                className={`w-full px-4 py-3 bg-white border ${errors.name ? 'border-[#BC5A36] focus:ring-1 focus:ring-[#BC5A36]' : 'border-[#D9D3C7] focus:ring-1 focus:ring-[#2D5A27]'} rounded-xl text-[#2D231E] outline-none transition-all`}
+                className={`w-full px-4 py-3 bg-white border ${errors.name ? 'border-[#C91D1D] focus:ring-1 focus:ring-[#C91D1D]' : 'border-[#DCDCDC] focus:ring-1 focus:ring-[#042509]'} rounded-xl text-[#000000] outline-none transition-all`}
               />
               {errors.name && (
-                <p className="text-[11px] text-[#BC5A36] font-bold flex items-center gap-1 mt-1">
+                <p className="text-[11px] text-[#C91D1D] font-bold flex items-center gap-1 mt-1">
                   <AlertCircle size={12} />
                   <span>{errors.name}</span>
                 </p>
@@ -176,13 +176,13 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
             </div>
 
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#2D231E] uppercase">SKU Identifier</label>
+              <label className="font-bold text-[#000000] uppercase">SKU Identifier</label>
               <input
                 type="text"
                 name="id"
                 value={formData.id}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-[#EFECE6] border border-[#D9D3C7] rounded-xl text-[#2D231E] font-bold outline-none"
+                className="w-full px-4 py-3 bg-[#EFECE6] border border-[#DCDCDC] rounded-xl text-[#000000] font-bold outline-none"
               />
             </div>
           </div>
@@ -190,12 +190,12 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
           {/* 2. Category, Price, Quantity (Stock) */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#2D231E] uppercase">Category</label>
+              <label className="font-bold text-[#000000] uppercase">Category</label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-white border border-[#D9D3C7] rounded-xl text-[#2D231E] font-bold outline-none focus:ring-1 focus:ring-[#2D5A27] cursor-pointer"
+                className="w-full px-4 py-3 bg-white border border-[#DCDCDC] rounded-xl text-[#000000] font-bold outline-none focus:ring-1 focus:ring-[#042509] cursor-pointer"
               >
                 <option value="Tops">Tops & Knitwear</option>
                 <option value="Bottoms">Bottoms & Denim</option>
@@ -206,11 +206,11 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
             </div>
 
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#2D231E] uppercase">
-                Price (USD) <span className="text-[#BC5A36]">*</span>
+              <label className="font-bold text-[#000000] uppercase">
+                Price (USD) <span className="text-[#C91D1D]">*</span>
               </label>
               <div className="relative">
-                <span className="absolute left-3.5 inset-y-0 my-auto h-fit text-[#6B5E55] font-bold">$</span>
+                <span className="absolute left-3.5 inset-y-0 my-auto h-fit text-[#666666] font-bold">$</span>
                 <input
                   type="number"
                   step="0.01"
@@ -218,11 +218,11 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
                   value={formData.price}
                   onChange={handleChange}
                   placeholder="48.00"
-                  className={`w-full pl-8 pr-4 py-3 bg-white border ${errors.price ? 'border-[#BC5A36] focus:ring-1 focus:ring-[#BC5A36]' : 'border-[#D9D3C7] focus:ring-1 focus:ring-[#2D5A27]'} rounded-xl text-[#2D231E] font-bold outline-none transition-all`}
+                  className={`w-full pl-8 pr-4 py-3 bg-white border ${errors.price ? 'border-[#C91D1D] focus:ring-1 focus:ring-[#C91D1D]' : 'border-[#DCDCDC] focus:ring-1 focus:ring-[#042509]'} rounded-xl text-[#000000] font-bold outline-none transition-all`}
                 />
               </div>
               {errors.price && (
-                <p className="text-[11px] text-[#BC5A36] font-bold flex items-center gap-1 mt-1">
+                <p className="text-[11px] text-[#C91D1D] font-bold flex items-center gap-1 mt-1">
                   <AlertCircle size={12} />
                   <span>{errors.price}</span>
                 </p>
@@ -230,8 +230,8 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
             </div>
 
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#2D231E] uppercase">
-                Quantity (Stock) <span className="text-[#BC5A36]">*</span>
+              <label className="font-bold text-[#000000] uppercase">
+                Quantity (Stock) <span className="text-[#C91D1D]">*</span>
               </label>
               <input
                 type="number"
@@ -239,10 +239,10 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
                 value={formData.stock}
                 onChange={handleChange}
                 placeholder="25"
-                className={`w-full px-4 py-3 bg-white border ${errors.stock ? 'border-[#BC5A36] focus:ring-1 focus:ring-[#BC5A36]' : 'border-[#D9D3C7] focus:ring-1 focus:ring-[#2D5A27]'} rounded-xl text-[#2D231E] font-bold outline-none transition-all`}
+                className={`w-full px-4 py-3 bg-white border ${errors.stock ? 'border-[#C91D1D] focus:ring-1 focus:ring-[#C91D1D]' : 'border-[#DCDCDC] focus:ring-1 focus:ring-[#042509]'} rounded-xl text-[#000000] font-bold outline-none transition-all`}
               />
               {errors.stock && (
-                <p className="text-[11px] text-[#BC5A36] font-bold flex items-center gap-1 mt-1">
+                <p className="text-[11px] text-[#C91D1D] font-bold flex items-center gap-1 mt-1">
                   <AlertCircle size={12} />
                   <span>{errors.stock}</span>
                 </p>
@@ -255,19 +255,19 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
             
             {/* Field: Date */}
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#2D231E] uppercase flex items-center gap-1.5">
-                <Calendar size={13} className="text-[#2D5A27]" />
-                <span>Release Date <span className="text-[#BC5A36]">*</span></span>
+              <label className="font-bold text-[#000000] uppercase flex items-center gap-1.5">
+                <Calendar size={13} className="text-[#042509]" />
+                <span>Release Date <span className="text-[#C91D1D]">*</span></span>
               </label>
               <input
                 type="date"
                 name="date"
                 value={formData.date}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 bg-white border ${errors.date ? 'border-[#BC5A36] focus:ring-1 focus:ring-[#BC5A36]' : 'border-[#D9D3C7] focus:ring-1 focus:ring-[#2D5A27]'} rounded-xl text-[#2D231E] font-bold outline-none transition-all cursor-pointer`}
+                className={`w-full px-4 py-3 bg-white border ${errors.date ? 'border-[#C91D1D] focus:ring-1 focus:ring-[#C91D1D]' : 'border-[#DCDCDC] focus:ring-1 focus:ring-[#042509]'} rounded-xl text-[#000000] font-bold outline-none transition-all cursor-pointer`}
               />
               {errors.date && (
-                <p className="text-[11px] text-[#BC5A36] font-bold flex items-center gap-1 mt-1">
+                <p className="text-[11px] text-[#C91D1D] font-bold flex items-center gap-1 mt-1">
                   <AlertCircle size={12} />
                   <span>{errors.date}</span>
                 </p>
@@ -276,15 +276,15 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
 
             {/* Field: Tag */}
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#2D231E] uppercase flex items-center gap-1.5">
-                <TagIcon size={13} className="text-[#BC5A36]" />
-                <span>Product Tag <span className="text-[#BC5A36]">*</span></span>
+              <label className="font-bold text-[#000000] uppercase flex items-center gap-1.5">
+                <TagIcon size={13} className="text-[#C91D1D]" />
+                <span>Product Tag <span className="text-[#C91D1D]">*</span></span>
               </label>
               <select
                 name="tag"
                 value={formData.tag}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 bg-white border ${errors.tag ? 'border-[#BC5A36] focus:ring-1 focus:ring-[#BC5A36]' : 'border-[#D9D3C7] focus:ring-1 focus:ring-[#2D5A27]'} rounded-xl text-[#2D231E] font-bold outline-none transition-all cursor-pointer`}
+                className={`w-full px-4 py-3 bg-white border ${errors.tag ? 'border-[#C91D1D] focus:ring-1 focus:ring-[#C91D1D]' : 'border-[#DCDCDC] focus:ring-1 focus:ring-[#042509]'} rounded-xl text-[#000000] font-bold outline-none transition-all cursor-pointer`}
               >
                 <option value="NEW RELEASE">NEW RELEASE</option>
                 <option value="BESTSELLER">BESTSELLER</option>
@@ -294,7 +294,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
                 <option value="ORGANIC COTTON">ORGANIC COTTON</option>
               </select>
               {errors.tag && (
-                <p className="text-[11px] text-[#BC5A36] font-bold flex items-center gap-1 mt-1">
+                <p className="text-[11px] text-[#C91D1D] font-bold flex items-center gap-1 mt-1">
                   <AlertCircle size={12} />
                   <span>{errors.tag}</span>
                 </p>
@@ -303,12 +303,12 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
 
             {/* Field: Season */}
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#2D231E] uppercase">Season</label>
+              <label className="font-bold text-[#000000] uppercase">Season</label>
               <select
                 name="season"
                 value={formData.season}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-white border border-[#D9D3C7] rounded-xl text-[#2D231E] outline-none focus:ring-1 focus:ring-[#2D5A27] cursor-pointer"
+                className="w-full px-4 py-3 bg-white border border-[#DCDCDC] rounded-xl text-[#000000] outline-none focus:ring-1 focus:ring-[#042509] cursor-pointer"
               >
                 <option value="SS26">SS26 (Spring/Summer)</option>
                 <option value="FW26">FW26 (Fall/Winter)</option>
@@ -322,24 +322,24 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
           {/* 4. Color & Silhouette / Fit */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#2D231E] uppercase">Color Shade</label>
+              <label className="font-bold text-[#000000] uppercase">Color Shade</label>
               <input
                 type="text"
                 name="color"
                 value={formData.color}
                 onChange={handleChange}
                 placeholder="e.g. Matcha Green"
-                className="w-full px-4 py-3 bg-white border border-[#D9D3C7] rounded-xl text-[#2D231E] outline-none focus:ring-1 focus:ring-[#2D5A27]"
+                className="w-full px-4 py-3 bg-white border border-[#DCDCDC] rounded-xl text-[#000000] outline-none focus:ring-1 focus:ring-[#042509]"
               />
             </div>
 
             <div className="sm:col-span-2 space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#2D231E] uppercase">Silhouette / Fit</label>
+              <label className="font-bold text-[#000000] uppercase">Silhouette / Fit</label>
               <select
                 name="fit"
                 value={formData.fit}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-white border border-[#D9D3C7] rounded-xl text-[#2D231E] outline-none focus:ring-1 focus:ring-[#2D5A27] cursor-pointer"
+                className="w-full px-4 py-3 bg-white border border-[#DCDCDC] rounded-xl text-[#000000] outline-none focus:ring-1 focus:ring-[#042509] cursor-pointer"
               >
                 <option value="Boxy Oversized">Boxy Oversized (ทรงหลวมคลาสสิก)</option>
                 <option value="Relaxed Tailored">Relaxed Tailored (ทรงปล่อยเข้ารูป)</option>
@@ -352,7 +352,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
 
           {/* 5. Image URL & Live Preview */}
           <div className="space-y-3 font-mono text-xs">
-            <label className="font-bold text-[#2D231E] uppercase">Garment Photo / Artwork URL</label>
+            <label className="font-bold text-[#000000] uppercase">Garment Photo / Artwork URL</label>
             <div className="flex gap-3">
               <div className="relative flex-1">
                 <input
@@ -361,22 +361,22 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
                   value={formData.image}
                   onChange={handleChange}
                   placeholder="Paste direct HTTPS image URL"
-                  className="w-full px-4 py-3 bg-white border border-[#D9D3C7] rounded-xl text-[#2D231E] outline-none focus:ring-1 focus:ring-[#2D5A27]"
+                  className="w-full px-4 py-3 bg-white border border-[#DCDCDC] rounded-xl text-[#000000] outline-none focus:ring-1 focus:ring-[#042509]"
                 />
               </div>
-              <div className="w-12 h-12 rounded-xl bg-[#EFECE6] border border-[#D9D3C7] overflow-hidden flex items-center justify-center shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-[#EFECE6] border border-[#DCDCDC] overflow-hidden flex items-center justify-center shrink-0">
                 {/* Hide a broken thumbnail while retaining the typed URL for correction. */}
                 {imagePreview ? (
                   <img src={webpSrc(imagePreview)} data-original-src={imagePreview} alt="Preview" className="w-full h-full object-cover" onError={() => setImagePreview('')} />
                 ) : (
-                  <ImageIcon size={18} className="text-[#6B5E55]" />
+                  <ImageIcon size={18} className="text-[#666666]" />
                 )}
               </div>
             </div>
 
             {/* Quick Sample Image Presets */}
             <div className="flex flex-wrap items-center gap-2 pt-1">
-              <span className="text-[11px] text-[#6B5E55]">Presets:</span>
+              <span className="text-[11px] text-[#666666]">Presets:</span>
               {sampleImages.map((s) => (
                 <button
                   type="button"
@@ -387,7 +387,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
                     setFormData((p) => ({ ...p, image: s.url }));
                     setImagePreview(s.url);
                   }}
-                  className="px-2.5 py-1 rounded-lg bg-white border border-[#D9D3C7] hover:border-[#2D5A27] text-[11px] font-bold text-[#2D231E] transition-all cursor-pointer active:scale-95"
+                  className="px-2.5 py-1 rounded-lg bg-white border border-[#DCDCDC] hover:border-[#042509] text-[11px] font-bold text-[#000000] transition-all cursor-pointer active:scale-95"
                 >
                   {s.label}
                 </button>
@@ -398,10 +398,10 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
           {/* 6. Description & Material Notes (Validated Field) */}
           <div className="space-y-1.5 font-mono text-xs">
             <div className="flex items-center justify-between">
-              <label className="font-bold text-[#2D231E] uppercase">
-                Description & Material Notes <span className="text-[#BC5A36]">*</span>
+              <label className="font-bold text-[#000000] uppercase">
+                Description & Material Notes <span className="text-[#C91D1D]">*</span>
               </label>
-              <span className="text-[10px] text-[#6B5E55]">Min 10 characters</span>
+              <span className="text-[10px] text-[#666666]">Min 10 characters</span>
             </div>
             <textarea
               name="description"
@@ -409,10 +409,10 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
               onChange={handleChange}
               rows={3}
               placeholder="e.g. Crafted from 320gsm organic Japanese cotton. Bio-washed with natural matcha pigments for a tactile drape."
-              className={`w-full px-4 py-3 bg-white border ${errors.description ? 'border-[#BC5A36] focus:ring-1 focus:ring-[#BC5A36]' : 'border-[#D9D3C7] focus:ring-1 focus:ring-[#2D5A27]'} rounded-xl text-[#2D231E] outline-none transition-all resize-none`}
+              className={`w-full px-4 py-3 bg-white border ${errors.description ? 'border-[#C91D1D] focus:ring-1 focus:ring-[#C91D1D]' : 'border-[#DCDCDC] focus:ring-1 focus:ring-[#042509]'} rounded-xl text-[#000000] outline-none transition-all resize-none`}
             />
             {errors.description && (
-              <p className="text-[11px] text-[#BC5A36] font-bold flex items-center gap-1 mt-1">
+              <p className="text-[11px] text-[#C91D1D] font-bold flex items-center gap-1 mt-1">
                 <AlertCircle size={12} />
                 <span>{errors.description}</span>
               </p>
@@ -420,17 +420,17 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
           </div>
 
           {/* Form Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#D9D3C7]">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#DCDCDC]">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-3 border border-[#D9D3C7] text-xs font-bold font-mono uppercase text-[#6B5E55] hover:text-[#2D231E] hover:bg-white rounded-xl transition-all cursor-pointer"
+              className="px-5 py-3 border border-[#DCDCDC] text-xs font-bold font-mono uppercase text-[#666666] hover:text-[#000000] hover:bg-white rounded-xl transition-all cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-bold font-mono uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-98 cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-[#042509] hover:bg-[#021505] text-white text-xs font-bold font-mono uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-98 cursor-pointer"
             >
               <Plus size={16} />
               <span>Publish to Inventory</span>

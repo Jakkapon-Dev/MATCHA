@@ -112,7 +112,7 @@ export default function SignupForm({ onBackToStore }) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="p-3.5 rounded-xl bg-[#BC5A36]/10 border border-[#BC5A36]/30 text-[#BC5A36] text-xs font-mono flex items-center gap-2">
+        <div className="p-3.5 rounded-xl bg-[#C91D1D]/10 border border-[#C91D1D]/30 text-[#C91D1D] text-xs font-mono flex items-center gap-2">
           <AlertCircle size={15} className="shrink-0" />
           <span>{error}</span>
         </div>
@@ -121,11 +121,11 @@ export default function SignupForm({ onBackToStore }) {
       {/* First Name & Last Name (Rubric Mandatory Fields) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#2D231E] mb-1.5">
+          <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#000000] mb-1.5">
             First Name *
           </label>
           <div className="relative">
-            <User size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#6B5E55]" />
+            <User size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#666666]" />
             <input
               type="text"
               name="firstName"
@@ -138,11 +138,11 @@ export default function SignupForm({ onBackToStore }) {
         </div>
 
         <div>
-          <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#2D231E] mb-1.5">
+          <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#000000] mb-1.5">
             Last Name *
           </label>
           <div className="relative">
-            <User size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#6B5E55]" />
+            <User size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#666666]" />
             <input
               type="text"
               name="lastName"
@@ -157,11 +157,11 @@ export default function SignupForm({ onBackToStore }) {
 
       {/* Email Field */}
       <div>
-        <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#2D231E] mb-1.5">
+        <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#000000] mb-1.5">
           Email Address *
         </label>
         <div className="relative">
-          <Mail size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#6B5E55]" />
+          <Mail size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#666666]" />
           <input
             type="email"
             name="email"
@@ -176,11 +176,11 @@ export default function SignupForm({ onBackToStore }) {
 
       {/* Password Field */}
       <div>
-        <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#2D231E] mb-1.5">
+        <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#000000] mb-1.5">
           Password *
         </label>
         <div className="relative">
-          <Lock size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#6B5E55]" />
+          <Lock size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#666666]" />
           <input
             type="password"
             name="password"
@@ -195,11 +195,11 @@ export default function SignupForm({ onBackToStore }) {
 
       {/* Password Confirmation Field */}
       <div>
-        <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#2D231E] mb-1.5">
+        <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#000000] mb-1.5">
           Password Confirmation *
         </label>
         <div className="relative">
-          <Lock size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#6B5E55]" />
+          <Lock size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#666666]" />
           <input
             type="password"
             name="confirmPassword"
@@ -216,7 +216,7 @@ export default function SignupForm({ onBackToStore }) {
       <button
         type="submit"
         disabled={isLoading}
-        className="w-full mt-3 py-3.5 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-bold uppercase tracking-widest rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+        className="w-full mt-3 py-3.5 bg-[#042509] hover:bg-[#021505] text-white text-xs font-bold uppercase tracking-widest rounded-xl shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
       >
         {isLoading ? (
           <span>Creating account...</span>
@@ -229,12 +229,12 @@ export default function SignupForm({ onBackToStore }) {
       </button>
 
       {/* Switch to Login */}
-      <div className="text-center pt-2 text-xs font-mono text-[#6B5E55]">
+      <div className="text-center pt-2 text-xs font-mono text-[#666666]">
         Already have an account?{' '}
         <button
           type="button"
           onClick={() => navigate('/login')}
-          className="text-[#2D5A27] font-bold hover:underline cursor-pointer"
+          className="text-[#042509] font-bold hover:underline cursor-pointer"
         >
           Log in here
         </button>

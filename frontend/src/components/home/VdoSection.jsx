@@ -6,7 +6,7 @@ export default function VdoSection({ onClaimPromo }) {
   const videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-stylish-model-posing-outdoors-in-the-city-41222-large.mp4";
 
   return (
-    <section className="relative w-full min-h-screen bg-[#1A2218] overflow-hidden flex items-center justify-center border-y border-[#2D5A27]/30 select-none py-16 sm:py-24">
+    <section className="relative w-full min-h-screen bg-[#1A2218] overflow-hidden flex items-center justify-center border-y border-[#042509]/30 select-none py-16 sm:py-24">
       
       {/* 1. Full-Height Background Video (Anchored to top to prevent head crop) */}
       <video
@@ -29,9 +29,9 @@ export default function VdoSection({ onClaimPromo }) {
         
         {/* Left Side: Editorial Cinematic Title */}
         <div className="max-w-xl text-center lg:text-left">
-          <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-[#FAF8F5] tracking-tight uppercase leading-[0.95] drop-shadow-xl">
+          <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-[#F1F1F1] tracking-tight uppercase leading-[0.95] drop-shadow-xl">
             MOVEMENT <br />
-            <span className="text-[#D0DEC6] font-light">& EXPRESSION</span>
+            <span className="text-[#518F5C] font-light">& EXPRESSION</span>
           </h2>
           <p className="mt-6 text-xs sm:text-sm text-neutral-300 font-mono max-w-md leading-relaxed drop-shadow">
             Experience our organic Japanese cotton textures in real-world motion. Engineered for unrestricted movement in the modern urban landscape.
@@ -39,30 +39,30 @@ export default function VdoSection({ onClaimPromo }) {
         </div>
 
         {/* Right Side: Floating Glass Promotion Card (Glassmorphism) */}
-        <div className="w-full max-w-md backdrop-blur-2xl bg-[#FAF8F5]/95 border border-white/60 shadow-2xl rounded-3xl p-6 sm:p-8 transform hover:scale-[1.02] transition-transform duration-300">
+        <div className="w-full max-w-md backdrop-blur-2xl bg-[#F1F1F1]/95 border border-white/60 shadow-2xl rounded-3xl p-6 sm:p-8 transform hover:scale-[1.02] transition-transform duration-300">
           
           <div className="flex items-center justify-between mb-4">
-            <span className="px-3 py-1 bg-[#BC5A36] text-white text-[10px] font-bold uppercase tracking-widest rounded-full shadow-sm flex items-center gap-1.5">
+            <span className="px-3 py-1 bg-[#C91D1D] text-white text-[10px] font-bold uppercase tracking-widest rounded-full shadow-sm flex items-center gap-1.5">
               <Sparkles size={11} />
               <span>SPECIAL PROMO</span>
             </span>
-            <span className="text-[10px] font-mono text-[#2D5A27] font-bold bg-[#D0DEC6] px-2.5 py-1 rounded-md">
+            <span className="text-[10px] font-mono text-[#042509] font-bold bg-[#518F5C] px-2.5 py-1 rounded-md">
               USE: MATCHA15
             </span>
           </div>
 
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-[#2D231E] leading-tight">
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-[#000000] leading-tight">
             Buy two items get 15% off the total
           </h3>
 
-          <p className="text-xs text-[#6B5E55] mt-3 leading-relaxed font-sans">
+          <p className="text-xs text-[#666666] mt-3 leading-relaxed font-sans">
             Mix and match any tops and bottoms from our new MatchA series to unlock your discount automatically at checkout.
           </p>
 
           {/* Promo behavior is owned by the parent (for example, navigation or cart rules). */}
           <button 
             onClick={onClaimPromo}
-            className="mt-6 w-full py-4 bg-[#BC5A36] hover:bg-[#A64C2B] text-white font-bold font-mono text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-[#BC5A36]/30 active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
+            className="mt-6 w-full py-4 bg-[#C91D1D] hover:bg-[#A81515] text-white font-bold font-mono text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-[#C91D1D]/30 active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
           >
             <span>Claim 15% Discount</span>
             <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />

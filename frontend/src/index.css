@@ -4,14 +4,14 @@
 /* Fashion Theme Variables */
 
 :root {
-  --color-matcha-primary: #2D5A27;
-  --color-matcha-primary-dark: #23471E;
-  --color-matcha-secondary: #D0DEC6;
-  --color-matcha-bg: #FAF8F5;
-  --color-matcha-accent: #BC5A36;
-  --color-matcha-text: #2D231E;
-  --color-matcha-muted: #6B5E55;
-  --color-matcha-border: #D9D3C7;
+  --color-matcha-primary: #042509;
+  --color-matcha-primary-dark: #021505;
+  --color-matcha-secondary: #518F5C;
+  --color-matcha-bg: #F1F1F1;
+  --color-matcha-accent: #C91D1D;
+  --color-matcha-text: #000000;
+  --color-matcha-muted: #666666;
+  --color-matcha-border: #DCDCDC;
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;
 }
@@ -58,17 +58,17 @@ body {
 
 /* Glass & MatchA Panels */
 .fashion-glass {
-  background: rgba(250, 248, 245, 0.88);
+  background: rgba(241, 241, 241, 0.90);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(45, 90, 39, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .fashion-glass-dark {
-  background: rgba(30, 23, 19, 0.92);
+  background: rgba(0, 0, 0, 0.94);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(208, 222, 198, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 /* Scrollbars */
@@ -196,11 +196,11 @@ body {
 .animate-text-shimmer {
   background: linear-gradient(
     90deg,
-    #2D231E 0%,
-    #BC5A36 30%,
-    #2D5A27 50%,
-    #BC5A36 70%,
-    #2D231E 100%
+    #000000 0%,
+    #C91D1D 30%,
+    #042509 50%,
+    #C91D1D 70%,
+    #000000 100%
   );
   background-size: 200% auto;
   color: transparent;
@@ -212,11 +212,11 @@ body {
 .animate-text-shimmer-light {
   background: linear-gradient(
     90deg,
-    #FAF8F5 0%,
-    #D0DEC6 30%,
-    #BC5A36 50%,
-    #D0DEC6 70%,
-    #FAF8F5 100%
+    #F1F1F1 0%,
+    #518F5C 30%,
+    #C91D1D 50%,
+    #518F5C 70%,
+    #F1F1F1 100%
   );
   background-size: 200% auto;
   color: transparent;
@@ -339,10 +339,10 @@ body {
 
 @keyframes glowMatcha {
   0%, 100% {
-    box-shadow: 0 0 0 0 rgba(45, 90, 39, 0.4);
+    box-shadow: 0 0 0 0 rgba(4, 37, 9, 0.4);
   }
   50% {
-    box-shadow: 0 0 0 10px rgba(45, 90, 39, 0);
+    box-shadow: 0 0 0 10px rgba(4, 37, 9, 0);
   }
 }
 

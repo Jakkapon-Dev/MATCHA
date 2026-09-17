@@ -17,7 +17,7 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
     : [
         { 
           color: item?.color || 'Signature Tone', 
-          colorHex: item?.colorHex || '#BC5A36', 
+          colorHex: item?.colorHex || '#C91D1D', 
           image: item?.image 
         }
       ];
@@ -40,20 +40,20 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
     <SpotlightCard
       onClick={() => onQuickView && onQuickView({ ...item, initialVariant: activeVariant, activeImage: activeVariant.image })}
       spotlightColor="rgba(188, 90, 54, 0.15)"
-      className="matcha-hover-card w-64 sm:w-72 lg:w-80 shrink-0 p-5 sm:p-6 flex flex-col justify-between hover:bg-[#FAF8F5]/60 transition-colors duration-200 cursor-pointer group relative rounded-none border-0"
+      className="matcha-hover-card w-64 sm:w-72 lg:w-80 shrink-0 p-5 sm:p-6 flex flex-col justify-between hover:bg-[#F1F1F1]/60 transition-colors duration-200 cursor-pointer group relative rounded-none border-0"
     >
       {/* Top Tag & Category */}
       <div className="flex justify-between items-start mb-3 relative z-10">
-        <span className="text-[11px] font-mono font-bold text-[#BC5A36] uppercase bg-orange-50 px-2 py-0.5 rounded border border-orange-200/60">
+        <span className="text-[11px] font-mono font-bold text-[#C91D1D] uppercase bg-orange-50 px-2 py-0.5 rounded border border-orange-200/60">
           {item.tag || item.season}
         </span>
-        <span className="text-[10px] font-mono text-[#6B5E55] uppercase">
+        <span className="text-[10px] font-mono text-[#666666] uppercase">
           {item.category}
         </span>
       </div>
 
       {/* Product Image Container */}
-      <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden mb-3 p-2 bg-[#FAF8F5]/60 rounded-xl group-hover:bg-[#FAF8F5] transition-colors z-10">
+      <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden mb-3 p-2 bg-[#F1F1F1]/60 rounded-xl group-hover:bg-[#F1F1F1] transition-colors z-10">
         <img
           src={webpSrc(activeVariant.image)} data-original-src={activeVariant.image}
           alt={`${item.name} - ${activeVariant.color}`}
@@ -73,8 +73,8 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
 
         {/* Sold Out Overlay */}
         {!item.inStock && (
-          <div className="absolute inset-0 bg-[#2D231E]/60 backdrop-blur-[1px] flex items-center justify-center z-25">
-            <span className="px-3 py-1 bg-white text-[#2D231E] text-xs font-mono font-bold uppercase tracking-wider rounded-lg shadow-md">
+          <div className="absolute inset-0 bg-[#000000]/60 backdrop-blur-[1px] flex items-center justify-center z-25">
+            <span className="px-3 py-1 bg-white text-[#000000] text-xs font-mono font-bold uppercase tracking-wider rounded-lg shadow-md">
               Sold Out
             </span>
           </div>
@@ -93,7 +93,7 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
                 title={v.color}
                 className={`w-5.5 h-5.5 rounded-full border-2 transition-all cursor-pointer flex items-center justify-center ${
                   isSelected 
-                    ? 'border-[#2D231E] scale-120 ring-2 ring-[#BC5A36]/40 shadow-xs' 
+                    ? 'border-[#000000] scale-120 ring-2 ring-[#C91D1D]/40 shadow-xs' 
                     : 'border-transparent opacity-75 hover:opacity-100 hover:scale-110'
                 }`}
                 style={{ backgroundColor: v.colorHex }}
@@ -135,7 +135,7 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
           disabled={!item.inStock}
           className={`w-full py-2.5 font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-1.5 rounded-lg ${
             item.inStock
-              ? 'bg-[#BC5A36] hover:bg-[#9E4423] text-white'
+              ? 'bg-[#C91D1D] hover:bg-[#A81515] text-white'
               : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
           }`}
         >
@@ -146,10 +146,10 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
 
       {/* Product Title and Price */}
       <div className="text-center relative z-10">
-        <h3 className="text-xs sm:text-sm font-bold text-[#2D231E] line-clamp-1 leading-tight group-hover:text-[#BC5A36] transition-colors">
+        <h3 className="text-xs sm:text-sm font-bold text-[#000000] line-clamp-1 leading-tight group-hover:text-[#C91D1D] transition-colors">
           {item.name}
         </h3>
-        <p className="text-xs font-mono font-black text-[#BC5A36] mt-1">
+        <p className="text-xs font-mono font-black text-[#C91D1D] mt-1">
           ${typeof item.price === 'number' ? item.price.toFixed(2) : item.price}
         </p>
       </div>
@@ -194,13 +194,13 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
   };
 
   return (
-    <section id="street-favorites" className="w-full bg-[#FAF8F5] text-[#2D231E] py-16 sm:py-24 px-4 sm:px-8 lg:px-12 border-b border-[#D9D3C7] overflow-hidden select-none">
+    <section id="street-favorites" className="w-full bg-[#F1F1F1] text-[#000000] py-16 sm:py-24 px-4 sm:px-8 lg:px-12 border-b border-[#DCDCDC] overflow-hidden select-none">
       <div className="max-w-7xl mx-auto">
         
         {/* 1. Header Title & Navigation Controls */}
         <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <h2 className="text-4xl sm:text-6xl font-black text-[#BC5A36] tracking-tight font-sans">
+            <h2 className="text-4xl sm:text-6xl font-black text-[#C91D1D] tracking-tight font-sans">
               Street Favorites
             </h2>
           </div>
@@ -208,23 +208,23 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
             {onExploreCatalog && (
               <button
                 onClick={onExploreCatalog}
-                className="px-4 py-2 bg-[#2D5A27] hover:bg-[#23471E] text-white font-mono font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm transition-all flex items-center gap-1.5 cursor-pointer mr-2"
+                className="px-4 py-2 bg-[#042509] hover:bg-[#021505] text-white font-mono font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm transition-all flex items-center gap-1.5 cursor-pointer mr-2"
               >
-                <Sparkles size={13} className="text-[#D0DEC6]" />
+                <Sparkles size={13} className="text-[#518F5C]" />
                 <span>VIEW FULL CATALOG{!loading && !error ? ` (${products.length})` : ''}</span>
               </button>
             )}
             <button
               onClick={scrollLeft}
               aria-label="Previous Products"
-              className="w-10 h-10 border-2 border-[#BC5A36] text-[#BC5A36] hover:bg-[#BC5A36] hover:text-white flex items-center justify-center transition-colors shadow-sm cursor-pointer active:scale-95 rounded-lg"
+              className="w-10 h-10 border-2 border-[#C91D1D] text-[#C91D1D] hover:bg-[#C91D1D] hover:text-white flex items-center justify-center transition-colors shadow-sm cursor-pointer active:scale-95 rounded-lg"
             >
               <ChevronLeft size={20} />
             </button>
             <button
               onClick={scrollRight}
               aria-label="Next Products"
-              className="w-10 h-10 border-2 border-[#BC5A36] text-[#BC5A36] hover:bg-[#BC5A36] hover:text-white flex items-center justify-center transition-colors shadow-sm cursor-pointer active:scale-95 rounded-lg"
+              className="w-10 h-10 border-2 border-[#C91D1D] text-[#C91D1D] hover:bg-[#C91D1D] hover:text-white flex items-center justify-center transition-colors shadow-sm cursor-pointer active:scale-95 rounded-lg"
             >
               <ChevronRight size={20} />
             </button>
@@ -239,8 +239,8 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
               onClick={() => setActiveCategory(cat.key)}
               className={`px-4 py-1.5 text-xs font-mono font-bold tracking-wider uppercase transition-all whitespace-nowrap cursor-pointer rounded-lg ${
                 activeCategory === cat.key
-                  ? 'bg-[#BC5A36] text-white shadow-md'
-                  : 'bg-white text-[#2D231E] border border-[#D9D3C7] hover:border-[#BC5A36]'
+                  ? 'bg-[#C91D1D] text-white shadow-md'
+                  : 'bg-white text-[#000000] border border-[#DCDCDC] hover:border-[#C91D1D]'
               }`}
             >
               {cat.label}
@@ -249,15 +249,15 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
         </div>
 
         {/* 3. Main Framed Carousel Container with Spotlight Tracking */}
-        <div className="relative border-2 border-[#BC5A36] bg-white shadow-xl overflow-hidden rounded-2xl">
+        <div className="relative border-2 border-[#C91D1D] bg-white shadow-xl overflow-hidden rounded-2xl">
           
           <div 
             ref={scrollRef}
-            className="flex overflow-x-auto scrollbar-none divide-x-2 divide-[#BC5A36] scroll-smooth"
+            className="flex overflow-x-auto scrollbar-none divide-x-2 divide-[#C91D1D] scroll-smooth"
           >
             {loading ? <div role="status" aria-label="กำลังโหลดสินค้า" className="flex gap-4 p-5">{[0, 1, 2, 3].map(i => <div key={i} className="w-64 sm:w-72 lg:w-80 shrink-0"><ProductCardSkeleton /></div>)}</div>
-              : error ? <div role="alert" className="p-6 text-red-900"><p>{error}</p><button onClick={retry} className="mt-3 px-4 py-2 rounded-lg bg-[#2D5A27] text-white hover:bg-[#23471E]">ลองใหม่</button></div>
-              : !filteredProducts.length ? <div className="m-5 p-6 border border-dashed border-[#D9D3C7] rounded-xl"><ShoppingBag aria-hidden="true" /><p className="my-3">ยังไม่มีสินค้าในหมวดนี้</p><button onClick={onExploreCatalog} className="px-4 py-2 rounded-lg bg-[#2D5A27] text-white hover:bg-[#23471E]">ดูสินค้าทั้งหมด</button></div>
+              : error ? <div role="alert" className="p-6 text-red-900"><p>{error}</p><button onClick={retry} className="mt-3 px-4 py-2 rounded-lg bg-[#042509] text-white hover:bg-[#021505]">ลองใหม่</button></div>
+              : !filteredProducts.length ? <div className="m-5 p-6 border border-dashed border-[#DCDCDC] rounded-xl"><ShoppingBag aria-hidden="true" /><p className="my-3">ยังไม่มีสินค้าในหมวดนี้</p><button onClick={onExploreCatalog} className="px-4 py-2 rounded-lg bg-[#042509] text-white hover:bg-[#021505]">ดูสินค้าทั้งหมด</button></div>
               : filteredProducts.map((item) => (
               <StreetFavoriteCard 
                 key={item.id} 

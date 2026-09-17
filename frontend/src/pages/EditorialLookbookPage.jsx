@@ -286,29 +286,29 @@ export default function EditorialLookbookPage() {
   if (!curatedEditorialSpreads.length) return <div className="max-w-3xl mx-auto my-16 p-8 border border-dashed rounded-xl"><h1 className="text-2xl font-bold">{loading ? 'กำลังโหลด Lookbook' : 'ยังไม่มี Lookbook ที่เผยแพร่'}</h1><p className="my-4">กลับมาดูลุคใหม่ของเราได้เร็ว ๆ นี้</p><button disabled={loading} onClick={retry}>โหลดใหม่</button></div>;
 
   return (
-    <div className="w-full bg-[#FAF8F5] text-[#2D231E] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#F1F1F1] text-[#000000] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-10 sm:space-y-14">
         {purchaseItem && <ProductModal product={purchaseItem} onClose={() => setPurchaseItem(null)} />}
         {loading && <div role="status" aria-label="กำลังโหลดข้อมูลสินค้า" className="h-16 rounded-xl bg-[#EAE5DB]" />}
-        {error && <div role="alert" className="p-4 rounded-xl border border-[#BC5A36] bg-[#FFF4ED]">{error} <button onClick={retry} className="underline font-bold ml-3">ลองใหม่</button></div>}
+        {error && <div role="alert" className="p-4 rounded-xl border border-[#C91D1D] bg-[#FFF4ED]">{error} <button onClick={retry} className="underline font-bold ml-3">ลองใหม่</button></div>}
 
         {/* ========================================================================= */}
         {/* 1. EDITORIAL MAGAZINE MASTHEAD & HEADER (VOGUE / JAPANESE STREET STYLE) */}
         {/* ========================================================================= */}
-        <header className="space-y-6 border-b border-[#D9D3C7] pb-8 text-center sm:text-left">
+        <header className="space-y-6 border-b border-[#DCDCDC] pb-8 text-center sm:text-left">
           
           {/* Top Issue Tagline with Live Pulsing Radar Indicator */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-mono text-xs uppercase tracking-widest text-[#6B5E55]">
-            <div className="flex items-center justify-center sm:justify-start gap-2 text-[#2D5A27] font-bold">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 font-mono text-xs uppercase tracking-widest text-[#666666]">
+            <div className="flex items-center justify-center sm:justify-start gap-2 text-[#042509] font-bold">
               <span className="relative flex h-2.5 w-2.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2D5A27] opacity-75" />
-                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#2D5A27]" />
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#042509] opacity-75" />
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#042509]" />
               </span>
               <span>MATCHA ARCHIVE MAGAZINE // ISSUE NO. 04</span>
             </div>
             <div className="flex items-center justify-center sm:justify-end gap-3 text-[11px]">
               <span>TOKYO • KYOTO • ENOSHIMA</span>
-              <span className="text-[#D9D3C7]">•</span>
+              <span className="text-[#DCDCDC]">•</span>
               <span>2026 EDITORIAL EDITION</span>
             </div>
           </div>
@@ -316,33 +316,33 @@ export default function EditorialLookbookPage() {
           {/* Bold Magazine Typography with Floating Drifting Japanese Watermark */}
           <div className="relative py-2 sm:py-4 overflow-hidden sm:overflow-visible">
             {/* Drifting Kanji Watermark */}
-            <span className="absolute -top-4 right-2 sm:right-16 text-7xl sm:text-8xl md:text-9xl font-black text-[#2D5A27]/6 pointer-events-none select-none font-serif tracking-tighter animate-card-float-1">
+            <span className="absolute -top-4 right-2 sm:right-16 text-7xl sm:text-8xl md:text-9xl font-black text-[#042509]/6 pointer-events-none select-none font-serif tracking-tighter animate-card-float-1">
               街頭美學
             </span>
-            <span className="absolute -bottom-6 left-1/3 text-5xl sm:text-7xl font-black text-[#BC5A36]/4 pointer-events-none select-none font-serif tracking-widest hidden md:block animate-card-float-2">
+            <span className="absolute -bottom-6 left-1/3 text-5xl sm:text-7xl font-black text-[#C91D1D]/4 pointer-events-none select-none font-serif tracking-widest hidden md:block animate-card-float-2">
               流行文化
             </span>
 
-            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase text-[#2D231E] tracking-tight font-sans leading-[0.95] drop-shadow-xs">
+            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase text-[#000000] tracking-tight font-sans leading-[0.95] drop-shadow-xs">
               Editorial <br />
-              <span className="text-[#2D5A27] font-serif italic font-normal">Lookbook</span> Spread
+              <span className="text-[#042509] font-serif italic font-normal">Lookbook</span> Spread
             </h1>
 
-            <p data-enter style={{ '--enter-delay': '190ms' }} className="mt-4 text-xs sm:text-sm text-[#6B5E55] font-sans max-w-2xl leading-relaxed">
+            <p data-enter style={{ '--enter-delay': '190ms' }} className="mt-4 text-xs sm:text-sm text-[#666666] font-sans max-w-2xl leading-relaxed">
               ภาพถ่ายแฟชั่นชุดจริงระดับนิตยสาร ถ่ายทอดความงดงามของผ้ามัทฉะและซิลูเอทสตรีทแวร์ญี่ปุ่นในแสงธรรมชาติ พร้อมพิกัดเสื้อผ้าชิ้นจริงแบบอินเทอร์แอคทีฟ (Interactive Shoppable Hotspots)
             </p>
           </div>
 
           {/* Editorial Infinite Running Marquee Ticker */}
-          <div className="w-full overflow-hidden bg-white/70 backdrop-blur-xs border-y border-[#D9D3C7] py-2 font-mono text-[11px] font-bold text-[#6B5E55] tracking-widest uppercase">
+          <div className="w-full overflow-hidden bg-white/70 backdrop-blur-xs border-y border-[#DCDCDC] py-2 font-mono text-[11px] font-bold text-[#666666] tracking-widest uppercase">
             <div className="animate-marquee whitespace-nowrap flex items-center gap-8">
               <span>✦ MATCHA ARCHIVE // SPRING-AUTUMN 2026 EDITORIAL</span>
               <span>•</span>
-              <span className="text-[#2D5A27]">✦ HIGH-PRECISION JAPANESE STREET SILHOUETTES</span>
+              <span className="text-[#042509]">✦ HIGH-PRECISION JAPANESE STREET SILHOUETTES</span>
               <span>•</span>
               <span>✦ BOTANICAL DYED PIECES WITH 100% ARTISAN GUARANTEE</span>
               <span>•</span>
-              <span className="text-[#BC5A36]">✦ INTERACTIVE HOTSPOTS: CLICK PINS TO SHOP DIRECTLY</span>
+              <span className="text-[#C91D1D]">✦ INTERACTIVE HOTSPOTS: CLICK PINS TO SHOP DIRECTLY</span>
               <span>•</span>
               <span>✦ LIMITED RUN FABRICATIONS IN GINZA, ENOSHIMA & ODAIBA</span>
               <span>•</span>
@@ -372,14 +372,14 @@ export default function EditorialLookbookPage() {
                     }}
                     className={`px-4 py-2 rounded-full font-bold uppercase transition-all duration-300 flex items-center gap-1.5 whitespace-nowrap cursor-pointer transform active:scale-95 ${
                       isActive
-                        ? 'bg-[#2D5A27] text-white shadow-md scale-102 ring-2 ring-[#2D5A27]/25'
-                        : 'bg-white border border-[#D9D3C7] text-[#6B5E55] hover:border-[#2D5A27] hover:text-[#2D231E]'
+                        ? 'bg-[#042509] text-white shadow-md scale-102 ring-2 ring-[#042509]/25'
+                        : 'bg-white border border-[#DCDCDC] text-[#666666] hover:border-[#042509] hover:text-[#000000]'
                     }`}
                   >
                     <span className="text-sm">{s.icon}</span>
                     <span>{s.label}</span>
                     <span className={`text-[10px] px-1.5 py-0.2 rounded-full font-mono ${
-                      isActive ? 'bg-white/20 text-white' : 'bg-neutral-100 text-[#6B5E55]'
+                      isActive ? 'bg-white/20 text-white' : 'bg-neutral-100 text-[#666666]'
                     }`}>
                       {count}
                     </span>
@@ -392,9 +392,9 @@ export default function EditorialLookbookPage() {
             <div className="flex items-center gap-2.5">
               <button
                 onClick={() => navigate('/mix-match')}
-                className="px-4 py-2 bg-white hover:bg-[#2D231E] hover:text-white border border-[#D9D3C7] rounded-full text-xs font-mono font-bold uppercase transition-all duration-300 flex items-center gap-1.5 shadow-xs cursor-pointer group active:scale-95"
+                className="px-4 py-2 bg-white hover:bg-[#000000] hover:text-white border border-[#DCDCDC] rounded-full text-xs font-mono font-bold uppercase transition-all duration-300 flex items-center gap-1.5 shadow-xs cursor-pointer group active:scale-95"
               >
-                <Sparkles size={13} className="text-[#2D5A27] group-hover:text-[#D0DEC6] transition-colors" />
+                <Sparkles size={13} className="text-[#042509] group-hover:text-[#518F5C] transition-colors" />
                 <span>Open Mix & Match Studio</span>
               </button>
             </div>
@@ -411,14 +411,14 @@ export default function EditorialLookbookPage() {
             <TiltCard 
               enabled={true} 
               maxTilt={2.5}
-              className="relative bg-white rounded-3xl sm:rounded-[2.5rem] border border-[#D9D3C7] overflow-hidden shadow-xl group/hero transition-all duration-500 hover:border-[#2D5A27]/40"
+              className="relative bg-white rounded-3xl sm:rounded-[2.5rem] border border-[#DCDCDC] overflow-hidden shadow-xl group/hero transition-all duration-500 hover:border-[#042509]/40"
             >
               
               <div className="grid grid-cols-1 lg:grid-cols-12 items-stretch">
                 
                 {/* Left Column: Full-Height Interactive Photo with Pulsing Garment Hotspots */}
                 <div 
-                  className="lg:col-span-7 relative min-h-[500px] sm:min-h-[600px] lg:min-h-[720px] bg-[#FAF8F5] overflow-hidden cursor-pointer select-none"
+                  className="lg:col-span-7 relative min-h-[500px] sm:min-h-[600px] lg:min-h-[720px] bg-[#F1F1F1] overflow-hidden cursor-pointer select-none"
                   onClick={() => setSelectedSpread(coverStory)}
                 >
                   <img
@@ -434,11 +434,11 @@ export default function EditorialLookbookPage() {
 
                   {/* Top Issue Tag */}
                   <div className="absolute top-6 left-6 z-10 flex items-center gap-2">
-                    <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#2D231E] font-mono text-[10px] font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5">
-                      <Flame size={12} className="text-[#BC5A36]" />
+                    <span className="px-3.5 py-1.5 rounded-full bg-white/95 backdrop-blur-md text-[#000000] font-mono text-[10px] font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5">
+                      <Flame size={12} className="text-[#C91D1D]" />
                       <span>COVER STORY • {coverStory.vol}</span>
                     </span>
-                    <span className="px-3 py-1.5 rounded-full bg-[#2D5A27] text-white font-mono text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                    <span className="px-3 py-1.5 rounded-full bg-[#042509] text-white font-mono text-[10px] font-bold uppercase tracking-wider shadow-sm">
                       {coverStory.season} Drop
                     </span>
                   </div>
@@ -449,7 +449,7 @@ export default function EditorialLookbookPage() {
                     className={`absolute top-6 right-6 z-20 w-11 h-11 rounded-full flex items-center justify-center transition-all duration-300 shadow-md cursor-pointer ${
                       likedLooks[coverStory.id]
                         ? 'bg-rose-500 text-white scale-110 shadow-rose-500/30'
-                        : 'bg-white/90 text-[#2D231E] hover:bg-white hover:scale-108'
+                        : 'bg-white/90 text-[#000000] hover:bg-white hover:scale-108'
                     }`}
                     aria-label="Favorite Look"
                   >
@@ -482,18 +482,18 @@ export default function EditorialLookbookPage() {
                             e.stopPropagation();
                             setPinnedItemId((prev) => (prev === hsKey(hs) ? null : hsKey(hs)));
                           }}
-                          className="min-h-11 min-w-11 p-0.5 rounded-full cursor-pointer flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#2D5A27] focus-visible:outline-offset-2"
+                          className="min-h-11 min-w-11 p-0.5 rounded-full cursor-pointer flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#042509] focus-visible:outline-offset-2"
                         >
                           {/* Multi-Ring Pulsing Radar Waves */}
                           <div className="relative flex h-10 w-10 items-center justify-center">
                             <span className="animate-radar-ring-1 absolute inline-flex h-full w-full rounded-full bg-white/70" />
-                            <span className="animate-radar-ring-2 absolute inline-flex h-full w-full rounded-full bg-[#2D5A27]/60" />
+                            <span className="animate-radar-ring-2 absolute inline-flex h-full w-full rounded-full bg-[#042509]/60" />
                             
                             {/* Inner Core Pin with Spring Hover */}
                             <span className={`relative inline-flex rounded-full items-center justify-center font-bold text-xs shadow-2xl border-2 transition-all duration-300 ${
                               active 
-                                ? 'h-8 w-8 bg-[#2D5A27] text-white border-white scale-115 shadow-[#2D5A27]/50'
-                                : 'h-6 w-6 bg-white text-[#2D5A27] border-[#2D5A27] hover:scale-115'
+                                ? 'h-8 w-8 bg-[#042509] text-white border-white scale-115 shadow-[#042509]/50'
+                                : 'h-6 w-6 bg-white text-[#042509] border-[#042509] hover:scale-115'
                             }`}>
                               {active ? '✦' : '+'}
                             </span>
@@ -503,7 +503,7 @@ export default function EditorialLookbookPage() {
                         {/* Hotspot Floating Product Card (Spring Reveal) */}
                         {active && (
                           <div 
-                            className="absolute left-1/2 -translate-x-1/2 bottom-12 w-64 p-3.5 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-[#D9D3C7] text-left space-y-2.5 animate-scale-up z-30 pointer-events-auto"
+                            className="absolute left-1/2 -translate-x-1/2 bottom-12 w-64 p-3.5 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-[#DCDCDC] text-left space-y-2.5 animate-scale-up z-30 pointer-events-auto"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <div className="flex items-center gap-3">
@@ -513,16 +513,16 @@ export default function EditorialLookbookPage() {
                                 decoding="async"
                                 alt={hs.title} 
                                 onError={handleImageError} 
-                                className="w-12 h-14 object-contain rounded-xl bg-[#FAF8F5] shrink-0 border border-[#D9D3C7]" 
+                                className="w-12 h-14 object-contain rounded-xl bg-[#F1F1F1] shrink-0 border border-[#DCDCDC]" 
                               />
                               <div className="min-w-0 flex-1">
-                                <span className="text-[9px] font-mono uppercase text-[#BC5A36] font-bold block">
+                                <span className="text-[9px] font-mono uppercase text-[#C91D1D] font-bold block">
                                   {hs.category || 'Garment'}
                                 </span>
-                                <div className="text-xs font-bold text-[#2D231E] leading-snug truncate">
+                                <div className="text-xs font-bold text-[#000000] leading-snug truncate">
                                   {hs.title}
                                 </div>
-                                <div className="text-sm font-mono font-black text-[#2D5A27] mt-0.5">
+                                <div className="text-sm font-mono font-black text-[#042509] mt-0.5">
                                   ${hs.price.toFixed(2)}
                                 </div>
                               </div>
@@ -533,7 +533,7 @@ export default function EditorialLookbookPage() {
                               className={`w-full py-2 font-mono text-[10px] font-bold uppercase rounded-xl shadow-sm flex items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer ${
                                 addedItems[hs.productId || hs.id]
                                   ? 'bg-emerald-600 text-white animate-cart-pop'
-                                  : 'bg-[#2D5A27] hover:bg-[#1E3D1A] text-white active:scale-98'
+                                  : 'bg-[#042509] hover:bg-[#1E3D1A] text-white active:scale-98'
                               }`}
                             >
                               {addedItems[hs.productId || hs.id] ? (
@@ -557,7 +557,7 @@ export default function EditorialLookbookPage() {
                   {/* Bottom Image Caption & Inspect Prompt */}
                   <div className="absolute bottom-6 inset-x-6 z-10 flex items-center justify-between text-white font-mono text-xs">
                     <div className="flex items-center gap-2 drop-shadow-md">
-                      <MapPin size={14} className="text-[#D0DEC6]" />
+                      <MapPin size={14} className="text-[#518F5C]" />
                       <span>{coverStory.location}</span>
                     </div>
                     <span className="px-3.5 py-1.5 bg-black/50 backdrop-blur-md rounded-full text-[10px] uppercase font-bold flex items-center gap-1.5 hover:bg-black/70 transition-colors">
@@ -575,42 +575,42 @@ export default function EditorialLookbookPage() {
                   <div className="space-y-6">
                     
                     <div className="space-y-2">
-                      <span className="text-xs font-mono font-bold text-[#2D5A27] tracking-widest uppercase block">
+                      <span className="text-xs font-mono font-bold text-[#042509] tracking-widest uppercase block">
                         {coverStory.theme} // {coverStory.seasonThai}
                       </span>
-                      <h2 className="text-2xl sm:text-4xl font-black text-[#2D231E] tracking-tight font-serif leading-tight">
+                      <h2 className="text-2xl sm:text-4xl font-black text-[#000000] tracking-tight font-serif leading-tight">
                         {coverStory.title}
                       </h2>
-                      <p className="text-xs sm:text-sm font-mono text-[#6B5E55]">
+                      <p className="text-xs sm:text-sm font-mono text-[#666666]">
                         {coverStory.subtitle}
                       </p>
                     </div>
 
                     {/* Poetic Quote Box */}
-                    <blockquote className="p-4 rounded-2xl bg-[#FAF8F5] border-l-4 border-[#2D5A27] font-serif text-sm sm:text-base italic text-[#2D231E] leading-relaxed shadow-xs">
+                    <blockquote className="p-4 rounded-2xl bg-[#F1F1F1] border-l-4 border-[#042509] font-serif text-sm sm:text-base italic text-[#000000] leading-relaxed shadow-xs">
                       {coverStory.leadQuote}
                     </blockquote>
 
-                    <p className="text-xs sm:text-sm text-[#6B5E55] leading-relaxed font-sans">
+                    <p className="text-xs sm:text-sm text-[#666666] leading-relaxed font-sans">
                       {coverStory.narrative}
                     </p>
 
                     {/* Editorial Palette Swatches */}
                     <div className="space-y-2 pt-2">
-                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#6B5E55] block">
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#666666] block">
                         Botanical Palette Synergy:
                       </span>
                       <div className="flex flex-wrap items-center gap-2">
                         {coverStory.palette.map((c, i) => (
                           <div 
                             key={i} 
-                            className="flex items-center gap-1.5 bg-[#FAF8F5] px-2.5 py-1 rounded-xl border border-[#D9D3C7] hover:border-[#2D5A27] transition-all hover:scale-105 cursor-default"
+                            className="flex items-center gap-1.5 bg-[#F1F1F1] px-2.5 py-1 rounded-xl border border-[#DCDCDC] hover:border-[#042509] transition-all hover:scale-105 cursor-default"
                           >
                             <span 
                               className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0 shadow-xs" 
                               style={{ backgroundColor: c.hex }} 
                             />
-                            <span className="text-[10px] font-mono font-bold text-[#2D231E]">
+                            <span className="text-[10px] font-mono font-bold text-[#000000]">
                               {c.name}
                             </span>
                           </div>
@@ -621,13 +621,13 @@ export default function EditorialLookbookPage() {
                   </div>
 
                   {/* Shoppable Garment List with Synchronized Hotspot Highlighting */}
-                  <div className="space-y-4 pt-6 border-t border-[#D9D3C7]">
+                  <div className="space-y-4 pt-6 border-t border-[#DCDCDC]">
                     <div className="flex items-center justify-between font-mono text-xs">
-                      <span className="font-bold text-[#2D231E] uppercase flex items-center gap-1.5">
-                        <ShoppingBag size={13} className="text-[#2D5A27]" />
+                      <span className="font-bold text-[#000000] uppercase flex items-center gap-1.5">
+                        <ShoppingBag size={13} className="text-[#042509]" />
                         <span>Shop This Look ({coverStory.shoppableItems.length} Pieces)</span>
                       </span>
-                      <span className="text-[#2D5A27] font-bold text-[11px] bg-[#2D5A27]/10 px-2 py-0.5 rounded-full">
+                      <span className="text-[#042509] font-bold text-[11px] bg-[#042509]/10 px-2 py-0.5 rounded-full">
                         {coverStory.shoppableItems.some(i => i.inStock) ? 'Available pieces' : 'ยังไม่พร้อมจำหน่าย'}
                       </span>
                     </div>
@@ -648,8 +648,8 @@ export default function EditorialLookbookPage() {
                             onClick={() => setPinnedItemId((prev) => (prev === item.id ? null : item.id))}
                             className={`flex items-center justify-between p-3 rounded-2xl border transition-all duration-300 cursor-pointer ${
                               isActive 
-                                ? `bg-[#EBF3E7] border-[#2D5A27] shadow-md scale-[1.01] ${isPinned ? 'ring-2 ring-[#BC5A36]' : 'ring-2 ring-[#2D5A27]/20'}` 
-                                : 'bg-[#FAF8F5] border-[#D9D3C7] hover:border-[#2D5A27]/60'
+                                ? `bg-[#EBF3E7] border-[#042509] shadow-md scale-[1.01] ${isPinned ? 'ring-2 ring-[#C91D1D]' : 'ring-2 ring-[#042509]/20'}` 
+                                : 'bg-[#F1F1F1] border-[#DCDCDC] hover:border-[#042509]/60'
                             }`}
                           >
                             <div className="flex items-center gap-3 min-w-0">
@@ -657,16 +657,16 @@ export default function EditorialLookbookPage() {
                                 src={webpSrc(item.image)} data-original-src={item.image} 
                                 alt={item.name} 
                                 onError={handleImageError} 
-                                className={`w-11 h-13 object-contain rounded-xl bg-[#FAF8F5] border border-[#D9D3C7] shrink-0 transition-transform duration-300 ${
+                                className={`w-11 h-13 object-contain rounded-xl bg-[#F1F1F1] border border-[#DCDCDC] shrink-0 transition-transform duration-300 ${
                                   isActive ? 'scale-108' : ''
                                 }`} 
                               />
                               <div className="min-w-0">
-                                <div className="text-xs font-bold text-[#2D231E] truncate">
+                                <div className="text-xs font-bold text-[#000000] truncate">
                                   {item.name}
                                 </div>
-                                <div className="text-[11px] font-mono text-[#6B5E55]">
-                                  {item.color} • <span className="font-bold text-[#2D5A27]">${item.price.toFixed(2)}</span>
+                                <div className="text-[11px] font-mono text-[#666666]">
+                                  {item.color} • <span className="font-bold text-[#042509]">${item.price.toFixed(2)}</span>
                                 </div>
                               </div>
                             </div>
@@ -676,7 +676,7 @@ export default function EditorialLookbookPage() {
                               className={`px-3 py-1.5 font-mono text-[10px] font-bold uppercase rounded-lg shadow-sm transition-all duration-300 cursor-pointer shrink-0 ml-2 ${
                                 isAdded
                                   ? 'bg-emerald-600 text-white animate-cart-pop'
-                                  : 'bg-[#2D5A27] hover:bg-[#1E3D1A] text-white active:scale-95'
+                                  : 'bg-[#042509] hover:bg-[#1E3D1A] text-white active:scale-95'
                               }`}
                             >
                               {isAdded ? '✓ Added' : !item.inStock ? 'Unavailable' : 'Select / Add'}
@@ -692,7 +692,7 @@ export default function EditorialLookbookPage() {
                       className={`w-full py-3.5 font-mono text-xs font-bold uppercase tracking-widest rounded-xl transition-all duration-300 shadow-md hover:shadow-xl active:scale-98 cursor-pointer flex items-center justify-center gap-2 ${
                         addedEntireLook
                           ? 'bg-emerald-700 text-white animate-cart-pop'
-                          : 'bg-[#2D231E] hover:bg-[#1E3D1A] text-white'
+                          : 'bg-[#000000] hover:bg-[#1E3D1A] text-white'
                       }`}
                     >
                       {addedEntireLook ? (
@@ -702,7 +702,7 @@ export default function EditorialLookbookPage() {
                         </>
                       ) : (
                         <>
-                          <Sparkles size={14} className="text-[#D0DEC6] animate-spin" />
+                          <Sparkles size={14} className="text-[#518F5C] animate-spin" />
                           <span>Add Entire Look to Bag</span>
                         </>
                       )}
@@ -723,12 +723,12 @@ export default function EditorialLookbookPage() {
         {/* ========================================================================= */}
         <section className="space-y-16 sm:space-y-24">
           
-          <div className="flex items-center justify-between pb-4 border-b border-[#D9D3C7] font-mono text-xs">
-            <span className="font-bold uppercase text-[#2D231E] flex items-center gap-2">
-              <Layers size={14} className="text-[#2D5A27]" />
+          <div className="flex items-center justify-between pb-4 border-b border-[#DCDCDC] font-mono text-xs">
+            <span className="font-bold uppercase text-[#000000] flex items-center gap-2">
+              <Layers size={14} className="text-[#042509]" />
               <span>Curated Seasonal Editions ({remainingSpreads.length} Feature Stories)</span>
             </span>
-            <span className="text-[#6B5E55]">Vol. 04 Spring-Summer-Autumn-Winter</span>
+            <span className="text-[#666666]">Vol. 04 Spring-Summer-Autumn-Winter</span>
           </div>
 
           {remainingSpreads.map((spread, index) => {
@@ -749,7 +749,7 @@ export default function EditorialLookbookPage() {
                     maxTilt={4}
                     enabled={true}
                     onClick={() => setSelectedSpread(spread)}
-                    className="group relative aspect-4/5 sm:aspect-3/4 rounded-3xl sm:rounded-[2rem] overflow-hidden border border-[#D9D3C7] shadow-lg hover:shadow-2xl hover:border-[#2D5A27] transition-all duration-500 cursor-pointer bg-neutral-100"
+                    className="group relative aspect-4/5 sm:aspect-3/4 rounded-3xl sm:rounded-[2rem] overflow-hidden border border-[#DCDCDC] shadow-lg hover:shadow-2xl hover:border-[#042509] transition-all duration-500 cursor-pointer bg-neutral-100"
                   >
                     <img
                       src={webpSrc(spread.heroImage)} data-original-src={spread.heroImage}
@@ -767,10 +767,10 @@ export default function EditorialLookbookPage() {
 
                     {/* Badges */}
                     <div className="absolute top-5 left-5 z-10 flex items-center gap-2">
-                      <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-[#2D231E] font-mono text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                      <span className="px-3 py-1 rounded-full bg-white/90 backdrop-blur-md text-[#000000] font-mono text-[10px] font-bold uppercase tracking-wider shadow-sm">
                         {spread.issueDate}
                       </span>
-                      <span className="px-3 py-1 rounded-full bg-[#2D5A27] text-white font-mono text-[10px] font-bold uppercase tracking-wider shadow-sm">
+                      <span className="px-3 py-1 rounded-full bg-[#042509] text-white font-mono text-[10px] font-bold uppercase tracking-wider shadow-sm">
                         {spread.season}
                       </span>
                     </div>
@@ -781,7 +781,7 @@ export default function EditorialLookbookPage() {
                       className={`absolute top-5 right-5 z-20 w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-md cursor-pointer ${
                         likedLooks[spread.id]
                           ? 'bg-rose-500 text-white scale-110 shadow-rose-500/30'
-                          : 'bg-white/90 text-[#2D231E] hover:bg-white hover:scale-110'
+                          : 'bg-white/90 text-[#000000] hover:bg-white hover:scale-110'
                       }`}
                     >
                       <Heart size={17} className={likedLooks[spread.id] ? 'fill-white' : ''} />
@@ -789,7 +789,7 @@ export default function EditorialLookbookPage() {
 
                     {/* Overlay Hover CTA */}
                     <div className="absolute inset-0 bg-black/25 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10 pointer-events-none">
-                      <span className="px-5 py-2.5 bg-white text-[#2D231E] font-mono text-xs font-bold uppercase rounded-full shadow-2xl flex items-center gap-2 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-300">
+                      <span className="px-5 py-2.5 bg-white text-[#000000] font-mono text-xs font-bold uppercase rounded-full shadow-2xl flex items-center gap-2 transform translate-y-3 group-hover:translate-y-0 transition-transform duration-300">
                         <Maximize2 size={14} />
                         <span>Inspect Spread Details</span>
                       </span>
@@ -798,10 +798,10 @@ export default function EditorialLookbookPage() {
                     {/* Bottom Metadata Bar */}
                     <div className="absolute bottom-5 inset-x-5 z-10 flex items-center justify-between text-white font-mono text-xs">
                       <div className="flex items-center gap-2">
-                        <MapPin size={13} className="text-[#D0DEC6]" />
+                        <MapPin size={13} className="text-[#518F5C]" />
                         <span className="text-[11px] truncate max-w-[220px] sm:max-w-xs">{spread.location}</span>
                       </div>
-                      <span className="text-[10px] font-bold text-[#D0DEC6]">{spread.photographer}</span>
+                      <span className="text-[10px] font-bold text-[#518F5C]">{spread.photographer}</span>
                     </div>
 
                   </TiltCard>
@@ -818,22 +818,22 @@ export default function EditorialLookbookPage() {
                 >
                   
                   <div className="space-y-2">
-                    <span className="text-xs font-mono font-bold text-[#BC5A36] uppercase tracking-widest block">
+                    <span className="text-xs font-mono font-bold text-[#C91D1D] uppercase tracking-widest block">
                       {spread.theme}
                     </span>
-                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#2D231E] tracking-tight font-serif">
+                    <h3 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[#000000] tracking-tight font-serif">
                       {spread.title}
                     </h3>
-                    <p className="text-xs font-mono text-[#6B5E55]">
+                    <p className="text-xs font-mono text-[#666666]">
                       {spread.subtitle}
                     </p>
                   </div>
 
-                  <blockquote className="font-serif italic text-sm sm:text-base text-[#2D231E] border-l-3 border-[#BC5A36] pl-4 leading-relaxed">
+                  <blockquote className="font-serif italic text-sm sm:text-base text-[#000000] border-l-3 border-[#C91D1D] pl-4 leading-relaxed">
                     {spread.leadQuote}
                   </blockquote>
 
-                  <p className="text-xs sm:text-sm text-[#6B5E55] leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#666666] leading-relaxed">
                     {spread.narrative}
                   </p>
 
@@ -850,15 +850,15 @@ export default function EditorialLookbookPage() {
                   </div>
 
                   {/* Shoppable Outfit Mini Box */}
-                  <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#D9D3C7] shadow-sm space-y-3">
-                    <div className="flex items-center justify-between font-mono text-xs font-bold text-[#2D231E]">
+                  <div className="p-4 sm:p-5 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm space-y-3">
+                    <div className="flex items-center justify-between font-mono text-xs font-bold text-[#000000]">
                       <span className="uppercase flex items-center gap-1.5">
-                        <Tag size={13} className="text-[#2D5A27]" />
+                        <Tag size={13} className="text-[#042509]" />
                         <span>Key Garments</span>
                       </span>
                       <button 
                         onClick={() => setSelectedSpread(spread)}
-                        className="text-[#2D5A27] hover:underline flex items-center gap-1 text-[11px] cursor-pointer"
+                        className="text-[#042509] hover:underline flex items-center gap-1 text-[11px] cursor-pointer"
                       >
                         <span>View All Details</span>
                         <ArrowRight size={12} />
@@ -871,19 +871,19 @@ export default function EditorialLookbookPage() {
                         return (
                           <div 
                             key={item.id}
-                            className="flex items-center justify-between py-2 border-b border-[#D9D3C7]/40 last:border-none text-xs hover:bg-[#FAF8F5] px-1 rounded-lg transition-colors"
+                            className="flex items-center justify-between py-2 border-b border-[#DCDCDC]/40 last:border-none text-xs hover:bg-[#F1F1F1] px-1 rounded-lg transition-colors"
                           >
-                            <img src={webpSrc(item.image)} data-original-src={item.image} alt={item.name} loading="lazy" onError={handleImageError} className="w-12 h-14 object-contain rounded-lg bg-[#FAF8F5] border border-[#D9D3C7] shrink-0 mr-3" />
+                            <img src={webpSrc(item.image)} data-original-src={item.image} alt={item.name} loading="lazy" onError={handleImageError} className="w-12 h-14 object-contain rounded-lg bg-[#F1F1F1] border border-[#DCDCDC] shrink-0 mr-3" />
                             <div className="min-w-0 pr-2 flex-1">
-                              <span className="font-bold text-[#2D231E] block truncate">{item.name}</span>
-                              <span className="text-[10px] font-mono text-[#6B5E55]">${item.price.toFixed(2)}</span>
+                              <span className="font-bold text-[#000000] block truncate">{item.name}</span>
+                              <span className="text-[10px] font-mono text-[#666666]">${item.price.toFixed(2)}</span>
                             </div>
                             <button
                               disabled={loading || !item.inStock} onClick={(e) => handleQuickAdd(e, item)}
                               className={`px-3 py-1 rounded-lg font-mono text-[10px] font-bold uppercase transition-all duration-200 cursor-pointer ${
                                 isAdded
                                   ? 'bg-emerald-600 text-white animate-cart-pop'
-                                  : 'bg-[#FAF8F5] hover:bg-[#2D5A27] hover:text-white border border-[#D9D3C7]'
+                                  : 'bg-[#F1F1F1] hover:bg-[#042509] hover:text-white border border-[#DCDCDC]'
                               }`}
                             >
                               {isAdded ? '✓ Added' : !item.inStock ? 'Unavailable' : 'Select / Add'}
@@ -915,7 +915,7 @@ export default function EditorialLookbookPage() {
           >
             <div 
               data-lenis-prevent="true"
-              className="bg-[#FAF8F5] text-[#2D231E] rounded-3xl max-w-5xl w-full max-h-[92vh] overflow-y-auto overscroll-contain shadow-2xl border border-[#D9D3C7] relative flex flex-col md:flex-row overflow-hidden animate-scale-up"
+              className="bg-[#F1F1F1] text-[#000000] rounded-3xl max-w-5xl w-full max-h-[92vh] overflow-y-auto overscroll-contain shadow-2xl border border-[#DCDCDC] relative flex flex-col md:flex-row overflow-hidden animate-scale-up"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Top Controls: Prev/Next Spread & Close */}
@@ -923,14 +923,14 @@ export default function EditorialLookbookPage() {
                 <button
                   onClick={handlePrevSpread}
                   title="Previous spread (Left arrow key)"
-                  className="w-9 h-9 rounded-full bg-white/90 hover:bg-[#2D231E] hover:text-white border border-[#D9D3C7] flex items-center justify-center text-[#2D231E] transition-all cursor-pointer shadow-md"
+                  className="w-9 h-9 rounded-full bg-white/90 hover:bg-[#000000] hover:text-white border border-[#DCDCDC] flex items-center justify-center text-[#000000] transition-all cursor-pointer shadow-md"
                 >
                   <ChevronLeft size={16} />
                 </button>
                 <button
                   onClick={handleNextSpread}
                   title="Next spread (Right arrow key)"
-                  className="w-9 h-9 rounded-full bg-white/90 hover:bg-[#2D231E] hover:text-white border border-[#D9D3C7] flex items-center justify-center text-[#2D231E] transition-all cursor-pointer shadow-md"
+                  className="w-9 h-9 rounded-full bg-white/90 hover:bg-[#000000] hover:text-white border border-[#DCDCDC] flex items-center justify-center text-[#000000] transition-all cursor-pointer shadow-md"
                 >
                   <ChevronRight size={16} />
                 </button>
@@ -940,7 +940,7 @@ export default function EditorialLookbookPage() {
                     setIsZoomed(false);
                   }}
                   title="Close (Escape key)"
-                  className="w-9 h-9 rounded-full bg-white/90 hover:bg-[#2D231E] hover:text-white border border-[#D9D3C7] flex items-center justify-center text-[#2D231E] transition-all cursor-pointer shadow-md"
+                  className="w-9 h-9 rounded-full bg-white/90 hover:bg-[#000000] hover:text-white border border-[#DCDCDC] flex items-center justify-center text-[#000000] transition-all cursor-pointer shadow-md"
                   aria-label="Close modal"
                 >
                   <X size={16} />
@@ -990,46 +990,46 @@ export default function EditorialLookbookPage() {
                 <div className="space-y-4">
                   
                   <div className="space-y-1">
-                    <span className="text-xs font-mono font-bold text-[#2D5A27] uppercase tracking-wider block">
+                    <span className="text-xs font-mono font-bold text-[#042509] uppercase tracking-wider block">
                       {selectedSpread.theme} // {selectedSpread.seasonThai}
                     </span>
-                    <h2 className="text-2xl font-black font-serif text-[#2D231E]">
+                    <h2 className="text-2xl font-black font-serif text-[#000000]">
                       {selectedSpread.title}
                     </h2>
-                    <p className="text-xs font-mono text-[#6B5E55]">
+                    <p className="text-xs font-mono text-[#666666]">
                       {selectedSpread.location}
                     </p>
                   </div>
 
-                  <blockquote className="p-3.5 rounded-xl bg-white border border-[#D9D3C7] text-xs font-serif italic text-[#2D231E] leading-relaxed">
+                  <blockquote className="p-3.5 rounded-xl bg-white border border-[#DCDCDC] text-xs font-serif italic text-[#000000] leading-relaxed">
                     {selectedSpread.leadQuote}
                   </blockquote>
 
-                  <p className="text-xs text-[#6B5E55] leading-relaxed">
+                  <p className="text-xs text-[#666666] leading-relaxed">
                     {selectedSpread.narrative}
                   </p>
 
                   {/* Shoppable Products List */}
                   <div className="space-y-2 pt-2">
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#6B5E55] block">
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-[#666666] block">
                       Shop Selected Pieces:
                     </span>
                     <div className="space-y-2 max-h-48 overflow-y-auto pr-1">
                       {selectedSpread.shoppableItems.map((item) => {
                         const isAdded = addedItems[item.id];
                         return (
-                          <div key={item.id} className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-[#D9D3C7] hover:border-[#2D5A27] transition-all">
-                            <img src={webpSrc(item.image)} data-original-src={item.image} alt={item.name} loading="lazy" onError={handleImageError} className="w-12 h-14 object-contain rounded-lg bg-[#FAF8F5] border border-[#D9D3C7] shrink-0 mr-3" />
+                          <div key={item.id} className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-[#DCDCDC] hover:border-[#042509] transition-all">
+                            <img src={webpSrc(item.image)} data-original-src={item.image} alt={item.name} loading="lazy" onError={handleImageError} className="w-12 h-14 object-contain rounded-lg bg-[#F1F1F1] border border-[#DCDCDC] shrink-0 mr-3" />
                             <div className="min-w-0 pr-2 flex-1">
-                              <div className="text-xs font-bold text-[#2D231E] truncate">{item.name}</div>
-                              <div className="text-[11px] font-mono text-[#2D5A27] font-bold">${item.price.toFixed(2)}</div>
+                              <div className="text-xs font-bold text-[#000000] truncate">{item.name}</div>
+                              <div className="text-[11px] font-mono text-[#042509] font-bold">${item.price.toFixed(2)}</div>
                             </div>
                             <button
                               disabled={loading || !item.inStock} onClick={(e) => handleQuickAdd(e, item)}
                               className={`px-3 py-1 font-mono text-[10px] font-bold uppercase rounded-lg shadow-xs transition-all duration-200 cursor-pointer shrink-0 ${
                                 isAdded
                                   ? 'bg-emerald-600 text-white animate-cart-pop'
-                                  : 'bg-[#2D5A27] hover:bg-[#1E3D1A] text-white'
+                                  : 'bg-[#042509] hover:bg-[#1E3D1A] text-white'
                               }`}
                             >
                               {isAdded ? '✓ Added' : !item.inStock ? 'Unavailable' : 'Select / Add'}
@@ -1043,10 +1043,10 @@ export default function EditorialLookbookPage() {
                 </div>
 
                 {/* Bottom Actions */}
-                <div className="space-y-2.5 pt-4 border-t border-[#D9D3C7]">
+                <div className="space-y-2.5 pt-4 border-t border-[#DCDCDC]">
                   <button
                     disabled={loading || !selectedSpread.shoppableItems.some(i => i.inStock)} onClick={() => handleAddEntireLook(selectedSpread)}
-                    className="w-full py-3.5 bg-[#2D5A27] hover:bg-[#1E3D1A] text-white font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98"
+                    className="w-full py-3.5 bg-[#042509] hover:bg-[#1E3D1A] text-white font-mono text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98"
                   >
                     <Sparkles size={14} />
                     <span>Add Entire Look to Bag</span>
@@ -1057,7 +1057,7 @@ export default function EditorialLookbookPage() {
                       setSelectedSpread(null);
                       navigate('/mix-match');
                     }}
-                    className="w-full py-2.5 bg-white hover:bg-[#FAF8F5] border border-[#D9D3C7] text-[#2D231E] font-mono text-xs font-bold uppercase rounded-xl transition-all cursor-pointer"
+                    className="w-full py-2.5 bg-white hover:bg-[#F1F1F1] border border-[#DCDCDC] text-[#000000] font-mono text-xs font-bold uppercase rounded-xl transition-all cursor-pointer"
                   >
                     Open in Mix & Match Studio
                   </button>

@@ -24,7 +24,7 @@ export default function CatalogToolbar({
         
         {/* Search Input */}
         <div className="relative flex-1 max-w-md">
-          <Search size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#6B5E55]" />
+          <Search size={16} className="absolute left-3.5 inset-y-0 my-auto text-[#666666]" />
           <input
             type="text"
             value={searchQuery}
@@ -42,7 +42,7 @@ export default function CatalogToolbar({
             <select
               value={sortBy}
               onChange={(e) => onSortChange(e.target.value)}
-              className="px-3.5 py-2.5 rounded-xl border border-[#D9D3C7] bg-white font-mono text-xs font-bold text-[#2D231E] outline-none hover:border-[#2D5A27] cursor-pointer shadow-2xs pr-8"
+              className="px-3.5 py-2.5 rounded-xl border border-[#DCDCDC] bg-white font-mono text-xs font-bold text-[#000000] outline-none hover:border-[#042509] cursor-pointer shadow-2xs pr-8"
             >
               <option value="featured">Sort: Featured</option>
               <option value="price-low">Price: Low to High</option>
@@ -54,12 +54,12 @@ export default function CatalogToolbar({
 
           {/* Grid Layout Switcher (Desktop) */}
           {/* gridCols is numeric for card grids and the string "list" for list view. */}
-          <div className="hidden sm:flex items-center p-1 rounded-xl bg-white border border-[#D9D3C7] shadow-2xs">
+          <div className="hidden sm:flex items-center p-1 rounded-xl bg-white border border-[#DCDCDC] shadow-2xs">
             <button
               onClick={() => onGridChange(2)}
               title="2 Columns"
               className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                gridCols === 2 ? 'bg-[#2D5A27] text-white' : 'text-[#6B5E55] hover:text-[#2D231E]'
+                gridCols === 2 ? 'bg-[#042509] text-white' : 'text-[#666666] hover:text-[#000000]'
               }`}
             >
               <Grid2x2 size={15} />
@@ -68,7 +68,7 @@ export default function CatalogToolbar({
               onClick={() => onGridChange(3)}
               title="3 Columns"
               className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                gridCols === 3 ? 'bg-[#2D5A27] text-white' : 'text-[#6B5E55] hover:text-[#2D231E]'
+                gridCols === 3 ? 'bg-[#042509] text-white' : 'text-[#666666] hover:text-[#000000]'
               }`}
             >
               <Grid3x3 size={15} />
@@ -77,7 +77,7 @@ export default function CatalogToolbar({
               onClick={() => onGridChange(4)}
               title="4 Columns"
               className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                gridCols === 4 ? 'bg-[#2D5A27] text-white' : 'text-[#6B5E55] hover:text-[#2D231E]'
+                gridCols === 4 ? 'bg-[#042509] text-white' : 'text-[#666666] hover:text-[#000000]'
               }`}
             >
               <LayoutGrid size={15} />
@@ -86,7 +86,7 @@ export default function CatalogToolbar({
               onClick={() => onGridChange('list')}
               title="List View"
               className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-                gridCols === 'list' ? 'bg-[#2D5A27] text-white' : 'text-[#6B5E55] hover:text-[#2D231E]'
+                gridCols === 'list' ? 'bg-[#042509] text-white' : 'text-[#666666] hover:text-[#000000]'
               }`}
             >
               <List size={15} />
@@ -105,8 +105,8 @@ export default function CatalogToolbar({
             onClick={() => onSelectCategory(cat.id)}
             className={`px-4 py-2 rounded-xl text-xs font-mono font-bold whitespace-nowrap transition-all cursor-pointer border ${
               selectedCategory === cat.id
-                ? 'bg-[#2D231E] text-white border-[#2D231E] shadow-sm'
-                : 'bg-white text-[#6B5E55] border-[#D9D3C7] hover:border-[#2D5A27] hover:text-[#2D5A27]'
+                ? 'bg-[#000000] text-white border-[#000000] shadow-sm'
+                : 'bg-white text-[#666666] border-[#DCDCDC] hover:border-[#042509] hover:text-[#042509]'
             }`}
           >
             <span>{cat.name}</span>

@@ -38,9 +38,9 @@ export default function AdminDashboardTab() {
   ];
 
   const categoryDistribution = [
-    { name: 'Tops & Tees', percent: 45, color: '#2D5A27' },
+    { name: 'Tops & Tees', percent: 45, color: '#042509' },
     { name: 'Bottoms & Trousers', percent: 25, color: '#556B2F' },
-    { name: 'Outerwear & Fleece', percent: 20, color: '#BC5A36' },
+    { name: 'Outerwear & Fleece', percent: 20, color: '#C91D1D' },
     { name: 'Accessories & Tea', percent: 10, color: '#D4A338' },
   ];
 
@@ -61,43 +61,43 @@ export default function AdminDashboardTab() {
       {/* 1. Header & Metric Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         
-        <div className="p-5 rounded-3xl bg-white border border-[#D9D3C7] shadow-sm">
-          <div className="flex items-center justify-between text-xs font-mono text-[#6B5E55]">
+        <div className="p-5 rounded-3xl bg-white border border-[#DCDCDC] shadow-sm">
+          <div className="flex items-center justify-between text-xs font-mono text-[#666666]">
             <span>Total Revenue</span>
-            <DollarSign size={16} className="text-[#2D5A27]" />
+            <DollarSign size={16} className="text-[#042509]" />
           </div>
-          <div className="text-2xl font-black text-[#2D231E] font-mono mt-2">$249,000</div>
-          <div className="flex items-center gap-1 text-[11px] font-mono text-[#2D5A27] font-bold mt-1">
+          <div className="text-2xl font-black text-[#000000] font-mono mt-2">$249,000</div>
+          <div className="flex items-center gap-1 text-[11px] font-mono text-[#042509] font-bold mt-1">
             <TrendingUp size={12} />
             <span>+18.4% this month</span>
           </div>
         </div>
 
-        <div className="p-5 rounded-3xl bg-white border border-[#D9D3C7] shadow-sm">
-          <div className="flex items-center justify-between text-xs font-mono text-[#6B5E55]">
+        <div className="p-5 rounded-3xl bg-white border border-[#DCDCDC] shadow-sm">
+          <div className="flex items-center justify-between text-xs font-mono text-[#666666]">
             <span>Average Order</span>
-            <ShoppingBag size={16} className="text-[#BC5A36]" />
+            <ShoppingBag size={16} className="text-[#C91D1D]" />
           </div>
-          <div className="text-2xl font-black text-[#2D231E] font-mono mt-2">$92.40</div>
-          <div className="text-[11px] font-mono text-[#6B5E55] mt-1">Across 2,695 orders</div>
+          <div className="text-2xl font-black text-[#000000] font-mono mt-2">$92.40</div>
+          <div className="text-[11px] font-mono text-[#666666] mt-1">Across 2,695 orders</div>
         </div>
 
-        <div className="p-5 rounded-3xl bg-white border border-[#D9D3C7] shadow-sm">
-          <div className="flex items-center justify-between text-xs font-mono text-[#6B5E55]">
+        <div className="p-5 rounded-3xl bg-white border border-[#DCDCDC] shadow-sm">
+          <div className="flex items-center justify-between text-xs font-mono text-[#666666]">
             <span>Total Stock</span>
-            <Package size={16} className="text-[#2D5A27]" />
+            <Package size={16} className="text-[#042509]" />
           </div>
-          <div className="text-2xl font-black text-[#2D231E] font-mono mt-2">1,420 pcs</div>
-          <div className="text-[11px] font-mono text-[#2D5A27] font-bold mt-1">94% Fulfillment</div>
+          <div className="text-2xl font-black text-[#000000] font-mono mt-2">1,420 pcs</div>
+          <div className="text-[11px] font-mono text-[#042509] font-bold mt-1">94% Fulfillment</div>
         </div>
 
-        <div className="p-5 rounded-3xl bg-white border border-[#D9D3C7] shadow-sm">
-          <div className="flex items-center justify-between text-xs font-mono text-[#6B5E55]">
+        <div className="p-5 rounded-3xl bg-white border border-[#DCDCDC] shadow-sm">
+          <div className="flex items-center justify-between text-xs font-mono text-[#666666]">
             <span>VIP Members</span>
             <ShieldCheck size={16} className="text-[#D4A338]" />
           </div>
-          <div className="text-2xl font-black text-[#2D231E] font-mono mt-2">842</div>
-          <div className="text-[11px] font-mono text-[#2D5A27] font-bold mt-1">+46 this week</div>
+          <div className="text-2xl font-black text-[#000000] font-mono mt-2">842</div>
+          <div className="text-[11px] font-mono text-[#042509] font-bold mt-1">+46 this week</div>
         </div>
 
       </div>
@@ -106,56 +106,56 @@ export default function AdminDashboardTab() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         
         {/* CHART 1: Monthly Sales Revenue (Bar Chart) */}
-        <div className="lg:col-span-7 bg-white border border-[#D9D3C7] rounded-3xl p-6 sm:p-7 shadow-sm">
-          <div className="flex items-center justify-between pb-4 border-b border-[#D9D3C7] mb-6">
+        <div className="lg:col-span-7 bg-white border border-[#DCDCDC] rounded-3xl p-6 sm:p-7 shadow-sm">
+          <div className="flex items-center justify-between pb-4 border-b border-[#DCDCDC] mb-6">
             <div>
-              <h3 className="text-sm font-extrabold uppercase text-[#2D231E] font-mono">
+              <h3 className="text-sm font-extrabold uppercase text-[#000000] font-mono">
                 Chart 1: Monthly Sales Revenue
               </h3>
-              <p className="text-[11px] font-mono text-[#6B5E55]">Direct D2C Ecommerce Revenue (Jan - Jun 2026)</p>
+              <p className="text-[11px] font-mono text-[#666666]">Direct D2C Ecommerce Revenue (Jan - Jun 2026)</p>
             </div>
-            <BarChart3 size={18} className="text-[#2D5A27]" />
+            <BarChart3 size={18} className="text-[#042509]" />
           </div>
 
           {/* Rendered CSS Bar Chart */}
           <div className="h-48 flex items-end justify-between gap-3 pt-6 px-2">
             {monthlySales.map((item) => (
               <div key={item.month} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
-                <span className="text-[10px] font-mono font-bold text-[#2D5A27] opacity-0 group-hover:opacity-100 transition-opacity">
+                <span className="text-[10px] font-mono font-bold text-[#042509] opacity-0 group-hover:opacity-100 transition-opacity">
                   ${item.sales}k
                 </span>
                 <div 
-                  className="w-full bg-[#D0DEC6] group-hover:bg-[#2D5A27] rounded-t-xl transition-all duration-300 relative overflow-hidden"
+                  className="w-full bg-[#518F5C] group-hover:bg-[#042509] rounded-t-xl transition-all duration-300 relative overflow-hidden"
                   style={{ height: `${(item.revenue / 70000) * 100}%` }}
                 >
-                  <div className="absolute inset-x-0 top-0 h-1.5 bg-[#2D5A27]/40" />
+                  <div className="absolute inset-x-0 top-0 h-1.5 bg-[#042509]/40" />
                 </div>
-                <span className="text-xs font-mono font-bold text-[#6B5E55]">{item.month}</span>
+                <span className="text-xs font-mono font-bold text-[#666666]">{item.month}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* CHART 2: Category Distribution (Segment Progress Bars) */}
-        <div className="lg:col-span-5 bg-white border border-[#D9D3C7] rounded-3xl p-6 sm:p-7 shadow-sm">
-          <div className="flex items-center justify-between pb-4 border-b border-[#D9D3C7] mb-6">
+        <div className="lg:col-span-5 bg-white border border-[#DCDCDC] rounded-3xl p-6 sm:p-7 shadow-sm">
+          <div className="flex items-center justify-between pb-4 border-b border-[#DCDCDC] mb-6">
             <div>
-              <h3 className="text-sm font-extrabold uppercase text-[#2D231E] font-mono">
+              <h3 className="text-sm font-extrabold uppercase text-[#000000] font-mono">
                 Chart 2: Sales by Category
               </h3>
-              <p className="text-[11px] font-mono text-[#6B5E55]">Volume share across product silos</p>
+              <p className="text-[11px] font-mono text-[#666666]">Volume share across product silos</p>
             </div>
-            <Layers size={18} className="text-[#BC5A36]" />
+            <Layers size={18} className="text-[#C91D1D]" />
           </div>
 
           <div className="space-y-4 pt-2">
             {categoryDistribution.map((cat) => (
               <div key={cat.name} className="space-y-1.5 font-mono text-xs">
-                <div className="flex justify-between text-[#2D231E]">
+                <div className="flex justify-between text-[#000000]">
                   <span className="font-bold">{cat.name}</span>
-                  <span className="font-bold text-[#2D5A27]">{cat.percent}%</span>
+                  <span className="font-bold text-[#042509]">{cat.percent}%</span>
                 </div>
-                <div className="w-full h-2.5 rounded-full bg-[#FAF8F5] border border-[#D9D3C7] overflow-hidden">
+                <div className="w-full h-2.5 rounded-full bg-[#F1F1F1] border border-[#DCDCDC] overflow-hidden">
                   <div
                     className="h-full rounded-full transition-all duration-500"
                     style={{ width: `${cat.percent}%`, backgroundColor: cat.color }}
@@ -169,23 +169,23 @@ export default function AdminDashboardTab() {
       </div>
 
       {/* 3. Admin Inventory Management Table */}
-      <div className="bg-white border border-[#D9D3C7] rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#D9D3C7]">
+      <div className="bg-white border border-[#DCDCDC] rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#DCDCDC]">
           <div>
             <div className="flex items-center gap-2">
-              <Package size={18} className="text-[#2D5A27]" />
-              <h3 className="text-base font-extrabold uppercase tracking-tight text-[#2D231E]">
+              <Package size={18} className="text-[#042509]" />
+              <h3 className="text-base font-extrabold uppercase tracking-tight text-[#000000]">
                 3. Admin Inventory Management
               </h3>
             </div>
-            <p className="text-xs font-mono text-[#6B5E55] mt-0.5">
+            <p className="text-xs font-mono text-[#666666] mt-0.5">
               Live warehouse stock levels, pricing, and rapid restock actions
             </p>
           </div>
 
           <button
             onClick={() => showToast('Opened Add Product Dialog (Admin Demo)')}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#2D5A27] hover:bg-[#23471E] text-white text-xs font-bold font-mono uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-sm shrink-0"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-[#042509] hover:bg-[#021505] text-white text-xs font-bold font-mono uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-sm shrink-0"
           >
             <Plus size={14} />
             <span>Add Garment</span>
@@ -196,7 +196,7 @@ export default function AdminDashboardTab() {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs font-mono">
             <thead>
-              <tr className="border-b border-[#D9D3C7] text-[#6B5E55] uppercase text-[10px]">
+              <tr className="border-b border-[#DCDCDC] text-[#666666] uppercase text-[10px]">
                 <th className="py-3 px-2">SKU ID</th>
                 <th className="py-3 px-2">Product Name</th>
                 <th className="py-3 px-2">Category</th>
@@ -206,21 +206,21 @@ export default function AdminDashboardTab() {
                 <th className="py-3 px-2 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#D9D3C7]/60">
+            <tbody className="divide-y divide-[#DCDCDC]/60">
               {inventory.map((item) => (
-                <tr key={item.id} className="hover:bg-[#FAF8F5]/60 transition-colors">
-                  <td className="py-3.5 px-2 font-bold text-[#2D231E]">{item.id}</td>
-                  <td className="py-3.5 px-2 font-bold text-[#2D231E] max-w-55 truncate">{item.name}</td>
-                  <td className="py-3.5 px-2 text-[#6B5E55]">{item.category}</td>
-                  <td className="py-3.5 px-2 font-bold text-[#2D231E]">${item.price.toFixed(2)}</td>
-                  <td className="py-3.5 px-2 font-bold text-[#2D231E]">{item.stock} pcs</td>
+                <tr key={item.id} className="hover:bg-[#F1F1F1]/60 transition-colors">
+                  <td className="py-3.5 px-2 font-bold text-[#000000]">{item.id}</td>
+                  <td className="py-3.5 px-2 font-bold text-[#000000] max-w-55 truncate">{item.name}</td>
+                  <td className="py-3.5 px-2 text-[#666666]">{item.category}</td>
+                  <td className="py-3.5 px-2 font-bold text-[#000000]">${item.price.toFixed(2)}</td>
+                  <td className="py-3.5 px-2 font-bold text-[#000000]">{item.stock} pcs</td>
                   <td className="py-3.5 px-2">
                     <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase ${
                       item.status === 'In Stock'
-                        ? 'bg-[#D0DEC6] text-[#2D5A27]'
+                        ? 'bg-[#518F5C] text-[#042509]'
                         : item.status === 'Low Stock'
                         ? 'bg-[#D4A338]/20 text-[#D4A338]'
-                        : 'bg-[#BC5A36]/20 text-[#BC5A36]'
+                        : 'bg-[#C91D1D]/20 text-[#C91D1D]'
                     }`}>
                       {item.status}
                     </span>
@@ -228,7 +228,7 @@ export default function AdminDashboardTab() {
                   <td className="py-3.5 px-2 text-right">
                     <button
                       onClick={() => handleRestock(item.id)}
-                      className="px-2.5 py-1 rounded-lg border border-[#D9D3C7] hover:border-[#2D5A27] hover:bg-white text-[11px] font-bold text-[#2D5A27] transition-all cursor-pointer"
+                      className="px-2.5 py-1 rounded-lg border border-[#DCDCDC] hover:border-[#042509] hover:bg-white text-[11px] font-bold text-[#042509] transition-all cursor-pointer"
                     >
                       +10 Restock
                     </button>

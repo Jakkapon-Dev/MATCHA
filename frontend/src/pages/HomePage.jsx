@@ -22,7 +22,7 @@ export default function HomePage({
   };
 
   return (
-    <div data-motion="full" className="home-page w-full bg-[#FAF8F5]">
+    <div data-motion="full" className="home-page w-full bg-[#F1F1F1]">
       
       {/* 1. MASTER HERO: Editorial 4-Slice Interactive Lookbook Cover */}
       <section id="brand-hero">

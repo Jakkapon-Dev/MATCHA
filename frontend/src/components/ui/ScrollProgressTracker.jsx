@@ -30,7 +30,7 @@ export default function ScrollProgressTracker() {
     /* Top Global Scroll Progress Line */
     <div className="fixed top-0 left-0 right-0 h-0.75 bg-black/5 z-50 pointer-events-none">
       <div
-        className="h-full bg-linear-to-r from-[#2D5A27] via-[#BC5A36] to-[#2D5A27] transition-all duration-75 ease-out shadow-xs"
+        className="h-full bg-linear-to-r from-[#042509] via-[#C91D1D] to-[#518F5C] transition-all duration-75 ease-out shadow-xs"
         style={{ width: `${scrollProgress}%` }}
       />
     </div>

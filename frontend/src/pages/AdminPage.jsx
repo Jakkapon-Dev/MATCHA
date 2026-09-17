@@ -386,13 +386,13 @@ export default function AdminPage() {
         label: 'Tops & Knitwear',
         count: counts.Tops,
         percent: total > 0 ? Math.round((counts.Tops / total) * 100) : 0,
-        color: '#2D5A27'
+        color: '#042509'
       },
       {
         label: 'Bottoms & Denim',
         count: counts.Bottoms,
         percent: total > 0 ? Math.round((counts.Bottoms / total) * 100) : 0,
-        color: '#BC5A36'
+        color: '#C91D1D'
       },
       {
         label: 'Outerwear & Coats',
@@ -404,7 +404,7 @@ export default function AdminPage() {
         label: 'Shoes & Footwear',
         count: counts.Shoes,
         percent: total > 0 ? Math.round((counts.Shoes / total) * 100) : 0,
-        color: '#6B5E55'
+        color: '#666666'
       },
       {
         label: 'Accessories & Bags',
@@ -591,23 +591,23 @@ export default function AdminPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] text-[#2D231E] flex flex-col md:flex-row">
+    <div className="min-h-screen bg-[#F1F1F1] text-[#000000] flex flex-col md:flex-row">
       
       {/* ========================================================================= */}
       {/* 1. LEFT DASHBOARD NAVIGATION SIDEBAR                                      */}
       {/* ========================================================================= */}
-      <aside className="w-full md:w-64 lg:w-72 bg-[#2D231E] text-white flex flex-col shrink-0 border-r border-[#3E322C] select-none">
+      <aside className="w-full md:w-64 lg:w-72 bg-[#000000] text-white flex flex-col shrink-0 border-r border-[#3E322C] select-none">
         
         {/* Brand Header */}
         <div className="p-6 border-b border-[#3E322C]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#2D5A27] flex items-center justify-center text-lg font-black text-white shadow-md">
+              <div className="w-9 h-9 rounded-xl bg-[#042509] flex items-center justify-center text-lg font-black text-white shadow-md">
                 🍵
               </div>
               <div>
                 <h1 className="font-extrabold text-base tracking-tight uppercase font-sans">MatchA Admin</h1>
-                <span className="block text-[9px] font-mono text-[#D0DEC6] tracking-widest uppercase">
+                <span className="block text-[9px] font-mono text-[#518F5C] tracking-widest uppercase">
                   Command Center
                 </span>
               </div>
@@ -619,10 +619,10 @@ export default function AdminPage() {
         {/* Current Admin Identity Card */}
         <div className="p-4 mx-4 mt-4 rounded-xl bg-[#3A2E28] border border-[#4D3E35] flex items-center justify-between text-xs font-mono">
           <div className="truncate">
-            <div className="text-[10px] text-[#D0DEC6] uppercase">Active Operator</div>
+            <div className="text-[10px] text-[#518F5C] uppercase">Active Operator</div>
             <div className="font-bold text-white truncate">{currentUser?.name || 'Administrator'}</div>
           </div>
-          <span className="px-2 py-0.5 rounded bg-[#BC5A36] text-white text-[10px] font-bold">
+          <span className="px-2 py-0.5 rounded bg-[#C91D1D] text-white text-[10px] font-bold">
             {currentUser?.role || 'Admin'}
           </span>
         </div>
@@ -645,17 +645,17 @@ export default function AdminPage() {
                 }}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-[#2D5A27] text-white shadow-md translate-x-1'
-                    : 'text-[#D9D3C7] hover:bg-[#3A2E28] hover:text-white'
+                    ? 'bg-[#042509] text-white shadow-md translate-x-1'
+                    : 'text-[#DCDCDC] hover:bg-[#3A2E28] hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <Icon size={16} className={isActive ? 'text-[#D0DEC6]' : 'text-[#A89F91]'} />
+                  <Icon size={16} className={isActive ? 'text-[#518F5C]' : 'text-[#A89F91]'} />
                   <span>{tab.label}</span>
                 </div>
                 {tab.badge !== null && tab.badge > 0 && (
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    isActive ? 'bg-[#BC5A36] text-white' : 'bg-[#4D3E35] text-[#D0DEC6]'
+                    isActive ? 'bg-[#C91D1D] text-white' : 'bg-[#4D3E35] text-[#518F5C]'
                   }`}>
                     {tab.badge}
                   </span>
@@ -669,7 +669,7 @@ export default function AdminPage() {
         <div className="p-4 border-t border-[#3E322C] space-y-2 font-mono text-xs">
           <button
             onClick={() => navigate('/catalog')}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#3A2E28] hover:bg-[#4D3E35] text-[#D0DEC6] transition-colors cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#3A2E28] hover:bg-[#4D3E35] text-[#518F5C] transition-colors cursor-pointer"
           >
             <ExternalLink size={13} />
             <span>Visit Live Storefront</span>
@@ -680,7 +680,7 @@ export default function AdminPage() {
               navigate('/login');
               showToast('Logged out of Admin Session', 'info');
             }}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-[#BC5A36] hover:bg-[#BC5A36]/10 transition-colors cursor-pointer font-bold"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-[#C91D1D] hover:bg-[#C91D1D]/10 transition-colors cursor-pointer font-bold"
           >
             <LogOut size={13} />
             <span>End Session</span>
@@ -694,16 +694,16 @@ export default function AdminPage() {
       <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         
         {/* Top Header Bar with Universal Search & Action Buttons */}
-        <header className="sticky top-0 z-20 bg-[#FAF8F5]/90 backdrop-blur-md border-b border-[#D9D3C7] px-6 py-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+        <header className="sticky top-0 z-20 bg-[#F1F1F1]/90 backdrop-blur-md border-b border-[#DCDCDC] px-6 py-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           
           {/* Breadcrumb & Tab Title */}
           <div>
-            <div className="flex items-center gap-2 text-[11px] font-mono text-[#6B5E55]">
+            <div className="flex items-center gap-2 text-[11px] font-mono text-[#666666]">
               <span>Admin</span>
               <ChevronRight size={11} />
-              <span className="text-[#2D5A27] font-bold capitalize">{activeTab}</span>
+              <span className="text-[#042509] font-bold capitalize">{activeTab}</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[#2D231E]">
+            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[#000000]">
               {navTabs.find(t => t.id === activeTab)?.label}
             </h2>
           </div>
@@ -713,18 +713,18 @@ export default function AdminPage() {
             
             {/* Global Search Input */}
             <div className="relative flex-1 sm:w-64">
-              <Search size={14} className="absolute left-3 inset-y-0 my-auto text-[#6B5E55]" />
+              <Search size={14} className="absolute left-3 inset-y-0 my-auto text-[#666666]" />
               <input
                 type="text"
                 value={globalSearch}
                 onChange={(e) => setGlobalSearch(e.target.value)}
                 placeholder="Search metrics, SKU, orders, members..."
-                className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-[#D9D3C7] bg-white font-mono text-xs text-[#2D231E] outline-none focus:ring-2 focus:ring-[#2D5A27]/40"
+                className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-[#DCDCDC] bg-white font-mono text-xs text-[#000000] outline-none focus:ring-2 focus:ring-[#042509]/40"
               />
               {globalSearch && (
                 <button
                   onClick={() => setGlobalSearch('')}
-                  className="absolute right-2.5 inset-y-0 my-auto h-fit text-xs text-[#BC5A36] hover:font-bold cursor-pointer"
+                  className="absolute right-2.5 inset-y-0 my-auto h-fit text-xs text-[#C91D1D] hover:font-bold cursor-pointer"
                 >
                   ✕
                 </button>
@@ -734,7 +734,7 @@ export default function AdminPage() {
             {/* Quick Add Product Button */}
             <button
               onClick={() => setIsAddModalOpen(true)}
-              className="px-3.5 py-1.5 bg-[#2D5A27] hover:bg-[#23471E] text-white rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-98"
+              className="px-3.5 py-1.5 bg-[#042509] hover:bg-[#021505] text-white rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-98"
             >
               <Plus size={14} />
               <span>Add Garment</span>
@@ -744,9 +744,9 @@ export default function AdminPage() {
             <div className="relative">
               <button
                 onClick={() => setIsExportMenuOpen(!isExportMenuOpen)}
-                className="px-3 py-1.5 bg-white border border-[#D9D3C7] hover:border-[#2D5A27] text-[#2D231E] rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                className="px-3 py-1.5 bg-white border border-[#DCDCDC] hover:border-[#042509] text-[#000000] rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
               >
-                <Download size={13} className="text-[#2D5A27]" />
+                <Download size={13} className="text-[#042509]" />
                 <span>Export Data</span>
                 <ChevronDown size={12} />
               </button>
@@ -754,27 +754,27 @@ export default function AdminPage() {
               {isExportMenuOpen && (
                 <>
                   <div className="fixed inset-0 z-20 cursor-default" onClick={() => setIsExportMenuOpen(false)} />
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl border border-[#D9D3C7] shadow-2xl p-2 z-30 font-mono text-xs animate-fade-in">
-                    <div className="p-1.5 space-y-1 border-b border-[#D9D3C7]/40">
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl border border-[#DCDCDC] shadow-2xl p-2 z-30 font-mono text-xs animate-fade-in">
+                    <div className="p-1.5 space-y-1 border-b border-[#DCDCDC]/40">
                       <button
                         onClick={handleExportInventory}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-[#FAF8F5] text-left transition-colors cursor-pointer"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-[#F1F1F1] text-left transition-colors cursor-pointer"
                       >
-                        <FileSpreadsheet size={14} className="text-[#2D5A27]" />
+                        <FileSpreadsheet size={14} className="text-[#042509]" />
                         <span>Inventory CSV</span>
                       </button>
                       <button
                         onClick={handleExportOrders}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-[#FAF8F5] text-left transition-colors cursor-pointer"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-[#F1F1F1] text-left transition-colors cursor-pointer"
                       >
-                        <FileSpreadsheet size={14} className="text-[#2D5A27]" />
+                        <FileSpreadsheet size={14} className="text-[#042509]" />
                         <span>Orders Pipeline CSV</span>
                       </button>
                     </div>
                     <div className="p-1.5">
                       <button
                         onClick={handleExportFullJSON}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-[#BC5A36]/10 text-[#BC5A36] font-bold text-left transition-colors cursor-pointer"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-[#C91D1D]/10 text-[#C91D1D] font-bold text-left transition-colors cursor-pointer"
                       >
                         <FileJson size={14} />
                         <span>Full Store Backup (JSON)</span>
@@ -802,18 +802,18 @@ export default function AdminPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 
                 {/* KPI 1: Gross Revenue */}
-                <div className="p-5 rounded-2xl bg-white border border-[#D9D3C7] shadow-sm flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-xs font-mono text-[#6B5E55]">
+                <div className="p-5 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-xs font-mono text-[#666666]">
                     <span>Total Gross Revenue</span>
-                    <div className="w-8 h-8 rounded-xl bg-[#D0DEC6]/50 text-[#2D5A27] flex items-center justify-center font-bold">
+                    <div className="w-8 h-8 rounded-xl bg-[#518F5C]/50 text-[#042509] flex items-center justify-center font-bold">
                       <DollarSign size={16} />
                     </div>
                   </div>
                   <div className="mt-3">
-                    <div className="text-2xl sm:text-3xl font-black text-[#2D5A27] font-mono">
+                    <div className="text-2xl sm:text-3xl font-black text-[#042509] font-mono">
                       ${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
                     </div>
-                    <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#2D5A27] font-bold mt-1">
+                    <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#042509] font-bold mt-1">
                       <ArrowUpRight size={13} />
                       <span>+24.8% vs last month</span>
                     </div>
@@ -821,44 +821,44 @@ export default function AdminPage() {
                 </div>
 
                 {/* KPI 2: Total Orders */}
-                <div className="p-5 rounded-2xl bg-white border border-[#D9D3C7] shadow-sm flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-xs font-mono text-[#6B5E55]">
+                <div className="p-5 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-xs font-mono text-[#666666]">
                     <span>Customer Orders</span>
-                    <div className="w-8 h-8 rounded-xl bg-orange-50 text-[#BC5A36] flex items-center justify-center font-bold">
+                    <div className="w-8 h-8 rounded-xl bg-orange-50 text-[#C91D1D] flex items-center justify-center font-bold">
                       <ShoppingBag size={16} />
                     </div>
                   </div>
                   <div className="mt-3">
-                    <div className="text-2xl sm:text-3xl font-black text-[#2D231E] font-mono">
-                      {orders.length} <span className="text-xs font-normal text-[#6B5E55]">orders</span>
+                    <div className="text-2xl sm:text-3xl font-black text-[#000000] font-mono">
+                      {orders.length} <span className="text-xs font-normal text-[#666666]">orders</span>
                     </div>
-                    <div className="text-[11px] font-mono text-[#6B5E55] mt-1">
+                    <div className="text-[11px] font-mono text-[#666666] mt-1">
                       Avg. Value: ${(totalRevenue / (orders.length || 1)).toFixed(2)}
                     </div>
                   </div>
                 </div>
 
                 {/* KPI 3: Stock Units */}
-                <div className="p-5 rounded-2xl bg-white border border-[#D9D3C7] shadow-sm flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-xs font-mono text-[#6B5E55]">
+                <div className="p-5 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-xs font-mono text-[#666666]">
                     <span>Active Stock Units</span>
                     <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-800 flex items-center justify-center font-bold">
                       <Package size={16} />
                     </div>
                   </div>
                   <div className="mt-3">
-                    <div className="text-2xl sm:text-3xl font-black text-[#2D231E] font-mono">
-                      {totalStockUnits} <span className="text-xs font-normal text-[#6B5E55]">units</span>
+                    <div className="text-2xl sm:text-3xl font-black text-[#000000] font-mono">
+                      {totalStockUnits} <span className="text-xs font-normal text-[#666666]">units</span>
                     </div>
-                    <div className="text-[11px] font-mono text-[#6B5E55] mt-1">
+                    <div className="text-[11px] font-mono text-[#666666] mt-1">
                       Across {inventory.length} garment lines
                     </div>
                   </div>
                 </div>
 
                 {/* KPI 4: VIP Customers & Alerts */}
-                <div className="p-5 rounded-2xl bg-white border border-[#D9D3C7] shadow-sm flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-xs font-mono text-[#6B5E55]">
+                <div className="p-5 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm flex flex-col justify-between">
+                  <div className="flex items-center justify-between text-xs font-mono text-[#666666]">
                     <span>VIP Member Vault</span>
                     <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold">
                       <Users size={16} />
@@ -866,9 +866,9 @@ export default function AdminPage() {
                   </div>
                   <div className="mt-3">
                     <div className="text-2xl sm:text-3xl font-black text-amber-700 font-mono">
-                      {vipMembersCount} <span className="text-xs font-normal text-[#6B5E55]">VIPs</span>
+                      {vipMembersCount} <span className="text-xs font-normal text-[#666666]">VIPs</span>
                     </div>
-                    <div className="flex items-center gap-1 text-[11px] font-mono text-[#BC5A36] font-bold mt-1">
+                    <div className="flex items-center gap-1 text-[11px] font-mono text-[#C91D1D] font-bold mt-1">
                       <AlertTriangle size={12} />
                       <span>{lowStockCount} Low stock alerts</span>
                     </div>
@@ -881,13 +881,13 @@ export default function AdminPage() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
                 
                 {/* Left Chart: Monthly Revenue Histogram */}
-                <div className="lg:col-span-8 p-6 rounded-2xl bg-white border border-[#D9D3C7] shadow-sm">
-                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#D9D3C7]">
+                <div className="lg:col-span-8 p-6 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm">
+                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#DCDCDC]">
                     <div>
                       <h3 className="font-bold text-base uppercase font-sans">Monthly Revenue Performance</h3>
-                      <p className="text-xs font-mono text-[#6B5E55]">2026 Fiscal Year Trajectory ($USD)</p>
+                      <p className="text-xs font-mono text-[#666666]">2026 Fiscal Year Trajectory ($USD)</p>
                     </div>
-                    <span className="px-3 py-1 bg-[#D0DEC6]/50 text-[#2D5A27] font-mono text-xs font-bold rounded-lg">
+                    <span className="px-3 py-1 bg-[#518F5C]/50 text-[#042509] font-mono text-xs font-bold rounded-lg">
                       YTD: $48,170
                     </span>
                   </div>
@@ -902,21 +902,21 @@ export default function AdminPage() {
                       return (
                         <div key={item.month} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
                           {/* Hover Tooltip Value */}
-                          <span className="text-[10px] font-mono font-bold text-[#6B5E55] opacity-0 group-hover:opacity-100 transition-opacity">
+                          <span className="text-[10px] font-mono font-bold text-[#666666] opacity-0 group-hover:opacity-100 transition-opacity">
                             ${(item.revenue / 1000).toFixed(1)}k
                           </span>
                           
                           {/* Bar Container */}
-                          <div className="w-full max-w-10.5 bg-[#FAF8F5] rounded-t-xl h-full flex items-end p-1 relative overflow-hidden">
+                          <div className="w-full max-w-10.5 bg-[#F1F1F1] rounded-t-xl h-full flex items-end p-1 relative overflow-hidden">
                             <div
                               style={{ height: `${heightPercent}%` }}
                               className={`w-full rounded-t-lg transition-all duration-500 group-hover:brightness-110 ${
-                                isCurrentMonth ? 'bg-[#BC5A36]' : 'bg-[#2D5A27]'
+                                isCurrentMonth ? 'bg-[#C91D1D]' : 'bg-[#042509]'
                               }`}
                             />
                           </div>
 
-                          <span className="text-xs font-mono font-bold text-[#2D231E]">
+                          <span className="text-xs font-mono font-bold text-[#000000]">
                             {item.month}
                           </span>
                         </div>
@@ -926,21 +926,21 @@ export default function AdminPage() {
                 </div>
 
                 {/* Right Chart: Category Distribution */}
-                <div className="lg:col-span-4 p-6 rounded-2xl bg-white border border-[#D9D3C7] shadow-sm flex flex-col justify-between">
+                <div className="lg:col-span-4 p-6 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm flex flex-col justify-between">
                   <div>
-                    <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#D9D3C7]">
+                    <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#DCDCDC]">
                       <h3 className="font-bold text-sm uppercase font-sans">Category Share</h3>
-                      <span className="text-[10px] font-mono text-[#6B5E55]">Volume</span>
+                      <span className="text-[10px] font-mono text-[#666666]">Volume</span>
                     </div>
 
                     <div className="space-y-4">
                       {categoryDistribution.map(cat => (
                         <div key={cat.label} className="space-y-1.5">
                           <div className="flex justify-between text-xs font-mono">
-                            <span className="text-[#2D231E] font-medium">{cat.label}</span>
-                            <span className="font-bold text-[#6B5E55]">{cat.count} items ({cat.percent}%)</span>
+                            <span className="text-[#000000] font-medium">{cat.label}</span>
+                            <span className="font-bold text-[#666666]">{cat.count} items ({cat.percent}%)</span>
                           </div>
-                          <div className="w-full h-2 rounded-full bg-[#FAF8F5] overflow-hidden border border-[#D9D3C7]/40">
+                          <div className="w-full h-2 rounded-full bg-[#F1F1F1] overflow-hidden border border-[#DCDCDC]/40">
                             <div
                               style={{ width: `${cat.percent}%`, backgroundColor: cat.color }}
                               className="h-full rounded-full transition-all duration-500"
@@ -951,24 +951,24 @@ export default function AdminPage() {
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-[#FAF8F5] border border-[#D9D3C7] mt-6 text-xs font-mono flex items-center justify-between">
-                    <span className="text-[#6B5E55]">Total Catalog</span>
-                    <strong className="text-[#2D5A27]">{inventory.length} Models</strong>
+                  <div className="p-3 rounded-xl bg-[#F1F1F1] border border-[#DCDCDC] mt-6 text-xs font-mono flex items-center justify-between">
+                    <span className="text-[#666666]">Total Catalog</span>
+                    <strong className="text-[#042509]">{inventory.length} Models</strong>
                   </div>
                 </div>
 
               </div>
 
               {/* Recent Orders Live Activity Table */}
-              <div className="p-6 rounded-2xl bg-white border border-[#D9D3C7] shadow-sm">
-                <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#D9D3C7]">
+              <div className="p-6 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm">
+                <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#DCDCDC]">
                   <div className="flex items-center gap-2">
-                    <Activity size={16} className="text-[#2D5A27]" />
+                    <Activity size={16} className="text-[#042509]" />
                     <h3 className="font-bold text-base uppercase font-sans">Recent Customer Orders</h3>
                   </div>
                   <button
                     onClick={() => setActiveTab('orders')}
-                    className="text-xs font-mono font-bold text-[#2D5A27] hover:underline flex items-center gap-1 cursor-pointer"
+                    className="text-xs font-mono font-bold text-[#042509] hover:underline flex items-center gap-1 cursor-pointer"
                   >
                     <span>View All Pipeline</span>
                     <ChevronRight size={12} />
@@ -978,7 +978,7 @@ export default function AdminPage() {
                 <div className="overflow-x-auto">
                   <table className="w-full text-left font-mono text-xs">
                     <thead>
-                      <tr className="border-b border-[#D9D3C7] text-[#6B5E55]">
+                      <tr className="border-b border-[#DCDCDC] text-[#666666]">
                         <th className="pb-3 font-bold">Order ID</th>
                         <th className="pb-3 font-bold">Customer</th>
                         <th className="pb-3 font-bold">Date</th>
@@ -986,20 +986,20 @@ export default function AdminPage() {
                         <th className="pb-3 font-bold">Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#D9D3C7]/40">
+                    <tbody className="divide-y divide-[#DCDCDC]/40">
                       {orders.slice(0, 4).map(ord => (
-                        <tr key={ord.id} className="hover:bg-[#FAF8F5]/80">
-                          <td className="py-3 font-bold text-[#2D5A27]">{ord.id}</td>
-                          <td className="py-3 text-[#2D231E]">{ord.customer}</td>
-                          <td className="py-3 text-[#6B5E55]">{ord.date}</td>
-                          <td className="py-3 font-bold text-[#2D231E]">${ord.total.toFixed(2)}</td>
+                        <tr key={ord.id} className="hover:bg-[#F1F1F1]/80">
+                          <td className="py-3 font-bold text-[#042509]">{ord.id}</td>
+                          <td className="py-3 text-[#000000]">{ord.customer}</td>
+                          <td className="py-3 text-[#666666]">{ord.date}</td>
+                          <td className="py-3 font-bold text-[#000000]">${ord.total.toFixed(2)}</td>
                           <td className="py-3">
                             <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
                               ord.status === 'Delivered'
                                 ? 'bg-green-100 text-green-800'
                                 : ord.status === 'Shipped'
                                 ? 'bg-blue-100 text-blue-800'
-                                : 'bg-orange-100 text-[#BC5A36]'
+                                : 'bg-orange-100 text-[#C91D1D]'
                             }`}>
                               {ord.status}
                             </span>
@@ -1021,7 +1021,7 @@ export default function AdminPage() {
             <div className="space-y-6 animate-fade-in">
               
               {/* Category Filter Pills & Status Filter */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-white border border-[#D9D3C7] shadow-sm">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm">
                 
                 {/* Category Pills */}
                 <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
@@ -1031,8 +1031,8 @@ export default function AdminPage() {
                       onClick={() => setInventoryCategoryFilter(cat)}
                       className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer ${
                         inventoryCategoryFilter === cat
-                          ? 'bg-[#2D5A27] text-white shadow-xs'
-                          : 'bg-[#FAF8F5] text-[#6B5E55] hover:text-[#2D231E]'
+                          ? 'bg-[#042509] text-white shadow-xs'
+                          : 'bg-[#F1F1F1] text-[#666666] hover:text-[#000000]'
                       }`}
                     >
                       {cat === 'ALL' ? 'All Categories' : cat}
@@ -1042,11 +1042,11 @@ export default function AdminPage() {
 
                 {/* Status Filter */}
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-xs font-mono text-[#6B5E55]">Stock:</span>
+                  <span className="text-xs font-mono text-[#666666]">Stock:</span>
                   <select
                     value={inventoryStatusFilter}
                     onChange={(e) => setInventoryStatusFilter(e.target.value)}
-                    className="px-3 py-1 rounded-xl border border-[#D9D3C7] bg-[#FAF8F5] text-xs font-mono font-bold text-[#2D231E] outline-none cursor-pointer"
+                    className="px-3 py-1 rounded-xl border border-[#DCDCDC] bg-[#F1F1F1] text-xs font-mono font-bold text-[#000000] outline-none cursor-pointer"
                   >
                     <option value="ALL">All Statuses</option>
                     <option value="In Stock">In Stock</option>
@@ -1057,10 +1057,10 @@ export default function AdminPage() {
               </div>
 
               {/* Inventory Table */}
-              <div className="rounded-2xl bg-white border border-[#D9D3C7] shadow-sm overflow-hidden">
+              <div className="rounded-2xl bg-white border border-[#DCDCDC] shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left font-mono text-xs">
-                    <thead className="bg-[#FAF8F5] border-b border-[#D9D3C7] text-[#6B5E55]">
+                    <thead className="bg-[#F1F1F1] border-b border-[#DCDCDC] text-[#666666]">
                       <tr>
                         <th className="p-4 font-bold">Garment / SKU</th>
                         <th className="p-4 font-bold">Category</th>
@@ -1070,9 +1070,9 @@ export default function AdminPage() {
                         <th className="p-4 font-bold text-right">Quick Restock & Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#D9D3C7]/40">
+                    <tbody className="divide-y divide-[#DCDCDC]/40">
                       {filteredInventory.map(item => (
-                        <tr key={item.id} className="hover:bg-[#FAF8F5]/80 transition-colors">
+                        <tr key={item.id} className="hover:bg-[#F1F1F1]/80 transition-colors">
                           <td className="p-4">
                             <div className="flex items-center gap-3">
                               <img
@@ -1084,16 +1084,16 @@ export default function AdminPage() {
                                   e.currentTarget.onerror = null;
                                   e.currentTarget.src = '/images/products/autumn/tops/shirts/color_1_brown.jpeg';
                                 }}
-                                className="w-10 h-10 rounded-xl object-cover border border-[#D9D3C7]"
+                                className="w-10 h-10 rounded-xl object-cover border border-[#DCDCDC]"
                               />
                               <div>
-                                <div className="font-bold text-[#2D231E] text-sm">{item.name}</div>
-                                <div className="text-[10px] text-[#6B5E55]">{item.id} • {item.color} • {item.fit}</div>
+                                <div className="font-bold text-[#000000] text-sm">{item.name}</div>
+                                <div className="text-[10px] text-[#666666]">{item.id} • {item.color} • {item.fit}</div>
                               </div>
                             </div>
                           </td>
-                          <td className="p-4 text-[#2D231E]">{item.category}</td>
-                          <td className="p-4 font-bold text-[#2D5A27]">${item.price}</td>
+                          <td className="p-4 text-[#000000]">{item.category}</td>
+                          <td className="p-4 font-bold text-[#042509]">${item.price}</td>
                           <td className="p-4 font-bold">{item.stock}</td>
                           <td className="p-4">
                             <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold ${
@@ -1110,21 +1110,21 @@ export default function AdminPage() {
                             <div className="flex items-center justify-end gap-1.5">
                               <button
                                 onClick={() => handleRestock(item.id, 10)}
-                                className="px-2 py-1 rounded-lg bg-[#D0DEC6]/50 hover:bg-[#D0DEC6] text-[#2D5A27] font-bold text-[10px] cursor-pointer"
+                                className="px-2 py-1 rounded-lg bg-[#518F5C]/50 hover:bg-[#518F5C] text-[#042509] font-bold text-[10px] cursor-pointer"
                                 title="Add 10 Units"
                               >
                                 +10
                               </button>
                               <button
                                 onClick={() => handleRestock(item.id, -5)}
-                                className="px-2 py-1 rounded-lg bg-orange-50 hover:bg-orange-100 text-[#BC5A36] font-bold text-[10px] cursor-pointer"
+                                className="px-2 py-1 rounded-lg bg-orange-50 hover:bg-orange-100 text-[#C91D1D] font-bold text-[10px] cursor-pointer"
                                 title="Reduce 5 Units"
                               >
                                 -5
                               </button>
                               <button
                                 onClick={() => handleDeleteProduct(item.id)}
-                                className="p-1.5 rounded-lg text-[#BC5A36] hover:bg-red-50 transition-colors cursor-pointer"
+                                className="p-1.5 rounded-lg text-[#C91D1D] hover:bg-red-50 transition-colors cursor-pointer"
                                 title="Delete Product"
                               >
                                 <Trash2 size={13} />
@@ -1138,7 +1138,7 @@ export default function AdminPage() {
                 </div>
 
                 {filteredInventory.length === 0 && (
-                  <div className="p-8 text-center font-mono text-xs text-[#6B5E55]">
+                  <div className="p-8 text-center font-mono text-xs text-[#666666]">
                     No garments matching the selected filters.
                   </div>
                 )}
@@ -1161,8 +1161,8 @@ export default function AdminPage() {
                     onClick={() => setOrderStatusFilter(st)}
                     className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border ${
                       orderStatusFilter === st
-                        ? 'bg-[#2D5A27] text-white border-[#2D5A27] shadow-xs'
-                        : 'bg-white text-[#6B5E55] border-[#D9D3C7] hover:border-[#2D5A27]'
+                        ? 'bg-[#042509] text-white border-[#042509] shadow-xs'
+                        : 'bg-white text-[#666666] border-[#DCDCDC] hover:border-[#042509]'
                     }`}
                   >
                     {st === 'ALL' ? 'All Orders' : st}
@@ -1171,10 +1171,10 @@ export default function AdminPage() {
               </div>
 
               {/* Orders Table */}
-              <div className="rounded-2xl bg-white border border-[#D9D3C7] shadow-sm overflow-hidden">
+              <div className="rounded-2xl bg-white border border-[#DCDCDC] shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left font-mono text-xs">
-                    <thead className="bg-[#FAF8F5] border-b border-[#D9D3C7] text-[#6B5E55]">
+                    <thead className="bg-[#F1F1F1] border-b border-[#DCDCDC] text-[#666666]">
                       <tr>
                         <th className="p-4 font-bold">Order ID</th>
                         <th className="p-4 font-bold">Customer</th>
@@ -1185,16 +1185,16 @@ export default function AdminPage() {
                         <th className="p-4 font-bold">Fulfillment Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#D9D3C7]/40">
+                    <tbody className="divide-y divide-[#DCDCDC]/40">
                       {filteredOrders.map(ord => (
-                        <tr key={ord.id} className="hover:bg-[#FAF8F5]/80 transition-colors">
-                          <td className="p-4 font-bold text-[#2D5A27]">{ord.id}</td>
+                        <tr key={ord.id} className="hover:bg-[#F1F1F1]/80 transition-colors">
+                          <td className="p-4 font-bold text-[#042509]">{ord.id}</td>
                           <td className="p-4">
-                            <div className="font-bold text-[#2D231E]">{ord.customer}</div>
-                            <div className="text-[10px] text-[#6B5E55]">{ord.email}</div>
+                            <div className="font-bold text-[#000000]">{ord.customer}</div>
+                            <div className="text-[10px] text-[#666666]">{ord.email}</div>
                           </td>
-                          <td className="p-4 text-[#2D231E]">{ord.items} pcs</td>
-                          <td className="p-4 font-bold text-[#2D5A27]">${ord.total.toFixed(2)}</td>
+                          <td className="p-4 text-[#000000]">{ord.items} pcs</td>
+                          <td className="p-4 font-bold text-[#042509]">${ord.total.toFixed(2)}</td>
                           <td className="p-4">
                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
                               String(ord.paymentStatus).toLowerCase() === 'paid'
@@ -1204,12 +1204,12 @@ export default function AdminPage() {
                               {ord.paymentStatus || 'Unpaid'}
                             </span>
                           </td>
-                          <td className="p-4 text-[#6B5E55]">{ord.date}</td>
+                          <td className="p-4 text-[#666666]">{ord.date}</td>
                           <td className="p-4">
                             <select
                               value={ord.status}
                               onChange={(e) => handleUpdateOrderStatus(ord.id, e.target.value)}
-                              className="px-2.5 py-1 rounded-lg border border-[#D9D3C7] bg-white font-mono text-xs font-bold text-[#2D231E] outline-none cursor-pointer"
+                              className="px-2.5 py-1 rounded-lg border border-[#DCDCDC] bg-white font-mono text-xs font-bold text-[#000000] outline-none cursor-pointer"
                             >
                               <option value="Pending">Pending</option>
                               <option value="Processing">Processing</option>
@@ -1234,28 +1234,28 @@ export default function AdminPage() {
           {activeTab === 'analytics' && (
             <div className="space-y-6 animate-fade-in">
               
-              <div className="p-6 rounded-2xl bg-white border border-[#D9D3C7] shadow-sm">
+              <div className="p-6 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm">
                 <h3 className="font-bold text-base uppercase font-sans mb-4">Financial Performance Breakdown</h3>
                 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                  <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#D9D3C7]">
-                    <div className="text-xs font-mono text-[#6B5E55]">YTD Gross Sales</div>
-                    <div className="text-2xl font-black text-[#2D5A27] font-mono mt-1">$48,170.00</div>
+                  <div className="p-4 rounded-xl bg-[#F1F1F1] border border-[#DCDCDC]">
+                    <div className="text-xs font-mono text-[#666666]">YTD Gross Sales</div>
+                    <div className="text-2xl font-black text-[#042509] font-mono mt-1">$48,170.00</div>
                   </div>
-                  <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#D9D3C7]">
-                    <div className="text-xs font-mono text-[#6B5E55]">Estimated Profit Margin</div>
-                    <div className="text-2xl font-black text-[#2D231E] font-mono mt-1">68.4%</div>
+                  <div className="p-4 rounded-xl bg-[#F1F1F1] border border-[#DCDCDC]">
+                    <div className="text-xs font-mono text-[#666666]">Estimated Profit Margin</div>
+                    <div className="text-2xl font-black text-[#000000] font-mono mt-1">68.4%</div>
                   </div>
-                  <div className="p-4 rounded-xl bg-[#FAF8F5] border border-[#D9D3C7]">
-                    <div className="text-xs font-mono text-[#6B5E55]">Cart Conversion Rate</div>
-                    <div className="text-2xl font-black text-[#BC5A36] font-mono mt-1">4.2%</div>
+                  <div className="p-4 rounded-xl bg-[#F1F1F1] border border-[#DCDCDC]">
+                    <div className="text-xs font-mono text-[#666666]">Cart Conversion Rate</div>
+                    <div className="text-2xl font-black text-[#C91D1D] font-mono mt-1">4.2%</div>
                   </div>
                 </div>
 
                 <div className="overflow-x-auto">
                   <table className="w-full text-left font-mono text-xs">
                     <thead>
-                      <tr className="border-b border-[#D9D3C7] text-[#6B5E55]">
+                      <tr className="border-b border-[#DCDCDC] text-[#666666]">
                         <th className="pb-3 font-bold">Month</th>
                         <th className="pb-3 font-bold">Revenue ($)</th>
                         <th className="pb-3 font-bold">Orders</th>
@@ -1263,16 +1263,16 @@ export default function AdminPage() {
                         <th className="pb-3 font-bold">Target Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#D9D3C7]/40">
+                    <tbody className="divide-y divide-[#DCDCDC]/40">
                       {MONTHLY_REVENUE_DATA.map(m => (
-                        <tr key={m.month} className="hover:bg-[#FAF8F5]/80">
-                          <td className="py-3 font-bold text-[#2D231E]">{m.month} 2026</td>
-                          <td className="py-3 font-bold text-[#2D5A27]">${m.revenue.toLocaleString()}</td>
+                        <tr key={m.month} className="hover:bg-[#F1F1F1]/80">
+                          <td className="py-3 font-bold text-[#000000]">{m.month} 2026</td>
+                          <td className="py-3 font-bold text-[#042509]">${m.revenue.toLocaleString()}</td>
                           <td className="py-3">{m.orders}</td>
-                          <td className="py-3 text-[#6B5E55]">${m.target.toLocaleString()}</td>
+                          <td className="py-3 text-[#666666]">${m.target.toLocaleString()}</td>
                           <td className="py-3">
                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                              m.revenue >= m.target ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-[#BC5A36]'
+                              m.revenue >= m.target ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-[#C91D1D]'
                             }`}>
                               {m.revenue >= m.target ? 'Target Met ✦' : 'In Progress'}
                             </span>
@@ -1300,8 +1300,8 @@ export default function AdminPage() {
                     onClick={() => setMemberTierFilter(t)}
                     className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border ${
                       memberTierFilter === t
-                        ? 'bg-[#2D5A27] text-white border-[#2D5A27]'
-                        : 'bg-white text-[#6B5E55] border-[#D9D3C7] hover:border-[#2D5A27]'
+                        ? 'bg-[#042509] text-white border-[#042509]'
+                        : 'bg-white text-[#666666] border-[#DCDCDC] hover:border-[#042509]'
                     }`}
                   >
                     {t === 'ALL' ? 'All Customers' : `${t} Tier`}
@@ -1309,10 +1309,10 @@ export default function AdminPage() {
                 ))}
               </div>
 
-              <div className="rounded-2xl bg-white border border-[#D9D3C7] shadow-sm overflow-hidden">
+              <div className="rounded-2xl bg-white border border-[#DCDCDC] shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left font-mono text-xs">
-                    <thead className="bg-[#FAF8F5] border-b border-[#D9D3C7] text-[#6B5E55]">
+                    <thead className="bg-[#F1F1F1] border-b border-[#DCDCDC] text-[#666666]">
                       <tr>
                         <th className="p-4 font-bold">Member ID</th>
                         <th className="p-4 font-bold">Customer Name</th>
@@ -1322,13 +1322,13 @@ export default function AdminPage() {
                         <th className="p-4 font-bold text-right">VIP Tier Management</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#D9D3C7]/40">
+                    <tbody className="divide-y divide-[#DCDCDC]/40">
                       {filteredMembers.map(mem => (
-                        <tr key={mem.id} className="hover:bg-[#FAF8F5]/80 transition-colors">
-                          <td className="p-4 font-bold text-[#2D5A27]">{mem.id}</td>
-                          <td className="p-4 font-bold text-[#2D231E]">{mem.name}</td>
-                          <td className="p-4 text-[#6B5E55]">{mem.email}</td>
-                          <td className="p-4 font-bold text-[#2D5A27]">${mem.totalSpent.toFixed(2)}</td>
+                        <tr key={mem.id} className="hover:bg-[#F1F1F1]/80 transition-colors">
+                          <td className="p-4 font-bold text-[#042509]">{mem.id}</td>
+                          <td className="p-4 font-bold text-[#000000]">{mem.name}</td>
+                          <td className="p-4 text-[#666666]">{mem.email}</td>
+                          <td className="p-4 font-bold text-[#042509]">${mem.totalSpent.toFixed(2)}</td>
                           <td className="p-4">
                             <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold ${
                               mem.tier.includes('VIP')
@@ -1341,7 +1341,7 @@ export default function AdminPage() {
                           <td className="p-4 text-right">
                             <button
                               onClick={() => handleToggleVIPTier(mem.id)}
-                              className="px-3 py-1 rounded-lg border border-[#D9D3C7] hover:border-[#2D5A27] text-xs font-mono font-bold text-[#2D231E] transition-all cursor-pointer"
+                              className="px-3 py-1 rounded-lg border border-[#DCDCDC] hover:border-[#042509] text-xs font-mono font-bold text-[#000000] transition-all cursor-pointer"
                             >
                               {mem.tier.includes('VIP') ? 'Demote to Regular' : 'Promote to VIP 👑'}
                             </button>
@@ -1365,20 +1365,20 @@ export default function AdminPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 
                 {/* Full Store JSON Backup Card */}
-                <div className="p-6 rounded-2xl bg-white border border-[#D9D3C7] shadow-sm flex flex-col justify-between">
+                <div className="p-6 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm flex flex-col justify-between">
                   <div>
-                    <div className="w-10 h-10 rounded-xl bg-orange-50 text-[#BC5A36] flex items-center justify-center font-bold mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-orange-50 text-[#C91D1D] flex items-center justify-center font-bold mb-4">
                       <FileJson size={20} />
                     </div>
-                    <h3 className="font-bold text-lg text-[#2D231E] uppercase font-sans">Full System JSON Snapshot</h3>
-                    <p className="text-xs font-mono text-[#6B5E55] mt-2 leading-relaxed">
+                    <h3 className="font-bold text-lg text-[#000000] uppercase font-sans">Full System JSON Snapshot</h3>
+                    <p className="text-xs font-mono text-[#666666] mt-2 leading-relaxed">
                       Download complete MatchA database snapshot including all active garments, SKU specs, customer orders, and VIP member records.
                     </p>
                   </div>
-                  <div className="mt-6 pt-4 border-t border-[#D9D3C7]">
+                  <div className="mt-6 pt-4 border-t border-[#DCDCDC]">
                     <button
                       onClick={handleExportFullJSON}
-                      className="w-full py-2.5 bg-[#BC5A36] hover:bg-[#9E4423] text-white rounded-xl font-mono text-xs font-bold transition-all shadow-sm cursor-pointer flex items-center justify-center gap-2"
+                      className="w-full py-2.5 bg-[#C91D1D] hover:bg-[#A81515] text-white rounded-xl font-mono text-xs font-bold transition-all shadow-sm cursor-pointer flex items-center justify-center gap-2"
                     >
                       <Download size={14} />
                       <span>Download JSON Backup Snapshot</span>
@@ -1387,27 +1387,27 @@ export default function AdminPage() {
                 </div>
 
                 {/* CSV Spreadsheets Suite */}
-                <div className="p-6 rounded-2xl bg-white border border-[#D9D3C7] shadow-sm flex flex-col justify-between">
+                <div className="p-6 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm flex flex-col justify-between">
                   <div>
-                    <div className="w-10 h-10 rounded-xl bg-[#D0DEC6]/50 text-[#2D5A27] flex items-center justify-center font-bold mb-4">
+                    <div className="w-10 h-10 rounded-xl bg-[#518F5C]/50 text-[#042509] flex items-center justify-center font-bold mb-4">
                       <FileSpreadsheet size={20} />
                     </div>
-                    <h3 className="font-bold text-lg text-[#2D231E] uppercase font-sans">Spreadsheet Datasets (CSV)</h3>
-                    <p className="text-xs font-mono text-[#6B5E55] mt-2 leading-relaxed">
+                    <h3 className="font-bold text-lg text-[#000000] uppercase font-sans">Spreadsheet Datasets (CSV)</h3>
+                    <p className="text-xs font-mono text-[#666666] mt-2 leading-relaxed">
                       Export structured CSV files with UTF-8 BOM encoding ready for Excel, Google Sheets, or external ERP data imports.
                     </p>
                   </div>
-                  <div className="mt-6 pt-4 border-t border-[#D9D3C7] space-y-2 font-mono text-xs">
+                  <div className="mt-6 pt-4 border-t border-[#DCDCDC] space-y-2 font-mono text-xs">
                     <button
                       onClick={handleExportInventory}
-                      className="w-full py-2 bg-[#2D5A27] hover:bg-[#23471E] text-white rounded-xl font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
+                      className="w-full py-2 bg-[#042509] hover:bg-[#021505] text-white rounded-xl font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
                     >
                       <FileSpreadsheet size={13} />
                       <span>Export Garment Inventory (CSV)</span>
                     </button>
                     <button
                       onClick={handleExportOrders}
-                      className="w-full py-2 bg-[#FAF8F5] border border-[#D9D3C7] hover:border-[#2D5A27] text-[#2D231E] rounded-xl font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
+                      className="w-full py-2 bg-[#F1F1F1] border border-[#DCDCDC] hover:border-[#042509] text-[#000000] rounded-xl font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
                     >
                       <FileSpreadsheet size={13} />
                       <span>Export Orders Pipeline (CSV)</span>
