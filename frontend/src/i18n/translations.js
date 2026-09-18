@@ -11,6 +11,16 @@ export const DEFAULT_LANG = 'en';
 
 export const translations = {
   en: {
+    notFound: {
+      code: '404',
+      title: 'This page is not here',
+      body: 'The link may be old, or the piece may have left the archive. These are still open.',
+      home: 'Home',
+      catalog: 'The catalogue',
+      lookbook: 'The lookbook',
+      colorLab: 'Colour lab',
+    },
+
     checkout: {
       stepBag: 'Bag',
       pageShipping: 'Where should it go?',
@@ -344,6 +354,11 @@ export const translations = {
     },
 
     auth: {
+      backToStore: 'MatchA Boutique',
+      signInTitle: 'What members get',
+      signUpTitle: 'What you get when you join',
+      archiveLine: 'TEA-DYE ARCHIVE // 2026',
+
       badge: 'MatchA Atelier • Member Access',
       welcomeBack: 'Welcome Back',
       signInDesc: 'Sign in to access your seasonal archive, personal color palette, and curated drops.',
@@ -389,6 +404,16 @@ export const translations = {
   },
 
   th: {
+    notFound: {
+      code: '404',
+      title: 'ไม่พบหน้านี้',
+      body: 'ลิงก์อาจเก่าไปแล้ว หรือสินค้าชิ้นนี้ออกจากคลังไปแล้ว ลองไปทางนี้แทนได้',
+      home: 'หน้าแรก',
+      catalog: 'สินค้าทั้งหมด',
+      lookbook: 'สมุดภาพชุด',
+      colorLab: 'ค้นหาสีประจำตัว',
+    },
+
     checkout: {
       stepBag: 'ตะกร้า',
       pageShipping: 'ส่งไปที่ไหนดี',
@@ -715,6 +740,11 @@ export const translations = {
     },
 
     auth: {
+      backToStore: 'MatchA Boutique',
+      signInTitle: 'สิทธิพิเศษของสมาชิก',
+      signUpTitle: 'สมัครแล้วได้อะไรบ้าง',
+      archiveLine: 'TEA-DYE ARCHIVE // 2026',
+
       badge: 'MatchA Atelier • สิทธิ์เฉพาะสมาชิก',
       welcomeBack: 'ยินดีต้อนรับกลับ',
       signInDesc: 'เข้าสู่ระบบเพื่อเข้าถึงคลังคอลเลกชันประจำฤดูกาล พาเลตต์สีประจำตัว และดรอปพิเศษ',
