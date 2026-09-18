@@ -1,7 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { Parallax, Reveal } from '../motion';
+import { storePendingCoupon } from '../../config/coupons';
 import { useLanguage } from '../../context/LanguageContext.jsx';
+
+// The code this panel promotes. Named once so the button, the clipboard copy
+// and the held coupon can never disagree with each other.
+const PROMO_CODE = 'MATCHA15';
 
 export default function VdoSection({ onClaimPromo }) {
   const { t } = useLanguage();
@@ -40,15 +45,23 @@ export default function VdoSection({ onClaimPromo }) {
     return () => observer.disconnect();
   }, []);
 
-  const handleClaim = (e) => {
+  /* The button says "claim", so it has to claim.
+   *
+   * It used to write `matcha_applied_coupon` to localStorage and nothing
+   * anywhere read that key — the write had no effect at all. All the button
+   * really did was copy the code to the clipboard and tell the visitor to type
+   * it in at checkout themselves, which fails the moment they copy anything
+   * else on the way there.
+   *
+   * The coupon is now held for the checkout screen to pick up. The clipboard
+   * copy stays as a fallback for a visitor whose storage is blocked. */
+  const handleClaim = () => {
     if (navigator?.clipboard?.writeText) {
-      navigator.clipboard.writeText('MATCHA15').catch(() => {});
+      navigator.clipboard.writeText(PROMO_CODE).catch(() => {});
     }
-    try {
-      localStorage.setItem('matcha_applied_coupon', 'MATCHA15');
-    } catch {}
+    const held = storePendingCoupon(PROMO_CODE);
     if (onClaimPromo) {
-      onClaimPromo();
+      onClaimPromo(held);
     }
   };
 

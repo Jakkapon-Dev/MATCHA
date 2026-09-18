@@ -10,7 +10,7 @@ import OrderSuccessModal from '../components/payment/OrderSuccessModal';
 import { api } from '../services/api';
 import { useStoreMode } from '../context/StoreModeContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, shippingCostFor } from '../config/shipping';
-import { couponFor, discountFor, normaliseCode, FEATURED_CODES } from '../config/coupons';
+import { couponFor, discountFor, normaliseCode, FEATURED_CODES, takePendingCoupon } from '../config/coupons';
 import PreviewNote from '../components/ui/PreviewNote';
 import { QrCode, Truck, Shield, AlertTriangle, RotateCcw } from 'lucide-react';
 
@@ -75,6 +75,20 @@ export default function PaymentPage() {
       navigate('/cart');
     }
   }, [cartItems, showSuccessModal, navigate]);
+
+  /* คูปองที่ผู้ใช้กดรับไว้จากหน้าโปรโมชัน ใส่ให้อัตโนมัติตอนเปิดหน้านี้
+   *
+   * takePendingCoupon อ่านแล้วลบทิ้งในจังหวะเดียว และเทียบรหัสกับตารางใหม่
+   * ก่อนคืนค่า ค่าที่ถูกแก้มาจึงกลายเป็น null ไม่ใช่ส่วนลดที่ผู้ใช้ตั้งเอง
+   *
+   * ต้องบอกด้วยว่าใส่ให้แล้ว ไม่ใช่ลดเงียบ ๆ — ยอดที่เปลี่ยนไปเองโดยไม่มีคำอธิบาย
+   * อ่านเหมือนคิดเงินผิดมากกว่าเหมือนได้ส่วนลด */
+  useEffect(() => {
+    const pending = takePendingCoupon();
+    if (!pending) return;
+    setAppliedCoupon(pending);
+    showToast(`ใส่คูปอง ${pending.code} (${pending.label}) ให้แล้ว`, 'success');
+  }, [showToast]);
 
   // Pricing calculations
   const subtotal = cartItems.reduce(

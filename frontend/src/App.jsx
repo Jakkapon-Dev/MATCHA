@@ -268,7 +268,14 @@ function AppContent() {
             element={
               <HomePage
                 onSelectFit={handleSelectFit}
-                onClaimPromo={() => showToast('คัดลอกโค้ด MATCHA15 แล้ว! ใช้เป็นส่วนลด 15% ในหน้าชำระเงิน 🎉', 'success')}
+                // `held` บอกว่าเก็บคูปองไว้ได้จริงไหม ถ้า storage ถูกปิด (โหมดส่วนตัว)
+                // ต้องบอกให้ผู้ใช้กรอกเอง ไม่ใช่สัญญาว่าจะใส่ให้แล้วไม่เกิดอะไรขึ้น
+                onClaimPromo={(held) => showToast(
+                  held
+                    ? 'รับส่วนลด 15% แล้ว — จะใส่ให้อัตโนมัติตอนชำระเงิน 🎉'
+                    : 'คัดลอกโค้ด MATCHA15 แล้ว! กรอกในหน้าชำระเงินเพื่อรับส่วนลด 15%',
+                  'success'
+                )}
                 onAddToCart={addToCart}
                 onQuickView={(prod) => setSelectedProduct(prod)}
                 onExploreCatalog={() => {

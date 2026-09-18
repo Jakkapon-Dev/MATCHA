@@ -35,3 +35,40 @@ export function discountFor(coupon, subtotal) {
   if (!coupon || coupon.type !== 'percent') return 0;
   return Math.round(subtotal * (coupon.discount / 100) * 100) / 100;
 }
+
+/* คูปองที่หน้าโปรโมชันรับไว้ รอให้หน้าชำระเงินมาหยิบไปใช้
+ *
+ * เก็บแค่ "รหัส" ตัวเดียว ไม่เก็บส่วนลดหรือชนิดคูปอง เพราะค่าใน localStorage
+ * ผู้ใช้แก้เองได้ ถ้าเก็บตัวเลขไว้แล้วเชื่อตามนั้น ใครก็ตั้งส่วนลดให้ตัวเองได้
+ * ฝั่งนี้จึงเอารหัสไปเทียบกับตารางด้านบนใหม่เสมอ (เซิร์ฟเวอร์ก็คิดใหม่อีกชั้น)
+ *
+ * และต้องลบทิ้งทันทีที่ถูกใช้ ไม่งั้นคูปองจะค้างอยู่แล้วโผล่มาลดราคาให้เอง
+ * ตอนสั่งซื้อครั้งถัดไปโดยที่ไม่มีใครกดรับ
+ */
+const PENDING_KEY = 'matcha_applied_coupon';
+
+export function storePendingCoupon(code) {
+  const clean = normaliseCode(code);
+  if (!COUPONS[clean]) return false;
+  try {
+    localStorage.setItem(PENDING_KEY, clean);
+    return true;
+  } catch {
+    // โหมดส่วนตัว/ปิด storage — ผู้ใช้ยังกรอกรหัสเองได้จากข้อความที่คัดลอกไว้
+    return false;
+  }
+}
+
+/** อ่านแล้วลบทิ้งในจังหวะเดียว คูปองหนึ่งใบใช้ได้ครั้งเดียว */
+export function takePendingCoupon() {
+  let raw = null;
+  try {
+    raw = localStorage.getItem(PENDING_KEY);
+    localStorage.removeItem(PENDING_KEY);
+  } catch {
+    return null;
+  }
+  const code = normaliseCode(raw);
+  const coupon = COUPONS[code];
+  return coupon ? { ...coupon, code } : null;
+}
