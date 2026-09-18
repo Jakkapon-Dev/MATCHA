@@ -365,7 +365,6 @@ export default function LoginPage({ onLoginSuccess }) {
             <div className="mt-5 p-4 rounded-2xl bg-[#FBF8EF] border border-[#E8DFC8] text-[#5C4A28]">
               <div className="flex items-center justify-between mb-1.5">
                 <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#4A3B1F]">
-                  <span>🧪</span>
                   <span>{t('auth.demoModeTitle')}</span>
                 </div>
                 <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#E8DFC8]/60 text-[#4A3B1F] uppercase font-bold">

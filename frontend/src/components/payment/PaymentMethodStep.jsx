@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 import { CreditCard, QrCode, Lock, ArrowLeft, CheckCircle2, Banknote, Sparkles, Smartphone } from 'lucide-react';
 
 export default function PaymentMethodStep({
@@ -12,6 +13,7 @@ export default function PaymentMethodStep({
   isProcessing = false,
   totalAmount = 0
 }) {
+  const { t } = useLanguage();
   const handleCardChange = (e) => {
     let { name, value } = e.target;
     
@@ -62,16 +64,16 @@ export default function PaymentMethodStep({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#DCDCDC] gap-2 mb-6">
           <div>
             <h2 className="text-base font-bold text-[#0A0A0A]">
-              Payment Method
+              {t('checkout.methodTitle')}
             </h2>
             <p className="text-xs text-[#666666] font-mono mt-0.5">
-              Choose how you would like to complete your order
+              {t('checkout.methodNote')}
             </p>
           </div>
 
           <div className="flex items-center gap-1.5 text-xs font-mono text-[#042509] self-start sm:self-auto">
             <Lock size={13} />
-            <span>256-bit encrypted</span>
+            <span>{t('checkout.secure')}</span>
           </div>
         </div>
 
@@ -94,8 +96,8 @@ export default function PaymentMethodStep({
                 )}
               </div>
               <div>
-                <span className="font-bold text-xs text-[#0A0A0A] block">Credit / Debit card</span>
-                <span className="text-[11px] font-mono text-[#666666] mt-0.5 block">Visa, Mastercard</span>
+                <span className="font-bold text-xs text-[#0A0A0A] block">{t('checkout.methodCard')}</span>
+                <span className="text-[11px] font-mono text-[#666666] mt-0.5 block">{t('checkout.methodCardNote')}</span>
               </div>
             </div>
 
@@ -115,8 +117,8 @@ export default function PaymentMethodStep({
                 )}
               </div>
               <div>
-                <span className="font-bold text-xs text-[#0A0A0A] block">PromptPay QR</span>
-                <span className="text-[11px] font-mono text-[#666666] mt-0.5 block">Thai banking app</span>
+                <span className="font-bold text-xs text-[#0A0A0A] block">{t('checkout.methodQr')}</span>
+                <span className="text-[11px] font-mono text-[#666666] mt-0.5 block">{t('checkout.methodQrNote')}</span>
               </div>
             </div>
 
@@ -136,8 +138,8 @@ export default function PaymentMethodStep({
                 )}
               </div>
               <div>
-                <span className="font-bold text-xs text-[#0A0A0A] block">Cash on delivery</span>
-                <span className="text-[11px] font-mono text-[#666666] mt-0.5 block">Pay upon delivery</span>
+                <span className="font-bold text-xs text-[#0A0A0A] block">{t('checkout.methodCod')}</span>
+                <span className="text-[11px] font-mono text-[#666666] mt-0.5 block">{t('checkout.methodCodNote')}</span>
               </div>
             </div>
           </div>
@@ -150,7 +152,6 @@ export default function PaymentMethodStep({
             <div className="w-full max-w-sm mx-auto aspect-[1.586/1] p-6 text-white bg-gradient-to-tr from-[#021505] via-[#042509] to-[#1E4524] relative overflow-hidden flex flex-col justify-between border border-[#518F5C]/40">
               <div className="flex items-center justify-between relative z-10">
                 <div className="flex items-center gap-2">
-                  <span className="text-base">🍵</span>
                   <span className="font-bold tracking-wider text-xs uppercase text-[#F1F1F1]">MatchA Atelier</span>
                 </div>
                 <span className="text-[10px] font-mono tracking-wider px-2 py-0.5 rounded bg-white/10 uppercase">
@@ -174,13 +175,13 @@ export default function PaymentMethodStep({
               {/* Cardholder & Expiry */}
               <div className="flex items-end justify-between relative z-10 text-[10px] font-mono uppercase tracking-wider text-white/80">
                 <div>
-                  <span className="text-[8px] text-white/50 block">CARDHOLDER</span>
+                  <span className="text-[8px] text-white/50 block">{t('checkout.cardholder')}</span>
                   <span className="font-bold text-white tracking-wider truncate max-w-[170px] inline-block">
                     {cardData.cardHolder || 'ALEX COLLECTOR'}
                   </span>
                 </div>
                 <div className="text-right">
-                  <span className="text-[8px] text-white/50 block">EXPIRES</span>
+                  <span className="text-[8px] text-white/50 block">{t('checkout.expires')}</span>
                   <span className="font-bold text-white tracking-wider">
                     {cardData.expiryDate || 'MM/YY'}
                   </span>
@@ -192,7 +193,7 @@ export default function PaymentMethodStep({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#F1F1F1]">
               <div className="sm:col-span-2">
                 <label className="block text-xs font-mono text-[#666666] mb-1">
-                  Card number <span className="text-[#C91D1D]">*</span>
+                  {t('checkout.cardNumber')} <span className="text-[#C91D1D]">*</span>
                 </label>
                 <input
                   type="text"
@@ -208,7 +209,7 @@ export default function PaymentMethodStep({
 
               <div>
                 <label className="block text-xs font-mono text-[#666666] mb-1">
-                  Cardholder name <span className="text-[#C91D1D]">*</span>
+                  {t('checkout.cardName')} <span className="text-[#C91D1D]">*</span>
                 </label>
                 <input
                   type="text"
@@ -224,7 +225,7 @@ export default function PaymentMethodStep({
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-mono text-[#666666] mb-1">
-                    Expiry <span className="text-[#C91D1D]">*</span>
+                    {t('checkout.expiry')} <span className="text-[#C91D1D]">*</span>
                   </label>
                   <input
                     type="text"
@@ -239,7 +240,7 @@ export default function PaymentMethodStep({
                 </div>
                 <div>
                   <label className="block text-xs font-mono text-[#666666] mb-1">
-                    CVV / CVC <span className="text-[#C91D1D]">*</span>
+                    {t('checkout.cvv')} <span className="text-[#C91D1D]">*</span>
                   </label>
                   <input
                     type="password"
@@ -283,7 +284,7 @@ export default function PaymentMethodStep({
 
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F1F1F1] text-[#042509] text-xs font-mono">
               <Smartphone size={13} />
-              <span>Test mode: instant authorization on submit</span>
+              <span>{t('checkout.testMode')}</span>
             </div>
           </div>
         )}
@@ -299,7 +300,7 @@ export default function PaymentMethodStep({
                 </h3>
               </div>
               <p className="text-xs font-mono text-[#666666] leading-relaxed">
-                Please have the exact amount of <strong className="text-[#042509]">${totalAmount.toFixed(2)}</strong> ready for payment upon delivery.
+                {t('checkout.codReady', { amount: totalAmount.toFixed(2) })}
               </p>
             </div>
           </div>
@@ -314,7 +315,7 @@ export default function PaymentMethodStep({
           className="inline-flex items-center gap-2 text-xs font-mono text-[#666666] hover:text-[#042509] transition-colors cursor-pointer"
         >
           <ArrowLeft size={14} />
-          <span>Edit shipping address</span>
+          <span>{t('checkout.editAddress')}</span>
         </button>
 
         <button
@@ -326,7 +327,7 @@ export default function PaymentMethodStep({
           {isProcessing ? (
             <span className="flex items-center gap-2">
               <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              <span>Processing order...</span>
+              <span>{t('checkout.processing')}</span>
             </span>
           ) : (
             <span>Place order (${totalAmount.toFixed(2)})</span>

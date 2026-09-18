@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 import { Tag, CheckCircle2, ShieldCheck, Sparkles } from 'lucide-react';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
 
@@ -15,6 +16,7 @@ export default function OrderSummarySidebar({
   couponError = '',
   onRemoveCoupon
 }) {
+  const { t } = useLanguage();
   return (
     <div className="bg-white border border-[#DCDCDC] p-6 sticky top-28 space-y-6">
       {/* Header */}
@@ -41,16 +43,14 @@ export default function OrderSummarySidebar({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-sm">🍵</span>
+                <span className="text-[9px] font-mono text-[#666666] uppercase">{item.id}</span>
               )}
             </div>
             <div className="flex-1 min-w-0">
               <div className="font-medium text-[#0A0A0A] truncate">{item.name}</div>
               <div className="text-[11px] text-[#666666] flex items-center gap-1.5 mt-0.5">
                 <span>{item.color || 'Natural'}</span>
-                <span>•</span>
                 <span>Size {item.size || 'M'}</span>
-                <span>•</span>
                 <span>Qty {item.quantity || 1}</span>
               </div>
             </div>
@@ -65,7 +65,7 @@ export default function OrderSummarySidebar({
       <form onSubmit={onApplyCoupon} className="space-y-2 pt-4 border-t border-[#DCDCDC]">
         <label className="block text-xs font-mono text-[#666666] flex items-center gap-1.5">
           <Tag size={12} className="text-[#518F5C]" />
-          <span>Promo code</span>
+          <span>{t('checkout.promo')}</span>
         </label>
         
         <div className="flex gap-2">
@@ -73,14 +73,14 @@ export default function OrderSummarySidebar({
             type="text"
             value={couponCode}
             onChange={(e) => onCouponCodeChange(e.target.value)}
-            placeholder="e.g. MATCHA15"
+            placeholder={t('checkout.promoPlaceholder')}
             className="flex-1 px-3 py-2 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono uppercase bg-[#F1F1F1] transition-colors"
           />
           <button
             type="submit"
             className="px-4 py-2 bg-[#042509] hover:bg-[#1A381F] text-white text-xs font-bold font-mono transition-colors cursor-pointer"
           >
-            Apply
+            {t('checkout.apply')}
           </button>
         </div>
 
@@ -111,12 +111,12 @@ export default function OrderSummarySidebar({
       {/* Price Calculations */}
       <div className="space-y-2.5 pt-4 border-t border-[#DCDCDC] text-xs font-mono">
         <div className="flex justify-between text-[#666666]">
-          <span>Subtotal</span>
+          <span>{t('checkout.subtotal')}</span>
           <span className="font-bold text-[#0A0A0A]">${subtotal.toFixed(2)}</span>
         </div>
 
         <div className="flex justify-between text-[#666666]">
-          <span>Delivery</span>
+          <span>{t('checkout.delivery')}</span>
           <span className="font-bold text-[#0A0A0A]">
             {shippingCost === 0 ? (
               <span className="text-[#518F5C]">Free</span>
@@ -130,7 +130,7 @@ export default function OrderSummarySidebar({
           <div className="flex justify-between text-[#042509] font-bold">
             <span className="flex items-center gap-1">
               <Sparkles size={12} className="text-[#518F5C]" />
-              <span>Discount</span>
+              <span>{t('checkout.discount')}</span>
             </span>
             <span>−${discount.toFixed(2)}</span>
           </div>
@@ -138,8 +138,8 @@ export default function OrderSummarySidebar({
 
         <div className="flex justify-between items-baseline pt-3 border-t border-dashed border-[#DCDCDC]">
           <div>
-            <span className="text-xs font-mono font-bold text-[#0A0A0A] block">Total</span>
-            <span className="text-[10px] font-mono text-[#666666]">Taxes included</span>
+            <span className="text-xs font-mono font-bold text-[#0A0A0A] block">{t('checkout.total')}</span>
+            <span className="text-[10px] font-mono text-[#666666]">{t('checkout.taxes')}</span>
           </div>
           <span className="text-2xl font-bold font-mono text-[#042509]">${total.toFixed(2)}</span>
         </div>
@@ -147,7 +147,7 @@ export default function OrderSummarySidebar({
 
       <div className="text-[11px] font-mono text-[#666666] text-center flex items-center justify-center gap-1.5 pt-1 border-t border-[#F1F1F1]">
         <ShieldCheck size={13} className="text-[#518F5C]" />
-        <span>Authentic craftsmanship & safe delivery</span>
+        <span>{t('checkout.assurance')}</span>
       </div>
     </div>
   );

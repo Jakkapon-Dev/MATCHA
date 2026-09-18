@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 import { Truck, CheckCircle2, PlusCircle, ArrowLeft, ArrowRight, ShieldCheck, Building2, Home } from 'lucide-react';
 
 const SAVED_ADDRESS_PRESETS = [
@@ -41,8 +42,34 @@ export default function ShippingStep({
   onNext,
   onBackToCart
 }) {
+  const { t } = useLanguage();
   const [selectedPreset, setSelectedPreset] = useState('addr-primary');
   const [isCustomAddress, setIsCustomAddress] = useState(false);
+  const seeded = useRef(false);
+
+  /* The first address arrives already marked as chosen, but nothing had ever
+     copied it into the form, so the page opened claiming a selection while
+     every field below sat empty. The seed runs once, and only into blank
+     fields, so it can never overwrite something the visitor typed. */
+  useEffect(() => {
+    if (seeded.current) return;
+    seeded.current = true;
+    const preset = SAVED_ADDRESS_PRESETS.find((p) => p.id === selectedPreset);
+    if (!preset) return;
+    if (formData?.firstName || formData?.address) return;
+    onFormChange({
+      ...formData,
+      firstName: preset.firstName,
+      lastName: preset.lastName,
+      email: preset.email,
+      phone: preset.phone,
+      address: preset.address,
+      city: preset.city,
+      state: preset.state,
+      zipCode: preset.zipCode,
+      country: preset.country,
+    });
+  }, [selectedPreset, formData, onFormChange]);
 
   const handleSelectPreset = (preset) => {
     setSelectedPreset(preset.id);
@@ -90,15 +117,15 @@ export default function ShippingStep({
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#DCDCDC] gap-2 mb-6">
           <div>
             <h2 className="text-base font-bold text-[#0A0A0A]">
-              Shipping Address
+              {t('checkout.addressTitle')}
             </h2>
             <p className="text-xs text-[#666666] font-mono mt-0.5">
-              Enter where you would like your order delivered
+              {t('checkout.addressNote')}
             </p>
           </div>
           <span className="text-xs font-mono text-[#518F5C] flex items-center gap-1.5 self-start sm:self-auto">
             <ShieldCheck size={14} />
-            <span>Saved addresses</span>
+            <span>{t('checkout.savedAddresses')}</span>
           </span>
         </div>
 
@@ -134,7 +161,7 @@ export default function ShippingStep({
                     {preset.address}, {preset.city} {preset.zipCode}
                   </p>
                   <span className="mt-2 text-[10px] font-mono text-[#666666]">
-                    Tel: {preset.phone}
+                    {t('checkout.tel')}: {preset.phone}
                   </span>
                 </div>
               );
@@ -151,7 +178,7 @@ export default function ShippingStep({
             >
               <PlusCircle size={18} className={isCustomAddress ? 'text-[#042509]' : 'text-[#666666]'} />
               <span className="text-xs font-mono font-medium">
-                {isCustomAddress ? 'Using custom address' : 'Add new address'}
+                {isCustomAddress ? t('checkout.usingCustom') : t('checkout.addAddress')}
               </span>
             </div>
           </div>
@@ -162,7 +189,7 @@ export default function ShippingStep({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-mono text-[#666666] mb-1">
-                First name <span className="text-[#C91D1D]">*</span>
+                {t('checkout.firstName')} <span className="text-[#C91D1D]">*</span>
               </label>
               <input
                 type="text"
@@ -177,7 +204,7 @@ export default function ShippingStep({
 
             <div>
               <label className="block text-xs font-mono text-[#666666] mb-1">
-                Last name <span className="text-[#C91D1D]">*</span>
+                {t('checkout.lastName')} <span className="text-[#C91D1D]">*</span>
               </label>
               <input
                 type="text"
@@ -192,7 +219,7 @@ export default function ShippingStep({
 
             <div>
               <label className="block text-xs font-mono text-[#666666] mb-1">
-                Email address <span className="text-[#C91D1D]">*</span>
+                {t('checkout.email')} <span className="text-[#C91D1D]">*</span>
               </label>
               <input
                 type="email"
@@ -207,7 +234,7 @@ export default function ShippingStep({
 
             <div>
               <label className="block text-xs font-mono text-[#666666] mb-1">
-                Phone number <span className="text-[#C91D1D]">*</span>
+                {t('checkout.phone')} <span className="text-[#C91D1D]">*</span>
               </label>
               <input
                 type="tel"
@@ -222,7 +249,7 @@ export default function ShippingStep({
 
             <div className="sm:col-span-2">
               <label className="block text-xs font-mono text-[#666666] mb-1">
-                Street address <span className="text-[#C91D1D]">*</span>
+                {t('checkout.street')} <span className="text-[#C91D1D]">*</span>
               </label>
               <input
                 type="text"
@@ -237,7 +264,7 @@ export default function ShippingStep({
 
             <div>
               <label className="block text-xs font-mono text-[#666666] mb-1">
-                City / District <span className="text-[#C91D1D]">*</span>
+                {t('checkout.city')} <span className="text-[#C91D1D]">*</span>
               </label>
               <input
                 type="text"
@@ -252,7 +279,7 @@ export default function ShippingStep({
 
             <div>
               <label className="block text-xs font-mono text-[#666666] mb-1">
-                Postal code <span className="text-[#C91D1D]">*</span>
+                {t('checkout.postal')} <span className="text-[#C91D1D]">*</span>
               </label>
               <input
                 type="text"
@@ -332,7 +359,7 @@ export default function ShippingStep({
           className="inline-flex items-center gap-2 text-xs font-mono text-[#666666] hover:text-[#042509] transition-colors cursor-pointer"
         >
           <ArrowLeft size={14} />
-          <span>Return to bag</span>
+          <span>{t('checkout.backToBag')}</span>
         </button>
 
         <button
@@ -341,7 +368,7 @@ export default function ShippingStep({
           disabled={!isFormValid}
           className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#042509] hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-wider transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
         >
-          <span>Continue to payment</span>
+          <span>{t('checkout.continueToPayment')}</span>
           <ArrowRight size={14} />
         </button>
       </div>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import { useNavigate } from 'react-router-dom';
 import useChangeMotion from '../hooks/useChangeMotion';
 import { useCart } from '../context/CartContext.jsx';
@@ -47,6 +48,7 @@ const initialCardData = {
 };
 
 export default function PaymentPage() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const { cartItems, clearCart } = useCart();
   const { showToast } = useToast();
@@ -161,7 +163,7 @@ export default function PaymentPage() {
         <div className="mb-8 pb-5 border-b border-[#DCDCDC] flex flex-col md:flex-row md:items-baseline justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-[#0A0A0A] tracking-tight">
-              {step === 'shipping' ? 'Shipping Details' : 'Payment Authorization'}
+              {step === 'shipping' ? t('checkout.pageShipping') : t('checkout.pagePayment')}
             </h1>
           </div>
 
@@ -172,7 +174,7 @@ export default function PaymentPage() {
               className="flex items-center gap-1 text-[#666666] hover:text-[#042509] cursor-pointer"
             >
               <Check size={12} className="text-[#042509]" />
-              <span>Bag</span>
+              <span>{t('checkout.stepBag')}</span>
             </button>
 
             <span className="text-[#DCDCDC]">/</span>
@@ -186,7 +188,7 @@ export default function PaymentPage() {
               }`}
             >
               {step === 'payment' ? <Check size={12} /> : null}
-              <span>1. Destination</span>
+              <span>{t('checkout.stepAddress')}</span>
             </button>
 
             <span className="text-[#DCDCDC]">/</span>
@@ -198,7 +200,7 @@ export default function PaymentPage() {
                   : 'text-[#666666]'
               }`}
             >
-              <span>2. Payment</span>
+              <span>{t('checkout.stepPayment')}</span>
             </div>
           </div>
         </div>
@@ -210,7 +212,7 @@ export default function PaymentPage() {
           <div ref={stepMotionRef} className="lg:col-span-7">
             {isDemo && (
               <PreviewNote className="mb-6">
-                <strong>Simulation mode</strong> — The checkout flow mirrors production. No real charge will occur. You may enter test card details or select PromptPay QR.
+                <strong>{t('checkout.simulation')}</strong> {t('checkout.simulationBody')}
               </PreviewNote>
             )}
 

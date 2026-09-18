@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 import { CheckCircle2, ArrowRight, Printer } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -11,6 +12,7 @@ export default function OrderSuccessModal({
   purchaseDateTime,
   onDone
 }) {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   if (!isOpen) return null;
 
@@ -54,24 +56,24 @@ export default function OrderSuccessModal({
         {/* Receipt Box */}
         <div className="p-4 bg-[#F1F1F1] border border-[#DCDCDC] text-left text-xs font-mono space-y-2.5">
           <div className="flex justify-between items-baseline pb-2 border-b border-[#DCDCDC]">
-            <span className="text-[#666666]">Order reference</span>
+            <span className="text-[#666666]">{t('checkout.orderRef')}</span>
             <span className="font-bold text-sm text-[#042509]">#{activeOrderId}</span>
           </div>
 
           <div className="flex justify-between items-start text-[11px]">
-            <span className="text-[#666666]">Delivering to</span>
+            <span className="text-[#666666]">{t('checkout.deliveringTo')}</span>
             <span className="font-medium text-[#0A0A0A] text-right max-w-[200px] truncate">
               {formData?.address || '123 Sukhumvit Road'}, {formData?.city || 'Bangkok'}
             </span>
           </div>
 
           <div className="flex justify-between items-center text-[11px]">
-            <span className="text-[#666666]">Payment</span>
+            <span className="text-[#666666]">{t('checkout.payment')}</span>
             <span className="font-medium text-[#0A0A0A] uppercase">{paymentMethod}</span>
           </div>
 
           <div className="flex justify-between items-baseline pt-2 border-t border-[#DCDCDC]">
-            <span className="text-[#666666]">Total</span>
+            <span className="text-[#666666]">{t('checkout.total')}</span>
             <span className="font-bold text-base text-[#042509]">${totalAmount?.toFixed(2)}</span>
           </div>
 
@@ -86,7 +88,7 @@ export default function OrderSuccessModal({
             onClick={handleFinish}
             className="w-full py-3.5 bg-[#042509] hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
           >
-            <span>Return to catalog</span>
+            <span>{t('checkout.backToCatalog')}</span>
             <ArrowRight size={14} />
           </button>
 
@@ -96,7 +98,7 @@ export default function OrderSuccessModal({
             className="w-full py-2 text-xs font-mono text-[#666666] hover:text-[#042509] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
           >
             <Printer size={13} />
-            <span>Print receipt</span>
+            <span>{t('checkout.printReceipt')}</span>
           </button>
         </div>
       </div>

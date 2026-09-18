@@ -66,7 +66,6 @@ export default function Navbar({
         {currentUser?.isDemoSession && (
           <div className="bg-[#518F5C] text-[#042509] text-[11px] py-1.5 px-4 font-mono font-bold flex items-center justify-between gap-2 shadow-inner border-b border-[#042509]/20">
             <div className="flex items-center gap-2 mx-auto sm:mx-0">
-              <span className="text-sm">🧪</span>
               <span>{t('nav.demoBanner')}</span>
             </div>
             <button
