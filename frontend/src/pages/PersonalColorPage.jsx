@@ -95,12 +95,45 @@ const SEASON_BY_TONE = {
 };
 
 const STORAGE_KEY = 'matcha_personal_color';
+const READING_KEY = 'matcha_personal_color_reading';
 
 // ค่าที่ค้างใน localStorage อาจเป็นของเวอร์ชันเก่าหรือถูกแก้มา ถ้าไม่ตรวจก่อนหน้าจะพังถาวร
 const readStoredSeason = () => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     return SEASON_PROFILES[stored] ? stored : null;
+  } catch {
+    return null;
+  }
+};
+
+/* The undertone axis, and what it can honestly resolve.
+
+   Questions 1–4 each contribute +2 warm, +2 cool or nothing, so the difference
+   between the two totals lands on one of nine steps from −8 to +8. That is a
+   real axis and it is drawn as one.
+
+   Depth is a different matter: only question 5 speaks to it, and only through
+   SEASON_DEPTH, so it resolves to Light or Deep and nothing in between. It is
+   drawn as two bands rather than a second continuous axis — a dot floating in
+   a smooth 2D field would claim a precision this quiz never measured. */
+const UNDERTONE_MAX = 8;
+const UNDERTONE_STEPS = UNDERTONE_MAX + 1; // −8, −6 … +6, +8
+
+// Where each season sits on the board, so the reading can be placed in it.
+const SEASON_AXIS = {
+  Spring: { tone: 'Warm', depth: 'Light' },
+  Summer: { tone: 'Cool', depth: 'Light' },
+  Autumn: { tone: 'Warm', depth: 'Deep' },
+  Winter: { tone: 'Cool', depth: 'Deep' },
+};
+
+const readStoredReading = () => {
+  try {
+    const raw = JSON.parse(localStorage.getItem(READING_KEY) || 'null');
+    if (!raw || typeof raw.warm !== 'number' || typeof raw.cool !== 'number') return null;
+    if (raw.depth !== 'Light' && raw.depth !== 'Deep') return null;
+    return raw;
   } catch {
     return null;
   }
@@ -321,6 +354,134 @@ function PaletteBand({ palette, innerRef }) {
   );
 }
 
+/* The reading, drawn at the resolution the quiz actually has.
+
+   Across: questions 1–4 each push +2 warm, +2 cool or nothing, so the result
+   lands on one of nine ticks. Those ticks are drawn, and the marker sits on
+   one of them — not between them, because nothing between them can be
+   measured.
+
+   Down: only question 5 speaks to depth, and only as Light or Deep. So depth
+   is two bands, and the visitor's band is the one filled in. Drawing this as a
+   second smooth axis with a dot floating in a field would look more scientific
+   and would be a lie about the instrument. */
+function ColorAxis({ season, reading }) {
+  const axis = SEASON_AXIS[season];
+  const depth = reading?.depth || axis.depth;
+
+  // −8 … +8 in steps of 2. Negative is cool, positive is warm.
+  const diff = reading ? reading.warm - reading.cool : null;
+  const tickIndex = diff === null ? null : (diff + UNDERTONE_MAX) / 2;
+
+  const rows = ['Light', 'Deep'];
+  const columns = ['Cool', 'Warm'];
+
+  // Which of the four seasons owns a given cell of the board.
+  const seasonAt = (tone, band) =>
+    Object.keys(SEASON_AXIS).find(
+      (key) => SEASON_AXIS[key].tone === tone && SEASON_AXIS[key].depth === band
+    );
+
+  return (
+    <div className="space-y-4">
+      <div className="border border-[#DCDCDC]">
+        {rows.map((band) => (
+          <div key={band} className="grid grid-cols-2 border-b border-[#DCDCDC] last:border-b-0">
+            {columns.map((tone) => {
+              const cellSeason = seasonAt(tone, band);
+              const isYours = cellSeason === season;
+              const inBand = band === depth;
+              return (
+                <div
+                  key={tone}
+                  className={`relative p-4 sm:p-5 border-r border-[#DCDCDC] last:border-r-0 transition-colors ${
+                    isYours ? 'bg-[#0A0A0A] text-[#F1F1F1]' : inBand ? 'bg-white' : ''
+                  }`}
+                >
+                  <span className={`font-mono text-[10px] uppercase tracking-[0.18em] block ${
+                    isYours ? 'text-[#F1F1F1]/60' : 'text-[#999999]'
+                  }`}>
+                    {tone} · {band}
+                  </span>
+                  <span className={`font-bold text-lg sm:text-xl block mt-1 ${
+                    isYours ? 'text-[#F1F1F1]' : 'text-[#666666]'
+                  }`}>
+                    {cellSeason}
+                  </span>
+
+                  {/* Every season's own colours, so the board is itself a
+                      comparison rather than four labelled boxes. */}
+                  <span className="flex mt-3 h-2">
+                    {SEASON_PROFILES[cellSeason].palette.map((c, i) => (
+                      <span key={i} className="flex-1" style={{ backgroundColor: c.hex }} />
+                    ))}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+
+      {/* The undertone scale, with the answer standing on its tick. */}
+      <div>
+        <div className="flex justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">
+          <span>Cool</span>
+          <span className="text-[#0A0A0A]">Undertone</span>
+          <span>Warm</span>
+        </div>
+
+        <div className="flex items-end gap-1" role="img" aria-label={
+          diff === null
+            ? `อันเดอร์โทน: ${axis.tone}`
+            : `อันเดอร์โทน ${diff > 0 ? 'อุ่น' : diff < 0 ? 'เย็น' : 'ก้ำกึ่ง'} ที่ระดับ ${Math.abs(diff)} จาก ${UNDERTONE_MAX}`
+        }>
+          {Array.from({ length: UNDERTONE_STEPS }).map((_, i) => {
+            const isMark = i === tickIndex;
+            const isMiddle = i === (UNDERTONE_STEPS - 1) / 2;
+            return (
+              <span
+                key={i}
+                className={`flex-1 transition-all ${
+                  isMark ? 'h-10 bg-[#C91D1D]' : isMiddle ? 'h-5 bg-[#999999]' : 'h-3 bg-[#DCDCDC]'
+                }`}
+              />
+            );
+          })}
+        </div>
+
+        {diff === null ? (
+          <p className="mt-3 font-mono text-[11px] text-[#666666]">
+            ผลนี้ถูกบันทึกไว้ก่อนหน้า จึงเหลือแต่ฤดู — ทำแบบทดสอบใหม่เพื่อดูคะแนนแต่ละแกน
+          </p>
+        ) : (
+          <div className="mt-3 flex flex-wrap items-baseline gap-x-6 gap-y-1 font-mono text-[11px] text-[#666666]">
+            <span>
+              อุ่น <span className="text-[#0A0A0A] tabular-nums">{reading.warm}</span>
+              <span className="mx-1.5">·</span>
+              เย็น <span className="text-[#0A0A0A] tabular-nums">{reading.cool}</span>
+              <span className="mx-1.5">·</span>
+              เต็ม <span className="text-[#0A0A0A] tabular-nums">{UNDERTONE_MAX}</span>
+            </span>
+            <span>
+              ความเข้มจากข้อ 5: <span className="text-[#0A0A0A]">{depth}</span>
+            </span>
+          </div>
+        )}
+
+        {/* A tie is the one result worth saying out loud: it means the
+            undertone questions did not decide this, question 5 did. */}
+        {diff === 0 && (
+          <p className="mt-2 text-sm text-[#0A0A0A] leading-relaxed max-w-prose">
+            คะแนนอุ่นกับเย็นเท่ากันพอดี — ฤดูนี้ตัดสินจากข้อ 5 เป็นหลัก คุณอยู่ก้ำกึ่งกับ{' '}
+            <strong>{seasonAt(axis.tone === 'Warm' ? 'Cool' : 'Warm', depth)}</strong> ลองดูพาเลตต์ของทั้งสองฤดูเทียบกัน
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function PersonalColorPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -329,6 +490,9 @@ export default function PersonalColorPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState({});
   const [diagnosedSeason, setDiagnosedSeason] = useState(readStoredSeason);
+  // The scores behind the verdict, kept so the result can show where the answer
+  // landed rather than only what it was called.
+  const [reading, setReading] = useState(readStoredReading);
   const [isScanning, setIsScanning] = useState(false);
   const [selectedSeasonTab, setSelectedSeasonTab] = useState(() => readStoredSeason() || 'Autumn');
   const quizAnchorRef = useRef(null);
@@ -382,11 +546,24 @@ export default function PersonalColorPage() {
         finalSeason = SEASON_BY_TONE[undertone][SEASON_DEPTH[intensitySeason]];
       }
 
+      /* The scores were being discarded the moment the verdict was named. They
+         are the only record of how close the call was — a tie on the undertone
+         axis decided by question 5 alone is a very different reading from a
+         clean 8–0, and the visitor was told neither. Nothing here changes what
+         finalSeason is; it only keeps the working. */
+      const nextReading = {
+        warm: warmScore,
+        cool: coolScore,
+        depth: SEASON_DEPTH[intensitySeason] || SEASON_AXIS[finalSeason].depth,
+      };
+
       setDiagnosedSeason(finalSeason);
       setSelectedSeasonTab(finalSeason);
+      setReading(nextReading);
       setIsScanning(false);
       try {
         localStorage.setItem(STORAGE_KEY, finalSeason);
+        localStorage.setItem(READING_KEY, JSON.stringify(nextReading));
       } catch {
         // โหมดส่วนตัว/ปิด storage — ผลยังแสดงได้ แค่ไม่ถูกจำข้ามหน้า
       }
@@ -398,6 +575,7 @@ export default function PersonalColorPage() {
     setAnswers({});
     setCurrentStep(0);
     setDiagnosedSeason(null);
+    setReading(null);
     // เลื่อนลงไปที่คำถามข้อแรก ไม่งั้นผู้ใช้ค้างอยู่หัวหน้าโดยไม่รู้ว่าแบบทดสอบเริ่มแล้ว
     requestAnimationFrame(() => {
       quizAnchorRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -524,8 +702,13 @@ export default function PersonalColorPage() {
                       )}
                     </div>
 
+                    {/* The setup illustration, at a ratio of its own rather
+                        than stretched to whatever height the question text
+                        happens to be — and smaller than the options below,
+                        which are the images that actually have to be
+                        compared. */}
                     {QUIZ_QUESTIONS[currentStep].image && (
-                      <div className="w-full md:w-[300px] lg:w-[340px] h-[180px] md:h-auto shrink-0 overflow-hidden bg-[#E4E4E4]">
+                      <div className="w-full md:w-[260px] aspect-4/3 shrink-0 overflow-hidden bg-[#E4E4E4] self-start">
                         {/* `fetchpriority` is spelled lowercase here: React 18
                             does not map the camelCase form and passes it to the
                             DOM with a warning instead. */}
@@ -541,40 +724,50 @@ export default function PersonalColorPage() {
                     )}
                   </div>
 
-                  {/* Options as a list with rules between them. The letter is
-                      the marker it always was, set large enough to be one. */}
-                  <ul className="border-t border-[#0A0A0A]">
+                  {/* Every one of these questions asks the visitor to compare
+                      photographs — wrists, gold against silver, warm cloth
+                      against cool — so the photographs have to be side by side
+                      and large enough to judge. As a vertical list the row
+                      height followed the text, and a one-line answer squeezed
+                      a portrait photograph into a 160x62 letterbox: the wrong
+                      crop, the wrong axis, and far too small to compare. They
+                      are all portrait originals, between 0.44 and 1.0, so the
+                      tiles are portrait too. */}
+                  <ul className={`grid grid-cols-2 gap-3 sm:gap-4 ${
+                    QUIZ_QUESTIONS[currentStep].options.length === 4 ? 'sm:grid-cols-4' : 'sm:grid-cols-3'
+                  }`}>
                     {QUIZ_QUESTIONS[currentStep].options.map((option, idx) => {
                       const letter = option.letter || String.fromCharCode(65 + idx);
                       return (
-                        <li key={idx} className="border-b border-[#DCDCDC]">
+                        <li key={idx}>
                           <button
                             type="button"
                             onClick={() => handleSelectOption(QUIZ_QUESTIONS[currentStep].id, option)}
-                            className="group w-full text-left cursor-pointer flex items-stretch gap-4 sm:gap-6 transition-colors hover:bg-white outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-inset"
+                            className="group w-full h-full text-left cursor-pointer flex flex-col outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F1F1F1]"
                           >
-                            <span className="shrink-0 w-10 sm:w-14 flex items-start justify-center pt-4 sm:pt-5 font-mono text-sm sm:text-base text-[#999999] group-hover:text-[#C91D1D] transition-colors">
-                              {letter}
-                            </span>
-
-                            <span className="flex-1 min-w-0 py-4 sm:py-5 pr-2 flex items-center">
-                              <span className="text-sm sm:text-base font-bold text-[#0A0A0A] leading-snug">
-                                {option.label}
-                              </span>
-                            </span>
-
-                            {option.image && (
-                              <span className="w-24 sm:w-32 md:w-40 shrink-0 overflow-hidden bg-[#E4E4E4] self-stretch">
+                            {option.image ? (
+                              <span className="block w-full aspect-3/4 overflow-hidden bg-[#E4E4E4]">
                                 <img
                                   src={option.image}
                                   alt=""
-                                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                                   style={{ objectPosition: option.imagePosition || 'center' }}
                                   referrerPolicy="no-referrer"
                                   loading="lazy"
                                 />
                               </span>
+                            ) : (
+                              <span className="block w-full aspect-3/4 bg-[#E4E4E4]" />
                             )}
+
+                            <span className="flex gap-2.5 pt-3 flex-1">
+                              <span className="font-mono text-xs text-[#999999] group-hover:text-[#C91D1D] transition-colors shrink-0">
+                                {letter}
+                              </span>
+                              <span className="text-xs sm:text-sm font-bold text-[#0A0A0A] leading-snug group-hover:underline underline-offset-4 decoration-[#C91D1D] decoration-2">
+                                {option.label}
+                              </span>
+                            </span>
                           </button>
                         </li>
                       );
@@ -655,6 +848,15 @@ export default function PersonalColorPage() {
                     Signature palette (สีที่ขับผิวที่สุด)
                   </h3>
                   <PaletteBand palette={profile.palette} innerRef={paletteMotionRef} />
+                </div>
+
+                {/* The working behind the verdict. The palette stays the
+                    answer; this is the evidence for it. */}
+                <div>
+                  <h3 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-3">
+                    ตำแหน่งของคุณบนสองแกน
+                  </h3>
+                  <ColorAxis season={diagnosedSeason} reading={reading} />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14">
