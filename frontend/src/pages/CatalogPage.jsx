@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { RotateCcw } from 'lucide-react';
 import useChangeMotion from '../hooks/useChangeMotion';
 import { api } from '../services/api';
@@ -35,7 +36,12 @@ export default function CatalogPage({
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedSeason, setSelectedSeason] = useState('ALL');
-  const [selectedDye, setSelectedDye] = useState('ALL');
+  /* A dye can arrive in the URL — the colour lab's reading links straight to
+     one, and it makes any single colour a page worth sharing or bookmarking.
+     The parameter seeds the filter at mount and is kept in step with it after,
+     so the address bar and the rail never disagree. */
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [selectedDye, setSelectedDye] = useState(() => searchParams.get('dye') || 'ALL');
   const [selectedFit, setSelectedFit] = useState('ALL');
   const [priceRange, setPriceRange] = useState(MAX_PRICE);
   const [inStockOnly, setInStockOnly] = useState(false);
@@ -105,6 +111,27 @@ export default function CatalogPage({
      not collapse every other band to zero — the rail has to keep showing where
      else the visitor could go. */
   const dyes = useMemo(() => buildDyeIndex(matchesEverythingButDye), [matchesEverythingButDye]);
+
+  /* A dye named in the URL may not survive a rename, or may simply be wrong.
+     Rather than an empty grid with no filter the visitor can see they set, an
+     unrecognised name drops back to the whole archive. This waits for the
+     fetch, because before it lands every name looks unrecognised. */
+  useEffect(() => {
+    if (loading || selectedDye === 'ALL') return;
+    if (!dyes.some((dye) => dye.name === selectedDye)) setSelectedDye('ALL');
+  }, [loading, dyes, selectedDye]);
+
+  /* Written back with replace rather than push: a colour index invites a lot
+     of trying-things-out, and pushing each one would bury the page the visitor
+     arrived from under twenty steps of Back. */
+  useEffect(() => {
+    const current = searchParams.get('dye') || 'ALL';
+    if (current === selectedDye) return;
+    const next = new URLSearchParams(searchParams);
+    if (selectedDye === 'ALL') next.delete('dye');
+    else next.set('dye', selectedDye);
+    setSearchParams(next, { replace: true });
+  }, [selectedDye, searchParams, setSearchParams]);
 
   const visible = useMemo(() => {
     const byDye = selectedDye === 'ALL'

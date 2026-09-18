@@ -11,6 +11,12 @@ export const DEFAULT_LANG = 'en';
 
 export const translations = {
   en: {
+    colorLab: {
+      paletteTitle: 'Your colours, from the archive',
+      paletteNote: 'These are the dyes we currently run that suit your reading. Pick one to see what it makes.',
+      paletteEmpty: 'The archive could not be reached, so there are no colours to show yet.',
+    },
+
     titles: {
       home: 'MatchA — tea-dyed streetwear',
       catalog: 'The archive — MatchA',
@@ -452,6 +458,12 @@ export const translations = {
   },
 
   th: {
+    colorLab: {
+      paletteTitle: 'สีของคุณ จากคลังจริง',
+      paletteNote: 'นี่คือสีย้อมที่เรามีอยู่จริงและเข้ากับผลวิเคราะห์ของคุณ กดเลือกเพื่อดูว่ามีอะไรบ้าง',
+      paletteEmpty: 'ตอนนี้ยังติดต่อคลังสินค้าไม่ได้ จึงยังไม่มีสีให้แสดง',
+    },
+
     titles: {
       home: 'MatchA — เสื้อผ้าย้อมชา',
       catalog: 'สินค้าทั้งหมด — MatchA',

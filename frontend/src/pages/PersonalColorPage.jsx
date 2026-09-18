@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import useChangeMotion from '../hooks/useChangeMotion';
 import {
   CheckCircle2,
@@ -11,9 +11,11 @@ import {
   Layers
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 // Same contrast and edge rules the catalogue's dye bars use, so a colour named
 // on itself is legible here exactly as it is there.
-import { inkOn, needsEdge } from '../utils/dye';
+import { inkOn, needsEdge, dyesForSeason } from '../utils/dye';
+import { useDyeArchive } from '../features/catalog/useDyeArchive';
 
 // 4 Master Personal Color Profiles with Grounded Theory
 const SEASON_PROFILES = {
@@ -329,13 +331,23 @@ const QUIZ_QUESTIONS = [
    largest thing on the page: solid blocks carrying their own name and value,
    using the ink rule the catalogue's dye bars and the lookbook's palettes use,
    so all three pages describe colour the same way. */
-function PaletteBand({ palette, innerRef }) {
+function PaletteBand({ palette, innerRef, emptyLabel }) {
+  if (!palette.length) {
+    return (
+      <p ref={innerRef} className="max-w-[54ch] text-sm text-[#0A0A0A]/75">
+        {emptyLabel}
+      </p>
+    );
+  }
+
   return (
     <div ref={innerRef} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-      {palette.map((colour, i) => (
-        <div
-          key={i}
-          className="aspect-square sm:aspect-3/4 flex flex-col justify-end p-3 sm:p-4"
+      {palette.map((colour) => (
+        <Link
+          key={colour.name}
+          to={`/catalog?dye=${encodeURIComponent(colour.name)}`}
+          aria-label={`${colour.name}, ${colour.count} ${colour.count === 1 ? 'garment' : 'garments'}`}
+          className="group aspect-square sm:aspect-3/4 flex flex-col justify-end p-3 sm:p-4 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-inset"
           style={{
             backgroundColor: colour.hex,
             color: inkOn(colour.hex),
@@ -344,11 +356,15 @@ function PaletteBand({ palette, innerRef }) {
             boxShadow: needsEdge(colour.hex) ? 'inset 0 0 0 1px #DCDCDC' : undefined,
           }}
         >
-          <span className="font-mono text-[11px] uppercase tracking-wider leading-tight">
+          <span className="font-mono text-[11px] uppercase tracking-wider leading-tight group-hover:underline underline-offset-4">
             {colour.name}
           </span>
-          <span className="font-mono text-[10px] opacity-60 mt-0.5">{colour.hex}</span>
-        </div>
+          {/* How many garments carry it, rather than the hex — a number the
+              visitor can act on instead of one only a screen can use. */}
+          <span className="font-mono text-[10px] opacity-70 mt-0.5 tabular-nums">
+            {colour.count}
+          </span>
+        </Link>
       ))}
     </div>
   );
@@ -485,6 +501,10 @@ function ColorAxis({ season, reading }) {
 export default function PersonalColorPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const { t } = useLanguage();
+  // The reading answers with colours the shop actually dyes, so the archive is
+  // read here rather than a palette being written by hand.
+  const { dyes } = useDyeArchive();
 
   const [activeTab, setActiveTab] = useState('quiz'); // 'quiz' | 'theory' | 'palette'
   const [currentStep, setCurrentStep] = useState(0);
@@ -849,10 +869,20 @@ export default function PersonalColorPage() {
 
                 {/* The answer, at the size of an answer. */}
                 <div>
-                  <h3 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-3">
-                    Signature palette (สีที่ขับผิวที่สุด)
+                  <h3 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-1">
+                    {t('colorLab.paletteTitle')}
                   </h3>
-                  <PaletteBand palette={profile.palette} innerRef={paletteMotionRef} />
+                  <p className="text-xs text-[#666666] mb-3 max-w-[58ch]">
+                    {t('colorLab.paletteNote')}
+                  </p>
+                  {/* The answer is drawn from stock rather than from theory: a
+                      page called "find your colour" that ends on six colours
+                      the shop has never dyed is a dead end. */}
+                  <PaletteBand
+                    palette={dyesForSeason(dyes, diagnosedSeason)}
+                    innerRef={paletteMotionRef}
+                    emptyLabel={t('colorLab.paletteEmpty')}
+                  />
                 </div>
 
                 {/* The working behind the verdict. The palette stays the
