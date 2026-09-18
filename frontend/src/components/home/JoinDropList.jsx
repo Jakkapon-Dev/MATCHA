@@ -33,7 +33,7 @@ export default function JoinDropList({ onSubscribe }) {
 
   return (
     <section className="w-full bg-[#F1F1F1] text-[#000000] py-20 px-4 sm:px-8 lg:px-12 border-b border-[#DCDCDC] select-none overflow-hidden">
-      <div className="max-w-6xl mx-auto bg-white border-2 border-[#C91D1D] shadow-2xl p-6 sm:p-10 lg:p-14 relative">
+      <div className="max-w-6xl mx-auto bg-white border-t border-[#0A0A0A] p-6 sm:p-10 lg:p-14 relative">
         
         {/* Subtle Background Glow */}
         <div className="absolute -right-20 -bottom-20 w-80 h-80 bg-[#C91D1D]/10 rounded-full blur-3xl pointer-events-none" />
@@ -127,7 +127,7 @@ export default function JoinDropList({ onSubscribe }) {
                 />
                 <button
                   type="submit"
-                  className="px-8 py-3 bg-[#C91D1D] hover:bg-[#A81515] text-white font-sans font-bold text-xs uppercase tracking-widest transition-all shadow-md active:scale-95 cursor-pointer whitespace-nowrap flex items-center justify-center gap-2"
+                  className="px-8 py-3 bg-[#C91D1D] hover:bg-[#A81515] text-white font-mono text-xs uppercase tracking-[0.15em] transition-colors cursor-pointer whitespace-nowrap flex items-center justify-center gap-2"
                 >
                   <span>{t('drop.cta')}</span>
                   <ArrowRight size={14} />

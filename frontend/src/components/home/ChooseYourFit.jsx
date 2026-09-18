@@ -89,7 +89,7 @@ export default function ChooseYourFit({ onSelectFit }) {
 
       {/* 2. Independent Title & Badge: คุมโทนสี MatchA Espresso & Terracotta */}
       <Reveal x={-44} y={0} duration={0.8} amount={0.1} className="absolute top-12 left-[24%] z-30 pointer-events-none">
-        <div className="bg-[#000000] px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block border-l-4 border-[#C91D1D]">
+        <div className="bg-[#0A0A0A] px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase inline-block border-l-4 border-[#C91D1D]">
           <span className="animate-text-shimmer-light inline-block">
             {t('fit.title')}
           </span>
@@ -127,8 +127,8 @@ export default function ChooseYourFit({ onSelectFit }) {
               onClick={() => onSelectFit && onSelectFit(item)}
               className={`relative w-full h-full cursor-pointer transition-all duration-300 transform ${
                 isHovered
-                  ? "scale-108 shadow-2xl -translate-y-1.5 ring-2 ring-[#C91D1D]"
-                  : "shadow-md hover:shadow-xl"
+                  ? "scale-105 -translate-y-1.5 ring-2 ring-[#C91D1D]"
+                  : ""
               } overflow-hidden bg-transparent border-0`}
             >
               {/* Outfit Photo */}
@@ -150,7 +150,7 @@ export default function ChooseYourFit({ onSelectFit }) {
                 <h4 className="text-xs sm:text-base font-extrabold text-[#F1F1F1] uppercase tracking-tight mt-1 leading-tight">
                   {copy.category}
                 </h4>
-                <span className="mt-2.5 inline-flex items-center gap-1 text-[10px] font-mono text-white font-bold uppercase bg-[#C91D1D] hover:bg-[#A81515] px-3 py-1 rounded shadow-sm transition-colors">
+                <span className="mt-2.5 inline-flex items-center gap-1 text-[10px] font-mono text-white uppercase tracking-wider bg-[#C91D1D] px-3 py-1 transition-colors">
                   <span>{t('fit.explore')}</span>
                   <ArrowUpRight size={11} />
                 </span>
@@ -158,7 +158,7 @@ export default function ChooseYourFit({ onSelectFit }) {
 
               {/* Code Label in Top Left Corner */}
               {!isHovered && (
-                <div className="absolute top-2 left-2 px-2 py-0.5 bg-[#000000]/90 text-[9px] sm:text-[10px] font-mono text-[#518F5C] font-bold shadow-sm">
+                <div className="absolute top-2 left-2 px-2 py-0.5 bg-[#0A0A0A]/90 text-[9px] sm:text-[10px] font-mono text-[#518F5C] tracking-wider">
                   {item.code}
                 </div>
               )}

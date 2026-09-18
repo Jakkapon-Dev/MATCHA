@@ -80,7 +80,7 @@ export default function PulsePerks() {
         {/* 2. Main Framed Grid Container (Matching Reference Orange Border Frame).
             กรอบทั้งกล่องเข้ามาเป็นชิ้นเดียว แล้วค่อยให้สิทธิพิเศษ 3 ข้อทยอยเข้า
             ข้างใน — การ์ด 3 มิติไม่ถูกแตะ เพราะ transform ของมันเป็นของผู้ใช้ */}
-        <Reveal y={44} delay={0.1} duration={0.8} amount={0.15} className="border-2 border-[#C91D1D]/80 rounded-none grid grid-cols-1 lg:grid-cols-12 overflow-hidden bg-white shadow-xl">
+        <Reveal y={44} delay={0.1} duration={0.8} amount={0.15} className="border-t border-[#0A0A0A] grid grid-cols-1 lg:grid-cols-12 overflow-hidden bg-white">
           
           {/* Left Column (Col 1-7): 3D Perspective Rotating Sitting Model Card */}
           <div
@@ -91,7 +91,7 @@ export default function PulsePerks() {
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            className="lg:col-span-7 p-8 sm:p-12 lg:p-16 flex items-center justify-center border-b lg:border-b-0 lg:border-r-2 border-[#C91D1D]/80 bg-linear-to-b from-[#F1F1F1] to-white relative cursor-grab perspective-1000 touch-pan-y"
+            className="lg:col-span-7 p-8 sm:p-12 lg:p-16 flex items-center justify-center border-b lg:border-b-0 lg:border-r border-[#DCDCDC] bg-linear-to-b from-[#F1F1F1] to-white relative cursor-grab perspective-1000 touch-pan-y"
             style={{ perspective: '1200px' }}
           >
             {/* Subtle background glow effect */}
@@ -144,7 +144,7 @@ export default function PulsePerks() {
           </div>
 
           {/* Right Column (Col 8-12): 3 Perk Sections with Orange Dividing Borders */}
-          <div className="lg:col-span-5 flex flex-col justify-between divide-y-2 divide-[#C91D1D]/80 bg-white">
+          <div className="lg:col-span-5 flex flex-col justify-between divide-y divide-[#DCDCDC] bg-white">
             {perks.map((perk, i) => {
               const Icon = perk.icon;
 

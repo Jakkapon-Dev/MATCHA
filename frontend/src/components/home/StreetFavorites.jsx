@@ -2,12 +2,27 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ShoppingBag, Sparkles, Star, Check, Eye } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { Reveal, EASE } from '../motion';
-import SpotlightCard from '../ui/SpotlightCard';
 import useStreetProducts from '../../hooks/useStreetProducts';
 import ProductCardSkeleton from '../ui/ProductCardSkeleton';
 import { webpSrc } from '../../utils/imageFallback';
+// The catalogue's colour rules, so a garment looks the same in the rail as it
+// does on the catalogue page.
+import { wash, inkOn, needsEdge } from '../../utils/dye';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 
+/* The home rail's product card, speaking the catalogue's language.
+
+   This one component renders twenty-four times on the landing page and was on
+   its own responsible for 258 of the page's 279 rounded boxes and 77 of its
+   117 shadows: a rounded spotlight panel holding a rounded badge, a rounded
+   image well, round swatches and a rounded button, all with their own shadow.
+   It is the same product the catalogue sells, so it is now shown the way the
+   catalogue shows it — standing on a wash of its own dye, with the true colour
+   named on a solid bar beneath.
+
+   The swatches stay: being able to flip a garment through its colours is the
+   point of this rail, and it is the one thing here the catalogue tile cannot
+   do. They are square now, because a dye is a field, not a dot. */
 function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
   const { t } = useLanguage();
   // Products with zero or multiple sizes must open quick view for an explicit choice;
@@ -19,10 +34,10 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
   const variants = item?.variants && item.variants.length > 0
     ? item.variants
     : [
-        { 
-          color: item?.color || t('favorites.signatureTone'), 
-          colorHex: item?.colorHex || '#C91D1D', 
-          image: item?.image 
+        {
+          color: item?.color || t('favorites.signatureTone'),
+          colorHex: item?.colorHex || '#C91D1D',
+          image: item?.image
         }
       ];
 
@@ -40,125 +55,116 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
     }, 150);
   };
 
+  const hex = activeVariant?.colorHex || '#DCDCDC';
+  const openQuickView = () =>
+    onQuickView && onQuickView({ ...item, initialVariant: activeVariant, activeImage: activeVariant.image });
+
   return (
-    <SpotlightCard
-      onClick={() => onQuickView && onQuickView({ ...item, initialVariant: activeVariant, activeImage: activeVariant.image })}
-      spotlightColor="rgba(188, 90, 54, 0.15)"
-      className="matcha-hover-card w-64 sm:w-72 lg:w-80 shrink-0 p-5 sm:p-6 flex flex-col justify-between hover:bg-[#F1F1F1]/60 transition-colors duration-200 cursor-pointer group relative rounded-none border-0"
+    <article
+      onClick={openQuickView}
+      className="w-64 sm:w-72 lg:w-80 shrink-0 flex flex-col cursor-pointer group relative select-none"
     >
-      {/* Top Tag & Category */}
-      <div className="flex justify-between items-start mb-3 relative z-10">
-        <span className="text-[11px] font-mono font-bold text-[#C91D1D] uppercase bg-orange-50 px-2 py-0.5 rounded border border-orange-200/60">
-          {item.tag || item.season}
-        </span>
-        <span className="text-[10px] font-mono text-[#666666] uppercase">
-          {item.category}
-        </span>
+      {/* Tag and category, set as the plain marginalia they are. */}
+      <div className="flex justify-between items-baseline gap-2 px-3 pt-3 pb-2 font-mono text-[10px] uppercase tracking-wider">
+        <span className="text-[#C91D1D] truncate">{item.tag || item.season}</span>
+        <span className="text-[#666666] truncate">{item.category}</span>
       </div>
 
-      {/* Product Image Container */}
-      <div className="relative w-full aspect-square flex items-center justify-center overflow-hidden mb-3 p-2 bg-[#F1F1F1]/60 rounded-xl group-hover:bg-[#F1F1F1] transition-colors z-10">
+      {/* The garment on its own dye. Every product here is shot on white, so
+          `multiply` drops the studio backdrop into the wash. */}
+      <div className="relative aspect-square overflow-hidden" style={{ backgroundColor: wash(hex) }}>
         <img
           src={webpSrc(activeVariant.image)} data-original-src={activeVariant.image}
           alt={`${item.name} - ${activeVariant.color}`}
-          className={`w-full h-full object-contain object-center transition-all duration-300 group-hover:scale-105 ${
-            imageFade ? 'opacity-30 scale-95' : 'opacity-100 scale-100'
+          className={`absolute inset-0 w-full h-full object-contain object-center mix-blend-multiply transition-all duration-300 group-hover:scale-[1.04] ${
+            imageFade ? 'opacity-30' : 'opacity-100'
           }`}
         />
-        
-        {/* Active Color Name Pill */}
-        <span className="absolute bottom-2 left-2 px-2 py-0.5 bg-black/75 text-white text-[9px] font-mono rounded flex items-center gap-1 shadow-sm">
-          <span 
-            className="w-2 h-2 rounded-full border border-white/50" 
-            style={{ backgroundColor: activeVariant.colorHex }}
-          />
-          <span>{activeVariant.color}</span>
-        </span>
 
-        {/* Sold Out Overlay */}
         {!item.inStock && (
-          <div className="absolute inset-0 bg-[#000000]/60 backdrop-blur-[1px] flex items-center justify-center z-25">
-            <span className="px-3 py-1 bg-white text-[#000000] text-xs font-mono font-bold uppercase tracking-wider rounded-lg shadow-md">
+          <div className="absolute inset-0 bg-[#F1F1F1]/70 flex items-center justify-center">
+            <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#0A0A0A]">
               {t('favorites.soldOutBadge')}
             </span>
           </div>
         )}
+
+        {/* The action answers the pointer rather than sitting on all
+            twenty-four cards at once. */}
+        {item.inStock && (
+          <div className="absolute inset-x-0 bottom-0 flex opacity-0 translate-y-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-y-0 group-focus-within:opacity-100 group-focus-within:translate-y-0">
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (needsSizeChoice) return openQuickView();
+                onAddToCart && onAddToCart({
+                  ...item,
+                  image: activeVariant.image,
+                  color: activeVariant.color,
+                  colorHex: activeVariant.colorHex,
+                  size: sizeList[0],
+                  quantity: 1
+                });
+              }}
+              className="flex-1 py-2.5 bg-[#0A0A0A] hover:bg-[#C91D1D] text-[#F1F1F1] font-mono text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+            >
+              {needsSizeChoice ? <Eye size={13} /> : <ShoppingBag size={13} />}
+              <span>{needsSizeChoice ? t('favorites.selectSize') : t('favorites.addToCart')}</span>
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* Interactive Color Selection Buttons */}
-      {variants.length > 1 && (
-        <div className="mb-3 flex items-center justify-center gap-1.5 z-10 flex-wrap">
-          {variants.map((v, i) => {
-            const isSelected = activeVariant.image === v.image;
-            return (
-              <button
-                key={i}
-                onClick={(e) => handleColorClick(e, v)}
-                title={v.color}
-                className={`w-5.5 h-5.5 rounded-full border-2 transition-all cursor-pointer flex items-center justify-center ${
-                  isSelected 
-                    ? 'border-[#000000] scale-120 ring-2 ring-[#C91D1D]/40 shadow-xs' 
-                    : 'border-transparent opacity-75 hover:opacity-100 hover:scale-110'
-                }`}
-                style={{ backgroundColor: v.colorHex }}
-              >
-                {isSelected && (
-                  <Check size={9} className={['white', 'cream', 'Ecru'].some(c => v.color.includes(c)) ? 'text-black font-bold' : 'text-white font-bold'} />
-                )}
-              </button>
-            );
-          })}
-        </div>
-      )}
-
-      {/* Solid Terracotta Action Button */}
-      <div className="mb-3 relative z-10">
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            if (!item.inStock) return;
-            // Route ambiguous sizes through quick view; otherwise construct a complete
-            // cart line using the active color and the product's sole size.
-            if (needsSizeChoice) {
-              onQuickView && onQuickView({
-                ...item,
-                initialVariant: activeVariant,
-                activeImage: activeVariant.image
-              });
-            } else {
-              onAddToCart && onAddToCart({
-                ...item,
-                image: activeVariant.image,
-                color: activeVariant.color,
-                colorHex: activeVariant.colorHex,
-                size: sizeList[0],
-                quantity: 1
-              });
-            }
-          }}
-          disabled={!item.inStock}
-          className={`w-full py-2.5 font-mono font-bold text-xs uppercase tracking-wider transition-all shadow-md active:scale-98 cursor-pointer flex items-center justify-center gap-1.5 rounded-lg ${
-            item.inStock
-              ? 'bg-[#C91D1D] hover:bg-[#A81515] text-white'
-              : 'bg-gray-200 text-gray-400 cursor-not-allowed shadow-none'
-          }`}
-        >
-          {needsSizeChoice && item.inStock ? <Eye size={13} /> : <ShoppingBag size={13} />}
-          <span>{!item.inStock ? t('favorites.soldOut') : needsSizeChoice ? t('favorites.selectSize') : t('favorites.addToCart')}</span>
-        </button>
+      {/* The dye at full strength, named on itself — the same bar the
+          catalogue tiles carry. */}
+      <div
+        className="flex items-center justify-between gap-2 px-3 py-1"
+        style={{
+          backgroundColor: hex,
+          color: inkOn(hex),
+          boxShadow: needsEdge(hex) ? 'inset 0 0 0 1px #DCDCDC' : undefined,
+        }}
+      >
+        <span className="font-mono text-[10px] uppercase tracking-wider truncate">
+          {activeVariant.color}
+        </span>
+        <span className="font-mono text-[10px] tabular-nums shrink-0">
+          ${typeof item.price === 'number' ? item.price.toFixed(2) : item.price}
+        </span>
       </div>
 
-      {/* Product Title and Price */}
-      <div className="text-center relative z-10">
-        <h3 className="text-xs sm:text-sm font-bold text-[#000000] line-clamp-1 leading-tight group-hover:text-[#C91D1D] transition-colors">
+      <div className="px-3 pt-2.5 pb-3 flex flex-col gap-2.5">
+        <h3 className="text-[13px] leading-snug text-[#0A0A0A] line-clamp-2 group-hover:underline underline-offset-4 decoration-2 decoration-[#C91D1D]">
           {item.name}
         </h3>
-        <p className="text-xs font-mono font-black text-[#C91D1D] mt-1">
-          ${typeof item.price === 'number' ? item.price.toFixed(2) : item.price}
-        </p>
-      </div>
 
-    </SpotlightCard>
+        {variants.length > 1 && (
+          <div className="flex items-center gap-1.5 flex-wrap">
+            {variants.map((v, i) => {
+              const isSelected = activeVariant.image === v.image;
+              return (
+                <button
+                  key={i}
+                  type="button"
+                  onClick={(e) => handleColorClick(e, v)}
+                  title={v.color}
+                  aria-label={v.color}
+                  aria-pressed={isSelected}
+                  className={`w-5 h-5 cursor-pointer transition-all outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-offset-1 ${
+                    isSelected ? 'ring-2 ring-[#0A0A0A] ring-offset-1' : 'opacity-80 hover:opacity-100'
+                  }`}
+                  style={{
+                    backgroundColor: v.colorHex,
+                    boxShadow: needsEdge(v.colorHex) ? 'inset 0 0 0 1px #DCDCDC' : undefined,
+                  }}
+                />
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </article>
   );
 }
 
@@ -215,7 +221,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
             {onExploreCatalog && (
               <button
                 onClick={onExploreCatalog}
-                className="px-4 py-2 bg-[#042509] hover:bg-[#021505] text-white font-mono font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm transition-all flex items-center gap-1.5 cursor-pointer mr-2"
+                className="font-mono text-xs uppercase tracking-wider text-[#C91D1D] hover:underline underline-offset-4 cursor-pointer flex items-center gap-1.5 mr-2 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
               >
                 <Sparkles size={13} className="text-[#518F5C]" />
                 <span>{t('favorites.viewCatalog')}{!loading && !error ? ` (${products.length})` : ''}</span>
@@ -224,14 +230,14 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
             <button
               onClick={scrollLeft}
               aria-label={t('favorites.prevAria')}
-              className="w-10 h-10 border-2 border-[#C91D1D] text-[#C91D1D] hover:bg-[#C91D1D] hover:text-white flex items-center justify-center transition-colors shadow-sm cursor-pointer active:scale-95 rounded-lg"
+              className="w-9 h-9 text-[#0A0A0A] hover:text-[#C91D1D] flex items-center justify-center transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
             >
               <ChevronLeft size={20} />
             </button>
             <button
               onClick={scrollRight}
               aria-label={t('favorites.nextAria')}
-              className="w-10 h-10 border-2 border-[#C91D1D] text-[#C91D1D] hover:bg-[#C91D1D] hover:text-white flex items-center justify-center transition-colors shadow-sm cursor-pointer active:scale-95 rounded-lg"
+              className="w-9 h-9 text-[#0A0A0A] hover:text-[#C91D1D] flex items-center justify-center transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
             >
               <ChevronRight size={20} />
             </button>
@@ -248,32 +254,36 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
             return (
               <button
                 key={key}
+                type="button"
+                aria-pressed={isActive}
                 onClick={() => setActiveCategory(key)}
-                className={`relative px-4 py-1.5 text-xs font-mono font-bold tracking-wider uppercase transition-colors whitespace-nowrap cursor-pointer rounded-lg ${
-                  isActive
-                    ? 'text-white'
-                    : 'bg-white text-[#000000] border border-[#DCDCDC] hover:border-[#C91D1D]'
+                className={`relative pb-1.5 font-mono text-xs uppercase tracking-wider whitespace-nowrap cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
+                  isActive ? 'text-[#0A0A0A] font-bold' : 'text-[#666666] hover:text-[#0A0A0A]'
                 }`}
               >
+                <span>{t(`favorites.categories.${key}`)}</span>
+                {/* The rule that slides between categories, the same mark the
+                    catalogue puts under its current category. It is still one
+                    shared element rather than six that switch on and off, so
+                    the eye can follow the selection to where it went. */}
                 {isActive && (
                   reduced ? (
-                    <span className="absolute inset-0 bg-[#C91D1D] rounded-lg shadow-md" />
+                    <span className="absolute inset-x-0 bottom-0 h-0.5 bg-[#C91D1D]" />
                   ) : (
                     <motion.span
                       layoutId="favorites-active-pill"
-                      className="absolute inset-0 bg-[#C91D1D] rounded-lg shadow-md"
+                      className="absolute inset-x-0 bottom-0 h-0.5 bg-[#C91D1D]"
                       transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                     />
                   )
                 )}
-                <span className="relative z-10">{t(`favorites.categories.${key}`)}</span>
               </button>
             );
           })}
         </Reveal>
 
         {/* 3. Main Framed Carousel Container with Spotlight Tracking */}
-        <Reveal y={40} delay={0.16} className="relative border-2 border-[#C91D1D] bg-white shadow-xl overflow-hidden rounded-2xl">
+        <Reveal y={40} delay={0.16} className="relative border-t border-b border-[#0A0A0A] bg-white overflow-hidden">
 
           {/* The dividing rules moved from `divide-x` onto the cards themselves.
               `divide-x` styles every child but the first, and which card is

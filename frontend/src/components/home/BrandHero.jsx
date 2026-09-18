@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import { Parallax, Reveal, EASE } from '../motion';
@@ -7,6 +8,7 @@ import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function BrandHero({ onShopNow, onEnterWebsite }) {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const reduced = useReducedMotion();
 
   // Studio model references for the four independently shuffled slices.
@@ -111,7 +113,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
 
   return (
     <section
-      className="relative w-full bg-[#F1F1F1] text-[#000000] min-h-[92svh] pt-2 pb-8 sm:pb-10 px-4 sm:px-8 lg:px-12 flex flex-col gap-2 sm:gap-4 select-none border-b border-[#DCDCDC]"
+      className="relative w-full bg-[#F1F1F1] text-[#000000] min-h-svh pt-2 pb-8 sm:pb-10 px-4 sm:px-8 lg:px-12 flex flex-col justify-center gap-2 sm:gap-4 select-none border-b border-[#DCDCDC]"
     >
       
       {/* The masthead wipes up from its own baseline the way a magazine title
@@ -147,7 +149,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
           {badgeLines.map((text, i) => (
             <Reveal key={i} x={-28} y={0} delay={0.25 + i * 0.07} duration={0.6}>
               <span
-                className="bg-[#000000] text-[#F1F1F1] px-3.5 py-1 text-xs sm:text-sm font-bold font-mono uppercase tracking-wider inline-block shadow-md select-none"
+                className="bg-[#0A0A0A] text-[#F1F1F1] px-3.5 py-1 text-xs sm:text-sm font-bold font-mono uppercase tracking-wider inline-block select-none"
               >
                 {text}
               </span>
@@ -161,14 +163,20 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
         <Parallax
           distance={48}
           className="md:col-span-6 flex flex-col items-center justify-center order-1 md:order-2 z-20"
-          innerClassName="w-full flex justify-center"
+          innerClassName="w-full flex flex-col items-center gap-3"
         >
 
+          {/* The composite model is the one thing on this page that shows what
+              MatchA is: four garments from four different looks, swappable
+              panel by panel. It was sitting at card size among six other
+              sections. It is now sized off the viewport so it leads the screen
+              on any display, and the frame, shadow and border came off — the
+              rules between the slices are structure and stay. */}
           <motion.div
             initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.94, y: 34 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             transition={{ duration: 0.85, delay: 0.1, ease: EASE }}
-            className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl aspect-3/4 bg-white rounded-none overflow-hidden shadow-2xl border border-[#000000]/20 flex flex-col select-none group/card z-20"
+            className="relative h-[42svh] sm:h-[54svh] lg:h-[62svh] aspect-3/4 bg-white overflow-hidden flex flex-col select-none group/card z-20"
           >
             
             {/* Slice 1: Head & Face (Top 25%) */}
@@ -225,6 +233,14 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
 
           </motion.div>
 
+          {/* Said out loud, because the `title` attributes on each slice need a
+              mouse held still to read and say nothing at all on a phone. */}
+          <Reveal y={12} delay={0.5} duration={0.5}>
+            <p className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-[#666666] text-center">
+              {t('hero.sliceHint')}
+            </p>
+          </Reveal>
+
         </Parallax>
 
         {/* Right Column: Code, Barcode & Action Button */}
@@ -254,10 +270,22 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
           <Reveal x={28} y={0} delay={0.38} duration={0.6} className="w-full sm:w-auto">
             <button
               onClick={handleAction}
-              className="w-full sm:w-auto max-w-full px-8 py-4 bg-[#C91D1D] hover:bg-[#A81515] text-white font-mono text-sm font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-[#C91D1D]/30 active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
+              className="w-full sm:w-auto max-w-full px-8 py-4 bg-[#C91D1D] hover:bg-[#A81515] text-white font-mono text-sm uppercase tracking-[0.15em] transition-colors active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
             >
               <span>{onEnterWebsite ? t('hero.enterWebsite') : t('hero.shopNow')}</span>
               <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </Reveal>
+
+          {/* The Colour Lab is the point of the brand and the landing page had
+              no way into it but the nav. */}
+          <Reveal x={28} y={0} delay={0.44} duration={0.6}>
+            <button
+              type="button"
+              onClick={() => navigate('/personal-color')}
+              className="font-mono text-xs uppercase tracking-wider text-[#0A0A0A] hover:text-[#C91D1D] cursor-pointer transition-colors underline underline-offset-4 decoration-[#DCDCDC] hover:decoration-[#C91D1D] outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+            >
+              {t('hero.findYourColour')}
             </button>
           </Reveal>
 
