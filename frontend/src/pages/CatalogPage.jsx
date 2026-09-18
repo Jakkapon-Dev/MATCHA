@@ -1,310 +1,372 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { RotateCcw } from 'lucide-react';
 import useChangeMotion from '../hooks/useChangeMotion';
-import { Sparkles, ArrowLeft, RotateCcw } from 'lucide-react';
 import { api } from '../services/api';
-import ProductCard from '../components/product/ProductCard';
 import ProductCardSkeleton from '../components/ui/ProductCardSkeleton';
 import EmptyState from '../components/ui/EmptyState';
-import TopFilterBar from '../components/catalog/TopFilterBar';
-import CatalogToolbar from '../components/catalog/CatalogToolbar';
 import CatalogPagination from '../components/catalog/CatalogPagination';
+import DyeIndex from '../components/catalog/DyeIndex';
+import DyeTile from '../components/catalog/DyeTile';
+import { buildDyeIndex, variantForDye } from '../utils/dye';
 
-export default function CatalogPage({ 
+const SORTS = [
+  { value: 'featured', label: 'Featured' },
+  { value: 'price-asc', label: 'Price, low to high' },
+  { value: 'price-desc', label: 'Price, high to low' },
+  { value: 'name', label: 'A to Z' },
+];
+
+const FITS = ['ALL', 'Oversized', 'Relaxed', 'Tailored', 'Wide Leg', 'Vintage Boxy'];
+const SEASONS = ['ALL', 'Spring', 'Summer', 'Autumn', 'Winter', 'Artisan'];
+const MAX_PRICE = 200;
+
+const priceOf = (product) =>
+  typeof product?.price === 'number' ? product.price : parseFloat(product?.price) || 0;
+
+export default function CatalogPage({
   initialCategory = 'ALL',
-  onBackToHome, 
-  onAddToCart, 
-  onQuickView, 
-  onSelectFit 
+  onAddToCart,
+  onQuickView,
 }) {
-  // State for products and categories
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Filter States
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedSeason, setSelectedSeason] = useState('ALL');
-  const [selectedColor, setSelectedColor] = useState('ALL');
+  const [selectedDye, setSelectedDye] = useState('ALL');
   const [selectedFit, setSelectedFit] = useState('ALL');
-  const [priceRange, setPriceRange] = useState(200);
+  const [priceRange, setPriceRange] = useState(MAX_PRICE);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
 
-  // UI States
-  const [gridCols, setGridCols] = useState(4); // Default to 4 columns (2 on mobile, 3 on tablet, 4 on desktop)
-
-  // Pagination State
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 12;
+  const itemsPerPage = 24;
 
-  // Options
-  const seasonOptions = [
-    { label: 'All Seasons', value: 'ALL', icon: '✦' },
-    { label: 'Spring Drop', value: 'Spring', icon: '🌸' },
-    { label: 'Summer Drop', value: 'Summer', icon: '☀️' },
-    { label: 'Autumn Drop', value: 'Autumn', icon: '🍂' },
-    { label: 'Winter Drop', value: 'Winter', icon: '❄️' },
-    { label: 'Artisan Core', value: 'Artisan', icon: '🍵' },
-  ];
-
-  const colorOptions = [
-    { label: 'All Colors', value: 'ALL', hex: 'linear-gradient(135deg, #042509, #C91D1D, #1B3B6F)' },
-    { label: 'Olive Green', value: 'Olive', hex: '#556B2F' },
-    { label: 'Mustard Gold', value: 'Mustard', hex: '#D4A338' },
-    { label: 'Burnt Orange', value: 'Orange', hex: '#C05C2B' },
-    { label: 'Warm Brown', value: 'Brown', hex: '#5C4033' },
-    { label: 'Cobalt Blue', value: 'Cobalt', hex: '#1A365D' },
-    { label: 'Sky Blue', value: 'Sky', hex: '#64B5F6' },
-    { label: 'Matcha Teal', value: 'Teal', hex: '#00796B' },
-    { label: 'Charcoal Black', value: 'Charcoal', hex: '#2C3539' },
-    { label: 'Crimson Red', value: 'Crimson', hex: '#800020' },
-    { label: 'Fuchsia Pink', value: 'Fuchsia', hex: '#C2185B' },
-    { label: 'Lavender', value: 'Lavender', hex: '#9575CD' },
-    { label: 'Natural Ecru', value: 'Ecru', hex: '#EAE6DF' }
-  ];
-
-  const fitOptions = ['ALL', 'Oversized', 'Relaxed', 'Tailored', 'Wide Leg', 'Vintage Boxy'];
-
-  // Load Categories on mount
+  /* The archive is fetched once and narrowed in the browser. The dye rail has
+     to show how many garments sit behind every colour, which means the page
+     needs the whole set in hand regardless of what is currently selected —
+     and once it has it, a round trip per filter change buys nothing. */
   useEffect(() => {
-    async function fetchCats() {
-      try {
-        const catData = await api.getCategories();
-        setCategories(catData);
-      } catch (err) {
-        console.error('Error loading categories:', err);
-      }
-    }
-    fetchCats();
-  }, []);
+    let cancelled = false;
 
-  // Fetch Products based on filters
-  useEffect(() => {
-    async function loadProducts() {
+    async function loadArchive() {
       setLoading(true);
       try {
-        const response = await api.getProducts({
-          category: selectedCategory,
-          season: selectedSeason,
-          search: searchQuery,
-          sort: sortBy,
-          color: selectedColor,
-          fit: selectedFit,
-          inStockOnly,
-          maxPrice: priceRange,
-          page: 1,
-          limit: 100,
-        });
-
-        if (response && response.data) {
-          setProducts(response.data);
-          setError(null);
-        }
+        const response = await api.getProducts({ page: 1, limit: 100 });
+        if (cancelled) return;
+        setProducts(response?.data || []);
+        setError(null);
       } catch (err) {
+        if (cancelled) return;
         console.error('Failed to load products:', err);
-        setError('Unable to reach server. Displaying cached archive collection.');
+        setError('The archive could not be reached. Reload to try again.');
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
       }
     }
 
-    loadProducts();
-  }, [selectedCategory, selectedSeason, searchQuery, sortBy, selectedColor, selectedFit, inStockOnly, priceRange]);
+    loadArchive();
+    return () => { cancelled = true; };
+  }, []);
 
-  // Reset pagination when filter changes
+  // Categories come from the archive rather than a second endpoint, so the nav
+  // can never offer a category with nothing in it.
+  const categories = useMemo(() => {
+    const names = new Set(products.map((p) => p?.category).filter(Boolean));
+    return ['ALL', ...[...names].sort()];
+  }, [products]);
+
+  const matchesEverythingButDye = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    return products.filter((product) => {
+      if (selectedCategory !== 'ALL' && product?.category !== selectedCategory) return false;
+      if (selectedSeason !== 'ALL' && product?.season !== selectedSeason) return false;
+      if (selectedFit !== 'ALL' && product?.fit !== selectedFit) return false;
+      if (inStockOnly && product?.inStock === false) return false;
+      if (priceOf(product) > priceRange) return false;
+      if (query) {
+        const haystack = `${product?.name || ''} ${product?.category || ''} ${product?.season || ''}`.toLowerCase();
+        if (!haystack.includes(query)) return false;
+      }
+      return true;
+    });
+  }, [products, selectedCategory, selectedSeason, selectedFit, inStockOnly, priceRange, searchQuery]);
+
+  /* Counts are taken before the dye filter is applied. Narrowing to Coral must
+     not collapse every other band to zero — the rail has to keep showing where
+     else the visitor could go. */
+  const dyes = useMemo(() => buildDyeIndex(matchesEverythingButDye), [matchesEverythingButDye]);
+
+  const visible = useMemo(() => {
+    const byDye = selectedDye === 'ALL'
+      ? matchesEverythingButDye
+      : matchesEverythingButDye.filter((product) => {
+          const variants = product?.variants?.length
+            ? product.variants
+            : [{ color: product?.color }];
+          return variants.some((v) => v?.color === selectedDye);
+        });
+
+    const sorted = [...byDye];
+    if (sortBy === 'price-asc') sorted.sort((a, b) => priceOf(a) - priceOf(b));
+    else if (sortBy === 'price-desc') sorted.sort((a, b) => priceOf(b) - priceOf(a));
+    else if (sortBy === 'name') sorted.sort((a, b) => String(a?.name).localeCompare(String(b?.name)));
+    return sorted;
+  }, [matchesEverythingButDye, selectedDye, sortBy]);
+
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedCategory, selectedSeason, searchQuery, sortBy, selectedColor, selectedFit, inStockOnly, priceRange]);
+  }, [selectedCategory, selectedSeason, selectedDye, selectedFit, inStockOnly, priceRange, searchQuery, sortBy]);
 
-  // Calculate active filter count
-  const activeFilterCount = useMemo(() => {
-    let count = 0;
-    if (selectedSeason !== 'ALL') count++;
-    if (selectedColor !== 'ALL') count++;
-    if (selectedFit !== 'ALL') count++;
-    if (inStockOnly) count++;
-    if (priceRange < 200) count++;
-    return count;
-  }, [selectedSeason, selectedColor, selectedFit, inStockOnly, priceRange]);
+  const totalItems = visible.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+  const pageItems = useMemo(
+    () => visible.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage),
+    [visible, currentPage]
+  );
+  const startIndex = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+  const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
 
-  const handleResetFilters = () => {
+  const refineCount =
+    (selectedSeason !== 'ALL' ? 1 : 0) +
+    (selectedFit !== 'ALL' ? 1 : 0) +
+    (inStockOnly ? 1 : 0) +
+    (priceRange < MAX_PRICE ? 1 : 0);
+
+  const hasFilters = refineCount > 0 || selectedDye !== 'ALL' || selectedCategory !== 'ALL' || Boolean(searchQuery);
+
+  const resetAll = () => {
     setSelectedCategory('ALL');
     setSelectedSeason('ALL');
-    setSelectedColor('ALL');
+    setSelectedDye('ALL');
     setSelectedFit('ALL');
-    setPriceRange(200);
+    setPriceRange(MAX_PRICE);
     setInStockOnly(false);
     setSearchQuery('');
     setSortBy('featured');
-    setCurrentPage(1);
   };
 
-  // Client-side pagination slice
-  const totalItems = products.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-  const paginatedProducts = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    return products.slice(start, start + itemsPerPage);
-  }, [products, currentPage, itemsPerPage]);
-
-  const startIndex = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
-  const gridMotionRef = useChangeMotion(`${loading}-${gridCols}-${paginatedProducts.map(product => product.id).join('|')}`, 'grid');
-  const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
-
-  // Grid class mapping
-  const gridClasses = {
-    2: 'grid-cols-1 sm:grid-cols-2',
-    3: 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3',
-    4: 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4',
-    list: 'grid-cols-1 max-w-4xl mx-auto',
-  }[gridCols] || 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4';
+  // The grid answers the filter it was given; nothing here animates on scroll.
+  const gridMotionRef = useChangeMotion(
+    `${loading}-${selectedDye}-${pageItems.map((p) => p.id).join('|')}`,
+    'grid'
+  );
 
   return (
     <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
 
-        {/* Page Header */}
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 pb-6 border-b border-[#DCDCDC]">
-          <div>
-            <div data-enter className="flex items-center gap-2 text-xs font-mono font-bold text-[#042509] uppercase tracking-widest mb-1.5">
-              <span>MatchA Catalog Archive</span>
-              <span>✦</span>
-              <span>2026 Collection</span>
-            </div>
-            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-3xl sm:text-5xl font-black uppercase text-[#000000] tracking-tight">
-              Artisan Apparel
-            </h1>
-          </div>
+        <header className="mb-8">
+          <h1 className="text-4xl sm:text-6xl font-black uppercase text-[#0A0A0A] tracking-tight leading-none">
+            Artisan Apparel
+          </h1>
+          {/* The archive described by its own contents, in a sentence, instead
+              of a tracked-out label stack above the title. */}
+          <p className="mt-3 font-mono text-xs text-[#666666]">
+            {loading
+              ? 'Opening the archive'
+              : `${products.length} pieces in ${dyes.length} dyes`}
+          </p>
+        </header>
 
-          <div data-enter style={{ '--enter-delay': '190ms' }} className="text-xs font-mono text-[#666666]">
-            Total <strong className="text-[#000000]">{totalItems}</strong> pieces available
+        {/* Category is the one axis that is genuinely orthogonal to colour, so
+            it stays — as reading matter, not as a row of filled pills. */}
+        <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2 pb-4 border-b border-[#DCDCDC]">
+          {categories.map((name) => {
+            const active = selectedCategory === name;
+            return (
+              <button
+                key={name}
+                type="button"
+                onClick={() => setSelectedCategory(name)}
+                className={`font-mono text-xs uppercase tracking-wider cursor-pointer transition-colors ${
+                  active
+                    ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-[#C91D1D]'
+                    : 'text-[#666666] hover:text-[#0A0A0A]'
+                }`}
+              >
+                {name === 'ALL' ? 'Everything' : name}
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="flex flex-wrap items-center justify-between gap-4 py-4 border-b border-[#DCDCDC] mb-8">
+          <label className="flex-1 min-w-[12rem] max-w-sm">
+            <span className="sr-only">Search the archive</span>
+            <input
+              type="search"
+              value={searchQuery}
+              onChange={(event) => setSearchQuery(event.target.value)}
+              placeholder="Search the archive"
+              className="w-full bg-transparent border-b border-[#DCDCDC] focus:border-[#0A0A0A] outline-hidden py-1.5 text-sm text-[#0A0A0A] placeholder:text-[#999999] transition-colors"
+            />
+          </label>
+
+          <div className="flex items-center gap-5">
+            {/* Native disclosure: the secondary axes stay available without a
+                permanent second row competing with the dye index. */}
+            <details className="relative">
+              <summary className="font-mono text-xs uppercase tracking-wider text-[#0A0A0A] cursor-pointer list-none marker:hidden">
+                Refine{refineCount > 0 ? ` (${refineCount})` : ''}
+              </summary>
+              <div className="absolute right-0 z-30 mt-2 w-72 bg-white border border-[#DCDCDC] p-4 space-y-4 shadow-lg">
+                <fieldset>
+                  <legend className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">Season</legend>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1">
+                    {SEASONS.map((season) => (
+                      <label key={season} className="flex items-center gap-1.5 text-xs cursor-pointer">
+                        <input
+                          type="radio"
+                          name="season"
+                          checked={selectedSeason === season}
+                          onChange={() => setSelectedSeason(season)}
+                          className="accent-[#C91D1D]"
+                        />
+                        <span>{season === 'ALL' ? 'Any' : season}</span>
+                      </label>
+                    ))}
+                  </div>
+                </fieldset>
+
+                <fieldset>
+                  <legend className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">Fit</legend>
+                  <select
+                    value={selectedFit}
+                    onChange={(event) => setSelectedFit(event.target.value)}
+                    className="w-full border border-[#DCDCDC] px-2 py-1.5 text-xs bg-white cursor-pointer"
+                  >
+                    {FITS.map((fit) => (
+                      <option key={fit} value={fit}>{fit === 'ALL' ? 'Any fit' : fit}</option>
+                    ))}
+                  </select>
+                </fieldset>
+
+                <label className="block">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666]">
+                    Up to ${priceRange}
+                  </span>
+                  <input
+                    type="range"
+                    min="20"
+                    max={MAX_PRICE}
+                    step="5"
+                    value={priceRange}
+                    onChange={(event) => setPriceRange(Number(event.target.value))}
+                    className="w-full mt-1.5 accent-[#C91D1D] cursor-pointer"
+                  />
+                </label>
+
+                <label className="flex items-center gap-2 text-xs cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={inStockOnly}
+                    onChange={() => setInStockOnly(!inStockOnly)}
+                    className="accent-[#C91D1D]"
+                  />
+                  <span>In stock only</span>
+                </label>
+              </div>
+            </details>
+
+            <label className="flex items-center gap-2">
+              <span className="sr-only">Sort by</span>
+              <select
+                value={sortBy}
+                onChange={(event) => setSortBy(event.target.value)}
+                className="font-mono text-xs uppercase tracking-wider bg-transparent border-0 outline-hidden cursor-pointer text-[#0A0A0A]"
+              >
+                {SORTS.map((sort) => (
+                  <option key={sort.value} value={sort.value}>{sort.label}</option>
+                ))}
+              </select>
+            </label>
+
+            {hasFilters && (
+              <button
+                type="button"
+                onClick={resetAll}
+                className="font-mono text-xs uppercase tracking-wider text-[#C91D1D] hover:underline cursor-pointer flex items-center gap-1.5"
+              >
+                <RotateCcw size={12} />
+                <span>Clear</span>
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Toolbar Controls (Search, Categories, Sort, Layout) */}
-        <CatalogToolbar
-          searchQuery={searchQuery}
-          onSearchChange={setSearchQuery}
-          categories={categories}
-          selectedCategory={selectedCategory}
-          onSelectCategory={setSelectedCategory}
-          activeFilterCount={activeFilterCount}
-          sortBy={sortBy}
-          onSortChange={setSortBy}
-          gridCols={gridCols}
-          onGridChange={setGridCols}
-          totalResults={totalItems}
-        />
-
-        {/* Top Horizontal Pill Dropdowns Filter Bar (Apple / COS style) */}
-        <TopFilterBar
-          seasonOptions={seasonOptions}
-          selectedSeason={selectedSeason}
-          onSelectSeason={setSelectedSeason}
-          colorOptions={colorOptions}
-          selectedColor={selectedColor}
-          onSelectColor={setSelectedColor}
-          fitOptions={fitOptions}
-          selectedFit={selectedFit}
-          onSelectFit={setSelectedFit}
-          priceRange={priceRange}
-          onChangePrice={setPriceRange}
-          inStockOnly={inStockOnly}
-          onToggleInStock={() => setInStockOnly(!inStockOnly)}
-          onResetFilters={handleResetFilters}
-          activeFilterCount={activeFilterCount}
-          totalResults={totalItems}
-        />
-
-        {/* Active Filters Pill Bar (When filters applied) */}
-        {activeFilterCount > 0 && (
-          <div className="mb-6 p-3 rounded-2xl bg-[#518F5C]/30 border border-[#3E7047]/60 flex items-center justify-between gap-3 text-xs font-mono">
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-bold text-[#042509]">Active Filters ({activeFilterCount}):</span>
-              {selectedSeason !== 'ALL' && (
-                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#DCDCDC] text-[#000000] flex items-center gap-1.5 shadow-2xs">
-                  <span>Season: {selectedSeason}</span>
-                  <button onClick={() => setSelectedSeason('ALL')} className="text-[#C91D1D] hover:text-[#000000] cursor-pointer">×</button>
-                </span>
-              )}
-              {selectedColor !== 'ALL' && (
-                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#DCDCDC] text-[#000000] flex items-center gap-1.5 shadow-2xs">
-                  <span>Color: {selectedColor}</span>
-                  <button onClick={() => setSelectedColor('ALL')} className="text-[#C91D1D] hover:text-[#000000] cursor-pointer">×</button>
-                </span>
-              )}
-              {selectedFit !== 'ALL' && (
-                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#DCDCDC] text-[#000000] flex items-center gap-1.5 shadow-2xs">
-                  <span>Fit: {selectedFit}</span>
-                  <button onClick={() => setSelectedFit('ALL')} className="text-[#C91D1D] hover:text-[#000000] cursor-pointer">×</button>
-                </span>
-              )}
-              {priceRange < 200 && (
-                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#DCDCDC] text-[#000000] flex items-center gap-1.5 shadow-2xs">
-                  <span>Max: ${priceRange}</span>
-                  <button onClick={() => setPriceRange(200)} className="text-[#C91D1D] hover:text-[#000000] cursor-pointer">×</button>
-                </span>
-              )}
-              {inStockOnly && (
-                <span className="px-2.5 py-1 rounded-lg bg-white border border-[#DCDCDC] text-[#000000] flex items-center gap-1.5 shadow-2xs">
-                  <span>In Stock Only</span>
-                  <button onClick={() => setInStockOnly(false)} className="text-[#C91D1D] hover:text-[#000000] cursor-pointer">×</button>
-                </span>
-              )}
-            </div>
-            <button
-              onClick={handleResetFilters}
-              className="text-[#C91D1D] font-bold hover:underline cursor-pointer flex items-center gap-1 shrink-0"
-            >
-              <RotateCcw size={12} />
-              <span>Clear All</span>
-            </button>
-          </div>
+        {/* The strip sits above the row; the rail sits inside it. */}
+        {!loading && !error && (
+          <DyeIndex
+            variant="strip"
+            dyes={dyes}
+            selected={selectedDye}
+            onSelect={(name) => setSelectedDye((current) => (current === name ? 'ALL' : name))}
+            total={matchesEverythingButDye.length}
+          />
         )}
 
-        {/* Product Grid Area (4-State Contract: Loading, Empty, Error, Data) */}
-        {loading ? (
-          <div className={`grid ${gridClasses} gap-6`}>
-            {Array.from({ length: 6 }).map((_, i) => (
-              <ProductCardSkeleton key={i} />
-            ))}
-          </div>
-        ) : paginatedProducts.length === 0 ? (
-          <EmptyState
-            title="No garments matched your filters"
-            description="We couldn't find any MatchA pieces matching this combination. Try clearing your search query or loosening the color/season filters."
-            actionLabel="Reset All Filters"
-            onAction={handleResetFilters}
-          />
-        ) : (
-          <div ref={gridMotionRef} className={`grid ${gridClasses} gap-6`}>
-            {paginatedProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onAddToCart={onAddToCart}
-                onQuickView={onQuickView}
+        <div className="flex gap-8 items-start">
+          {!loading && !error && (
+            <DyeIndex
+              variant="rail"
+              dyes={dyes}
+              selected={selectedDye}
+              onSelect={(name) => setSelectedDye((current) => (current === name ? 'ALL' : name))}
+              total={matchesEverythingButDye.length}
+            />
+          )}
+
+          <div className="flex-1 min-w-0">
+            {loading ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-8">
+                {Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)}
+              </div>
+            ) : error ? (
+              <p role="alert" className="py-16 text-sm text-[#C91D1D]">{error}</p>
+            ) : pageItems.length === 0 ? (
+              <EmptyState
+                title="Nothing in the archive matches yet"
+                description="No garment carries this combination of dye, season and fit. Clearing the dye usually brings the most back."
+                actionLabel="Clear all filters"
+                onAction={resetAll}
               />
-            ))}
-          </div>
-        )}
+            ) : (
+              <>
+                <div
+                  ref={gridMotionRef}
+                  className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-8"
+                >
+                  {pageItems.map((product) => (
+                    <DyeTile
+                      key={product.id}
+                      product={product}
+                      variant={variantForDye(product, selectedDye)}
+                      onAddToCart={onAddToCart}
+                      onQuickView={onQuickView}
+                    />
+                  ))}
+                </div>
 
-        {/* Pagination Navigation */}
-        {!loading && paginatedProducts.length > 0 && (
-          <CatalogPagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={(page) => {
-              setCurrentPage(page);
-              window.scrollTo({ top: 200, behavior: 'smooth' });
-            }}
-            totalItems={totalItems}
-            startIndex={startIndex}
-            endIndex={endIndex}
-          />
-        )}
+                {totalPages > 1 && (
+                  <CatalogPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={(page) => {
+                      setCurrentPage(page);
+                      window.scrollTo({ top: 200, behavior: 'smooth' });
+                    }}
+                    totalItems={totalItems}
+                    startIndex={startIndex}
+                    endIndex={endIndex}
+                  />
+                )}
+              </>
+            )}
+          </div>
+        </div>
 
       </div>
     </div>

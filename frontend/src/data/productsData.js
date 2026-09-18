@@ -418,7 +418,7 @@ export const productsData = [
         "image": "/images/products/autumn/bottoms/pants/color_2_olive.jpeg"
       },
       {
-        "color": "Warm Brown",
+        "color": "Brown",
         "colorHex": "#5C4033",
         "image": "/images/products/autumn/bottoms/pants/color_3_warm_brown.jpeg"
       },
@@ -532,7 +532,7 @@ export const productsData = [
         "image": "/images/products/autumn/bottoms/skirts/color_1_brown.jpeg"
       },
       {
-        "color": "Dark Brown",
+        "color": "Brown",
         "colorHex": "#5C4033",
         "image": "/images/products/autumn/bottoms/skirts/color_2_dark_brown.jpeg"
       },
@@ -919,8 +919,8 @@ export const productsData = [
         "image": "/images/products/autumn/tops/hoodies/color_3_white.jpeg"
       },
       {
-        "color": "Yellow",
-        "colorHex": "#2D5A27",
+        "color": "White",
+        "colorHex": "#F5F5F5",
         "image": "/images/products/autumn/tops/hoodies/color_4_yellow.jpeg"
       }
     ],
@@ -1144,7 +1144,7 @@ export const productsData = [
         "image": "/images/products/autumn/tops/shirts/color_1_brown.jpeg"
       },
       {
-        "color": "Dark Brown",
+        "color": "Brown",
         "colorHex": "#5C4033",
         "image": "/images/products/autumn/tops/shirts/color_2_dark_brown.jpeg"
       },
@@ -1368,7 +1368,7 @@ export const productsData = [
     "subCategory": "Bags",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Relaxed",
     "sizes": [
       "OS"
@@ -1376,7 +1376,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/accessories/bags/color_1_peach.jpeg"
       },
       {
@@ -1440,7 +1440,7 @@ export const productsData = [
     "subCategory": "Scarves",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Relaxed",
     "sizes": [
       "OS"
@@ -1448,7 +1448,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/accessories/scarves/color_1_peach.jpeg"
       },
       {
@@ -1512,7 +1512,7 @@ export const productsData = [
     "subCategory": "Jeans",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Wide Leg",
     "sizes": [
       "S",
@@ -1524,7 +1524,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/bottoms/jeans/color_1_peach.jpeg"
       },
       {
@@ -1626,7 +1626,7 @@ export const productsData = [
     "subCategory": "Pants",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Wide Leg",
     "sizes": [
       "S",
@@ -1638,7 +1638,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/bottoms/pants/color_1_peach.jpeg"
       },
       {
@@ -1740,7 +1740,7 @@ export const productsData = [
     "subCategory": "Shorts",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Relaxed",
     "sizes": [
       "S",
@@ -1752,7 +1752,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/bottoms/shorts/color_1_peach.jpeg"
       },
       {
@@ -1854,7 +1854,7 @@ export const productsData = [
     "subCategory": "Skirts",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Relaxed",
     "sizes": [
       "S",
@@ -1866,7 +1866,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/bottoms/skirts/color_1_peach.jpeg"
       },
       {
@@ -1987,7 +1987,7 @@ export const productsData = [
       },
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/shoes/loafers/color_2_peach.jpeg"
       },
       {
@@ -2116,7 +2116,7 @@ export const productsData = [
       },
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/shoes/sneakers/color_2_peach.jpeg"
       },
       {
@@ -2252,7 +2252,7 @@ export const productsData = [
         "image": "/images/products/spring/tops/band-collar-shirts/color_3_cream.jpeg"
       },
       {
-        "color": "Warm Cream",
+        "color": "Cream",
         "colorHex": "#FFFDD0",
         "image": "/images/products/spring/tops/band-collar-shirts/color_4_warm_cream.jpeg"
       }
@@ -2363,7 +2363,7 @@ export const productsData = [
       },
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/tops/cardigans/color_3_peach.jpeg"
       },
       {
@@ -2472,8 +2472,8 @@ export const productsData = [
         "image": "/images/products/spring/tops/polo-shirts/color_1_coral.jpeg"
       },
       {
-        "color": "Soft",
-        "colorHex": "#2D5A27",
+        "color": "Coral",
+        "colorHex": "#FF6F61",
         "image": "/images/products/spring/tops/polo-shirts/color_2_soft.jpeg"
       },
       {
@@ -2593,7 +2593,7 @@ export const productsData = [
       },
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/tops/shirts/color_3_peach.jpeg"
       },
       {
@@ -2685,7 +2685,7 @@ export const productsData = [
     "category": "Outerwear",
     "subCategory": "Cobalt Coat",
     "season": "Artisan",
-    "color": "Cobalt Coat",
+    "color": "Cobalt",
     "colorHex": "#1A365D",
     "fit": "Tailored",
     "sizes": [
@@ -2697,7 +2697,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Cobalt Coat",
+        "color": "Cobalt",
         "colorHex": "#1A365D",
         "image": "/images/products/standalone/cobalt_coat.jpg"
       }
@@ -2785,8 +2785,8 @@ export const productsData = [
     "category": "Shoes",
     "subCategory": "Boots",
     "season": "Artisan",
-    "color": "Cognac Boots",
-    "colorHex": "#2D5A27",
+    "color": "Caramel",
+    "colorHex": "#A0522D",
     "fit": "Relaxed",
     "sizes": [
       "EU 38",
@@ -2799,8 +2799,8 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Cognac Boots",
-        "colorHex": "#2D5A27",
+        "color": "Caramel",
+        "colorHex": "#A0522D",
         "image": "/images/products/standalone/cognac_boots.jpg"
       }
     ],
@@ -2899,7 +2899,7 @@ export const productsData = [
     "category": "Accessories",
     "subCategory": "Bags",
     "season": "Artisan",
-    "color": "Coral Bag",
+    "color": "Coral",
     "colorHex": "#FF6F61",
     "fit": "Relaxed",
     "sizes": [
@@ -2907,7 +2907,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Coral Bag",
+        "color": "Coral",
         "colorHex": "#FF6F61",
         "image": "/images/products/standalone/coral_bag.jpg"
       }
@@ -2956,7 +2956,7 @@ export const productsData = [
     "category": "Tops",
     "subCategory": "Coral Blouse",
     "season": "Artisan",
-    "color": "Coral Blouse",
+    "color": "Coral",
     "colorHex": "#FF6F61",
     "fit": "Relaxed",
     "sizes": [
@@ -2968,7 +2968,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Coral Blouse",
+        "color": "Coral",
         "colorHex": "#FF6F61",
         "image": "/images/products/standalone/coral_blouse.jpg"
       }
@@ -3056,7 +3056,7 @@ export const productsData = [
     "category": "Shoes",
     "subCategory": "Sneakers",
     "season": "Artisan",
-    "color": "Coral Sneakers",
+    "color": "Coral",
     "colorHex": "#FF6F61",
     "fit": "Relaxed",
     "sizes": [
@@ -3070,7 +3070,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Coral Sneakers",
+        "color": "Coral",
         "colorHex": "#FF6F61",
         "image": "/images/products/standalone/coral_sneakers.jpg"
       }
@@ -3170,7 +3170,7 @@ export const productsData = [
     "category": "Accessories",
     "subCategory": "Bags",
     "season": "Artisan",
-    "color": "Cream Bag",
+    "color": "Cream",
     "colorHex": "#FFFDD0",
     "fit": "Relaxed",
     "sizes": [
@@ -3178,7 +3178,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Cream Bag",
+        "color": "Cream",
         "colorHex": "#FFFDD0",
         "image": "/images/products/standalone/cream_bag.jpg"
       }
@@ -3227,7 +3227,7 @@ export const productsData = [
     "category": "Accessories",
     "subCategory": "Jewelry",
     "season": "Artisan",
-    "color": "Gold Necklace",
+    "color": "Gold",
     "colorHex": "#D4AF37",
     "fit": "Relaxed",
     "sizes": [
@@ -3235,7 +3235,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Gold Necklace",
+        "color": "Gold",
         "colorHex": "#D4AF37",
         "image": "/images/products/standalone/gold_necklace.jpg"
       }
@@ -3284,7 +3284,7 @@ export const productsData = [
     "category": "Tops",
     "subCategory": "Mustard Sweater",
     "season": "Artisan",
-    "color": "Mustard Sweater",
+    "color": "Mustard",
     "colorHex": "#D4A338",
     "fit": "Oversized",
     "sizes": [
@@ -3296,7 +3296,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Mustard Sweater",
+        "color": "Mustard",
         "colorHex": "#D4A338",
         "image": "/images/products/standalone/mustard_sweater.jpg"
       }
@@ -3384,8 +3384,8 @@ export const productsData = [
     "category": "Bottoms",
     "subCategory": "Peach Skirt",
     "season": "Artisan",
-    "color": "Peach Skirt",
-    "colorHex": "#2D5A27",
+    "color": "Peach",
+    "colorHex": "#EDBCA4",
     "fit": "Relaxed",
     "sizes": [
       "S",
@@ -3396,8 +3396,8 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Peach Skirt",
-        "colorHex": "#2D5A27",
+        "color": "Peach",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/standalone/peach_skirt.jpg"
       }
     ],
@@ -3483,16 +3483,16 @@ export const productsData = [
     "category": "Accessories",
     "subCategory": "Scarves",
     "season": "Artisan",
-    "color": "Silk Scarf",
-    "colorHex": "#2D5A27",
+    "color": "Apricot",
+    "colorHex": "#E38953",
     "fit": "Relaxed",
     "sizes": [
       "OS"
     ],
     "variants": [
       {
-        "color": "Silk Scarf",
-        "colorHex": "#2D5A27",
+        "color": "Apricot",
+        "colorHex": "#E38953",
         "image": "/images/products/standalone/silk_scarf.jpg"
       }
     ],
@@ -3540,7 +3540,7 @@ export const productsData = [
     "category": "Accessories",
     "subCategory": "Jewelry",
     "season": "Artisan",
-    "color": "Silver Earrings",
+    "color": "Silver",
     "colorHex": "#C0C0C0",
     "fit": "Relaxed",
     "sizes": [
@@ -3548,7 +3548,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Silver Earrings",
+        "color": "Silver",
         "colorHex": "#C0C0C0",
         "image": "/images/products/standalone/silver_earrings.jpg"
       }
@@ -3597,7 +3597,7 @@ export const productsData = [
     "category": "Bottoms",
     "subCategory": "Teal Pants",
     "season": "Artisan",
-    "color": "Teal Pants",
+    "color": "Teal",
     "colorHex": "#00796B",
     "fit": "Wide Leg",
     "sizes": [
@@ -3609,7 +3609,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Teal Pants",
+        "color": "Teal",
         "colorHex": "#00796B",
         "image": "/images/products/standalone/teal_pants.jpg"
       }
