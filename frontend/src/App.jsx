@@ -29,7 +29,7 @@ import { ToastProvider, useToast } from './context/ToastContext.jsx';
 import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import { CartProvider, useCart } from './context/CartContext.jsx';
 import { StoreModeProvider } from './context/StoreModeContext.jsx';
-import { LanguageProvider } from './context/LanguageContext.jsx';
+import { LanguageProvider, useLanguage } from './context/LanguageContext.jsx';
 
 // ความสูงคงที่ระหว่างรอ chunk เพื่อไม่ให้หน้ากระตุกตอนหน้าใหม่มาถึง
 function PageSkeleton() {
@@ -49,31 +49,43 @@ function PageSkeleton() {
   );
 }
 
-// ชื่อหน้าแยกตาม route — เดิมทุกหน้าใช้ <title> เดียวกันจาก index.html
-const PAGE_TITLES = {
-  '/': 'MatchA • Modern Artisan Experience',
-  '/catalog': 'Catalog • MatchA',
-  '/personal-color': 'ค้นหาโทนสีผิว 4 ฤดูกาล • MatchA Personal Color Lab',
-  '/mix-match': 'Mix & Match Fashion Studio • MatchA',
-  '/lookbook': 'Editorial Lookbook • MatchA',
-  '/editorial': 'Editorial Lookbook • MatchA',
-  '/cart': 'ตะกร้าสินค้า • MatchA',
-  '/payment': 'ชำระเงิน • MatchA',
-  '/login': 'เข้าสู่ระบบ • MatchA',
-  '/signup': 'สมัครสมาชิก • MatchA',
-  '/account': 'บัญชีของฉัน • MatchA',
-  '/admin': 'Admin Console • MatchA',
-  '/legal': 'ข้อกำหนดและนโยบาย • MatchA Legal',
-};
+/* The tab title, per route and per language.
+
+   The old map was a literal with mixed Thai and English values, so the tab
+   never changed when the visitor switched language. It also keyed only on
+   '/legal', while the route that actually renders is '/legal/:topic' — so
+   every policy page fell back to the home title. Prefixes are matched longest
+   first, which covers sub-routes without listing each one. */
+const TITLE_KEYS = [
+  ['/personal-color', 'titles.personalColor'],
+  ['/mix-match', 'titles.mixMatch'],
+  ['/lookbook', 'titles.lookbook'],
+  ['/editorial', 'titles.lookbook'],
+  ['/catalog', 'titles.catalog'],
+  ['/payment', 'titles.payment'],
+  ['/signup', 'titles.signup'],
+  ['/account', 'titles.account'],
+  ['/admin', 'titles.admin'],
+  ['/login', 'titles.login'],
+  ['/legal', 'titles.legal'],
+  ['/cart', 'titles.cart'],
+];
+
+function titleKeyFor(pathname) {
+  if (pathname === '/') return 'titles.home';
+  const hit = TITLE_KEYS.find(([prefix]) => pathname === prefix || pathname.startsWith(prefix + '/'));
+  return hit ? hit[1] : 'titles.notFound';
+}
 
 function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
 
-  // อัปเดต <title> ตามหน้าที่เปิดอยู่
+  // อัปเดต <title> ตามหน้าและภาษาที่เปิดอยู่
   useEffect(() => {
-    document.title = PAGE_TITLES[location.pathname] || PAGE_TITLES['/'];
-  }, [location.pathname]);
+    document.title = t(titleKeyFor(location.pathname));
+  }, [location.pathname, t]);
 
   // Context Hooks
   const { cartItems, setCartItems, addToCart, updateQty, removeItem, cartCount } = useCart();

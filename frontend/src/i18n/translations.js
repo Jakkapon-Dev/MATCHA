@@ -11,6 +11,22 @@ export const DEFAULT_LANG = 'en';
 
 export const translations = {
   en: {
+    titles: {
+      home: 'MatchA — tea-dyed streetwear',
+      catalog: 'The archive — MatchA',
+      personalColor: 'Colour lab — MatchA',
+      mixMatch: 'Mix & Match studio — MatchA',
+      lookbook: 'Lookbook — MatchA',
+      cart: 'Your bag — MatchA',
+      payment: 'Checkout — MatchA',
+      login: 'Sign in — MatchA',
+      signup: 'Create an account — MatchA',
+      account: 'Your account — MatchA',
+      admin: 'Admin console — MatchA',
+      legal: 'Policies — MatchA',
+      notFound: 'Page not found — MatchA',
+    },
+
     account: {
       lounge: 'Your account',
       addresses: 'Delivery addresses',
@@ -432,6 +448,22 @@ export const translations = {
   },
 
   th: {
+    titles: {
+      home: 'MatchA — เสื้อผ้าย้อมชา',
+      catalog: 'สินค้าทั้งหมด — MatchA',
+      personalColor: 'ค้นหาสีประจำตัว — MatchA',
+      mixMatch: 'Mix & Match Studio — MatchA',
+      lookbook: 'สมุดภาพชุด — MatchA',
+      cart: 'ตะกร้าสินค้า — MatchA',
+      payment: 'ชำระเงิน — MatchA',
+      login: 'เข้าสู่ระบบ — MatchA',
+      signup: 'สมัครสมาชิก — MatchA',
+      account: 'บัญชีของฉัน — MatchA',
+      admin: 'ผู้ดูแลระบบ — MatchA',
+      legal: 'ข้อกำหนดและนโยบาย — MatchA',
+      notFound: 'ไม่พบหน้านี้ — MatchA',
+    },
+
     account: {
       lounge: 'บัญชีของคุณ',
       addresses: 'ที่อยู่จัดส่ง',
