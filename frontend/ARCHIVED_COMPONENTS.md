@@ -1,6 +1,6 @@
-# MatchA Archive Directory (`_archive/`)
+# MatchA Retired & Archived Components Reference
 
-โฟลเดอร์นี้รวบรวมไฟล์คอมโพเนนต์และสคริปต์ที่ **ไม่ได้ถูกเรียกใช้งานใน Production (Dead Code / Prototypes)** เพื่อทำความสะอาดโครงสร้าง Source Code หลักของโปรเจคตามข้อกำหนด Clean Architecture & Code Hygiene
+เอกสารนี้บันทึกประวัติไฟล์คอมโพเนนต์และสคริปต์เดิมที่ถูกปลดประจำการและลบออกจาก Source Tree หลักของโปรเจกต์ (Dead Code / Prototypes) ตามข้อกำหนด Clean Architecture & Code Hygiene 100% โดยโค้ดต้นฉบับทั้งหมดได้รับการจัดเก็บสำรองไว้อย่างปลอดภัยใน **Git Version Control History** สามารถดึงกลับมาดูได้ตลอดเวลาผ่าน `git log` / `git checkout`
 
 ---
 
