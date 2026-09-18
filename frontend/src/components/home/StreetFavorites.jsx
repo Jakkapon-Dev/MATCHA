@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, ShoppingBag, Sparkles, Star, Check, Eye } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingBag, Sparkles, Eye } from 'lucide-react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { Reveal, EASE } from '../motion';
 import useStreetProducts from '../../hooks/useStreetProducts';

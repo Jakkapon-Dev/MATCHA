@@ -1,5 +1,5 @@
 import React from 'react';
-import { MapPin, Plus, Check } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 
 export default function AddressesTab({ addresses = [] }) {
   // The parent may supply persisted addresses. Until that integration is available,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sliders, Bell } from 'lucide-react';
+import { Sliders } from 'lucide-react';
 
 export default function PreferencesTab({ preferences, onTogglePreference }) {
   // Keeping labels and descriptions in configuration makes every switch use the same

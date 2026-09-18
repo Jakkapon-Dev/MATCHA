@@ -1,5 +1,5 @@
 import React from 'react';
-import { CreditCard, Plus, ShieldCheck } from 'lucide-react';
+import { CreditCard } from 'lucide-react';
 
 export default function PaymentMethodsTab() {
   // These are masked display fixtures only; full card details must never be stored in

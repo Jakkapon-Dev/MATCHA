@@ -6,7 +6,7 @@ import { Parallax, Reveal, EASE } from '../motion';
 import { webpSrc } from '../../utils/imageFallback';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 
-export default function BrandHero({ onShopNow, onEnterWebsite }) {
+export default function BrandHero({ onShopNow }) {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const reduced = useReducedMotion();
@@ -101,12 +101,10 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
 
 
   const handleAction = () => {
-    // Landing-screen entry takes priority when provided; the normal home hero falls
-    // back to its catalog/shop action.
-    if (onEnterWebsite) {
-      onEnterWebsite();
-    } else if (onShopNow) {
+    if (onShopNow) {
       onShopNow();
+    } else {
+      navigate('/catalog');
     }
   };
 
@@ -272,7 +270,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
               onClick={handleAction}
               className="w-full sm:w-auto max-w-full px-8 py-4 bg-[#C91D1D] hover:bg-[#A81515] text-white font-mono text-sm uppercase tracking-[0.15em] transition-colors active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
             >
-              <span>{onEnterWebsite ? t('hero.enterWebsite') : t('hero.shopNow')}</span>
+              <span>{t('hero.shopNow')}</span>
               <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
             </button>
           </Reveal>

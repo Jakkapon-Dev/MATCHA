@@ -1,5 +1,5 @@
 import React from 'react';
-import { Package, Clock, Truck, CheckCircle2, ChevronRight, AlertCircle, ShoppingBag } from 'lucide-react';
+import { Package, ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
 

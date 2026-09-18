@@ -1,5 +1,5 @@
 import React from 'react';
-import { CreditCard, QrCode, Shield, Lock, Check } from 'lucide-react';
+import { CreditCard, QrCode, Shield, Lock } from 'lucide-react';
 
 export default function PaymentMethodStep({
   paymentMethods,

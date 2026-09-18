@@ -11,8 +11,7 @@ import {
   LogOut,
   Sparkles,
   ShieldCheck,
-  ArrowRight,
-  ExternalLink
+  ArrowRight
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';

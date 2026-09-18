@@ -4,7 +4,6 @@ import {
   Heart, 
   Star, 
   ShoppingBag, 
-  Check, 
   Sparkles, 
   ShieldCheck, 
   Truck, 

@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  ShieldAlert,
-  ShieldCheck,
   Package,
   ShoppingBag,
-  TrendingUp,
   DollarSign,
   Plus,
   BarChart3,
@@ -14,20 +11,13 @@ import {
   Search,
   Filter,
   Trash2,
-  Edit3,
-  RefreshCw,
   ExternalLink,
   ChevronRight,
-  Sparkles,
-  CheckCircle2,
-  Clock,
-  Truck,
   AlertTriangle,
   ArrowUpRight,
   Download,
   FileSpreadsheet,
   FileJson,
-  Check,
   ChevronDown,
   LayoutDashboard,
   Boxes,
@@ -35,10 +25,6 @@ import {
   UserCheck,
   HardDrive,
   LogOut,
-  SlidersHorizontal,
-  RotateCcw,
-  ArrowUpDown,
-  CircleDollarSign,
   Activity
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -46,6 +32,8 @@ import { useToast } from '../context/ToastContext.jsx';
 import AddProductModal from '../components/admin/AddProductModal';
 import MediaManager from '../features/media/MediaManager';
 import { api } from '../services/api';
+import { webpSrc } from '../utils/imageFallback';
+import useChangeMotion from '../hooks/useChangeMotion';
 
 const INITIAL_INVENTORY = [
   {
@@ -345,8 +333,6 @@ export default function AdminPage() {
     localStorage.setItem('matcha_admin_members', JSON.stringify(members));
   }, [members]);
 
-  // Auth Guard
-  const isAdmin = currentUser?.role === 'Admin' || currentUser?.email === 'admin@matcha.com';
   const isDemo = Boolean(currentUser?.isDemoSession);
 
   // KPI Calculations
@@ -1469,5 +1455,3 @@ export default function AdminPage() {
     </div>
   );
 }
-import useChangeMotion from '../hooks/useChangeMotion';
-import { webpSrc } from '../utils/imageFallback';

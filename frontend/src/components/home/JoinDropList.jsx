@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, ShieldCheck, ArrowRight, CreditCard, CheckCircle2 } from 'lucide-react';
+import { ShieldCheck, ArrowRight, CheckCircle2 } from 'lucide-react';
 import BorderBeam from '../ui/BorderBeam';
 import { Reveal } from '../motion';
 import { useToast } from '../../context/ToastContext.jsx';

@@ -12,7 +12,7 @@ import { useStoreMode } from '../context/StoreModeContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, shippingCostFor } from '../config/shipping';
 import { couponFor, discountFor, normaliseCode, FEATURED_CODES, takePendingCoupon } from '../config/coupons';
 import PreviewNote from '../components/ui/PreviewNote';
-import { QrCode, Truck, Shield, AlertTriangle, RotateCcw } from 'lucide-react';
+import { QrCode, AlertTriangle, RotateCcw } from 'lucide-react';
 
 const PAYMENT_METHODS = [
   { id: 'visa', name: 'Visa', icon: '💳' },

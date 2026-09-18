@@ -94,44 +94,7 @@ body {
 /* 🌟 MATCH A SIGNATURE ANIMATION SYSTEM (HIGH-FASHION) */
 /* ========================================================= */
 
-/* 1. Staggered Ambient Floating for Lookbook Cards */
-@keyframes float-1 {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-12px) rotate(0.8deg); }
-}
-
-@keyframes float-2 {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-16px) rotate(-1deg); }
-}
-
-@keyframes float-3 {
-  0%, 100% { transform: translateY(0px) rotate(0deg); }
-  50% { transform: translateY(-10px) rotate(0.6deg); }
-}
-
-.animate-card-float-1 {
-  animation: float-1 4.5s ease-in-out infinite;
-}
-
-.animate-card-float-2 {
-  animation: float-2 5.5s ease-in-out 0.8s infinite;
-}
-
-.animate-card-float-3 {
-  animation: float-3 5s ease-in-out 1.5s infinite;
-}
-
-.group:hover .animate-card-float-1,
-.group:hover .animate-card-float-2,
-.group:hover .animate-card-float-3,
-.animate-card-float-1:hover,
-.animate-card-float-2:hover,
-.animate-card-float-3:hover {
-  animation-play-state: paused;
-}
-
-/* 2. Holographic Glare Sweep across Product Cards */
+/* 1. Holographic Glare Sweep across Product Cards */
 @keyframes sheen-sweep {
   0% {
     transform: translateX(-150%) skewX(-25deg);
@@ -183,7 +146,7 @@ body {
   animation: border-beam 6s linear infinite;
 }
 
-/* 4. Text Shimmer Reveal (ReactVibe Inspired) */
+/* 3. Text Shimmer Reveal (ReactVibe Inspired) */
 @keyframes text-shimmer {
   0% {
     background-position: 200% 0;
@@ -191,22 +154,6 @@ body {
   100% {
     background-position: -200% 0;
   }
-}
-
-.animate-text-shimmer {
-  background: linear-gradient(
-    90deg,
-    #000000 0%,
-    #C91D1D 30%,
-    #042509 50%,
-    #C91D1D 70%,
-    #000000 100%
-  );
-  background-size: 200% auto;
-  color: transparent;
-  -webkit-background-clip: text;
-  background-clip: text;
-  animation: text-shimmer 6s linear infinite;
 }
 
 .animate-text-shimmer-light {
@@ -335,17 +282,4 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-editorial-reveal,
   [data-reveal="editorial"].revealed { animation-name: enter-fade; }
-}
-
-@keyframes glowMatcha {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(4, 37, 9, 0.4);
-  }
-  50% {
-    box-shadow: 0 0 0 10px rgba(4, 37, 9, 0);
-  }
-}
-
-.animate-glow-matcha {
-  animation: glowMatcha 2s infinite;
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, ShoppingBag, Trash2 } from 'lucide-react';
+import { Heart, ShoppingBag } from 'lucide-react';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
 import { useCart } from '../../context/CartContext.jsx';
 

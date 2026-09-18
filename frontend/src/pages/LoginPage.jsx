@@ -1,16 +1,32 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { motion } from 'motion/react';
 import { api } from '../services/api';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import PreviewBadge from '../components/ui/PreviewBadge';
-import PreviewNote from '../components/ui/PreviewNote';
-import { Mail, Lock, Eye, EyeOff, Sparkles, ShieldCheck, ArrowRight, Shield, User, CheckCircle2, TestTube2 } from 'lucide-react';
+import {
+  Mail,
+  Lock,
+  Eye,
+  EyeOff,
+  Sparkles,
+  ArrowRight,
+  Shield,
+  User,
+  CheckCircle2,
+  AlertCircle,
+  ArrowLeft,
+  KeyRound,
+  X,
+} from 'lucide-react';
 
 export default function LoginPage({ onLoginSuccess }) {
   const navigate = useNavigate();
   const { login } = useAuth();
   const { showToast } = useToast();
+  const { t } = useLanguage();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -30,17 +46,17 @@ export default function LoginPage({ onLoginSuccess }) {
       email: 'admin@matcha.com',
       role: 'Admin',
       tier: 'System Admin',
-      isDemoSession: true
+      isDemoSession: true,
     } : {
       id: 'demo-member',
       name: 'Demo Member',
       email: 'demo@matcha.com',
       role: 'Member',
       tier: 'VIP Connoisseur',
-      isDemoSession: true
+      isDemoSession: true,
     };
     login(demoUser, false, 'demo-offline-token');
-    showToast(`เข้าสู่ระบบโหมดสาธิตในฐานะ ${demoUser.name} (${demoUser.role})`, 'success');
+    showToast(`${t('auth.welcomeBack')}: ${demoUser.name} (${demoUser.role})`, 'success');
     if (onLoginSuccess) onLoginSuccess(demoUser);
     navigate(role === 'Admin' ? '/admin' : '/');
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -52,14 +68,12 @@ export default function LoginPage({ onLoginSuccess }) {
     setSuccessMsg('');
 
     if (!email.trim() || !password.trim()) {
-      setErrorMsg('Please enter both email and password.');
+      setErrorMsg(t('auth.email') + ' / ' + t('auth.password'));
       return;
     }
 
     setIsLoading(true);
     try {
-      // The server decides who this is and what they may do; the browser is
-      // told the answer, it does not work it out for itself.
       const res = await api.login(email.trim(), password);
       const account = res.data || {};
       const user = {
@@ -71,7 +85,7 @@ export default function LoginPage({ onLoginSuccess }) {
       };
 
       login(user, rememberMe, res.token);
-      setSuccessMsg(`Welcome back, ${user.name}! (${user.role}) ✨`);
+      setSuccessMsg(`${t('auth.welcomeBack')}, ${user.name}! ✨`);
 
       if (onLoginSuccess) onLoginSuccess(user);
 
@@ -79,7 +93,7 @@ export default function LoginPage({ onLoginSuccess }) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
       if (err.message && (err.message.includes('ติดต่อเซิร์ฟเวอร์ไม่ได้') || err.message.includes('Failed to communicate') || err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))) {
-        setErrorMsg('ตอนนี้เชื่อมต่อระบบไม่ได้ กรุณาลองใหม่');
+        setErrorMsg('ตอนนี้เชื่อมต่อระบบไม่ได้ กรุณาลองใหม่อีกครั้ง');
       } else {
         setErrorMsg(err.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
       }
@@ -96,274 +110,363 @@ export default function LoginPage({ onLoginSuccess }) {
       setForgotSent(false);
       setForgotModal(false);
       setForgotEmail('');
-    }, 2000);
+    }, 2200);
   };
 
   return (
-    <div className="w-full bg-[#F1F1F1] py-12 sm:py-20 px-4 sm:px-6 md:px-8 min-h-[85vh] flex flex-col items-center justify-center relative overflow-hidden">
+    <div className="w-full bg-[#FAF9F5] min-h-[90vh] py-8 sm:py-16 px-4 sm:px-6 lg:px-8 flex items-center justify-center relative selection:bg-[#042509] selection:text-white">
       
-      {/* Background Decorative Ambient Circles */}
-      <div className="absolute top-10 left-1/4 w-72 h-72 bg-[#518F5C]/40 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-1/4 w-80 h-80 bg-[#C91D1D]/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Subtle Ambient Background Wash */}
+      <div className="absolute top-1/4 left-10 w-96 h-96 bg-[#518F5C]/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-10 w-96 h-96 bg-[#042509]/5 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-md w-full relative z-10">
-
-        {/* Brand Card Container */}
-        <div className="bg-white border border-[#DCDCDC] rounded-3xl p-6 sm:p-8 shadow-xl shadow-[#000000]/5 transition-all">
+      {/* Main Split-Canvas Frame */}
+      <motion.div 
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+        className="max-w-5xl w-full grid grid-cols-1 lg:grid-cols-12 bg-white border border-[#E5E2D8] rounded-[2rem] shadow-2xl shadow-[#042509]/5 overflow-hidden relative z-10"
+      >
+        
+        {/* ========================================================= */}
+        {/* LEFT COLUMN: Editorial Atelier Showcase (Desktop/Tablet) */}
+        {/* ========================================================= */}
+        <div className="lg:col-span-5 bg-[#042509] text-[#FAF9F5] p-8 sm:p-10 lg:p-12 flex flex-col justify-between relative overflow-hidden">
           
-          {/* Header Branding */}
-          <div className="text-center mb-6">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#000000] text-[#518F5C] text-[10px] font-mono font-bold tracking-widest uppercase rounded-full shadow-xs mb-3">
-              <Sparkles size={11} className="text-[#C91D1D]" />
-              <span>MatchA Collective</span>
-            </div>
-            
-            <h1 className="text-3xl font-extrabold text-[#000000] uppercase tracking-tight">
-              Welcome Back
-            </h1>
-            <p className="text-xs text-[#666666] mt-1.5 font-mono">
-              Sign in to see your seasonal drops and your orders.
-            </p>
-          </div>
-
-          {/* Error / Success Notifications */}
-          {errorMsg && (
-            <div className="mb-5 p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-mono flex items-center gap-2">
-              <span className="shrink-0 text-red-500">⚠️</span>
-              <span>{errorMsg}</span>
-            </div>
-          )}
-
-          {successMsg && (
-            <div className="mb-5 p-3.5 rounded-2xl bg-[#518F5C]/50 border border-[#042509]/30 text-[#042509] text-xs font-mono flex items-center gap-2">
-              <CheckCircle2 size={16} className="text-[#042509] shrink-0" />
-              <span>{successMsg}</span>
-            </div>
-          )}
-
-          {/* Login Form */}
-          <form onSubmit={handleLogin} className="space-y-4">
-            
-            {/* Email Field */}
-            <div>
-              <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#000000] mb-1.5">
-                Email Address
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#666666]">
-                  <Mail size={16} />
-                </div>
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="name@domain.com"
-                  className="w-full pl-10 pr-4 py-3 bg-matcha-bg border border-matcha-border rounded-xl text-sm text-matcha-text placeholder-matcha-muted/60 focus:bg-white focus:border-matcha-primary focus:ring-2 focus:ring-matcha-primary/20 focus:outline-none transition-all font-mono"
-                  required
-                />
-              </div>
-            </div>
-
-            {/* Password Field */}
-            <div>
-              <div className="flex items-center justify-between mb-1.5">
-                <label className="block text-xs font-mono font-bold uppercase tracking-wider text-[#000000]">
-                  Password
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setForgotModal(true)}
-                  className="text-[11px] font-mono text-[#C91D1D] hover:underline cursor-pointer"
-                >
-                  Forgot password?
-                </button>
-              </div>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#666666]">
-                  <Lock size={16} />
-                </div>
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
-                  className="w-full pl-10 pr-11 py-3 bg-matcha-bg border border-matcha-border rounded-xl text-sm text-matcha-text placeholder-matcha-muted/60 focus:bg-white focus:border-matcha-primary focus:ring-2 focus:ring-matcha-primary/20 focus:outline-none transition-all font-mono"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#666666] hover:text-[#000000] transition-colors cursor-pointer"
-                >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-            </div>
-
-            {/* Remember Me Checkbox */}
-            <div className="flex items-center justify-between pt-1">
-              <label className="flex items-center gap-2 text-xs font-mono text-[#000000] cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="w-4 h-4 rounded border-[#DCDCDC] text-[#042509] focus:ring-[#042509] accent-[#042509] cursor-pointer"
-                />
-                <span>Remember me</span>
-              </label>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full mt-3 py-3.5 bg-[#042509] hover:bg-[#021505] active:scale-[0.98] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-[#042509]/25 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 disabled:pointer-events-none"
+          {/* Subtle Textile Grid Motif Background */}
+          <div className="absolute inset-0 opacity-[0.04] pointer-events-none bg-[radial-gradient(#FAF9F5_1px,transparent_1px)] [background-size:16px_16px]" />
+          
+          {/* Top Brand Mark & Badge */}
+          <div className="relative z-10">
+            <Link 
+              to="/"
+              className="inline-flex items-center gap-2 text-xs font-mono text-[#FAF9F5]/70 hover:text-white transition-colors group mb-8"
             >
-              {isLoading ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  <span>Authenticating...</span>
-                </>
-              ) : (
-                <>
-                  <span>Sign In to MatchA</span>
-                  <ArrowRight size={14} />
-                </>
-              )}
-            </button>
-          </form>
+              <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+              <span>MatchA Boutique</span>
+            </Link>
 
-          {/* Social Login Dividers */}
-          <div className="mt-6 pt-5 border-t border-[#DCDCDC] text-center">
-            <span className="text-[10px] font-mono text-[#666666] uppercase tracking-widest bg-white px-2 relative -top-7.5 flex items-center justify-center gap-1.5 w-max mx-auto">
-              <span>social sign-in</span>
-              <PreviewBadge label="COMING SOON" />
-            </span>
+            <div className="space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-[#FAF9F5]/10 border border-[#FAF9F5]/15 rounded-full text-[10px] font-mono tracking-widest uppercase text-[#518F5C]">
+                <Sparkles size={11} className="text-[#518F5C]" />
+                <span>{t('auth.badge')}</span>
+              </div>
 
-            <div className="grid grid-cols-2 gap-3 -mt-2">
-              <button
-                type="button"
-                aria-disabled="true"
-                onClick={() => showToast('ระบบ Google Sign-in อยู่ระหว่างการพัฒนา จะเปิดให้บริการในเวอร์ชันถัดไป', 'info')}
-                className="py-2.5 px-3 border border-[#DCDCDC] hover:border-[#000000]/30 rounded-xl text-xs font-mono font-bold text-[#000000]/70 bg-[#F1F1F1] hover:bg-[#EAEAEA] flex items-center justify-center gap-2 cursor-pointer shadow-2xs transition-all active:scale-98"
-              >
-                <span>🌐</span>
-                <span>Google</span>
-              </button>
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight font-serif text-white leading-snug">
+                The Inner Circle of Modern Tea Couture
+              </h2>
 
-              <button
-                type="button"
-                aria-disabled="true"
-                onClick={() => showToast('ระบบ GitHub Sign-in อยู่ระหว่างการพัฒนา จะเปิดให้บริการในเวอร์ชันถัดไป', 'info')}
-                className="py-2.5 px-3 border border-[#DCDCDC] hover:border-[#000000]/30 rounded-xl text-xs font-mono font-bold text-[#000000]/70 bg-[#F1F1F1] hover:bg-[#EAEAEA] flex items-center justify-center gap-2 cursor-pointer shadow-2xs transition-all active:scale-98"
-              >
-                <span>🐙</span>
-                <span>GitHub</span>
-              </button>
+              <p className="text-xs text-[#FAF9F5]/70 leading-relaxed font-sans font-light">
+                {t('auth.atelierPledgeBody')}
+              </p>
             </div>
           </div>
 
-          {/* Demo Mode Bypass for Academic Evaluation & Presentation */}
-          <div className="mt-6 pt-5 border-t border-[#DCDCDC]">
-            <div className="p-4 rounded-2xl bg-amber-50/80 border border-amber-200 text-amber-900 shadow-xs">
-              <div className="flex items-center gap-2 mb-1.5 font-mono font-bold text-xs">
-                <span className="text-base">🧪</span>
-                <span>เข้าสู่ระบบโหมดสาธิต (Demo Mode)</span>
+          {/* Center Privileges List */}
+          <div className="relative z-10 my-8 py-6 border-y border-[#FAF9F5]/10 space-y-3.5">
+            <div className="flex items-start gap-3 text-xs">
+              <div className="w-5 h-5 rounded-full bg-[#518F5C]/20 border border-[#518F5C]/40 flex items-center justify-center shrink-0 mt-0.5">
+                <span className="text-[10px] text-[#518F5C]">✦</span>
               </div>
-              <p className="text-[11px] font-mono text-amber-800/80 mb-3 leading-relaxed">
-                สำหรับกรรมการตรวจหรือทดสอบ UX/UI ทันที โดยไม่ต้องพึ่งพาเซิร์ฟเวอร์
+              <span className="text-[#FAF9F5]/85">{t('auth.perkColor')}</span>
+            </div>
+
+            <div className="flex items-start gap-3 text-xs">
+              <div className="w-5 h-5 rounded-full bg-[#518F5C]/20 border border-[#518F5C]/40 flex items-center justify-center shrink-0 mt-0.5">
+                <span className="text-[10px] text-[#518F5C]">✦</span>
+              </div>
+              <span className="text-[#FAF9F5]/85">{t('auth.perkDrops')}</span>
+            </div>
+
+            <div className="flex items-start gap-3 text-xs">
+              <div className="w-5 h-5 rounded-full bg-[#518F5C]/20 border border-[#518F5C]/40 flex items-center justify-center shrink-0 mt-0.5">
+                <span className="text-[10px] text-[#518F5C]">✦</span>
+              </div>
+              <span className="text-[#FAF9F5]/85">{t('auth.perkTailoring')}</span>
+            </div>
+          </div>
+
+          {/* Bottom Capsule Tag */}
+          <div className="relative z-10 pt-2 flex items-center justify-between text-[11px] font-mono text-[#FAF9F5]/50 border-t border-[#FAF9F5]/10">
+            <span>TEA-DYE ARCHIVE // 2026</span>
+            <span className="text-[#518F5C]">KYOTO • BKK</span>
+          </div>
+
+        </div>
+
+        {/* ========================================================= */}
+        {/* RIGHT COLUMN: Tactile Authentication Experience           */}
+        {/* ========================================================= */}
+        <div className="lg:col-span-7 p-8 sm:p-10 lg:p-12 flex flex-col justify-between bg-white">
+          
+          <div>
+            {/* Header Title */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between">
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-[#042509] tracking-tight">
+                  {t('auth.welcomeBack')}
+                </h1>
+                <span className="text-xs font-mono text-[#666666] hidden sm:inline-block">
+                  MatchA ID
+                </span>
+              </div>
+              <p className="text-xs text-[#666666] mt-1.5 leading-relaxed">
+                {t('auth.signInDesc')}
               </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            </div>
+
+            {/* Error / Success Notifications */}
+            {errorMsg && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }} 
+                animate={{ opacity: 1, height: 'auto' }}
+                className="mb-5 p-3.5 rounded-xl bg-red-50/80 border border-red-200 text-red-700 text-xs font-mono flex items-center gap-2.5"
+              >
+                <AlertCircle size={15} className="text-[#C91D1D] shrink-0" />
+                <span>{errorMsg}</span>
+              </motion.div>
+            )}
+
+            {successMsg && (
+              <motion.div 
+                initial={{ opacity: 0, height: 0 }} 
+                animate={{ opacity: 1, height: 'auto' }}
+                className="mb-5 p-3.5 rounded-xl bg-[#518F5C]/15 border border-[#518F5C]/40 text-[#042509] text-xs font-mono flex items-center gap-2.5"
+              >
+                <CheckCircle2 size={15} className="text-[#518F5C] shrink-0" />
+                <span>{successMsg}</span>
+              </motion.div>
+            )}
+
+            {/* Login Form */}
+            <form onSubmit={handleLogin} className="space-y-4">
+              
+              {/* Email Field */}
+              <div>
+                <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-[#042509] mb-1.5">
+                  {t('auth.email')}
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#757B75]">
+                    <Mail size={16} />
+                  </div>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={t('auth.emailPlaceholder')}
+                    className="w-full pl-10 pr-4 py-3 bg-[#FAF9F5] border border-[#E5E2D8] rounded-xl text-xs sm:text-sm text-[#042509] placeholder-[#757B75]/60 focus:bg-white focus:border-[#042509] focus:ring-2 focus:ring-[#042509]/10 focus:outline-none transition-all font-sans"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Password Field */}
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-[11px] font-mono font-bold uppercase tracking-wider text-[#042509]">
+                    {t('auth.password')}
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setForgotModal(true)}
+                    className="text-[11px] font-mono text-[#C91D1D] hover:underline cursor-pointer transition-colors"
+                  >
+                    {t('auth.forgotPassword')}
+                  </button>
+                </div>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#757B75]">
+                    <Lock size={16} />
+                  </div>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder={t('auth.passwordPlaceholder')}
+                    className="w-full pl-10 pr-11 py-3 bg-[#FAF9F5] border border-[#E5E2D8] rounded-xl text-xs sm:text-sm text-[#042509] placeholder-[#757B75]/60 focus:bg-white focus:border-[#042509] focus:ring-2 focus:ring-[#042509]/10 focus:outline-none transition-all font-sans"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#757B75] hover:text-[#042509] transition-colors cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              {/* Remember Me */}
+              <div className="flex items-center justify-between pt-0.5">
+                <label className="flex items-center gap-2 text-xs font-mono text-[#666666] cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                    className="w-4 h-4 rounded border-[#DCDCDC] text-[#042509] focus:ring-[#042509] accent-[#042509] cursor-pointer"
+                  />
+                  <span>{t('auth.rememberMe')}</span>
+                </label>
+              </div>
+
+              {/* Submit CTA */}
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full mt-2 py-3.5 bg-[#042509] hover:bg-[#021505] active:scale-[0.99] text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md shadow-[#042509]/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-70 disabled:pointer-events-none"
+              >
+                {isLoading ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>{t('auth.signingIn')}</span>
+                  </>
+                ) : (
+                  <>
+                    <span>{t('auth.signInBtn')}</span>
+                    <ArrowRight size={14} />
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Social Authentication */}
+            <div className="mt-6 pt-5 border-t border-[#E5E2D8]">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#757B75]">
+                  {t('auth.socialTitle')}
+                </span>
+                <PreviewBadge label="COMING SOON" />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => showToast('Google Sign-In จะพร้อมใช้งานในเร็ว ๆ นี้', 'info')}
+                  className="py-2.5 px-3 border border-[#E5E2D8] hover:border-[#042509]/40 rounded-xl text-xs font-mono font-medium text-[#042509] bg-[#FAF9F5] hover:bg-white flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  <span>🌐</span>
+                  <span>Google</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => showToast('GitHub Sign-In จะพร้อมใช้งานในเร็ว ๆ นี้', 'info')}
+                  className="py-2.5 px-3 border border-[#E5E2D8] hover:border-[#042509]/40 rounded-xl text-xs font-mono font-medium text-[#042509] bg-[#FAF9F5] hover:bg-white flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  <span>🐙</span>
+                  <span>GitHub</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Demo Quick-Bypass for Evaluators */}
+            <div className="mt-5 p-4 rounded-2xl bg-[#FBF8EF] border border-[#E8DFC8] text-[#5C4A28]">
+              <div className="flex items-center justify-between mb-1.5">
+                <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-[#4A3B1F]">
+                  <span>🧪</span>
+                  <span>{t('auth.demoModeTitle')}</span>
+                </div>
+                <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-[#E8DFC8]/60 text-[#4A3B1F] uppercase font-bold">
+                  Bypass
+                </span>
+              </div>
+              <p className="text-[11px] text-[#786645] mb-3 leading-relaxed">
+                {t('auth.demoModeDesc')}
+              </p>
+              <div className="grid grid-cols-2 gap-2">
                 <button
                   type="button"
                   onClick={() => handleDemoLogin('Member')}
-                  className="py-2.5 px-3 bg-white hover:bg-amber-100/60 border border-amber-300 rounded-xl text-xs font-mono font-bold text-amber-900 flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-95"
+                  className="py-2 px-3 bg-white hover:bg-[#F3EDE0] border border-[#D9CBB0] rounded-xl text-xs font-mono font-bold text-[#4A3B1F] flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-xs"
                 >
-                  <User size={13} className="text-amber-700" />
-                  <span>Member (Demo)</span>
+                  <User size={13} className="text-[#518F5C]" />
+                  <span>{t('auth.memberDemo')}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleDemoLogin('Admin')}
-                  className="py-2.5 px-3 bg-[#042509] hover:bg-[#021505] text-white rounded-xl text-xs font-mono font-bold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all active:scale-95"
+                  className="py-2 px-3 bg-[#042509] hover:bg-[#021505] text-white rounded-xl text-xs font-mono font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-all shadow-xs"
                 >
                   <Shield size={13} className="text-[#518F5C]" />
-                  <span>Admin (Demo)</span>
+                  <span>{t('auth.adminDemo')}</span>
                 </button>
               </div>
             </div>
           </div>
 
           {/* Switch to SignUp */}
-          <div className="mt-6 text-center text-xs font-mono text-[#666666]">
-            Don't have an account yet?{' '}
+          <div className="mt-6 pt-4 border-t border-[#E5E2D8] text-center text-xs font-mono text-[#666666]">
+            <span>{t('auth.dontHaveAccount')} </span>
             <Link
               to="/signup"
-              className="font-bold text-[#C91D1D] hover:underline"
+              className="text-[#042509] font-bold underline hover:text-[#518F5C] transition-colors ml-1"
             >
-              Create Account →
+              {t('auth.signUpHere')} →
             </Link>
           </div>
 
         </div>
 
-        {/* Security Assurance Badge */}
-        <div className="mt-4 flex items-center justify-center gap-2 text-[10px] font-mono text-[#666666] uppercase tracking-widest">
-          <ShieldCheck size={13} className="text-[#042509]" />
-          <span>256-bit SSL Encrypted • MatchA Secure Auth</span>
-        </div>
-
-      </div>
+      </motion.div>
 
       {/* Forgot Password Modal */}
       {forgotModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white border border-[#DCDCDC] rounded-3xl p-6 sm:p-7 max-w-sm w-full shadow-2xl relative animate-scale-up">
-            <h3 className="text-lg font-bold text-[#000000] uppercase tracking-tight">
-              Reset Password
-            </h3>
-            <p className="text-xs text-[#666666] mt-1 font-mono">
-              Enter your email to receive a password reset link.
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="max-w-md w-full bg-white border border-[#E5E2D8] rounded-2xl p-6 shadow-2xl relative"
+          >
+            <button
+              onClick={() => setForgotModal(false)}
+              className="absolute top-4 right-4 text-[#757B75] hover:text-[#042509] p-1 rounded-lg transition-colors cursor-pointer"
+            >
+              <X size={18} />
+            </button>
+
+            <div className="flex items-center gap-2 mb-2 text-[#042509]">
+              <KeyRound size={20} className="text-[#518F5C]" />
+              <h3 className="text-lg font-bold">{t('auth.resetTitle')}</h3>
+            </div>
+            <p className="text-xs text-[#666666] mb-4 font-sans">
+              {t('auth.resetDesc')}
             </p>
 
             {forgotSent ? (
-              <div className="mt-4 space-y-3">
-                <div className="p-3.5 rounded-xl bg-[#518F5C]/30 border border-[#042509]/20 text-[#042509] text-xs font-mono font-bold text-center">
-                  ✓ จำลองการส่งลิงก์รีเซ็ตรหัสผ่านไปยัง {forgotEmail}!
-                </div>
-                <PreviewNote>
-                  โหมดสาธิต — ยังไม่มีการส่งอีเมลจริง ตัวอย่างลิงก์: <span className="underline break-all">https://matcha.com/reset-password?token=demo-{Date.now()}</span>
-                </PreviewNote>
+              <div className="p-3.5 rounded-xl bg-[#518F5C]/15 border border-[#518F5C]/40 text-[#042509] text-xs font-mono flex items-center gap-2">
+                <CheckCircle2 size={16} className="text-[#518F5C] shrink-0" />
+                <span>{t('auth.resetSent')}</span>
               </div>
             ) : (
-              <form onSubmit={handleSendReset} className="mt-4 space-y-3">
+              <form onSubmit={handleSendReset} className="space-y-3">
                 <input
                   type="email"
                   value={forgotEmail}
                   onChange={(e) => setForgotEmail(e.target.value)}
-                  placeholder="name@domain.com"
-                  className="w-full px-3.5 py-2.5 bg-matcha-bg border border-matcha-border rounded-xl text-xs font-mono focus:outline-none focus:border-matcha-primary focus:ring-1 focus:ring-matcha-primary"
+                  placeholder={t('auth.emailPlaceholder')}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5E2D8] text-xs font-sans focus:outline-none focus:border-[#042509] focus:ring-2 focus:ring-[#042509]/10"
                   required
                 />
-                <div className="flex gap-2 pt-2">
+                <div className="flex justify-end gap-2 pt-2">
                   <button
                     type="button"
                     onClick={() => setForgotModal(false)}
-                    className="flex-1 py-2.5 rounded-xl border border-[#DCDCDC] text-xs font-mono font-bold text-[#666666] hover:bg-[#F1F1F1] cursor-pointer"
+                    className="px-4 py-2 rounded-xl text-xs font-mono border border-[#E5E2D8] text-[#666666] hover:bg-[#FAF9F5] cursor-pointer"
                   >
-                    Cancel
+                    {t('auth.close')}
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-2.5 rounded-xl bg-[#C91D1D] text-white text-xs font-mono font-bold hover:bg-[#A81515] cursor-pointer"
+                    className="px-4 py-2 rounded-xl text-xs font-mono font-bold bg-[#042509] hover:bg-[#021505] text-white cursor-pointer"
                   >
-                    Send Link
+                    {t('auth.resetSend')}
                   </button>
                 </div>
               </form>
             )}
-          </div>
+          </motion.div>
         </div>
       )}
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Truck, Shield, MapPin, User, Mail, Phone } from 'lucide-react';
+import { Truck, MapPin, Phone } from 'lucide-react';
 
 export default function ShippingStep({
   formData,

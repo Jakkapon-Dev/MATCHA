@@ -5,9 +5,6 @@ import {
   Menu,
   X,
   User,
-  LogOut,
-  ShieldCheck,
-  LayoutDashboard,
   Loader2
 } from 'lucide-react';
 import { BorderBeam } from '../ui/BorderBeam';
@@ -147,9 +144,6 @@ export default function Navbar({
               <span className="relative z-10">MIX@MATCH</span>
             </button>
 
-            {/* Language Switch: EN / TH */}
-            <LanguageToggle />
-
             {/* Cart Trigger Button (Black & White with Red Count Badge) */}
             <button
               onClick={onOpenCart}
@@ -227,6 +221,9 @@ export default function Navbar({
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
+
+            {/* Far right: EN / TH switch, last tile in the row */}
+            <LanguageToggle />
 
           </div>
 

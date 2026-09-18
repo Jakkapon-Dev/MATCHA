@@ -1,5 +1,5 @@
 import React from 'react';
-import { Gift, Lock, ShoppingBag } from 'lucide-react';
+import { Lock } from 'lucide-react';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
 
 export default function OrderSummarySidebar({
