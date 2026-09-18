@@ -12,7 +12,7 @@ import { useStoreMode } from '../context/StoreModeContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, shippingCostFor } from '../config/shipping';
 import { couponFor, discountFor, normaliseCode, FEATURED_CODES, takePendingCoupon } from '../config/coupons';
 import PreviewNote from '../components/ui/PreviewNote';
-import { QrCode, AlertTriangle, RotateCcw } from 'lucide-react';
+import { QrCode, AlertTriangle, RotateCcw, Check, ArrowRight } from 'lucide-react';
 
 const PAYMENT_METHODS = [
   { id: 'visa', name: 'Visa', icon: '💳' },
@@ -21,7 +21,6 @@ const PAYMENT_METHODS = [
   { id: 'qr', name: 'PromptPay QR', icon: <QrCode size={20} /> },
 ];
 
-// ชื่อและระยะเวลาเป็นเรื่องของหน้าจอ ส่วนราคามาจากตารางกลางที่ตรงกับเซิร์ฟเวอร์
 const SHIPPING_OPTIONS = [
   { id: 'standard', name: 'Standard Express Shipping', price: SHIPPING_RATES.standard, days: '3-5 business days' },
   { id: 'express', name: 'Priority Courier Shipping', price: SHIPPING_RATES.express, days: '1-2 business days' },
@@ -68,26 +67,19 @@ export default function PaymentPage() {
   const [orderError, setOrderError] = useState(null);
   const [checkoutRequestId] = useState(() => `req-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`);
 
-  // โหมดเดโมมีขั้นตอนของตัวเองและล้างตะกร้าทันทีที่ออเดอร์ถูกบันทึก
-  // ถ้าปล่อยให้ guard นี้ทำงานด้วย หน้ายืนยันจะถูกเด้งทิ้งก่อนผู้ซื้อได้เห็นเลขออเดอร์
+  // Redirect to cart if bag is empty and not viewing success modal
   useEffect(() => {
     if (cartItems.length === 0 && !showSuccessModal) {
       navigate('/cart');
     }
   }, [cartItems, showSuccessModal, navigate]);
 
-  /* คูปองที่ผู้ใช้กดรับไว้จากหน้าโปรโมชัน ใส่ให้อัตโนมัติตอนเปิดหน้านี้
-   *
-   * takePendingCoupon อ่านแล้วลบทิ้งในจังหวะเดียว และเทียบรหัสกับตารางใหม่
-   * ก่อนคืนค่า ค่าที่ถูกแก้มาจึงกลายเป็น null ไม่ใช่ส่วนลดที่ผู้ใช้ตั้งเอง
-   *
-   * ต้องบอกด้วยว่าใส่ให้แล้ว ไม่ใช่ลดเงียบ ๆ — ยอดที่เปลี่ยนไปเองโดยไม่มีคำอธิบาย
-   * อ่านเหมือนคิดเงินผิดมากกว่าเหมือนได้ส่วนลด */
+  // Handle pending coupon applied from banners
   useEffect(() => {
     const pending = takePendingCoupon();
     if (!pending) return;
     setAppliedCoupon(pending);
-    showToast(`ใส่คูปอง ${pending.code} (${pending.label}) ให้แล้ว`, 'success');
+    showToast(`Applied coupon ${pending.code} (${pending.label})`, 'success');
   }, [showToast]);
 
   // Pricing calculations
@@ -100,9 +92,7 @@ export default function PaymentPage() {
     freeShippingCoupon: appliedCoupon?.type === 'free_shipping'
   });
 
-  // ปัดเศษด้วยกฎเดียวกับเซิร์ฟเวอร์ ไม่งั้นยอดพรีวิวกับยอดที่เรียกเก็บจะต่างกันเศษสตางค์
   const discount = discountFor(appliedCoupon, subtotal);
-
   const total = Math.max(0, subtotal + shippingCost - discount);
 
   const handleApplyCoupon = (e) => {
@@ -112,26 +102,24 @@ export default function PaymentPage() {
     const coupon = couponFor(code);
 
     if (!coupon) {
-      // รหัสตัวอย่างดึงจาก config ไม่ได้พิมพ์ซ้ำไว้ตรงนี้ จะได้ไม่ลืมแก้ตอนเปลี่ยนโปรโมชัน
       setCouponError(`Invalid promo code. Try ${FEATURED_CODES.join(' or ')}`);
       return;
     }
 
     setAppliedCoupon({ ...coupon, code });
-    showToast(`Applied coupon: ${code} (${coupon.label}) 🎉`);
+    showToast(`Applied coupon: ${code} (${coupon.label}) ✨`);
     setCouponCode('');
   };
 
   const handleRemoveCoupon = () => {
     setAppliedCoupon(null);
-    showToast('Removed promotional coupon.');
+    showToast('Removed promotional code.');
   };
 
   const handlePlaceOrder = async () => {
     setOrderError(null);
     setIsProcessing(true);
     try {
-      // ราคาไม่ได้ส่งไปแล้ว — เซิร์ฟเวอร์คิดเองจากราคาใน DB และโค้ดส่วนลดที่ส่งไป
       const orderPayload = {
         idempotencyKey: checkoutRequestId,
         customer: formData,
@@ -150,68 +138,86 @@ export default function PaymentPage() {
 
       const res = await api.createOrder(orderPayload);
       if (!res || res.success === false || !res.data) {
-        throw new Error(res?.message || 'เซิร์ฟเวอร์ไม่ได้ยืนยันการสร้างออเดอร์');
+        throw new Error(res?.message || 'Server did not acknowledge order creation.');
       }
       setCreatedOrder(res.data);
-      showToast('รับคำสั่งซื้อเรียบร้อยแล้ว (สถานะ: รอดำเนินการ / รอชำระเงิน)', 'success');
+      showToast('Order confirmed and recorded in atelier vault!', 'success');
       setShowSuccessModal(true);
       clearCart();
     } catch (err) {
-      // ออเดอร์ที่เซิร์ฟเวอร์ปฏิเสธคือออเดอร์ที่ไม่เกิดขึ้น — อย่าบอกลูกค้าว่าสำเร็จ
       console.error('Order creation failed:', err.message);
-      showToast(err.message || 'Could not place the order. Please try again.', 'error');
-      setOrderError(err.message || 'ไม่สามารถสร้างออเดอร์ได้ กรุณาลองใหม่อีกครั้ง');
+      showToast(err.message || 'Could not place order. Please try again.', 'error');
+      setOrderError(err.message || 'Could not place order. Please try again.');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // โหมดทดลองใช้ฟอร์มกรอกที่อยู่และบัตรชุดเดียวกับโหมดร้านจริง เพื่อให้ผู้ที่มาลองใช้
-  // เห็นขั้นตอนการสั่งซื้อครบตามจริง — ต่างกันแค่ไม่มีการตัดเงินและไม่มีการจัดส่ง
-  // เลขบัตรอยู่ใน state ของหน้านี้เท่านั้น ไม่ถูกส่งไปกับ orderPayload และไม่ถูกบันทึกที่ใด
   return (
-    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#F7F6F2] text-[#111111] min-h-screen py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         
-        {/* Step Indicator Header */}
-        <div className="mb-10 pb-6 border-b border-[#DCDCDC] flex items-center justify-between">
+        {/* Luxury Checkout Stepper Header */}
+        <div className="mb-10 pb-6 border-b border-[#E5E2D9] flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
-            <span data-enter className="text-xs font-mono font-bold text-[#042509] uppercase tracking-widest">
-              Checkout Flow
-            </span>
-            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-2xl sm:text-4xl font-black uppercase text-[#000000] tracking-tight mt-1">
-              {step === 'shipping' ? 'Shipping Details' : 'Payment Method'}
+            <div className="flex items-center gap-2 text-[11px] font-mono tracking-[0.2em] uppercase text-[#518F5C] font-semibold">
+              <span>MatchA Atelier</span>
+              <span>/</span>
+              <span>Secure Checkout</span>
+              <span>/</span>
+              <span className="text-[#111111]">お会計</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-black text-[#111111] tracking-tight mt-1 font-serif">
+              {step === 'shipping' ? 'Shipping & Handover' : 'Payment Authorization'}
             </h1>
           </div>
 
-          {/* Stepper Progress */}
-          <div className="flex items-center gap-2 font-mono text-xs">
-            <span className={`px-3 py-1 rounded-lg font-bold ${
-              step === 'shipping' ? 'bg-[#042509] text-white' : 'bg-[#518F5C] text-[#042509]'
-            }`}>
-              1. Address
-            </span>
-            <span className="text-[#DCDCDC]">→</span>
-            <span className={`px-3 py-1 rounded-lg font-bold ${
-              step === 'payment' ? 'bg-[#042509] text-white' : 'bg-white border border-[#DCDCDC] text-[#666666]'
-            }`}>
-              2. Payment
-            </span>
+          {/* Stepper Progress Bar */}
+          <div className="flex items-center gap-2 sm:gap-3 font-mono text-xs">
+            <button
+              onClick={() => navigate('/cart')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#E8EFE9] text-[#042509] font-bold border border-[#518F5C]/30 hover:bg-[#D7E5D9] transition-colors cursor-pointer"
+            >
+              <Check size={13} className="text-[#042509]" />
+              <span>Bag</span>
+            </button>
+
+            <span className="text-[#D5D2C9]">/</span>
+
+            <button
+              onClick={() => setStep('shipping')}
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-bold transition-all cursor-pointer ${
+                step === 'shipping'
+                  ? 'bg-[#042509] text-white shadow-xs'
+                  : 'bg-[#E8EFE9] text-[#042509]'
+              }`}
+            >
+              {step === 'payment' ? <Check size={13} /> : null}
+              <span>1. Destination</span>
+            </button>
+
+            <span className="text-[#D5D2C9]">/</span>
+
+            <div
+              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-bold ${
+                step === 'payment'
+                  ? 'bg-[#042509] text-white shadow-xs'
+                  : 'bg-white border border-[#E5E2D9] text-[#888888]'
+              }`}
+            >
+              <span>2. Payment</span>
+            </div>
           </div>
         </div>
 
         {/* 2-Column Checkout Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           
-          {/* Main Form Steps (Left Column) */}
+          {/* Main Form Step Area */}
           <div ref={stepMotionRef} className="lg:col-span-7">
             {isDemo && (
-              <PreviewNote className="mb-5">
-                <strong>โหมดทดลอง</strong> — ขั้นตอนและฟอร์มเหมือนการสั่งซื้อจริงทุกอย่าง
-                แต่ไม่มีการตัดเงินและไม่มีการจัดส่ง
-                <br />
-                กรุณา<strong>ใช้ข้อมูลสมมติเท่านั้น</strong> อย่ากรอกเลขบัตรจริง
-                (เลขบัตรที่กรอกอยู่ในหน้าจอนี้เท่านั้น ไม่ถูกส่งออกและไม่ถูกบันทึกที่ใด)
+              <PreviewNote className="mb-6">
+                <strong>Atelier Simulation Mode</strong> — All steps reflect the live production checkout flow. No real banking charge will occur. You may use mock test card details or select PromptPay QR.
               </PreviewNote>
             )}
 
@@ -235,38 +241,42 @@ export default function PaymentPage() {
                 onSelectPayment={setSelectedPayment}
                 cardData={cardData}
                 onCardDataChange={setCardData}
-                onBack={() => setStep('shipping')}
+                onBack={() => {
+                  setStep('shipping');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 onPlaceOrder={handlePlaceOrder}
                 isProcessing={isProcessing}
                 totalAmount={total}
               />
             )}
 
+            {/* Error Notification Banner */}
             {step === 'payment' && orderError && (
               <div
                 role="alert"
-                className="mt-6 p-6 rounded-2xl border border-[#DCDCDC] bg-[#F1F1F1] shadow-sm space-y-4"
+                className="mt-6 p-6 rounded-3xl border border-[#C91D1D]/30 bg-[#FBEAEA] shadow-sm space-y-4"
               >
                 <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-xl bg-white border border-[#DCDCDC] text-[#C91D1D] shrink-0 mt-0.5">
+                  <div className="p-2.5 rounded-xl bg-white text-[#C91D1D] shrink-0 shadow-xs">
                     <AlertTriangle size={20} />
                   </div>
                   <div>
                     <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#C91D1D] block">
-                      ORDER NOT PLACED
+                      TRANSACTION NOT COMPLETED
                     </span>
-                    <h3 className="text-lg font-black uppercase tracking-tight text-[#000000] mt-0.5">
-                      ออเดอร์ยังไม่ถูกสร้าง
+                    <h3 className="text-lg font-black font-serif text-[#111111] mt-0.5">
+                      Order Registration Failed
                     </h3>
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-xl border border-[#DCDCDC] bg-white text-xs font-mono text-[#C91D1D] break-words">
+                <div className="p-3.5 rounded-xl border border-[#C91D1D]/20 bg-white text-xs font-mono text-[#C91D1D]">
                   {orderError}
                 </div>
 
-                <p className="text-xs text-[#666666] leading-relaxed">
-                  สินค้าในตะกร้าและข้อมูลที่คุณกรอกไว้ยังอยู่ครบถ้วน ไม่มีการตัดเงินเกิดขึ้น
+                <p className="text-xs font-mono text-[#555555] leading-relaxed">
+                  Your curated bag items and delivery details have been safely retained. No amount was debited.
                 </p>
 
                 <div className="flex flex-wrap items-center gap-3 pt-1">
@@ -274,24 +284,24 @@ export default function PaymentPage() {
                     type="button"
                     onClick={handlePlaceOrder}
                     disabled={isProcessing}
-                    className="px-6 py-3 bg-[#042509] hover:bg-[#021505] text-white text-xs font-mono font-bold uppercase tracking-widest rounded-xl shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
+                    className="px-6 py-3 bg-[#042509] hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-widest rounded-xl shadow-md transition-all disabled:opacity-40 cursor-pointer flex items-center gap-2"
                   >
                     <RotateCcw size={14} className={isProcessing ? 'animate-spin' : ''} />
-                    <span>{isProcessing ? 'กำลังดำเนินการ...' : 'ลองสั่งซื้ออีกครั้ง'}</span>
+                    <span>{isProcessing ? 'Authorizing...' : 'Try Again'}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setStep('shipping')}
-                    className="px-6 py-3 bg-white border border-[#DCDCDC] text-[#666666] hover:text-[#000000] hover:border-[#000000] text-xs font-mono font-bold uppercase tracking-widest rounded-xl transition-colors cursor-pointer"
+                    className="px-6 py-3 bg-white border border-[#D5D2C9] text-[#111111] hover:border-[#042509] text-xs font-mono font-bold uppercase tracking-widest rounded-xl transition-colors cursor-pointer"
                   >
-                    กลับไปแก้ข้อมูลจัดส่ง
+                    Edit Shipping Info
                   </button>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Order Summary Sidebar (Right Column) */}
+          {/* Sticky Order Summary Sidebar */}
           <div className="lg:col-span-5">
             <OrderSummarySidebar
               cartItems={cartItems}
@@ -310,7 +320,7 @@ export default function PaymentPage() {
 
         </div>
 
-        {/* Order Confirmation Receipt Modal */}
+        {/* Dispatch Certificate Success Modal */}
         <OrderSuccessModal
           isOpen={showSuccessModal}
           order={createdOrder}
