@@ -44,6 +44,13 @@ export default function CatalogPage({
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 24;
 
+  // Sync category state whenever initialCategory prop changes from external navigation (e.g. ChooseYourFit)
+  useEffect(() => {
+    if (initialCategory) {
+      setSelectedCategory(initialCategory);
+    }
+  }, [initialCategory]);
+
   /* The archive is fetched once and narrowed in the browser. The dye rail has
      to show how many garments sit behind every colour, which means the page
      needs the whole set in hand regardless of what is currently selected —

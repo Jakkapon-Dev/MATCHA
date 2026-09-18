@@ -1,5 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useMemo, useEffect } from 'react';
 import useChangeMotion from '../hooks/useChangeMotion';
 import {
   Sparkles,
@@ -43,7 +42,6 @@ const SEASONS = [
    flat rectangles that sit on the page. */
 
 export default function EditorialLookbookPage() {
-  const navigate = useNavigate();
   const { addToCart } = useCart();
   const { showToast } = useToast();
   const { looks: curatedEditorialSpreads, loading, error, retry } = useLookbooks();
@@ -63,7 +61,6 @@ export default function EditorialLookbookPage() {
   const [likedLooks, setLikedLooks] = useState({});
   const [addedItems, setAddedItems] = useState({});
   const [addedEntireLook, setAddedEntireLook] = useState(false);
-  const ambientMotion = true;
   const [isZoomed, setIsZoomed] = useState(false);
 
   // ล้างสถานะเมื่อเปลี่ยนฤดูกาล เพื่อไม่ให้เหลือสถานะของ Look เก่า
@@ -244,250 +241,163 @@ export default function EditorialLookbookPage() {
   }
 
   return (
-    <div className="w-full bg-[#F1F1F1] text-[#000000] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-10 sm:space-y-14">
-        {purchaseItem && <ProductModal product={purchaseItem} onClose={() => setPurchaseItem(null)} />}
-        {loading && <div role="status" aria-label="กำลังโหลดข้อมูลสินค้า" className="h-16 rounded-xl bg-[#EAE5DB]" />}
-        {error && <div role="alert" className="p-4 rounded-xl border border-[#C91D1D] bg-[#FFF4ED]">{error} <button onClick={retry} className="underline font-bold ml-3">ลองใหม่</button></div>}
+    <div className="w-full bg-[#F1F1F1] text-[#000000] min-h-screen">
+      {purchaseItem && <ProductModal product={purchaseItem} onClose={() => setPurchaseItem(null)} />}
+      {loading && <div role="status" aria-label="กำลังโหลดข้อมูลสินค้า" className="h-16 bg-[#EAE5DB]" />}
+      {error && <div role="alert" className="p-4 border-b border-[#C91D1D] bg-[#FFF4ED] text-center">{error} <button onClick={retry} className="underline font-bold ml-3">ลองใหม่</button></div>}
 
-        {/* ========================================================================= */}
-        {/* 1. EDITORIAL MAGAZINE MASTHEAD & HEADER (VOGUE / JAPANESE STREET STYLE) */}
-        {/* ========================================================================= */}
-        <header className="space-y-8">
+      {/* ========================================================================= */}
+      {/* 1. THE COVER STORY: FULL-BLEED EDITORIAL MAGAZINE COVER (OPTION 1)         */}
+      {/* ========================================================================= */}
+      {coverStory && (
+        <div ref={editorialMotionRef} key={`cover-${coverStory.id}-${selectedSeason}`}>
+          <figure
+            className="relative w-full h-[88svh] sm:h-[94svh] min-h-[540px] overflow-hidden bg-[#0A0A0A] cursor-pointer select-none"
+            onClick={() => setSelectedSpread(coverStory)}
+          >
+            <img
+              ref={coverImageRef}
+              src={webpSrc(coverStory.heroImage)} data-original-src={coverStory.heroImage}
+              alt={coverStory.title}
+              onError={handleImageError}
+              style={{ objectPosition: `${COVER_FOCUS.x * 100}% ${COVER_FOCUS.y * 100}%` }}
+              className="w-full h-full object-cover"
+            />
 
-          {/* Masthead rule. The pulsing radar dot that used to lead this line is
-              gone: it animated like a live status indicator while reporting
-              nothing, and a magazine's issue line is a fact, not a feed. */}
-          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-3 border-b border-[#0A0A0A] font-mono text-[11px] uppercase tracking-[0.18em] text-[#666666]">
-            <span className="text-[#0A0A0A] font-bold">Matcha Archive Magazine — Issue No. 04</span>
-            <span>Tokyo · Kyoto · Enoshima — 2026 Edition</span>
-          </div>
+            {/* Luxury Magazine Vignette Gradient */}
+            <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/25 to-black/65 pointer-events-none" />
 
-          {/* The title is the design here rather than a line of text with one
-              word dressed up: two words, one weight, set as large and as tight
-              as the measure allows, with the archive's own subject standing
-              behind them. */}
-          <div className="relative py-2 sm:py-6">
-            <span
-              aria-hidden="true"
-              className="absolute -top-2 right-0 text-[5.5rem] sm:text-[9rem] lg:text-[12rem] leading-none font-black text-[#042509]/[0.07] pointer-events-none select-none font-serif tracking-tighter"
-            >
-              街頭美學
-            </span>
+            {/* Top Magazine Meta Bar (Over Image) */}
+            <figcaption className="absolute top-0 inset-x-0 z-20 p-5 sm:p-8 flex items-start justify-between gap-4 text-white">
+              <div className="space-y-1">
+                <div className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-white/90 drop-shadow">
+                  <span>MatchA Archive Magazine — Issue No. 04</span>
+                  <span className="hidden sm:inline"> — Tokyo · Kyoto · Enoshima (2026 Edition)</span>
+                </div>
+                <div className="text-[10px] font-mono text-[#518F5C] uppercase tracking-widest flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#518F5C]" />
+                  <span>Cover Story: {coverStory.vol} — {coverStory.season}</span>
+                </div>
+              </div>
 
-            <h1 className="relative text-5xl sm:text-7xl md:text-8xl lg:text-[7.5rem] font-black uppercase text-[#0A0A0A] tracking-[-0.03em] font-sans leading-[0.85]">
-              Editorial<br />Lookbook
-            </h1>
+              <button
+                type="button"
+                onClick={(e) => toggleLike(e, coverStory.id)}
+                aria-label="Save this look"
+                aria-pressed={Boolean(likedLooks[coverStory.id])}
+                className="shrink-0 text-white cursor-pointer transition-transform hover:scale-110 outline-hidden focus-visible:ring-2 focus-visible:ring-white p-2.5 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 shadow-md"
+              >
+                <Heart size={20} className={likedLooks[coverStory.id] ? 'fill-[#C91D1D] text-[#C91D1D]' : 'drop-shadow'} />
+              </button>
+            </figcaption>
 
-            <p className="relative mt-6 text-xs sm:text-sm text-[#666666] font-sans max-w-2xl leading-relaxed">
-              ภาพถ่ายแฟชั่นชุดจริงระดับนิตยสาร ถ่ายทอดความงดงามของผ้ามัทฉะและซิลูเอทสตรีทแวร์ญี่ปุ่นในแสงธรรมชาติ พร้อมพิกัดเสื้อผ้าชิ้นจริงแบบอินเทอร์แอคทีฟ (Interactive Shoppable Hotspots)
-            </p>
-          </div>
-
-          {/* Running ticker. The ✦ prefixes and the interpunct separators were
-              chrome standing in for punctuation; a rule between items does the
-              same job without decorating every phrase. */}
-          <div className="w-full overflow-hidden border-y border-[#DCDCDC] py-2.5 font-mono text-[11px] text-[#666666] tracking-[0.15em] uppercase">
-            <div className="animate-marquee whitespace-nowrap flex items-center">
-              {[
-                'Matcha Archive, Spring to Autumn 2026',
-                'High-precision Japanese street silhouettes',
-                'Botanical dyed pieces, 100% artisan guarantee',
-                'Click any pin on a photograph to shop it',
-                'Limited run fabrications in Ginza, Enoshima and Odaiba',
-              ].concat([
-                'Matcha Archive, Spring to Autumn 2026',
-                'High-precision Japanese street silhouettes',
-              ]).map((line, i) => (
-                <span key={i} className="flex items-center">
-                  <span className="px-6">{line}</span>
-                  <span aria-hidden="true" className="h-3 w-px bg-[#DCDCDC]" />
-                </span>
-              ))}
+            {/* Giant Masthead Center Watermark / Headline */}
+            <div className="absolute top-1/4 sm:top-1/5 inset-x-0 z-10 text-center pointer-events-none px-4">
+              <span
+                aria-hidden="true"
+                className="text-[5rem] sm:text-[9rem] lg:text-[13rem] leading-none font-black text-white/[0.08] select-none font-serif tracking-tighter block"
+              >
+                街頭美學
+              </span>
+              <h1 className="text-4xl sm:text-7xl md:text-8xl lg:text-[6.8rem] font-black uppercase text-white tracking-[-0.03em] font-sans leading-[0.88] drop-shadow-2xl -mt-8 sm:-mt-16 lg:-mt-24">
+                Editorial Lookbook
+              </h1>
             </div>
-          </div>
 
-          {/* Issue navigation, set as reading matter like the catalogue's
-              categories, so the two pages navigate in one voice. */}
-          <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3">
-            <nav aria-label="Filter by issue" className="flex flex-wrap items-baseline gap-x-5 gap-y-2">
-              {SEASONS.map((s) => {
-                const isActive = selectedSeason === s.id;
-                const count = s.id === 'ALL'
-                  ? curatedEditorialSpreads.length
-                  : curatedEditorialSpreads.filter(sp => sp.season.toLowerCase() === s.id.toLowerCase()).length;
-
-                return (
-                  <button
-                    key={s.id}
-                    type="button"
-                    aria-pressed={isActive}
-                    onClick={() => {
-                      setSelectedSeason(s.id);
-                      setPinnedItemId(null);
-                      setHoveredItemId(null);
-                      setFocusedItemId(null);
-                    }}
-                    className={`font-mono text-xs uppercase tracking-wider cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
-                      isActive
-                        ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-[#C91D1D]'
-                        : 'text-[#666666] hover:text-[#0A0A0A]'
-                    }`}
-                  >
-                    {s.label}
-                    <span className="ml-1.5 text-[10px] tabular-nums text-[#999999]">{count}</span>
-                  </button>
-                );
-              })}
-            </nav>
-
-            <button
-              type="button"
-              onClick={() => navigate('/mix-match')}
-              className="font-mono text-xs uppercase tracking-wider text-[#C91D1D] hover:underline underline-offset-4 cursor-pointer flex items-center gap-1.5 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
-            >
-              <span>Open Mix &amp; Match Studio</span>
-              <ArrowRight size={13} />
-            </button>
-          </div>
-
-        </header>
-
-        {/* ========================================================================= */}
-        {/* 2. THE COVER STORY: FULL-BLEED EDITORIAL MASTERPIECE WITH 3D TILT & HOTSPOTS */}
-        {/* ========================================================================= */}
-        {coverStory && (
-          <div ref={editorialMotionRef} key={`cover-${coverStory.id}-${selectedSeason}`}>
-            {/* The cover runs as a spread: one wide photograph with the story
-                set on it, and the essay and the shopping list carried beneath
-                in columns. It used to be a bordered, rounded, shadowed pane
-                holding a 7/5 split — a product card at magazine scale. */}
-            {/* Sized by the viewport rather than by a fixed ratio. A landscape
-                ratio over a portrait photograph has to discard a quarter of the
-                frame, and the cover then fights whatever the photographer put
-                at the top and bottom. A tall cover keeps far more of the shot. */}
-            <figure
-              className="relative w-full h-[78svh] sm:h-[86svh] min-h-[440px] overflow-hidden bg-[#E4E4E4] cursor-pointer select-none"
-              onClick={() => setSelectedSpread(coverStory)}
-            >
-              <img
-                ref={coverImageRef}
-                src={webpSrc(coverStory.heroImage)} data-original-src={coverStory.heroImage}
-                alt={coverStory.title}
-                onError={handleImageError}
-                style={{ objectPosition: `${COVER_FOCUS.x * 100}% ${COVER_FOCUS.y * 100}%` }}
-                className="w-full h-full object-cover"
-              />
-
-              {/* Enough shading to carry type at either end, and no more. */}
-              <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/10 to-black/40 pointer-events-none" />
-
-              <figcaption className="absolute top-5 left-5 right-5 z-10 flex items-start justify-between gap-4">
-                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/90 drop-shadow">
-                  Cover story — {coverStory.vol} — {coverStory.season}
-                </span>
-
-                <button
-                  type="button"
-                  onClick={(e) => toggleLike(e, coverStory.id)}
-                  aria-label="Save this look"
-                  aria-pressed={Boolean(likedLooks[coverStory.id])}
-                  className="shrink-0 text-white cursor-pointer transition-transform hover:scale-110 outline-hidden focus-visible:ring-2 focus-visible:ring-white"
+            {/* Interactive garment pins */}
+            {coverStory.hotspots && coverStory.hotspots.map((hs) => {
+              const active = isHotspotActive(hs);
+              return (
+                <div
+                  key={hs.id}
+                  className="absolute z-20 transform -translate-x-1/2 -translate-y-1/2"
+                  style={coverPosition(hs)}
                 >
-                  <Heart size={20} className={likedLooks[coverStory.id] ? 'fill-[#C91D1D] text-[#C91D1D]' : 'drop-shadow'} />
-                </button>
-              </figcaption>
-
-              {/* Interactive garment pins, unchanged in behaviour. The radar
-                  rings around each one were removed: five pulsing targets on a
-                  photograph read as an alarm, not an invitation. */}
-              {coverStory.hotspots && coverStory.hotspots.map((hs) => {
-                const active = isHotspotActive(hs);
-                return (
-                  <div
-                    key={hs.id}
-                    className="absolute z-20 transform -translate-x-1/2 -translate-y-1/2"
-                    style={coverPosition(hs)}
+                  <button
+                    type="button"
+                    aria-label={`ไฮไลต์ ${hs.title} บนภาพ`}
+                    aria-pressed={pinnedItemId === hsKey(hs)}
+                    onMouseEnter={() => setHoveredItemId(hsKey(hs))}
+                    onMouseLeave={() => setHoveredItemId(null)}
+                    onFocus={() => setFocusedItemId(hsKey(hs))}
+                    onBlur={() => setFocusedItemId(null)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPinnedItemId((prev) => (prev === hsKey(hs) ? null : hsKey(hs)));
+                    }}
+                    className="min-h-11 min-w-11 cursor-pointer flex items-center justify-center outline-hidden focus-visible:ring-2 focus-visible:ring-white"
                   >
-                    <button
-                      type="button"
-                      aria-label={`ไฮไลต์ ${hs.title} บนภาพ`}
-                      aria-pressed={pinnedItemId === hsKey(hs)}
-                      onMouseEnter={() => setHoveredItemId(hsKey(hs))}
-                      onMouseLeave={() => setHoveredItemId(null)}
-                      onFocus={() => setFocusedItemId(hsKey(hs))}
-                      onBlur={() => setFocusedItemId(null)}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setPinnedItemId((prev) => (prev === hsKey(hs) ? null : hsKey(hs)));
-                      }}
-                      className="min-h-11 min-w-11 cursor-pointer flex items-center justify-center outline-hidden focus-visible:ring-2 focus-visible:ring-white"
-                    >
-                      <span
-                        className={`block rounded-full border transition-all duration-200 ${
-                          active
-                            ? 'h-4 w-4 bg-[#C91D1D] border-white'
-                            : 'h-3 w-3 bg-white/90 border-white/60 hover:h-4 hover:w-4'
-                        }`}
-                      />
-                    </button>
+                    <span
+                      className={`block rounded-full border transition-all duration-200 ${
+                        active
+                          ? 'h-4 w-4 bg-[#C91D1D] border-white ring-4 ring-white/30'
+                          : 'h-3 w-3 bg-white/90 border-white/60 hover:h-4 hover:w-4'
+                      }`}
+                    />
+                  </button>
 
-                    {active && (
-                      <div
-                        className="absolute left-1/2 -translate-x-1/2 bottom-10 w-60 p-3 bg-[#F1F1F1] shadow-xl text-left z-30 pointer-events-auto"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={webpSrc(hs.image)} data-original-src={hs.image}
-                            loading="lazy"
-                            decoding="async"
-                            alt={hs.title}
-                            onError={handleImageError}
-                            className="w-12 h-14 object-contain bg-white shrink-0"
-                          />
-                          <div className="min-w-0 flex-1">
-                            <span className="text-[9px] font-mono uppercase tracking-wider text-[#666666] block">
-                              {hs.category || 'Garment'}
-                            </span>
-                            <div className="text-xs font-bold text-[#0A0A0A] leading-snug truncate">
-                              {hs.title}
-                            </div>
-                            <div className="text-xs font-mono text-[#0A0A0A] mt-0.5">
-                              ${hs.price.toFixed(2)}
-                            </div>
+                  {active && (
+                    <div
+                      className="absolute left-1/2 -translate-x-1/2 bottom-10 w-60 p-3 bg-white/95 backdrop-blur-md shadow-2xl text-left z-30 pointer-events-auto border border-[#E5E2D8] rounded-xl"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={webpSrc(hs.image)} data-original-src={hs.image}
+                          loading="lazy"
+                          decoding="async"
+                          alt={hs.title}
+                          onError={handleImageError}
+                          className="w-12 h-14 object-contain bg-[#FAF9F5] rounded-md shrink-0 border border-[#E5E2D8]"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <span className="text-[9px] font-mono uppercase tracking-wider text-[#666666] block">
+                            {hs.category || 'Garment'}
+                          </span>
+                          <div className="text-xs font-bold text-[#0A0A0A] leading-snug truncate">
+                            {hs.title}
+                          </div>
+                          <div className="text-xs font-mono text-[#0A0A0A] mt-0.5 font-bold">
+                            ${hs.price.toFixed(2)}
                           </div>
                         </div>
-
-                        <button
-                          type="button"
-                          disabled={loading || !hs.inStock} onClick={(e) => handleQuickAdd(e, hs)}
-                          className="mt-2.5 w-full py-2 bg-[#0A0A0A] hover:bg-[#C91D1D] disabled:bg-[#DCDCDC] disabled:text-[#666666] text-[#F1F1F1] font-mono text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:cursor-not-allowed"
-                        >
-                          {addedItems[hs.productId || hs.id] ? <Check size={12} /> : <ShoppingBag size={12} />}
-                          <span>{addedItems[hs.productId || hs.id] ? 'Added' : !hs.inStock ? 'Unavailable' : 'Add to bag'}</span>
-                        </button>
                       </div>
-                    )}
-                  </div>
-                );
-              })}
 
-              {/* The story lands on the photograph, the way a cover carries its
-                  own headline instead of captioning it underneath. */}
-              <div className="absolute bottom-0 inset-x-0 z-10 p-5 sm:p-8 text-white pointer-events-none">
-                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/80">
+                      <button
+                        type="button"
+                        disabled={loading || !hs.inStock} onClick={(e) => {
+                          e.stopPropagation();
+                          handleQuickAdd(e, {
+                            id: hs.productId || hs.id,
+                            name: hs.title,
+                            price: hs.price,
+                            image: hs.image,
+                            inStock: hs.inStock,
+                            size: 'M',
+                            color: 'Editorial MatchA'
+                          });
+                        }}
+                        className="mt-2.5 w-full py-2 bg-[#0A0A0A] hover:bg-[#C91D1D] disabled:bg-[#DCDCDC] disabled:text-[#666666] text-[#F1F1F1] font-mono text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:cursor-not-allowed rounded-lg"
+                      >
+                        {addedItems[hs.productId || hs.id] ? <Check size={12} /> : <ShoppingBag size={12} />}
+                        <span>{addedItems[hs.productId || hs.id] ? 'Added' : !hs.inStock ? 'Unavailable' : 'Add to bag'}</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+
+            {/* Bottom Cover Story Captions */}
+            <div className="absolute bottom-0 inset-x-0 z-10 p-5 sm:p-8 lg:p-12 text-white pointer-events-none flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+              <div>
+                <span className="inline-block px-2.5 py-0.5 bg-[#C91D1D] text-white font-mono text-[10px] uppercase tracking-[0.18em] rounded-xs font-bold mb-2 shadow-xs">
                   {coverStory.theme} — {coverStory.seasonThai}
                 </span>
-                {/* The colour is set here rather than inherited: index.css gives
-                    every heading an explicit colour in @layer base, and a
-                    parent's `text-white` loses to a rule that targets h2
-                    directly — so a heading over a photograph renders black
-                    unless it says otherwise. */}
-                <h2 className="mt-2 text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-[-0.02em] leading-[0.9] max-w-3xl text-white">
+                <h2 className="mt-1 text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-[-0.02em] leading-[0.9] max-w-3xl text-white drop-shadow-md">
                   {coverStory.title}
                 </h2>
-                <div className="mt-3 flex flex-wrap items-baseline gap-x-5 gap-y-1 font-mono text-[11px] text-white/80">
+                <div className="mt-3 flex flex-wrap items-baseline gap-x-5 gap-y-1 font-mono text-[11px] text-white/85">
                   <span>{coverStory.subtitle}</span>
                   <span className="flex items-center gap-1.5">
                     <MapPin size={12} />
@@ -495,9 +405,88 @@ export default function EditorialLookbookPage() {
                   </span>
                 </div>
               </div>
-            </figure>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 pt-10">
+              <div className="text-[11px] font-mono text-white/70 tracking-wider uppercase hidden md:flex items-center gap-2 drop-shadow">
+                <span>เลื่อนเพื่ออ่านเรื่องราวและช็อปชิ้นงาน</span>
+                <span className="animate-bounce">↓</span>
+              </div>
+            </div>
+          </figure>
+        </div>
+      )}
+
+      {/* Running ticker (Full-Width Edge-to-Edge) */}
+      <div className="w-full overflow-hidden border-y border-[#DCDCDC] py-2.5 bg-white font-mono text-[11px] text-[#666666] tracking-[0.15em] uppercase">
+        <div className="animate-marquee whitespace-nowrap flex items-center">
+          {[
+            'Matcha Archive, Spring to Autumn 2026',
+            'High-precision Japanese street silhouettes',
+            'Botanical dyed pieces, 100% artisan guarantee',
+            'Click any pin on a photograph to shop it',
+            'Limited run fabrications in Ginza, Enoshima and Odaiba',
+          ].concat([
+            'Matcha Archive, Spring to Autumn 2026',
+            'High-precision Japanese street silhouettes',
+          ]).map((line, i) => (
+            <span key={i} className="flex items-center">
+              <span className="px-6">{line}</span>
+              <span aria-hidden="true" className="h-3 w-px bg-[#DCDCDC]" />
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* 2. MAIN EDITORIAL CONTENT: FILTER & DEEP-DIVE (MAX-W-7XL)                 */}
+      {/* ========================================================================= */}
+      <div className="max-w-7xl mx-auto py-10 sm:py-16 px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
+        
+        {/* Issue navigation */}
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 pb-6 border-b border-[#DCDCDC]">
+          <nav aria-label="Filter by issue" className="flex flex-wrap items-baseline gap-x-5 gap-y-2">
+            {SEASONS.map((s) => {
+              const isActive = selectedSeason === s.id;
+              const count = s.id === 'ALL'
+                ? curatedEditorialSpreads.length
+                : curatedEditorialSpreads.filter(sp => sp.season.toLowerCase() === s.id.toLowerCase()).length;
+
+              return (
+                <button
+                  key={s.id}
+                  type="button"
+                  aria-pressed={isActive}
+                  onClick={() => {
+                    setSelectedSeason(s.id);
+                    setPinnedItemId(null);
+                    setHoveredItemId(null);
+                    setFocusedItemId(null);
+                  }}
+                  className={`font-mono text-xs uppercase tracking-wider cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
+                    isActive
+                      ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-[#C91D1D]'
+                      : 'text-[#666666] hover:text-[#0A0A0A]'
+                  }`}
+                >
+                  {s.label}
+                  <span className="ml-1.5 text-[10px] tabular-nums text-[#999999]">{count}</span>
+                </button>
+              );
+            })}
+          </nav>
+
+          <button
+            type="button"
+            onClick={() => navigate('/mix-match')}
+            className="font-mono text-xs uppercase tracking-wider text-[#C91D1D] hover:underline underline-offset-4 cursor-pointer flex items-center gap-1.5 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+          >
+            <span>Open Mix &amp; Match Studio</span>
+            <ArrowRight size={13} />
+          </button>
+        </div>
+
+        {/* Cover Story Narrative & Shoppable Pieces */}
+        {coverStory && (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
 
               <div className="lg:col-span-7 space-y-7">
                 {/* The pull quote is set as a pull quote — large, hung off the
@@ -603,7 +592,6 @@ export default function EditorialLookbookPage() {
               </div>
 
             </div>
-          </div>
         )}
 
         {/* ========================================================================= */}

@@ -81,7 +81,6 @@ function AppContent() {
   const { showToast } = useToast();
 
   // Local UI States
-  const [healthStatus, setHealthStatus] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [catalogCategory, setCatalogCategory] = useState('ALL');
 
@@ -118,30 +117,27 @@ function AppContent() {
       infinite: false,
     });
 
+    let isRunning = true;
+    let rafId;
+
     function raf(time) {
+      if (!isRunning) return;
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
 
-    const rafId = requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
+      isRunning = false;
       cancelAnimationFrame(rafId);
       lenis.destroy();
     };
   }, []);
 
-  // Health check
+  // Health check & backend warmup
   useEffect(() => {
-    async function loadHealth() {
-      try {
-        const res = await api.checkHealth().catch(() => null);
-        if (res) setHealthStatus(res);
-      } catch (err) {
-        console.error('API Error:', err);
-      }
-    }
-    loadHealth();
+    api.checkHealth().catch(() => null);
   }, []);
 
   const handleProceedToPayment = () => {
@@ -364,15 +360,7 @@ function AppContent() {
             path="/account"
             element={
               <RequireAuth>
-                <UserAccount
-                  cartCount={cartCount}
-                  onOpenCart={handleOpenCart}
-                  onNavigate={handleNavigate}
-                  onGoToLanding={handleGoToHome}
-                  user={currentUser}
-                  onAddToCart={addToCart}
-                  onLogout={logout}
-                />
+                <UserAccount />
               </RequireAuth>
             }
           />
