@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
 import { wash, inkOn, needsEdge } from '../../utils/dye';
+import { describeProduct } from '../../utils/productCopy';
 import { useCart } from '../../context/CartContext.jsx';
 import { useToast } from '../../context/ToastContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
@@ -21,7 +22,7 @@ import { SHIPPING_OPTIONS as SHIPPING_RATES, FREE_SHIPPING_THRESHOLD } from '../
 export default function ProductModal({ product, onClose, onAddToCart, onToggleWishlist, isWishlisted = false }) {
   const { addToCart: contextAddToCart } = useCart();
   const { showToast } = useToast();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
 
   // Normalize products without explicit variants so all image/color controls can use
   // one consistent list shape.
@@ -354,7 +355,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
 
             {/* Description */}
             <p className="text-xs sm:text-sm text-[#666666] leading-relaxed">
-              {product.description}
+              {describeProduct(product, lang)}
             </p>
 
             {/* 1. Interactive Color Swatches */}
