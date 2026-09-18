@@ -462,9 +462,17 @@ export default function MixMatchStudioPage() {
                       </span>
 
                       {/* Size stays on the slot: choosing it is part of building
-                          the bundle, not a separate step. */}
+                          the bundle, not a separate step.
+
+                          It wraps rather than scrolls. Footwear carries seven
+                          sizes, EU 38 to EU 44, which need 281px in a 204px
+                          row — as a scroller with its bar hidden that clipped
+                          77px and simply swallowed EU 43 and EU 44, so anyone
+                          who takes a 44 would read the shoe as not made in
+                          their size. Two short rows show every size that
+                          exists. */}
                       <div
-                        className="flex items-center gap-1 mt-1.5 overflow-x-auto scrollbar-none"
+                        className="flex flex-wrap items-center gap-1 mt-1.5"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {(item?.sizes || sizes).map((sz) => (
