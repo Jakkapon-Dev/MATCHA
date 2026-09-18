@@ -1,7 +1,6 @@
 import mongoose from 'mongoose';
 
 const { Schema, model } = mongoose;
-
 const GUEST_CART_TTL_SECONDS = 60 * 60 * 24 * 30; // 30 days
 
 const cartItemSchema = new Schema(
@@ -62,7 +61,6 @@ cartSchema.index({ userId: 1 }, { unique: true, partialFilterExpression: { userI
 cartSchema.index({ guestId: 1 }, { unique: true, partialFilterExpression: { guestId: { $type: 'string' } } });
 cartSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
-const Cart = mongoose.models.Cart || model('Cart', cartSchema);
+const Cart = model('Cart', cartSchema);
 
 export default Cart;
-export { Cart };
