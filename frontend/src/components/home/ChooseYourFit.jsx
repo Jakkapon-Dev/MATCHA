@@ -100,7 +100,7 @@ export default function ChooseYourFit({ onSelectFit }) {
       </Reveal>
 
       {/* 3. Floating Cards Layer (แอนิเมชันลอย 3 มิติ Ambient Floating) */}
-      <div className="relative w-full max-w-[1700px] mx-auto h-215 sm:h-230 lg:h-245 px-4 sm:px-8 z-10 pointer-events-auto">
+      <div className="relative w-full max-w-[1700px] mx-auto h-215 sm:h-230 lg:h-245 px-5 sm:px-8 z-10 pointer-events-auto">
         {fitItems.map((item, index) => {
           // Only one card can receive the elevated hover treatment at a time.
           const isHovered = hoveredCard === item.id;

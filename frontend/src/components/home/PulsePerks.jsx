@@ -67,7 +67,7 @@ export default function PulsePerks() {
   };
 
   return (
-    <section className="w-full bg-[#F1F1F1] text-[#000000] py-16 sm:py-24 px-4 sm:px-8 lg:px-12 border-b border-[#DCDCDC] select-none overflow-hidden">
+    <section className="w-full bg-[#F1F1F1] text-[#000000] py-16 sm:py-24 px-5 sm:px-8 lg:px-12 border-b border-[#DCDCDC] select-none overflow-hidden">
       <div className="max-w-7xl mx-auto">
         
         {/* 1. Header Title */}

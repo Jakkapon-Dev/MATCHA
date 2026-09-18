@@ -211,7 +211,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
   };
 
   return (
-    <section id="street-favorites" className="w-full bg-[#F1F1F1] text-[#000000] py-16 sm:py-24 px-4 sm:px-8 lg:px-12 border-b border-[#DCDCDC] overflow-hidden select-none">
+    <section id="street-favorites" className="w-full bg-[#F1F1F1] text-[#000000] py-16 sm:py-24 px-5 sm:px-8 lg:px-12 border-b border-[#DCDCDC] overflow-hidden select-none">
       <div className="max-w-7xl mx-auto">
         
         {/* 1. Header Title & Navigation Controls */}

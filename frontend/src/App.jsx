@@ -34,7 +34,7 @@ import { LanguageProvider } from './context/LanguageContext.jsx';
 // ความสูงคงที่ระหว่างรอ chunk เพื่อไม่ให้หน้ากระตุกตอนหน้าใหม่มาถึง
 function PageSkeleton() {
   return (
-    <div className="w-full bg-[#F1F1F1] min-h-[70vh] px-4 sm:px-6 lg:px-8 py-16" aria-busy="true">
+    <div className="w-full bg-[#F1F1F1] min-h-[70vh] px-5 sm:px-6 lg:px-8 py-16" aria-busy="true">
       <div className="max-w-6xl mx-auto animate-pulse">
         <div className="h-3 w-32 rounded-full bg-[#DCDCDC]" />
         <div className="mt-5 h-10 w-2/3 max-w-md rounded-lg bg-[#DCDCDC]" />

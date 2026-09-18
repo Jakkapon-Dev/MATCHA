@@ -109,7 +109,7 @@ export default function LegalPage() {
   const Icon = doc.icon;
 
   return (
-    <div className="min-h-[85vh] bg-[#F1F1F1] py-12 sm:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-[85vh] bg-[#F1F1F1] py-12 sm:py-16 px-5 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         
         {/* Navigation Breadcrumb */}

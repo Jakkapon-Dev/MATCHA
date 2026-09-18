@@ -32,7 +32,7 @@ export default function JoinDropList({ onSubscribe }) {
   };
 
   return (
-    <section className="w-full bg-[#F1F1F1] text-[#000000] py-20 px-4 sm:px-8 lg:px-12 border-b border-[#DCDCDC] select-none overflow-hidden">
+    <section className="w-full bg-[#F1F1F1] text-[#000000] py-20 px-5 sm:px-8 lg:px-12 border-b border-[#DCDCDC] select-none overflow-hidden">
       <div className="max-w-6xl mx-auto bg-white border-t border-[#0A0A0A] p-6 sm:p-10 lg:p-14 relative">
         
         {/* Subtle Background Glow */}

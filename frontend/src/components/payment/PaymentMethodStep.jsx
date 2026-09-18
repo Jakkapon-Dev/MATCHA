@@ -57,11 +57,11 @@ export default function PaymentMethodStep({
 
   return (
     <div className="space-y-8">
-      <div className="bg-white border border-[#E5E2D9] rounded-2xl p-6 sm:p-7 shadow-xs">
+      <div className="bg-white border border-[#DCDCDC] p-6 sm:p-7">
         {/* Step Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#E5E2D9] gap-2 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#DCDCDC] gap-2 mb-6">
           <div>
-            <h2 className="text-base font-serif font-bold text-[#111111]">
+            <h2 className="text-base font-bold text-[#0A0A0A]">
               Payment Method
             </h2>
             <p className="text-xs text-[#666666] font-mono mt-0.5">
@@ -81,10 +81,10 @@ export default function PaymentMethodStep({
             {/* 1. Credit / Debit Card */}
             <div
               onClick={() => onSelectPayment('visa')}
-              className={`p-4 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
+              className={`p-4 border transition-all cursor-pointer flex flex-col justify-between ${
                 selectedPayment === 'visa' || selectedPayment === 'mastercard'
-                  ? 'border-[#042509] bg-[#F7F9F7] shadow-xs'
-                  : 'border-[#E5E2D9] bg-white hover:border-[#518F5C]/60 hover:bg-[#FAF9F5]'
+                  ? 'border-[#042509] bg-[#F1F1F1]'
+                  : 'border-[#DCDCDC] bg-white hover:border-[#518F5C]/60 hover:bg-[#F1F1F1]'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
@@ -94,7 +94,7 @@ export default function PaymentMethodStep({
                 )}
               </div>
               <div>
-                <span className="font-serif font-bold text-xs text-[#111111] block">Credit / Debit card</span>
+                <span className="font-bold text-xs text-[#0A0A0A] block">Credit / Debit card</span>
                 <span className="text-[11px] font-mono text-[#666666] mt-0.5 block">Visa, Mastercard</span>
               </div>
             </div>
@@ -102,10 +102,10 @@ export default function PaymentMethodStep({
             {/* 2. PromptPay QR */}
             <div
               onClick={() => onSelectPayment('qr')}
-              className={`p-4 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
+              className={`p-4 border transition-all cursor-pointer flex flex-col justify-between ${
                 selectedPayment === 'qr'
-                  ? 'border-[#042509] bg-[#F7F9F7] shadow-xs'
-                  : 'border-[#E5E2D9] bg-white hover:border-[#518F5C]/60 hover:bg-[#FAF9F5]'
+                  ? 'border-[#042509] bg-[#F1F1F1]'
+                  : 'border-[#DCDCDC] bg-white hover:border-[#518F5C]/60 hover:bg-[#F1F1F1]'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
@@ -115,7 +115,7 @@ export default function PaymentMethodStep({
                 )}
               </div>
               <div>
-                <span className="font-serif font-bold text-xs text-[#111111] block">PromptPay QR</span>
+                <span className="font-bold text-xs text-[#0A0A0A] block">PromptPay QR</span>
                 <span className="text-[11px] font-mono text-[#666666] mt-0.5 block">Thai banking app</span>
               </div>
             </div>
@@ -123,10 +123,10 @@ export default function PaymentMethodStep({
             {/* 3. Cash on Delivery (COD) */}
             <div
               onClick={() => onSelectPayment('cod')}
-              className={`p-4 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
+              className={`p-4 border transition-all cursor-pointer flex flex-col justify-between ${
                 selectedPayment === 'cod'
-                  ? 'border-[#042509] bg-[#F7F9F7] shadow-xs'
-                  : 'border-[#E5E2D9] bg-white hover:border-[#518F5C]/60 hover:bg-[#FAF9F5]'
+                  ? 'border-[#042509] bg-[#F1F1F1]'
+                  : 'border-[#DCDCDC] bg-white hover:border-[#518F5C]/60 hover:bg-[#F1F1F1]'
               }`}
             >
               <div className="flex items-center justify-between mb-2">
@@ -136,7 +136,7 @@ export default function PaymentMethodStep({
                 )}
               </div>
               <div>
-                <span className="font-serif font-bold text-xs text-[#111111] block">Cash on delivery</span>
+                <span className="font-bold text-xs text-[#0A0A0A] block">Cash on delivery</span>
                 <span className="text-[11px] font-mono text-[#666666] mt-0.5 block">Pay upon delivery</span>
               </div>
             </div>
@@ -147,11 +147,11 @@ export default function PaymentMethodStep({
         {(selectedPayment === 'visa' || selectedPayment === 'mastercard') && (
           <div className="pt-2 space-y-6">
             {/* Live Card Visualizer */}
-            <div className="w-full max-w-sm mx-auto aspect-[1.586/1] rounded-2xl p-6 text-white bg-gradient-to-tr from-[#021505] via-[#042509] to-[#1E4524] shadow-xl relative overflow-hidden flex flex-col justify-between border border-[#518F5C]/40">
+            <div className="w-full max-w-sm mx-auto aspect-[1.586/1] p-6 text-white bg-gradient-to-tr from-[#021505] via-[#042509] to-[#1E4524] relative overflow-hidden flex flex-col justify-between border border-[#518F5C]/40">
               <div className="flex items-center justify-between relative z-10">
                 <div className="flex items-center gap-2">
                   <span className="text-base">🍵</span>
-                  <span className="font-serif font-bold tracking-wider text-xs uppercase text-[#E8EFE9]">MatchA Atelier</span>
+                  <span className="font-bold tracking-wider text-xs uppercase text-[#F1F1F1]">MatchA Atelier</span>
                 </div>
                 <span className="text-[10px] font-mono tracking-wider px-2 py-0.5 rounded bg-white/10 uppercase">
                   Black Card
@@ -161,7 +161,7 @@ export default function PaymentMethodStep({
               {/* Realistic Chip */}
               <div className="flex items-center gap-3 relative z-10 my-1">
                 <div className="w-8 h-6 rounded bg-gradient-to-br from-[#E2B961] to-[#BA903B] border border-[#FDE68A]/60 flex items-center justify-center">
-                  <div className="w-6 h-4 border border-black/20 rounded-xs" />
+                  <div className="w-6 h-4 border border-black/20" />
                 </div>
                 <Sparkles size={13} className="text-white/60" />
               </div>
@@ -189,9 +189,9 @@ export default function PaymentMethodStep({
             </div>
 
             {/* Inputs Form */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#F2F0EA]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#F1F1F1]">
               <div className="sm:col-span-2">
-                <label className="block text-xs font-mono text-[#555555] mb-1">
+                <label className="block text-xs font-mono text-[#666666] mb-1">
                   Card number <span className="text-[#C91D1D]">*</span>
                 </label>
                 <input
@@ -201,13 +201,13 @@ export default function PaymentMethodStep({
                   value={cardData.cardNumber}
                   onChange={handleCardChange}
                   placeholder="4532 8821 0092 8899"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-[#D5D2C9] focus:border-[#042509] outline-none text-xs font-mono text-[#111111] bg-[#FAF9F6] tracking-wider transition-colors"
+                  className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] tracking-wider transition-colors"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-[#555555] mb-1">
+                <label className="block text-xs font-mono text-[#666666] mb-1">
                   Cardholder name <span className="text-[#C91D1D]">*</span>
                 </label>
                 <input
@@ -216,14 +216,14 @@ export default function PaymentMethodStep({
                   value={cardData.cardHolder}
                   onChange={handleCardChange}
                   placeholder="ALEX COLLECTOR"
-                  className="w-full px-3.5 py-2.5 rounded-lg border border-[#D5D2C9] focus:border-[#042509] outline-none text-xs font-mono text-[#111111] bg-[#FAF9F6] uppercase transition-colors"
+                  className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] uppercase transition-colors"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-mono text-[#555555] mb-1">
+                  <label className="block text-xs font-mono text-[#666666] mb-1">
                     Expiry <span className="text-[#C91D1D]">*</span>
                   </label>
                   <input
@@ -233,12 +233,12 @@ export default function PaymentMethodStep({
                     value={cardData.expiryDate}
                     onChange={handleCardChange}
                     placeholder="MM/YY"
-                    className="w-full px-3 py-2.5 rounded-lg border border-[#D5D2C9] focus:border-[#042509] outline-none text-xs font-mono text-[#111111] bg-[#FAF9F6] text-center transition-colors"
+                    className="w-full px-3 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] text-center transition-colors"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-mono text-[#555555] mb-1">
+                  <label className="block text-xs font-mono text-[#666666] mb-1">
                     CVV / CVC <span className="text-[#C91D1D]">*</span>
                   </label>
                   <input
@@ -248,7 +248,7 @@ export default function PaymentMethodStep({
                     value={cardData.cvv}
                     onChange={handleCardChange}
                     placeholder="•••"
-                    className="w-full px-3 py-2.5 rounded-lg border border-[#D5D2C9] focus:border-[#042509] outline-none text-xs font-mono text-[#111111] bg-[#FAF9F6] text-center transition-colors"
+                    className="w-full px-3 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] text-center transition-colors"
                     required
                   />
                 </div>
@@ -260,17 +260,17 @@ export default function PaymentMethodStep({
         {/* 2. PromptPay QR Code Canvas */}
         {selectedPayment === 'qr' && (
           <div className="pt-2 text-center space-y-4">
-            <div className="max-w-xs mx-auto p-5 rounded-2xl bg-[#FAF9F6] border border-[#E5E2D9] space-y-3">
-              <div className="bg-[#003B64] text-white py-1.5 px-3 rounded-lg flex items-center justify-between text-xs">
+            <div className="max-w-xs mx-auto p-5 bg-[#F1F1F1] border border-[#DCDCDC] space-y-3">
+              <div className="bg-[#003B64] text-white py-1.5 px-3 flex items-center justify-between text-xs">
                 <span className="font-bold tracking-wider">PromptPay</span>
                 <span className="text-[10px] font-mono">พร้อมเพย์</span>
               </div>
 
-              <div className="w-40 h-40 mx-auto bg-white p-2.5 rounded-xl border border-[#D5D2C9] flex items-center justify-center">
+              <div className="w-40 h-40 mx-auto bg-white p-2.5 border border-[#DCDCDC] flex items-center justify-center">
                 <QrCode size={135} strokeWidth={1.5} className="text-[#003B64]" />
               </div>
 
-              <div className="text-xs font-mono font-bold text-[#111111]">
+              <div className="text-xs font-mono font-bold text-[#0A0A0A]">
                 MatchA Atelier Co., Ltd.
               </div>
               <div className="text-lg font-mono font-bold text-[#042509]">
@@ -281,7 +281,7 @@ export default function PaymentMethodStep({
               </p>
             </div>
 
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E8EFE9] text-[#042509] text-xs font-mono">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F1F1F1] text-[#042509] text-xs font-mono">
               <Smartphone size={13} />
               <span>Test mode: instant authorization on submit</span>
             </div>
@@ -291,14 +291,14 @@ export default function PaymentMethodStep({
         {/* 3. Cash on Delivery */}
         {selectedPayment === 'cod' && (
           <div className="pt-2">
-            <div className="p-5 rounded-xl bg-[#F7F9F7] border border-[#518F5C]/40 space-y-2">
+            <div className="p-5 bg-[#F1F1F1] border border-[#518F5C]/40 space-y-2">
               <div className="flex items-center gap-2 text-[#042509]">
                 <Banknote size={18} />
-                <h3 className="font-serif font-bold text-sm text-[#111111]">
+                <h3 className="font-bold text-sm text-[#0A0A0A]">
                   Cash on delivery
                 </h3>
               </div>
-              <p className="text-xs font-mono text-[#555555] leading-relaxed">
+              <p className="text-xs font-mono text-[#666666] leading-relaxed">
                 Please have the exact amount of <strong className="text-[#042509]">${totalAmount.toFixed(2)}</strong> ready for payment upon delivery.
               </p>
             </div>
@@ -321,7 +321,7 @@ export default function PaymentMethodStep({
           type="button"
           onClick={onPlaceOrder}
           disabled={!isCardValid || isProcessing}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-9 py-3.5 bg-[#042509] hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-wider rounded-xl shadow-md transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-9 py-3.5 bg-[#042509] hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-wider transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
         >
           {isProcessing ? (
             <span className="flex items-center gap-2">

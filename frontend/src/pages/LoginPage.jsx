@@ -114,7 +114,7 @@ export default function LoginPage({ onLoginSuccess }) {
   };
 
   return (
-    <div className="w-full bg-[#FAF9F5] min-h-[90vh] py-8 sm:py-16 px-4 sm:px-6 lg:px-8 flex items-center justify-center relative selection:bg-[#042509] selection:text-white">
+    <div className="w-full bg-[#FAF9F5] min-h-[90vh] py-8 sm:py-16 px-5 sm:px-6 lg:px-8 flex items-center justify-center relative selection:bg-[#042509] selection:text-white">
       
       {/* Subtle Ambient Background Wash */}
       <div className="absolute top-1/4 left-10 w-96 h-96 bg-[#518F5C]/10 rounded-full blur-3xl pointer-events-none" />

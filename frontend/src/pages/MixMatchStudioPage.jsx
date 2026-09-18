@@ -273,7 +273,7 @@ export default function MixMatchStudioPage() {
   }, [activeSlotTab, tops, bottoms, footwear, accessories, userSeason]);
 
   return (
-    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-5 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-10 sm:space-y-14">
 
         {/* 1. HEADER — the masthead rule the catalogue, lookbook and colour lab

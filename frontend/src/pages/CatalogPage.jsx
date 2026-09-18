@@ -182,7 +182,7 @@ export default function CatalogPage({
   );
 
   return (
-    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-14 px-5 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
 
         <header className="mb-8">

@@ -88,7 +88,7 @@ export default function Navbar({
         </div>
 
         {/* 2. Main Navigation Bar */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+        <div className="max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
 
           {/* Left: Brand Wordmark (Sleek Standalone High-Fashion Identity) */}
           <div className="flex items-center">

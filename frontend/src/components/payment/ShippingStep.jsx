@@ -86,10 +86,10 @@ export default function ShippingStep({
   return (
     <div className="space-y-8">
       {/* Address Card */}
-      <div className="bg-white border border-[#E5E2D9] rounded-2xl p-6 sm:p-7 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#E5E2D9] gap-2 mb-6">
+      <div className="bg-white border border-[#DCDCDC] p-6 sm:p-7">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#DCDCDC] gap-2 mb-6">
           <div>
-            <h2 className="text-base font-serif font-bold text-[#111111]">
+            <h2 className="text-base font-bold text-[#0A0A0A]">
               Shipping Address
             </h2>
             <p className="text-xs text-[#666666] font-mono mt-0.5">
@@ -111,10 +111,10 @@ export default function ShippingStep({
                 <div
                   key={preset.id}
                   onClick={() => handleSelectPreset(preset)}
-                  className={`p-4 rounded-xl border transition-all cursor-pointer flex flex-col justify-between text-left ${
+                  className={`p-4 border transition-all cursor-pointer flex flex-col justify-between text-left ${
                     isSelected
-                      ? 'border-[#042509] bg-[#F7F9F7] shadow-xs'
-                      : 'border-[#E5E2D9] bg-white hover:border-[#518F5C]/60 hover:bg-[#FAF9F5]'
+                      ? 'border-[#042509] bg-[#F1F1F1]'
+                      : 'border-[#DCDCDC] bg-white hover:border-[#518F5C]/60 hover:bg-[#F1F1F1]'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2 mb-1.5">
@@ -124,7 +124,7 @@ export default function ShippingStep({
                       ) : (
                         <Building2 size={13} className="text-[#042509]" />
                       )}
-                      <span className="font-serif font-bold text-xs text-[#111111]">{preset.title}</span>
+                      <span className="font-bold text-xs text-[#0A0A0A]">{preset.title}</span>
                     </div>
                     {isSelected && (
                       <CheckCircle2 size={14} className="text-[#042509] shrink-0" />
@@ -133,7 +133,7 @@ export default function ShippingStep({
                   <p className="text-[11px] font-mono text-[#666666] line-clamp-2 leading-relaxed">
                     {preset.address}, {preset.city} {preset.zipCode}
                   </p>
-                  <span className="mt-2 text-[10px] font-mono text-[#888888]">
+                  <span className="mt-2 text-[10px] font-mono text-[#666666]">
                     Tel: {preset.phone}
                   </span>
                 </div>
@@ -143,13 +143,13 @@ export default function ShippingStep({
             {/* Custom Address Option */}
             <div
               onClick={handleCustomToggle}
-              className={`p-4 rounded-xl border border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-1.5 min-h-[100px] ${
+              className={`p-4 border border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-1.5 min-h-[100px] ${
                 isCustomAddress
-                  ? 'border-[#042509] bg-[#F7F9F7] text-[#042509]'
-                  : 'border-[#D5D2C9] hover:border-[#042509] text-[#666666]'
+                  ? 'border-[#042509] bg-[#F1F1F1] text-[#042509]'
+                  : 'border-[#DCDCDC] hover:border-[#042509] text-[#666666]'
               }`}
             >
-              <PlusCircle size={18} className={isCustomAddress ? 'text-[#042509]' : 'text-[#888888]'} />
+              <PlusCircle size={18} className={isCustomAddress ? 'text-[#042509]' : 'text-[#666666]'} />
               <span className="text-xs font-mono font-medium">
                 {isCustomAddress ? 'Using custom address' : 'Add new address'}
               </span>
@@ -158,10 +158,10 @@ export default function ShippingStep({
         </div>
 
         {/* Address Input Form */}
-        <div className="pt-4 border-t border-[#F2F0EA] space-y-4">
+        <div className="pt-4 border-t border-[#F1F1F1] space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-mono text-[#555555] mb-1">
+              <label className="block text-xs font-mono text-[#666666] mb-1">
                 First name <span className="text-[#C91D1D]">*</span>
               </label>
               <input
@@ -170,13 +170,13 @@ export default function ShippingStep({
                 value={formData.firstName || ''}
                 onChange={handleChange}
                 placeholder="Alex"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-[#D5D2C9] focus:border-[#042509] outline-none text-xs font-mono text-[#111111] bg-[#FAF9F6] transition-colors"
+                className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-[#555555] mb-1">
+              <label className="block text-xs font-mono text-[#666666] mb-1">
                 Last name <span className="text-[#C91D1D]">*</span>
               </label>
               <input
@@ -185,13 +185,13 @@ export default function ShippingStep({
                 value={formData.lastName || ''}
                 onChange={handleChange}
                 placeholder="Collector"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-[#D5D2C9] focus:border-[#042509] outline-none text-xs font-mono text-[#111111] bg-[#FAF9F6] transition-colors"
+                className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-[#555555] mb-1">
+              <label className="block text-xs font-mono text-[#666666] mb-1">
                 Email address <span className="text-[#C91D1D]">*</span>
               </label>
               <input
@@ -200,13 +200,13 @@ export default function ShippingStep({
                 value={formData.email || ''}
                 onChange={handleChange}
                 placeholder="alex@matcha.vip"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-[#D5D2C9] focus:border-[#042509] outline-none text-xs font-mono text-[#111111] bg-[#FAF9F6] transition-colors"
+                className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-[#555555] mb-1">
+              <label className="block text-xs font-mono text-[#666666] mb-1">
                 Phone number <span className="text-[#C91D1D]">*</span>
               </label>
               <input
@@ -215,13 +215,13 @@ export default function ShippingStep({
                 value={formData.phone || ''}
                 onChange={handleChange}
                 placeholder="081-234-5678"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-[#D5D2C9] focus:border-[#042509] outline-none text-xs font-mono text-[#111111] bg-[#FAF9F6] transition-colors"
+                className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] transition-colors"
                 required
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block text-xs font-mono text-[#555555] mb-1">
+              <label className="block text-xs font-mono text-[#666666] mb-1">
                 Street address <span className="text-[#C91D1D]">*</span>
               </label>
               <input
@@ -230,13 +230,13 @@ export default function ShippingStep({
                 value={formData.address || ''}
                 onChange={handleChange}
                 placeholder="123 Sukhumvit Road, Apt 4B"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-[#D5D2C9] focus:border-[#042509] outline-none text-xs font-mono text-[#111111] bg-[#FAF9F6] transition-colors"
+                className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-[#555555] mb-1">
+              <label className="block text-xs font-mono text-[#666666] mb-1">
                 City / District <span className="text-[#C91D1D]">*</span>
               </label>
               <input
@@ -245,13 +245,13 @@ export default function ShippingStep({
                 value={formData.city || ''}
                 onChange={handleChange}
                 placeholder="Bangkok"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-[#D5D2C9] focus:border-[#042509] outline-none text-xs font-mono text-[#111111] bg-[#FAF9F6] transition-colors"
+                className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-[#555555] mb-1">
+              <label className="block text-xs font-mono text-[#666666] mb-1">
                 Postal code <span className="text-[#C91D1D]">*</span>
               </label>
               <input
@@ -260,7 +260,7 @@ export default function ShippingStep({
                 value={formData.zipCode || ''}
                 onChange={handleChange}
                 placeholder="10110"
-                className="w-full px-3.5 py-2.5 rounded-lg border border-[#D5D2C9] focus:border-[#042509] outline-none text-xs font-mono text-[#111111] bg-[#FAF9F6] transition-colors"
+                className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] transition-colors"
                 required
               />
             </div>
@@ -269,9 +269,9 @@ export default function ShippingStep({
       </div>
 
       {/* Delivery Speed Selection */}
-      <div className="bg-white border border-[#E5E2D9] rounded-2xl p-6 sm:p-7 shadow-xs">
-        <div className="pb-4 border-b border-[#E5E2D9] mb-5">
-          <h2 className="text-base font-serif font-bold text-[#111111]">
+      <div className="bg-white border border-[#DCDCDC] p-6 sm:p-7">
+        <div className="pb-4 border-b border-[#DCDCDC] mb-5">
+          <h2 className="text-base font-bold text-[#0A0A0A]">
             Delivery Method
           </h2>
           <p className="text-xs text-[#666666] font-mono mt-0.5">
@@ -286,22 +286,22 @@ export default function ShippingStep({
               <div
                 key={option.id}
                 onClick={() => onSelectShipping(option.id)}
-                className={`p-4 rounded-xl border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                className={`p-4 border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                   isSelected
-                    ? 'border-[#042509] bg-[#F7F9F7] shadow-xs'
-                    : 'border-[#E5E2D9] bg-white hover:border-[#518F5C]/60 hover:bg-[#FAF9F5]'
+                    ? 'border-[#042509] bg-[#F1F1F1]'
+                    : 'border-[#DCDCDC] bg-white hover:border-[#518F5C]/60 hover:bg-[#F1F1F1]'
                 }`}
               >
                 <div className="flex items-center gap-3">
                   <div className={`w-4 h-4 rounded-full border flex items-center justify-center transition-colors ${
-                    isSelected ? 'border-[#042509] bg-[#042509]' : 'border-[#D5D2C9] bg-white'
+                    isSelected ? 'border-[#042509] bg-[#042509]' : 'border-[#DCDCDC] bg-white'
                   }`}>
                     {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
                   </div>
 
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-serif font-bold text-sm text-[#111111]">{option.name}</span>
+                      <span className="font-bold text-sm text-[#0A0A0A]">{option.name}</span>
                       {option.id === 'express' && (
                         <span className="px-2 py-0.5 rounded text-[9px] font-mono font-bold bg-[#042509] text-white">
                           Recommended
@@ -339,7 +339,7 @@ export default function ShippingStep({
           type="button"
           onClick={onNext}
           disabled={!isFormValid}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#042509] hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-wider rounded-xl shadow-md transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#042509] hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-wider transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
         >
           <span>Continue to payment</span>
           <ArrowRight size={14} />

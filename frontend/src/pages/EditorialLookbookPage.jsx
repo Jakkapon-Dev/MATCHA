@@ -439,7 +439,7 @@ export default function EditorialLookbookPage() {
       {/* ========================================================================= */}
       {/* 2. MAIN EDITORIAL CONTENT: FILTER & DEEP-DIVE (MAX-W-7XL)                 */}
       {/* ========================================================================= */}
-      <div className="max-w-7xl mx-auto py-10 sm:py-16 px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
+      <div className="max-w-7xl mx-auto py-10 sm:py-16 px-5 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
         
         {/* Issue navigation */}
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 pb-6 border-b border-[#DCDCDC]">

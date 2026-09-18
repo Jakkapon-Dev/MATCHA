@@ -111,7 +111,7 @@ export default function BrandHero({ onShopNow }) {
 
   return (
     <section
-      className="relative w-full bg-[#F1F1F1] text-[#000000] min-h-svh pt-2 pb-8 sm:pb-10 px-4 sm:px-8 lg:px-12 flex flex-col justify-center gap-2 sm:gap-4 select-none border-b border-[#DCDCDC]"
+      className="relative w-full bg-[#F1F1F1] text-[#000000] min-h-svh pt-2 pb-8 sm:pb-10 px-5 sm:px-8 lg:px-12 flex flex-col justify-center gap-2 sm:gap-4 select-none border-b border-[#DCDCDC]"
     >
       
       {/* The masthead wipes up from its own baseline the way a magazine title
