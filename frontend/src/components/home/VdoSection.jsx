@@ -70,16 +70,27 @@ export default function VdoSection({ onClaimPromo }) {
           playsInline
           preload="none"
           poster="/videos/lookbook_reel_poster.webp"
-          className="w-full h-full object-cover object-top sm:object-[center_15%] opacity-90"
+          className="w-full h-full object-cover object-top sm:object-[center_15%]"
         >
           <source src="/videos/lookbook_reel.mp4" type="video/mp4" />
           <source src={videoSrc} type="video/mp4" />
         </video>
       </Parallax>
 
-      {/* 2. Film Gradient Overlays for Readability & Depth */}
-      <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/40 to-black/65 pointer-events-none" />
-      <div className="absolute inset-0 bg-linear-to-t from-[#1A2218] via-transparent to-[#1A2218]/90 pointer-events-none" />
+      {/* 2. One scrim, only where type actually sits.
+
+          The footage used to be under three dimmers at once: the video at 90%
+          opacity, a black gradient that never fell below 40% anywhere in the
+          frame, and a second full-frame wash of the section's dark green that
+          was fully opaque along the bottom edge and 90% along the top. At the
+          corners almost nothing of the film survived.
+
+          A scrim is for carrying text, so it now covers the side the text is
+          on and clears the rest. On a wide screen the copy is on the left and
+          the promo card on the right is opaque anyway, so the right half is
+          left alone entirely; stacked on a phone the copy sits above the card,
+          so the scrim runs top to bottom instead. */}
+      <div className="absolute inset-0 pointer-events-none bg-linear-to-b from-black/70 via-black/30 to-black/45 lg:bg-linear-to-r lg:from-black/78 lg:via-black/45 lg:to-transparent" />
 
       {/* 3. Main Content Container: Left Headline + Right Floating Glass Card */}
       <div className="relative z-10 max-w-7xl mx-auto w-full px-6 sm:px-8 lg:px-12 flex flex-col lg:flex-row items-center justify-between gap-10 sm:gap-14">
