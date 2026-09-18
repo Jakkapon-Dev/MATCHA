@@ -11,6 +11,26 @@ export const DEFAULT_LANG = 'en';
 
 export const translations = {
   en: {
+    account: {
+      lounge: 'Your account',
+      addresses: 'Delivery addresses',
+      noAddresses: 'No addresses saved yet. The one you enter at checkout will be kept here for next time.',
+      defaultAddress: 'Default',
+      title: 'Member account',
+      vip: 'Member',
+      admin: 'Store administrator',
+      adminConsole: 'Open the admin console',
+      signOutTitle: 'Sign out of MatchA?',
+      signedOut: 'Signed out',
+      pleaseSignIn: 'Please sign in',
+      addToCart: 'Add to bag',
+      noOrders: 'No orders yet',
+      browseCatalog: 'Browse the catalogue',
+      cardholder: 'Cardholder',
+      saved: 'Saved',
+      saveProfile: 'Save changes',
+    },
+
     notFound: {
       code: '404',
       title: 'This page is not here',
@@ -23,6 +43,14 @@ export const translations = {
 
     checkout: {
       stepBag: 'Bag',
+      phFirst: 'Your first name',
+      phLast: 'Your last name',
+      phEmail: 'you@example.com',
+      phPhone: '08X-XXX-XXXX',
+      phStreet: 'House number, street, unit',
+      phCity: 'District and province',
+      phPostal: '10110',
+      noSavedAddresses: 'Signed-in members can save an address here for next time.',
       pageShipping: 'Where should it go?',
       pagePayment: 'How would you like to pay?',
       addressTitle: 'Delivery address',
@@ -404,6 +432,26 @@ export const translations = {
   },
 
   th: {
+    account: {
+      lounge: 'บัญชีของคุณ',
+      addresses: 'ที่อยู่จัดส่ง',
+      noAddresses: 'ยังไม่มีที่อยู่ที่บันทึกไว้ ที่อยู่ที่กรอกตอนชำระเงินจะถูกเก็บไว้ที่นี่สำหรับครั้งถัดไป',
+      defaultAddress: 'ค่าเริ่มต้น',
+      title: 'บัญชีสมาชิก',
+      vip: 'สมาชิก',
+      admin: 'ผู้ดูแลร้าน',
+      adminConsole: 'เปิดหน้าผู้ดูแลระบบ',
+      signOutTitle: 'ออกจากระบบ MatchA?',
+      signedOut: 'ออกจากระบบแล้ว',
+      pleaseSignIn: 'กรุณาเข้าสู่ระบบ',
+      addToCart: 'ใส่ตะกร้า',
+      noOrders: 'ยังไม่มีประวัติคำสั่งซื้อ',
+      browseCatalog: 'เลือกดูสินค้าทั้งหมด',
+      cardholder: 'ชื่อผู้ถือบัตร',
+      saved: 'บันทึกแล้ว',
+      saveProfile: 'บันทึกการแก้ไข',
+    },
+
     notFound: {
       code: '404',
       title: 'ไม่พบหน้านี้',
@@ -416,6 +464,14 @@ export const translations = {
 
     checkout: {
       stepBag: 'ตะกร้า',
+      phFirst: 'ชื่อของคุณ',
+      phLast: 'นามสกุลของคุณ',
+      phEmail: 'you@example.com',
+      phPhone: '08X-XXX-XXXX',
+      phStreet: 'บ้านเลขที่ ถนน ห้อง',
+      phCity: 'เขต/อำเภอ และจังหวัด',
+      phPostal: '10110',
+      noSavedAddresses: 'สมาชิกที่ล็อกอินสามารถบันทึกที่อยู่ไว้ใช้ครั้งต่อไปได้',
       pageShipping: 'ส่งไปที่ไหนดี',
       pagePayment: 'ชำระเงินแบบไหนดี',
       addressTitle: 'ที่อยู่จัดส่ง',

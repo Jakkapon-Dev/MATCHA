@@ -1,37 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useAuth } from '../../context/AuthContext.jsx';
+import { readAddressBook, rememberAddress } from '../../features/account/addressBook';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { Truck, CheckCircle2, PlusCircle, ArrowLeft, ArrowRight, ShieldCheck, Building2, Home } from 'lucide-react';
 
-const SAVED_ADDRESS_PRESETS = [
-  {
-    id: 'addr-primary',
-    type: 'home',
-    title: 'Primary Residence',
-    firstName: 'Alex',
-    lastName: 'Collector',
-    email: 'alex@matcha.vip',
-    phone: '081-999-8888',
-    address: '123 Sukhumvit 55, Thong Lo, Apt 4B',
-    city: 'Wattana, Bangkok',
-    state: 'Bangkok',
-    zipCode: '10110',
-    country: 'Thailand'
-  },
-  {
-    id: 'addr-studio',
-    type: 'studio',
-    title: 'Design Studio & Atelier',
-    firstName: 'Alex',
-    lastName: 'Studio',
-    email: 'studio@matcha.vip',
-    phone: '082-111-2222',
-    address: '88 Charoenkrung Road, Creative District, Fl 2',
-    city: 'Bang Rak, Bangkok',
-    state: 'Bangkok',
-    zipCode: '10500',
-    country: 'Thailand'
-  }
-];
 
 export default function ShippingStep({
   formData,
@@ -43,7 +15,16 @@ export default function ShippingStep({
   onBackToCart
 }) {
   const { t } = useLanguage();
-  const [selectedPreset, setSelectedPreset] = useState('addr-primary');
+  const { currentUser } = useAuth();
+
+  /* Saved addresses belong to an account. A visitor who has not signed in has
+     none, so they are shown no picker at all and simply fill the form —
+     which is what the old preset cards were pretending to skip, using
+     somebody else's name and street. */
+  const savedAddresses = useMemo(() => readAddressBook(currentUser), [currentUser]);
+  const hasSaved = savedAddresses.length > 0;
+
+  const [selectedPreset, setSelectedPreset] = useState(null);
   const [isCustomAddress, setIsCustomAddress] = useState(false);
   const seeded = useRef(false);
 
@@ -53,10 +34,28 @@ export default function ShippingStep({
      fields, so it can never overwrite something the visitor typed. */
   useEffect(() => {
     if (seeded.current) return;
+
+    /* Signed in with nothing saved: the account still knows who they are, so
+       the name and email come across and only the address is left to type. */
+    if (!hasSaved) {
+      if (currentUser && !formData?.firstName && !formData?.email) {
+        seeded.current = true;
+        const [first, ...rest] = String(currentUser.name || '').trim().split(/\s+/);
+        onFormChange({
+          ...formData,
+          firstName: first || '',
+          lastName: rest.join(' '),
+          email: currentUser.email || '',
+        });
+      }
+      return;
+    }
+
     seeded.current = true;
-    const preset = SAVED_ADDRESS_PRESETS.find((p) => p.id === selectedPreset);
+    const preset = savedAddresses.find((a) => a.isDefault) || savedAddresses[0];
     if (!preset) return;
     if (formData?.firstName || formData?.address) return;
+    setSelectedPreset(preset.id);
     onFormChange({
       ...formData,
       firstName: preset.firstName,
@@ -69,7 +68,7 @@ export default function ShippingStep({
       zipCode: preset.zipCode,
       country: preset.country,
     });
-  }, [selectedPreset, formData, onFormChange]);
+  }, [hasSaved, savedAddresses, currentUser, formData, onFormChange]);
 
   const handleSelectPreset = (preset) => {
     setSelectedPreset(preset.id);
@@ -100,6 +99,14 @@ export default function ShippingStep({
     });
   };
 
+  /* Moving on keeps the address for next time, but only for someone signed in
+     — there is no account to keep it against otherwise, and the book must not
+     become a store of strangers' addresses on a shared machine. */
+  const handleNext = () => {
+    if (currentUser) rememberAddress(currentUser, formData);
+    if (onNext) onNext();
+  };
+
   const isFormValid = Boolean(
     formData.firstName?.trim() &&
     formData.lastName?.trim() &&
@@ -123,16 +130,19 @@ export default function ShippingStep({
               {t('checkout.addressNote')}
             </p>
           </div>
-          <span className="text-xs font-mono text-[#518F5C] flex items-center gap-1.5 self-start sm:self-auto">
-            <ShieldCheck size={14} />
-            <span>{t('checkout.savedAddresses')}</span>
-          </span>
+          {hasSaved && (
+            <span className="text-xs font-mono text-[#666666] flex items-center gap-1.5 self-start sm:self-auto">
+              <ShieldCheck size={14} aria-hidden="true" />
+              <span>{t('checkout.savedAddresses')}</span>
+            </span>
+          )}
         </div>
 
         {/* Preset Address Selection */}
+        {hasSaved && (
         <div className="mb-6">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {SAVED_ADDRESS_PRESETS.map((preset) => {
+            {savedAddresses.map((preset) => {
               const isSelected = selectedPreset === preset.id && !isCustomAddress;
               return (
                 <div
@@ -183,9 +193,10 @@ export default function ShippingStep({
             </div>
           </div>
         </div>
+        )}
 
         {/* Address Input Form */}
-        <div className="pt-4 border-t border-[#F1F1F1] space-y-4">
+        <div className={hasSaved ? 'pt-4 border-t border-[#DCDCDC] space-y-4' : 'space-y-4'}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-mono text-[#666666] mb-1">
@@ -196,7 +207,7 @@ export default function ShippingStep({
                 name="firstName"
                 value={formData.firstName || ''}
                 onChange={handleChange}
-                placeholder="Alex"
+                placeholder={t('checkout.phFirst')}
                 className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] transition-colors"
                 required
               />
@@ -211,7 +222,7 @@ export default function ShippingStep({
                 name="lastName"
                 value={formData.lastName || ''}
                 onChange={handleChange}
-                placeholder="Collector"
+                placeholder={t('checkout.phLast')}
                 className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] transition-colors"
                 required
               />
@@ -226,7 +237,7 @@ export default function ShippingStep({
                 name="email"
                 value={formData.email || ''}
                 onChange={handleChange}
-                placeholder="alex@matcha.vip"
+                placeholder={t('checkout.phEmail')}
                 className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] transition-colors"
                 required
               />
@@ -241,7 +252,7 @@ export default function ShippingStep({
                 name="phone"
                 value={formData.phone || ''}
                 onChange={handleChange}
-                placeholder="081-234-5678"
+                placeholder={t('checkout.phPhone')}
                 className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] transition-colors"
                 required
               />
@@ -256,7 +267,7 @@ export default function ShippingStep({
                 name="address"
                 value={formData.address || ''}
                 onChange={handleChange}
-                placeholder="123 Sukhumvit Road, Apt 4B"
+                placeholder={t('checkout.phStreet')}
                 className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] transition-colors"
                 required
               />
@@ -271,7 +282,7 @@ export default function ShippingStep({
                 name="city"
                 value={formData.city || ''}
                 onChange={handleChange}
-                placeholder="Bangkok"
+                placeholder={t('checkout.phCity')}
                 className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] transition-colors"
                 required
               />
@@ -286,7 +297,7 @@ export default function ShippingStep({
                 name="zipCode"
                 value={formData.zipCode || ''}
                 onChange={handleChange}
-                placeholder="10110"
+                placeholder={t('checkout.phPostal')}
                 className="w-full px-3.5 py-2.5 border border-[#DCDCDC] focus:border-[#042509] outline-none text-xs font-mono text-[#0A0A0A] bg-[#F1F1F1] transition-colors"
                 required
               />
@@ -364,7 +375,7 @@ export default function ShippingStep({
 
         <button
           type="button"
-          onClick={onNext}
+          onClick={handleNext}
           disabled={!isFormValid}
           className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 bg-[#042509] hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-wider transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
         >

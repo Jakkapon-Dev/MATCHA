@@ -1,9 +1,11 @@
 import React from 'react';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 import { Heart, ShoppingBag } from 'lucide-react';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
 import { useCart } from '../../context/CartContext.jsx';
 
 export default function FavoritesTab({ favorites = [], onRemoveFavorite }) {
+  const { t } = useLanguage();
   const { addToCart } = useCart();
 
   // Prefer favorites supplied by the account data source. Sample products keep the
@@ -32,11 +34,11 @@ export default function FavoritesTab({ favorites = [], onRemoveFavorite }) {
   ];
 
   return (
-    <div className="bg-white border border-[#DCDCDC] rounded-3xl p-6 sm:p-8 shadow-sm space-y-6">
+    <div className="bg-white border border-[#DCDCDC] p-6 sm:p-8 space-y-6">
       <div className="flex items-center justify-between pb-4 border-b border-[#DCDCDC]">
         <div className="flex items-center gap-2">
           <Heart size={18} className="text-[#C91D1D] fill-[#C91D1D]" />
-          <h2 className="text-base font-extrabold uppercase tracking-tight text-[#000000]">
+          <h2 className="text-base font-extrabold uppercase tracking-tight text-[#0A0A0A]">
             Saved Wishlist & Look Archive ({defaultFavorites.length})
           </h2>
         </div>
@@ -44,9 +46,9 @@ export default function FavoritesTab({ favorites = [], onRemoveFavorite }) {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {defaultFavorites.map((item) => (
-          <div key={item.id} className="p-4 rounded-2xl border border-[#DCDCDC] bg-[#F1F1F1]/40 flex items-center justify-between gap-3">
+          <div key={item.id} className="p-4 border border-[#DCDCDC] bg-[#F1F1F1]/40 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-16 h-20 rounded-xl bg-white border border-[#DCDCDC] overflow-hidden shrink-0">
+              <div className="w-16 h-20 bg-white border border-[#DCDCDC] overflow-hidden shrink-0">
                 <img
                   src={webpSrc(item.image)} data-original-src={item.image}
                   loading="lazy"
@@ -57,7 +59,7 @@ export default function FavoritesTab({ favorites = [], onRemoveFavorite }) {
                 />
               </div>
               <div className="min-w-0">
-                <h4 className="text-xs font-bold text-[#000000] font-mono truncate">{item.name}</h4>
+                <h4 className="text-xs font-bold text-[#0A0A0A] font-mono truncate">{item.name}</h4>
                 <div className="text-[11px] font-mono text-[#666666] mt-0.5">${item.price} • {item.color}</div>
               </div>
             </div>
@@ -66,8 +68,8 @@ export default function FavoritesTab({ favorites = [], onRemoveFavorite }) {
               {/* CartContext owns cart persistence and duplicate-item behavior. */}
               <button
                 onClick={() => addToCart(item)}
-                className="p-2.5 rounded-xl bg-[#042509] hover:bg-[#021505] text-white transition-colors cursor-pointer shadow-xs"
-                title="Add to Cart"
+                className="p-2.5 bg-[#042509] hover:bg-[#021505] text-white transition-colors cursor-pointer"
+                title={t('account.addToCart')}
               >
                 <ShoppingBag size={14} />
               </button>
