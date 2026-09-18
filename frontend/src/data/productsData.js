@@ -919,8 +919,8 @@ export const productsData = [
         "image": "/images/products/autumn/tops/hoodies/color_3_white.jpeg"
       },
       {
-        "color": "White",
-        "colorHex": "#F5F5F5",
+        "color": "Mustard",
+        "colorHex": "#D4A338",
         "image": "/images/products/autumn/tops/hoodies/color_4_yellow.jpeg"
       }
     ],
@@ -2472,8 +2472,8 @@ export const productsData = [
         "image": "/images/products/spring/tops/polo-shirts/color_1_coral.jpeg"
       },
       {
-        "color": "Coral",
-        "colorHex": "#FF6F61",
+        "color": "Peach",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/tops/polo-shirts/color_2_soft.jpeg"
       },
       {
