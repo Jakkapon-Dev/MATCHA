@@ -12,7 +12,7 @@ import { useStoreMode } from '../context/StoreModeContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, shippingCostFor } from '../config/shipping';
 import { couponFor, discountFor, normaliseCode, FEATURED_CODES, takePendingCoupon } from '../config/coupons';
 import PreviewNote from '../components/ui/PreviewNote';
-import { QrCode, AlertTriangle, RotateCcw, Check, ArrowRight } from 'lucide-react';
+import { QrCode, AlertTriangle, RotateCcw, Check } from 'lucide-react';
 
 const PAYMENT_METHODS = [
   { id: 'visa', name: 'Visa', icon: '💳' },
@@ -22,9 +22,9 @@ const PAYMENT_METHODS = [
 ];
 
 const SHIPPING_OPTIONS = [
-  { id: 'standard', name: 'Standard Express Shipping', price: SHIPPING_RATES.standard, days: '3-5 business days' },
-  { id: 'express', name: 'Priority Courier Shipping', price: SHIPPING_RATES.express, days: '1-2 business days' },
-  { id: 'premium', name: 'VIP Same-Day Delivery', price: SHIPPING_RATES.premium, days: 'Guaranteed 24 Hours' },
+  { id: 'standard', name: 'Standard Delivery', price: SHIPPING_RATES.standard, days: '3-5 business days' },
+  { id: 'express', name: 'Priority Express Courier', price: SHIPPING_RATES.express, days: '1-2 business days' },
+  { id: 'premium', name: 'Same-Day Dispatch', price: SHIPPING_RATES.premium, days: 'Guaranteed 24 hours' },
 ];
 
 const initialFormData = {
@@ -113,7 +113,7 @@ export default function PaymentPage() {
 
   const handleRemoveCoupon = () => {
     setAppliedCoupon(null);
-    showToast('Removed promotional code.');
+    showToast('Removed promo code.');
   };
 
   const handlePlaceOrder = async () => {
@@ -141,7 +141,7 @@ export default function PaymentPage() {
         throw new Error(res?.message || 'Server did not acknowledge order creation.');
       }
       setCreatedOrder(res.data);
-      showToast('Order confirmed and recorded in atelier vault!', 'success');
+      showToast('Order confirmed successfully.', 'success');
       setShowSuccessModal(true);
       clearCart();
     } catch (err) {
@@ -157,28 +157,21 @@ export default function PaymentPage() {
     <div className="w-full bg-[#F7F6F2] text-[#111111] min-h-screen py-10 sm:py-14 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         
-        {/* Luxury Checkout Stepper Header */}
-        <div className="mb-10 pb-6 border-b border-[#E5E2D9] flex flex-col md:flex-row md:items-end justify-between gap-4">
+        {/* Confident, Quiet Header */}
+        <div className="mb-8 pb-5 border-b border-[#E5E2D9] flex flex-col md:flex-row md:items-baseline justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-[11px] font-mono tracking-[0.2em] uppercase text-[#518F5C] font-semibold">
-              <span>MatchA Atelier</span>
-              <span>/</span>
-              <span>Secure Checkout</span>
-              <span>/</span>
-              <span className="text-[#111111]">お会計</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-black text-[#111111] tracking-tight mt-1 font-serif">
-              {step === 'shipping' ? 'Shipping & Handover' : 'Payment Authorization'}
+            <h1 className="text-2xl sm:text-3xl font-serif font-bold text-[#111111] tracking-tight">
+              {step === 'shipping' ? 'Shipping Details' : 'Payment Authorization'}
             </h1>
           </div>
 
-          {/* Stepper Progress Bar */}
-          <div className="flex items-center gap-2 sm:gap-3 font-mono text-xs">
+          {/* Stepper Progress */}
+          <div className="flex items-center gap-2 font-mono text-xs">
             <button
               onClick={() => navigate('/cart')}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#E8EFE9] text-[#042509] font-bold border border-[#518F5C]/30 hover:bg-[#D7E5D9] transition-colors cursor-pointer"
+              className="flex items-center gap-1 text-[#666666] hover:text-[#042509] cursor-pointer"
             >
-              <Check size={13} className="text-[#042509]" />
+              <Check size={12} className="text-[#042509]" />
               <span>Bag</span>
             </button>
 
@@ -186,23 +179,23 @@ export default function PaymentPage() {
 
             <button
               onClick={() => setStep('shipping')}
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-bold transition-all cursor-pointer ${
+              className={`flex items-center gap-1 px-2.5 py-1 rounded-md transition-colors cursor-pointer ${
                 step === 'shipping'
-                  ? 'bg-[#042509] text-white shadow-xs'
-                  : 'bg-[#E8EFE9] text-[#042509]'
+                  ? 'bg-[#042509] text-white font-bold'
+                  : 'text-[#666666] hover:text-[#042509]'
               }`}
             >
-              {step === 'payment' ? <Check size={13} /> : null}
+              {step === 'payment' ? <Check size={12} /> : null}
               <span>1. Destination</span>
             </button>
 
             <span className="text-[#D5D2C9]">/</span>
 
             <div
-              className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-full font-bold ${
+              className={`px-2.5 py-1 rounded-md ${
                 step === 'payment'
-                  ? 'bg-[#042509] text-white shadow-xs'
-                  : 'bg-white border border-[#E5E2D9] text-[#888888]'
+                  ? 'bg-[#042509] text-white font-bold'
+                  : 'text-[#888888]'
               }`}
             >
               <span>2. Payment</span>
@@ -217,7 +210,7 @@ export default function PaymentPage() {
           <div ref={stepMotionRef} className="lg:col-span-7">
             {isDemo && (
               <PreviewNote className="mb-6">
-                <strong>Atelier Simulation Mode</strong> — All steps reflect the live production checkout flow. No real banking charge will occur. You may use mock test card details or select PromptPay QR.
+                <strong>Simulation mode</strong> — The checkout flow mirrors production. No real charge will occur. You may enter test card details or select PromptPay QR.
               </PreviewNote>
             )}
 
@@ -255,46 +248,36 @@ export default function PaymentPage() {
             {step === 'payment' && orderError && (
               <div
                 role="alert"
-                className="mt-6 p-6 rounded-3xl border border-[#C91D1D]/30 bg-[#FBEAEA] shadow-sm space-y-4"
+                className="mt-6 p-5 rounded-2xl border border-[#C91D1D]/30 bg-[#FBEAEA] space-y-3"
               >
                 <div className="flex items-start gap-3">
-                  <div className="p-2.5 rounded-xl bg-white text-[#C91D1D] shrink-0 shadow-xs">
-                    <AlertTriangle size={20} />
-                  </div>
+                  <AlertTriangle size={18} className="text-[#C91D1D] shrink-0 mt-0.5" />
                   <div>
-                    <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#C91D1D] block">
-                      TRANSACTION NOT COMPLETED
-                    </span>
-                    <h3 className="text-lg font-black font-serif text-[#111111] mt-0.5">
-                      Order Registration Failed
+                    <h3 className="font-serif font-bold text-sm text-[#111111]">
+                      Unable to place order
                     </h3>
+                    <p className="text-xs font-mono text-[#555555] mt-1 leading-relaxed">
+                      {orderError}. Your items and shipping details remain saved.
+                    </p>
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-xl border border-[#C91D1D]/20 bg-white text-xs font-mono text-[#C91D1D]">
-                  {orderError}
-                </div>
-
-                <p className="text-xs font-mono text-[#555555] leading-relaxed">
-                  Your curated bag items and delivery details have been safely retained. No amount was debited.
-                </p>
-
-                <div className="flex flex-wrap items-center gap-3 pt-1">
+                <div className="flex items-center gap-3 pt-1">
                   <button
                     type="button"
                     onClick={handlePlaceOrder}
                     disabled={isProcessing}
-                    className="px-6 py-3 bg-[#042509] hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-widest rounded-xl shadow-md transition-all disabled:opacity-40 cursor-pointer flex items-center gap-2"
+                    className="px-5 py-2.5 bg-[#042509] hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-wider rounded-lg shadow-sm transition-all disabled:opacity-40 cursor-pointer flex items-center gap-2"
                   >
-                    <RotateCcw size={14} className={isProcessing ? 'animate-spin' : ''} />
-                    <span>{isProcessing ? 'Authorizing...' : 'Try Again'}</span>
+                    <RotateCcw size={13} className={isProcessing ? 'animate-spin' : ''} />
+                    <span>{isProcessing ? 'Processing...' : 'Try again'}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setStep('shipping')}
-                    className="px-6 py-3 bg-white border border-[#D5D2C9] text-[#111111] hover:border-[#042509] text-xs font-mono font-bold uppercase tracking-widest rounded-xl transition-colors cursor-pointer"
+                    className="px-4 py-2.5 bg-white border border-[#D5D2C9] text-[#111111] hover:border-[#042509] text-xs font-mono rounded-lg transition-colors cursor-pointer"
                   >
-                    Edit Shipping Info
+                    Edit destination
                   </button>
                 </div>
               </div>
@@ -320,7 +303,7 @@ export default function PaymentPage() {
 
         </div>
 
-        {/* Dispatch Certificate Success Modal */}
+        {/* Confirmation Modal */}
         <OrderSuccessModal
           isOpen={showSuccessModal}
           order={createdOrder}
