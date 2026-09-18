@@ -21,7 +21,7 @@ export default function AtelierPanel({ title, footer }) {
   ];
 
   return (
-    <div className="lg:col-span-5 p-8 sm:p-10 lg:p-12 bg-[#042509] text-[#F1F1F1] flex flex-col justify-between relative overflow-hidden">
+    <div className="lg:col-span-5 lg:order-1 p-8 sm:p-10 lg:p-12 bg-[#042509] text-[#F1F1F1] flex flex-col justify-between relative overflow-hidden">
 
       <div className="relative z-10">
         <Link

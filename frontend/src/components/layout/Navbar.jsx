@@ -194,20 +194,15 @@ export default function Navbar({
                 </button>
               </div>
             ) : (
-              <div className="hidden lg:flex items-center gap-1.5 font-mono">
+              /* Signing in and registering are one page now, so the header
+                 offers one door rather than two buttons to the same room. */
+              <div className="hidden lg:flex items-center font-mono">
                 <button
                   onClick={() => handleLinkClick('/login')}
-                  className="px-3 py-1.5 text-xs font-bold text-[#000000] hover:bg-black/5 rounded-lg transition-colors cursor-pointer flex items-center gap-1"
+                  className="px-4 py-2 text-xs font-bold bg-[#0A0A0A] text-[#F1F1F1] hover:bg-[#C91D1D] transition-colors cursor-pointer flex items-center gap-1.5 outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]"
                 >
-                  <User size={13} />
-                  <span>{t('nav.logIn')}</span>
-                </button>
-                <span className="text-[#DCDCDC]">/</span>
-                <button
-                  onClick={() => handleLinkClick('/signup')}
-                  className="px-3.5 py-1.5 text-xs font-bold bg-[#000000] text-white hover:bg-black/80 rounded-xl transition-colors cursor-pointer shadow-xs"
-                >
-                  {t('nav.signUp')}
+                  <User size={13} aria-hidden="true" />
+                  <span>{t('nav.access')}</span>
                 </button>
               </div>
             )}
@@ -264,19 +259,13 @@ export default function Navbar({
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-2 pb-3 border-b border-[#DCDCDC]">
+                <div className="pb-3 border-b border-[#DCDCDC]">
                   <button
                     onClick={() => { setMobileMenuOpen(false); handleLinkClick('/login'); }}
-                    className="py-2 px-3 bg-white border border-[#DCDCDC] rounded-xl text-xs font-mono font-bold text-[#000000] hover:border-black flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
+                    className="w-full py-2.5 px-3 bg-[#0A0A0A] text-[#F1F1F1] text-xs font-mono font-bold hover:bg-[#C91D1D] transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                   >
-                    <User size={13} />
-                    <span>{t('nav.logIn')}</span>
-                  </button>
-                  <button
-                    onClick={() => { setMobileMenuOpen(false); handleLinkClick('/signup'); }}
-                    className="py-2 px-3 bg-[#000000] text-white rounded-xl text-xs font-mono font-bold hover:bg-black/80 flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
-                  >
-                    <span>{t('nav.signUp')}</span>
+                    <User size={13} aria-hidden="true" />
+                    <span>{t('nav.access')}</span>
                   </button>
                 </div>
               )}

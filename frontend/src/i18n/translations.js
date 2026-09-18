@@ -11,6 +11,47 @@ export const DEFAULT_LANG = 'en';
 
 export const translations = {
   en: {
+    access: {
+      signInTitle: 'Sign in',
+      registerTitle: 'Create an account',
+      signInLead: 'Your orders, saved addresses and colour reading, all in one place.',
+      registerLead: 'Keep your addresses and your colour reading for next time.',
+      email: 'Email',
+      emailPlaceholder: 'you@example.com',
+      password: 'Password',
+      passwordPlaceholder: 'At least 8 characters',
+      firstName: 'First name',
+      lastName: 'Last name',
+      confirm: 'Confirm password',
+      showPassword: 'Show password',
+      hidePassword: 'Hide password',
+      remember: 'Keep me signed in',
+      forgot: 'Forgot your password?',
+      submitSignIn: 'Sign in',
+      submitRegister: 'Create account',
+      working: 'One moment',
+      noAccount: 'No account yet?',
+      toRegister: 'Create one',
+      haveAccount: 'Already have an account?',
+      toSignIn: 'Sign in',
+      terms: 'I agree to the terms and the privacy policy.',
+      termsLink: 'Read them',
+      termsRequired: 'Agree to the terms to create an account.',
+      mismatch: 'The two passwords do not match.',
+      tooShort: 'Use at least 8 characters.',
+      needBoth: 'Enter your email and password.',
+      strength: {
+        label: 'Password strength',
+        tooShort: 'Too short',
+        weak: 'Weak',
+        fair: 'Fair',
+        strong: 'Strong',
+      },
+      socialTitle: 'Or continue with',
+      socialSoon: 'Not connected yet',
+      socialSoonToast: 'Sign-in with {provider} is not connected yet. Use your email for now.',
+    },
+
     mixMatch: {
       eyebrow: 'Four slots, head to toe',
       discount: '{n}% off the complete outfit',
@@ -372,6 +413,7 @@ export const translations = {
 
     common: {
       loading: 'Loading products',
+      offline: 'Cannot reach the store right now. Try again in a moment.',
       retry: 'Try again',
     },
 
@@ -396,6 +438,7 @@ export const translations = {
       myAccountTitle: 'Go to My Account',
       myAccountMobile: '👤 My Account',
       logIn: 'LOG IN',
+      access: 'Sign in',
       signUp: 'SIGN UP',
       logOut: 'LOG OUT',
       logOutMobile: 'Log Out',
@@ -556,6 +599,7 @@ export const translations = {
 
     auth: {
       backToStore: 'MatchA Boutique',
+      invalidCredentials: 'That email and password do not match an account.',
       signInTitle: 'What members get',
       signUpTitle: 'What you get when you join',
       archiveLine: 'TEA-DYE ARCHIVE // 2026',
@@ -605,6 +649,47 @@ export const translations = {
   },
 
   th: {
+    access: {
+      signInTitle: 'เข้าสู่ระบบ',
+      registerTitle: 'สมัครสมาชิก',
+      signInLead: 'คำสั่งซื้อ ที่อยู่ที่บันทึกไว้ และผลวิเคราะห์สีของคุณ อยู่ที่เดียวกัน',
+      registerLead: 'เก็บที่อยู่และผลวิเคราะห์สีไว้ใช้ครั้งต่อไป',
+      email: 'อีเมล',
+      emailPlaceholder: 'you@example.com',
+      password: 'รหัสผ่าน',
+      passwordPlaceholder: 'อย่างน้อย 8 ตัวอักษร',
+      firstName: 'ชื่อ',
+      lastName: 'นามสกุล',
+      confirm: 'ยืนยันรหัสผ่าน',
+      showPassword: 'แสดงรหัสผ่าน',
+      hidePassword: 'ซ่อนรหัสผ่าน',
+      remember: 'จำฉันไว้ในระบบ',
+      forgot: 'ลืมรหัสผ่าน',
+      submitSignIn: 'เข้าสู่ระบบ',
+      submitRegister: 'สมัครสมาชิก',
+      working: 'สักครู่',
+      noAccount: 'ยังไม่มีบัญชี',
+      toRegister: 'สมัครที่นี่',
+      haveAccount: 'มีบัญชีอยู่แล้ว',
+      toSignIn: 'เข้าสู่ระบบที่นี่',
+      terms: 'ฉันยอมรับข้อกำหนดการใช้งานและนโยบายความเป็นส่วนตัว',
+      termsLink: 'อ่านเงื่อนไข',
+      termsRequired: 'ต้องยอมรับเงื่อนไขก่อนสมัครสมาชิก',
+      mismatch: 'รหัสผ่านทั้งสองช่องไม่ตรงกัน',
+      tooShort: 'รหัสผ่านต้องยาวอย่างน้อย 8 ตัวอักษร',
+      needBoth: 'กรอกอีเมลและรหัสผ่านก่อน',
+      strength: {
+        label: 'ความแข็งแรงของรหัสผ่าน',
+        tooShort: 'สั้นเกินไป',
+        weak: 'อ่อน',
+        fair: 'พอใช้',
+        strong: 'แข็งแรง',
+      },
+      socialTitle: 'หรือเข้าสู่ระบบด้วย',
+      socialSoon: 'ยังไม่เปิดใช้',
+      socialSoonToast: 'การเข้าสู่ระบบด้วย {provider} ยังไม่เปิดใช้งาน ใช้อีเมลไปก่อนได้',
+    },
+
     mixMatch: {
       eyebrow: 'สี่ช่อง ครบทั้งลุค',
       discount: 'ลด {n}% เมื่อจัดครบชุด',
@@ -966,6 +1051,7 @@ export const translations = {
 
     common: {
       loading: 'กำลังดึงข้อมูลสินค้า',
+      offline: 'ตอนนี้เชื่อมต่อระบบไม่ได้ ลองใหม่อีกครั้ง',
       retry: 'ลองอีกครั้ง',
     },
 
@@ -990,6 +1076,7 @@ export const translations = {
       myAccountTitle: 'ไปที่บัญชีของฉัน',
       myAccountMobile: '👤 บัญชีของฉัน',
       logIn: 'เข้าสู่ระบบ',
+      access: 'เข้าสู่ระบบ',
       signUp: 'สมัครสมาชิก',
       logOut: 'ออกจากระบบ',
       logOutMobile: 'ออกจากระบบ',
@@ -1143,6 +1230,7 @@ export const translations = {
 
     auth: {
       backToStore: 'MatchA Boutique',
+      invalidCredentials: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
       signInTitle: 'สิทธิพิเศษของสมาชิก',
       signUpTitle: 'สมัครแล้วได้อะไรบ้าง',
       archiveLine: 'TEA-DYE ARCHIVE // 2026',

@@ -7,8 +7,10 @@ import { api } from './services/api';
 const HomePage = React.lazy(() => import('./pages/HomePage.jsx'));
 const CatalogPage = React.lazy(() => import('./pages/CatalogPage.jsx'));
 const CartPage = React.lazy(() => import('./pages/CartPage.jsx'));
-const SignUpPage = React.lazy(() => import('./pages/SignUpPage.jsx'));
-const LoginPage = React.lazy(() => import('./pages/LoginPage.jsx'));
+/* One page serves both doors. The two routes stay because they are in the
+   navbar, in the hash router and in links people already hold; they differ
+   only in which mode opens. */
+const AccessPage = React.lazy(() => import('./pages/AccessPage.jsx'));
 const PaymentPage = React.lazy(() => import('./pages/PaymentPage.jsx'));
 const UserAccount = React.lazy(() => import('./pages/UserAccount.jsx'));
 const AdminPage = React.lazy(() => import('./pages/AdminPage.jsx'));
@@ -349,23 +351,9 @@ function AppContent() {
             element={<PaymentPage />} 
           />
 
-          {/* 5. Login Page */}
-          <Route 
-            path="/login" 
-            element={
-              <LoginPage 
-                onLoginSuccess={(user) => {
-                  login(user);
-                }} 
-              />
-            } 
-          />
-
-          {/* 6. Sign Up Page */}
-          <Route 
-            path="/signup" 
-            element={<SignUpPage onBackToStore={handleGoToHome} />} 
-          />
+          {/* 5 & 6. Sign in and register, one page */}
+          <Route path="/login" element={<AccessPage mode="signin" />} />
+          <Route path="/signup" element={<AccessPage mode="register" />} />
 
           {/* 7. User Account Page (Member VIP Lounge) */}
           <Route
