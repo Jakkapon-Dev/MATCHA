@@ -655,7 +655,10 @@ export default function PersonalColorPage() {
         {activeTab === 'quiz' ? (
           <div>
             {!diagnosedSeason && !isScanning ? (
-              <div ref={quizAnchorRef} className="max-w-4xl space-y-8 animate-fade-in">
+              /* The quiz takes the whole container. The photographs are the
+                 question, so every pixel of width goes to making them big
+                 enough to compare. */
+              <div ref={quizAnchorRef} className="space-y-8 animate-fade-in">
 
                 {/* Progress as five rules rather than a bar inside a panel:
                     the questions are countable, so show the count. */}
@@ -683,32 +686,32 @@ export default function PersonalColorPage() {
                   </div>
                 </div>
 
-                <div ref={questionMotionRef} className="space-y-6" aria-live="polite">
-                  {/* The question and its reference photograph, flat on the
-                      page. */}
-                  <div className={`flex flex-col md:flex-row items-stretch gap-6 ${QUIZ_QUESTIONS[currentStep].image ? '' : 'md:flex-col'}`}>
-                    <div className="flex-1 flex flex-col justify-center">
-                      <span className="font-mono text-[10px] font-bold uppercase text-[#C91D1D] tracking-[0.18em] flex items-center gap-1.5 mb-3">
-                        {QUIZ_QUESTIONS[currentStep].icon}
-                        <span>{QUIZ_QUESTIONS[currentStep].category}</span>
-                      </span>
-                      <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#0A0A0A] leading-snug">
-                        {QUIZ_QUESTIONS[currentStep].question}
-                      </h2>
-                      {QUIZ_QUESTIONS[currentStep].subtitle && (
-                        <p className="text-xs sm:text-sm text-[#666666] mt-3">
-                          {QUIZ_QUESTIONS[currentStep].subtitle}
-                        </p>
-                      )}
-                    </div>
+                <div ref={questionMotionRef} className="space-y-8" aria-live="polite">
+                  {/* Answering is a task, not a page to read down: one question
+                      at a time, nothing else competing, so it is centred and
+                      given the full width. The measure is still held for the
+                      question itself — centred text is only readable in a
+                      short line — while the photographs below take everything
+                      the container has. */}
+                  <div className="max-w-3xl mx-auto text-center">
+                    <span className="font-mono text-[10px] font-bold uppercase text-[#C91D1D] tracking-[0.18em] flex items-center justify-center gap-1.5 mb-3">
+                      {QUIZ_QUESTIONS[currentStep].icon}
+                      <span>{QUIZ_QUESTIONS[currentStep].category}</span>
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0A0A0A] leading-snug">
+                      {QUIZ_QUESTIONS[currentStep].question}
+                    </h2>
+                    {QUIZ_QUESTIONS[currentStep].subtitle && (
+                      <p className="text-xs sm:text-sm text-[#666666] mt-3">
+                        {QUIZ_QUESTIONS[currentStep].subtitle}
+                      </p>
+                    )}
 
-                    {/* The setup illustration, at a ratio of its own rather
-                        than stretched to whatever height the question text
-                        happens to be — and smaller than the options below,
-                        which are the images that actually have to be
-                        compared. */}
+                    {/* The setup illustration follows the question it sets up,
+                        at a ratio of its own and deliberately modest — the
+                        images that have to be compared are the ones below. */}
                     {QUIZ_QUESTIONS[currentStep].image && (
-                      <div className="w-full md:w-[260px] aspect-4/3 shrink-0 overflow-hidden bg-[#E4E4E4] self-start">
+                      <div className="mt-6 mx-auto w-full max-w-sm aspect-16/10 overflow-hidden bg-[#E4E4E4]">
                         {/* `fetchpriority` is spelled lowercase here: React 18
                             does not map the camelCase form and passes it to the
                             DOM with a warning instead. */}
@@ -760,7 +763,7 @@ export default function PersonalColorPage() {
                               <span className="block w-full aspect-3/4 bg-[#E4E4E4]" />
                             )}
 
-                            <span className="flex gap-2.5 pt-3 flex-1">
+                            <span className="flex justify-center gap-2 pt-3 flex-1 text-center px-1">
                               <span className="font-mono text-xs text-[#999999] group-hover:text-[#C91D1D] transition-colors shrink-0">
                                 {letter}
                               </span>
@@ -775,13 +778,15 @@ export default function PersonalColorPage() {
                   </ul>
 
                   {currentStep > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => setCurrentStep(prev => prev - 1)}
-                      className="font-mono text-xs uppercase tracking-wider text-[#666666] hover:text-[#0A0A0A] cursor-pointer inline-flex items-center gap-1.5 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
-                    >
-                      ← ย้อนกลับข้อก่อนหน้า
-                    </button>
+                    <div className="text-center">
+                      <button
+                        type="button"
+                        onClick={() => setCurrentStep(prev => prev - 1)}
+                        className="font-mono text-xs uppercase tracking-wider text-[#666666] hover:text-[#0A0A0A] cursor-pointer inline-flex items-center gap-1.5 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+                      >
+                        ← ย้อนกลับข้อก่อนหน้า
+                      </button>
+                    </div>
                   )}
                 </div>
 
