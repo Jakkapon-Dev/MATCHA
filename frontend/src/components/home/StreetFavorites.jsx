@@ -72,7 +72,11 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
 
       {/* The garment on its own dye. Every product here is shot on white, so
           `multiply` drops the studio backdrop into the wash. */}
-      <div className="relative aspect-square overflow-hidden" style={{ backgroundColor: wash(hex) }}>
+      {/* The frame follows the photography. Every garment here is shot
+          896x1200, so a square frame scaled each one down to fit its height
+          and left a band of empty wash down both sides; at 320 wide that was
+          40px of nothing on each edge with the garment shrunk to match. */}
+      <div className="relative aspect-3/4 overflow-hidden" style={{ backgroundColor: wash(hex) }}>
         <img
           src={webpSrc(activeVariant.image)} data-original-src={activeVariant.image}
           alt={`${item.name} - ${activeVariant.color}`}
@@ -321,7 +325,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
                       ease: EASE,
                       layout: { type: 'spring', stiffness: 340, damping: 34 },
                     }}
-                    className="shrink-0 border-r-2 border-[#C91D1D] last:border-r-0"
+                    className="shrink-0 border-r border-[#DCDCDC] last:border-r-0"
                   >
                     <StreetFavoriteCard
                       item={item}

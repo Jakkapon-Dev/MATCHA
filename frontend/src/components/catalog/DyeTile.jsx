@@ -64,7 +64,7 @@ export default function DyeTile({ product, variant, onAddToCart, onQuickView }) 
       className="group relative flex flex-col cursor-pointer select-none"
     >
       <div
-        className="relative aspect-4/5 overflow-hidden"
+        className="relative aspect-3/4 overflow-hidden"
         style={{ backgroundColor: wash(hex) }}
       >
         <img
