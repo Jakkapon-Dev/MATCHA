@@ -44,8 +44,11 @@ import {
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import AddProductModal from '../components/admin/AddProductModal';
+import OrderTrackingModal from '../components/admin/OrderTrackingModal';
 import MediaManager from '../features/media/MediaManager';
 import { api } from '../services/api';
+import useChangeMotion from '../hooks/useChangeMotion';
+import { webpSrc } from '../utils/imageFallback';
 
 const INITIAL_INVENTORY = [
   {
@@ -155,13 +158,13 @@ const INITIAL_INVENTORY = [
 ];
 
 const INITIAL_ORDERS = [
-  { id: 'ORD-8921', customer: 'Sarah Jenkins', email: 'sarah.j@gmail.com', items: 2, total: 136.00, status: 'Processing', date: '2026-08-25' },
-  { id: 'ORD-8920', customer: 'Kenji Takahashi', email: 'kenji.t@outlook.com', items: 1, total: 88.00, status: 'Shipped', date: '2026-08-24' },
-  { id: 'ORD-8919', customer: 'Elena Rostova', email: 'elena.r@yahoo.com', items: 3, total: 242.00, status: 'Delivered', date: '2026-08-22' },
-  { id: 'ORD-8918', customer: 'Marcus Vance', email: 'marcus.v@proton.me', items: 1, total: 48.00, status: 'Delivered', date: '2026-08-20' },
-  { id: 'ORD-8917', customer: 'Chloe Bennett', email: 'chloe.b@gmail.com', items: 4, total: 310.00, status: 'Processing', date: '2026-08-19' },
-  { id: 'ORD-8916', customer: 'Nattapong Somchai', email: 'nat.somchai@matcha.vip', items: 2, total: 176.00, status: 'Pending', date: '2026-08-18' },
-  { id: 'ORD-8915', customer: 'David Miller', email: 'd.miller@techcorp.io', items: 1, total: 110.00, status: 'Delivered', date: '2026-08-15' }
+  { id: 'ORD-8921', customer: 'Sarah Jenkins', email: 'sarah.j@gmail.com', phone: '+66 89 998-7122', address: '306 North Plaza, South Motera, Sukhumvit Soi 21, Bangkok - 10110', items: 2, total: 136.00, status: 'Processing', paymentStatus: 'Paid', date: '2026-08-25' },
+  { id: 'ORD-8920', customer: 'Kenji Takahashi', email: 'kenji.t@outlook.com', phone: '+66 81 445-9821', address: '88/4 Thonglor Soi 10, Khlong Tan Nuea, Watthana, Bangkok - 10110', items: 1, total: 88.00, status: 'Shipped', paymentStatus: 'Paid', date: '2026-08-24' },
+  { id: 'ORD-8919', customer: 'Elena Rostova', email: 'elena.r@yahoo.com', phone: '+66 92 334-1189', address: '45/12 Nimmanhaemin Rd, Suthep, Mueang Chiang Mai, Chiang Mai - 50200', items: 3, total: 242.00, status: 'Delivered', paymentStatus: 'Paid', date: '2026-08-22' },
+  { id: 'ORD-8918', customer: 'Marcus Vance', email: 'marcus.v@proton.me', phone: '+66 86 771-0023', address: '124 Wireless Road, Lumphini, Pathum Wan, Bangkok - 10330', items: 1, total: 48.00, status: 'Delivered', paymentStatus: 'Paid', date: '2026-08-20' },
+  { id: 'ORD-8917', customer: 'Chloe Bennett', email: 'chloe.b@gmail.com', phone: '+66 95 662-8810', address: '502 Sathorn Square Tower, North Sathorn Rd, Silom, Bang Rak, Bangkok - 10500', items: 4, total: 310.00, status: 'Processing', paymentStatus: 'Paid', date: '2026-08-19' },
+  { id: 'ORD-8916', customer: 'Nattapong Somchai', email: 'nat.somchai@matcha.vip', phone: '+66 81 889-4455', address: '18 Ari Samphan Soi 5, Phahon Yothin Rd, Phaya Thai, Bangkok - 10400', items: 2, total: 176.00, status: 'Pending', paymentStatus: 'Unpaid', date: '2026-08-18' },
+  { id: 'ORD-8915', customer: 'David Miller', email: 'd.miller@techcorp.io', phone: '+66 83 221-9900', address: '77/1 Asoke-Dindaeng Rd, Makkasan, Ratchathewi, Bangkok - 10400', items: 1, total: 110.00, status: 'Delivered', paymentStatus: 'Paid', date: '2026-08-15' }
 ];
 
 const INITIAL_MEMBERS = [
@@ -193,6 +196,8 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const adminMotionRef = useChangeMotion(activeTab);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedOrderForModal, setSelectedOrderForModal] = useState(null);
+  const [restockAmounts, setRestockAmounts] = useState({});
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
 
   // Core Data States with localStorage persistence & automatic sanitization of legacy images
@@ -513,6 +518,18 @@ export default function AdminPage() {
     }
   };
 
+  const handleRestockInputChange = (id, val) => {
+    const numericVal = val.replace(/\D/g, '');
+    setRestockAmounts(prev => ({ ...prev, [id]: numericVal }));
+  };
+
+  const handleRestockSubmit = (id) => {
+    const amount = parseInt(restockAmounts[id], 10);
+    if (!amount || amount <= 0) return;
+    handleRestock(id, amount);
+    setRestockAmounts(prev => ({ ...prev, [id]: '' }));
+  };
+
   const handleDeleteProduct = async (id) => {
     if (isDemo) {
       showToast('โหมดสาธิต: อ่านอย่างเดียว ไม่สามารถลบข้อมูลจริงได้', 'warning');
@@ -533,13 +550,15 @@ export default function AdminPage() {
 
   // Order Actions
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
+    setOrders(prev => prev.map(ord => ord.id === orderId ? { ...ord, status: newStatus } : ord));
+    setSelectedOrderForModal(prev => (prev && prev.id === orderId ? { ...prev, status: newStatus } : prev));
     try {
-      await api.updateOrderStatus(orderId, { status: newStatus });
-      setOrders(prev => prev.map(ord => ord.id === orderId ? { ...ord, status: newStatus } : ord));
+      if (api.updateOrderStatus) {
+        await api.updateOrderStatus(orderId, { status: newStatus });
+      }
       showToast(`Order ${orderId} updated to ${newStatus}`, 'success');
     } catch (err) {
       console.warn('Failed to update order status on server:', err.message);
-      setOrders(prev => prev.map(ord => ord.id === orderId ? { ...ord, status: newStatus } : ord));
       showToast(`Order ${orderId} updated locally`, 'info');
     }
   };
@@ -1142,27 +1161,36 @@ export default function AdminPage() {
                             </span>
                           </td>
                           <td className="p-4 text-right">
-                            <div className="flex items-center justify-end gap-1.5">
+                            <div className="flex items-center justify-end gap-2">
+                              <div className="flex items-center gap-1.5 bg-[#F1F1F1] p-1 rounded-xl border border-[#DCDCDC]">
+                                <input
+                                  type="text"
+                                  inputMode="numeric"
+                                  pattern="[0-9]*"
+                                  value={restockAmounts[item.id] || ''}
+                                  onChange={(e) => handleRestockInputChange(item.id, e.target.value)}
+                                  onKeyDown={(e) => {
+                                    if (e.key === 'Enter') handleRestockSubmit(item.id);
+                                  }}
+                                  placeholder="Qty"
+                                  className="w-14 px-2 py-1 text-center font-mono text-xs font-bold border border-[#DCDCDC] rounded-lg bg-white text-[#000000] outline-none focus:border-[#042509] focus:ring-1 focus:ring-[#042509]"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => handleRestockSubmit(item.id)}
+                                  disabled={!restockAmounts[item.id] || parseInt(restockAmounts[item.id], 10) <= 0}
+                                  className="px-3 py-1 rounded-lg border border-[#042509] bg-white hover:bg-[#042509] hover:text-white text-[#042509] font-mono text-xs font-bold transition-all cursor-pointer shadow-2xs active:scale-95 disabled:opacity-40 disabled:border-[#DCDCDC] disabled:text-[#888888] disabled:cursor-not-allowed"
+                                >
+                                  Add
+                                </button>
+                              </div>
                               <button
-                                onClick={() => handleRestock(item.id, 10)}
-                                className="px-2 py-1 rounded-lg bg-[#518F5C]/50 hover:bg-[#518F5C] text-[#042509] font-bold text-[10px] cursor-pointer"
-                                title="Add 10 Units"
-                              >
-                                +10
-                              </button>
-                              <button
-                                onClick={() => handleRestock(item.id, -5)}
-                                className="px-2 py-1 rounded-lg bg-orange-50 hover:bg-orange-100 text-[#C91D1D] font-bold text-[10px] cursor-pointer"
-                                title="Reduce 5 Units"
-                              >
-                                -5
-                              </button>
-                              <button
+                                type="button"
                                 onClick={() => handleDeleteProduct(item.id)}
-                                className="p-1.5 rounded-lg text-[#C91D1D] hover:bg-red-50 transition-colors cursor-pointer"
+                                className="p-2 rounded-xl text-[#C91D1D] hover:bg-red-50 border border-transparent hover:border-red-200 transition-colors cursor-pointer"
                                 title="Delete Product"
                               >
-                                <Trash2 size={13} />
+                                <Trash2 size={14} />
                               </button>
                             </div>
                           </td>
@@ -1225,18 +1253,30 @@ export default function AdminPage() {
                         <tr key={ord.id} className="hover:bg-[#F1F1F1]/80 transition-colors">
                           <td className="p-4 font-bold text-[#042509]">{ord.id}</td>
                           <td className="p-4">
-                            <div className="font-bold text-[#000000]">{ord.customer}</div>
-                            <div className="text-[10px] text-[#666666]">{ord.email}</div>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedOrderForModal(ord)}
+                              className="text-left group cursor-pointer"
+                              title="Click to view full Order Tracking & Fulfillment status"
+                            >
+                              <div className="font-bold text-[#000000] group-hover:text-[#042509] group-hover:underline flex items-center gap-1.5">
+                                <span>{ord.customer}</span>
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#042509]/10 text-[#042509] font-semibold group-hover:bg-[#042509] group-hover:text-white transition-colors">
+                                  Track ↗
+                                </span>
+                              </div>
+                              <div className="text-[10px] text-[#666666]">{ord.email}</div>
+                            </button>
                           </td>
                           <td className="p-4 text-[#000000]">{ord.items} pcs</td>
-                          <td className="p-4 font-bold text-[#042509]">${ord.total.toFixed(2)}</td>
+                          <td className="p-4 font-bold text-[#042509]">${Number(ord.total).toFixed(2)}</td>
                           <td className="p-4">
                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                              String(ord.paymentStatus).toLowerCase() === 'paid'
+                              String(ord.paymentStatus || (ord.status === 'Pending' ? 'Unpaid' : 'Paid')).toLowerCase() === 'paid'
                                 ? 'bg-emerald-100 text-emerald-800'
                                 : 'bg-amber-100 text-amber-800'
                             }`}>
-                              {ord.paymentStatus || 'Unpaid'}
+                              {ord.paymentStatus || (ord.status === 'Pending' ? 'Unpaid' : 'Paid')}
                             </span>
                           </td>
                           <td className="p-4 text-[#666666]">{ord.date}</td>
@@ -1466,8 +1506,14 @@ export default function AdminPage() {
         onAddProduct={handleAddProduct}
       />
 
+      {/* Order Tracking & Fulfillment Details Modal */}
+      <OrderTrackingModal
+        isOpen={Boolean(selectedOrderForModal)}
+        onClose={() => setSelectedOrderForModal(null)}
+        order={selectedOrderForModal}
+        onUpdateStatus={handleUpdateOrderStatus}
+      />
+
     </div>
   );
 }
-import useChangeMotion from '../hooks/useChangeMotion';
-import { webpSrc } from '../utils/imageFallback';
