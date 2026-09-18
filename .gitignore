@@ -176,5 +176,11 @@ backend/scripts/*
 !backend/scripts/bundle-demo-media.js
 !backend/scripts/seed.js
 !backend/scripts/seedUsers.js
+# Migrations already applied to the live data. Without these the repository
+# cannot reproduce its own database: seeding from seed.js would lose the colour
+# repair and the English descriptions with nothing to redo them. Both are
+# idempotent and write a backup before touching anything.
+!backend/scripts/fixProductColors.mjs
+!backend/scripts/addEnglishDescriptions.mjs
 
 

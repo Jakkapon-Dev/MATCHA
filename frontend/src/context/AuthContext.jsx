@@ -1,13 +1,53 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { useToast } from './ToastContext.jsx';
+import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from 'react';
 import { api, setToken } from '../services/api';
 
 const AUTH_CONTEXT_KEY = Symbol.for('matcha.auth.context');
 const AuthContext = globalThis[AUTH_CONTEXT_KEY] || (globalThis[AUTH_CONTEXT_KEY] = createContext(null));
 
+/* Every write to storage goes through here.
+
+   The reader below has always been guarded, with a comment about private mode
+   to say why. The three writers were not, so Safari's private browsing, blocked
+   site data and a full quota each threw out of a React event handler and into
+   the error boundary: signed in on the server, holding a token, looking at a
+   crash screen.
+
+   Storage is a convenience for the next visit, never a condition of this one,
+   so a failure is noted and the session carries on in memory. */
+const SESSION_KEY = 'matcha_user';
+
+const rememberSession = (user, persistent) => {
+  try {
+    const store = persistent ? localStorage : sessionStorage;
+    const other = persistent ? sessionStorage : localStorage;
+    store.setItem(SESSION_KEY, JSON.stringify(user));
+    other.removeItem(SESSION_KEY);
+  } catch (err) {
+    console.warn('Session not persisted; storage is unavailable:', err.message);
+  }
+};
+
+const forgetSession = () => {
+  try {
+    localStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem(SESSION_KEY);
+  } catch (err) {
+    console.warn('Session not cleared from storage:', err.message);
+  }
+};
+
+// Which store already holds the session, so an update lands where it lives.
+const sessionIsPersistent = () => {
+  try {
+    return Boolean(localStorage.getItem(SESSION_KEY));
+  } catch {
+    return true;
+  }
+};
+
 const loadInitialUser = () => {
   try {
-    const saved = localStorage.getItem('matcha_user') || sessionStorage.getItem('matcha_user');
+    const saved = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY);
     return saved ? JSON.parse(saved) : null;
   } catch (err) {
     console.error('Failed to load user session:', err);
@@ -17,7 +57,12 @@ const loadInitialUser = () => {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(loadInitialUser);
-  const { showToast } = useToast();
+
+  // The signed-in user, readable from a callback without listing it as a
+  // dependency — these go out through context and rebuilding them on every
+  // change would re-render every consumer.
+  const currentUserRef = useRef(currentUser);
+  useEffect(() => { currentUserRef.current = currentUser; }, [currentUser]);
 
   const login = useCallback((userData, rememberMe = true, token = null) => {
     if (token) setToken(token, rememberMe);
@@ -26,35 +71,32 @@ export function AuthProvider({ children }) {
     if (token) {
       api.mergeGuestCart().catch((err) => console.warn('Guest cart merge skipped:', err.message));
     }
+    currentUserRef.current = userData;
     setCurrentUser(userData);
-    if (rememberMe) {
-      localStorage.setItem('matcha_user', JSON.stringify(userData));
-      sessionStorage.removeItem('matcha_user');
-    } else {
-      sessionStorage.setItem('matcha_user', JSON.stringify(userData));
-      localStorage.removeItem('matcha_user');
-    }
+    rememberSession(userData, rememberMe);
   }, []);
 
   const logout = useCallback(() => {
     setToken(null);
+    currentUserRef.current = null;
     setCurrentUser(null);
-    localStorage.removeItem('matcha_user');
-    sessionStorage.removeItem('matcha_user');
+    forgetSession();
   }, []);
 
+  /* The storage write used to sit inside the setCurrentUser updater. Updaters
+     must be pure — React is free to run one more than once, and under
+     StrictMode it does — so the next user is built from the ref and the write
+     happens out here, once.
+
+     The confirmation toast went with it: ProfileTab already shows its own
+     "saved" state, so the toast was a second announcement of one event, in
+     English, on a page that had otherwise been translated. */
   const updateProfile = useCallback((updates) => {
-    setCurrentUser((prev) => {
-      const nextUser = { ...prev, ...updates };
-      if (localStorage.getItem('matcha_user')) {
-        localStorage.setItem('matcha_user', JSON.stringify(nextUser));
-      } else {
-        sessionStorage.setItem('matcha_user', JSON.stringify(nextUser));
-      }
-      return nextUser;
-    });
-    showToast('Profile updated successfully! ✨');
-  }, [showToast]);
+    const nextUser = { ...currentUserRef.current, ...updates };
+    currentUserRef.current = nextUser;
+    setCurrentUser(nextUser);
+    rememberSession(nextUser, sessionIsPersistent());
+  }, []);
 
   const value = {
     currentUser,
