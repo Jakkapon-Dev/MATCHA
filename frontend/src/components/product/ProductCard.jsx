@@ -36,7 +36,17 @@ export default function ProductCard({
 
   const [activeVariant, setActiveVariant] = useState(variants[0]);
   const cardRef = useRef(null);
-  const [wishlistActive, setWishlistActive] = useState(isWishlisted);
+
+  const isInitiallyWishlisted = () => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('matcha_wishlist') || '[]');
+      return saved.some(item => item.id === product?.id);
+    } catch {
+      return Boolean(isWishlisted);
+    }
+  };
+
+  const [wishlistActive, setWishlistActive] = useState(isInitiallyWishlisted);
   const [justAdded, setJustAdded] = useState(false);
   const [imageFade, setImageFade] = useState(false);
 
@@ -83,13 +93,23 @@ export default function ProductCard({
 
   const handleWishlistClick = (e) => {
     e.stopPropagation();
-    // Guests cannot mutate wishlist state and receive an explanatory toast.
-    if (!currentUser) {
-      showToast('กรุณาเข้าสู่ระบบก่อนเพื่อบันทึกรายการสินค้าที่ชอบ (Wishlist)', 'info');
-      return;
+    try {
+      const saved = JSON.parse(localStorage.getItem('matcha_wishlist') || '[]');
+      const exists = saved.some(item => item.id === product?.id);
+      let updated;
+      if (exists) {
+        updated = saved.filter(item => item.id !== product?.id);
+        setWishlistActive(false);
+        showToast(`นำ "${product?.name}" ออกจากรายการโปรดแล้ว`, 'info');
+      } else {
+        updated = [...saved, { id: product?.id, name: product?.name, price: product?.price, image: activeVariant.image }];
+        setWishlistActive(true);
+        showToast(`บันทึก "${product?.name}" ในรายการโปรดแล้ว! ❤️`, 'success');
+      }
+      localStorage.setItem('matcha_wishlist', JSON.stringify(updated));
+    } catch (err) {
+      console.warn('Wishlist storage error:', err);
     }
-    // Update the heart immediately, then let the optional parent persist the change.
-    setWishlistActive(!wishlistActive);
     if (onToggleWishlist) onToggleWishlist(product);
   };
 

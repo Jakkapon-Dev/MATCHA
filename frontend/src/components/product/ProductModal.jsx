@@ -15,10 +15,12 @@ import {
 } from 'lucide-react';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
 import { useCart } from '../../context/CartContext.jsx';
+import { useToast } from '../../context/ToastContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, FREE_SHIPPING_THRESHOLD } from '../../config/shipping';
 
 export default function ProductModal({ product, onClose, onAddToCart, onToggleWishlist, isWishlisted = false }) {
   const { addToCart: contextAddToCart } = useCart();
+  const { showToast } = useToast();
 
   // Normalize products without explicit variants so all image/color controls can use
   // one consistent list shape.
@@ -26,7 +28,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
     ? product.variants
     : [
         { 
-          color: product?.color || 'Matcha Sage', 
+          color: product?.color || 'MatchA Sage', 
           colorHex: product?.colorHex || '#8F9779', 
           image: product?.image || '/images/products/standalone/mustard_sweater.jpg' 
         }
@@ -40,7 +42,44 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
     sizeList.length === 1 ? sizeList[0] : null
   );
   const [quantity, setQuantity] = useState(1);
-  const [wishlistActive, setWishlistActive] = useState(isWishlisted);
+
+  const isInitiallyWishlisted = () => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('matcha_wishlist') || '[]');
+      return saved.some(item => item.id === product?.id);
+    } catch {
+      return Boolean(isWishlisted);
+    }
+  };
+
+  const [wishlistActive, setWishlistActive] = useState(isInitiallyWishlisted);
+
+  useEffect(() => {
+    setWishlistActive(isInitiallyWishlisted());
+  }, [product?.id]);
+
+  const handleWishlistToggle = (e) => {
+    if (e?.stopPropagation) e.stopPropagation();
+    try {
+      const saved = JSON.parse(localStorage.getItem('matcha_wishlist') || '[]');
+      const exists = saved.some(item => item.id === product?.id);
+      let updated;
+      if (exists) {
+        updated = saved.filter(item => item.id !== product?.id);
+        setWishlistActive(false);
+        showToast(`นำ "${product?.name}" ออกจากรายการโปรดแล้ว`, 'info');
+      } else {
+        updated = [...saved, { id: product?.id, name: product?.name, price: product?.price, image: activeVariant.image }];
+        setWishlistActive(true);
+        showToast(`บันทึก "${product?.name}" ในรายการโปรดแล้ว! ❤️`, 'success');
+      }
+      localStorage.setItem('matcha_wishlist', JSON.stringify(updated));
+    } catch (err) {
+      console.warn('Wishlist storage error:', err);
+    }
+    if (onToggleWishlist) onToggleWishlist(product);
+  };
+
   const [addedAnimation, setAddedAnimation] = useState(false);
   const [imageFade, setImageFade] = useState(false);
   const [galleryImage, setGalleryImage] = useState(null);
@@ -601,26 +640,41 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
               </p>
             )}
 
-            <button
-              onClick={handleAdd}
-              disabled={!product.inStock || selectedSize === null}
-              className={`w-full py-4 rounded-2xl font-mono font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer ${
-                product.inStock && selectedSize !== null
-                  ? addedAnimation 
-                    ? 'bg-emerald-600 text-white' 
-                    : 'bg-[#042509] hover:bg-[#021505] text-white shadow-[#042509]/25'
-                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              }`}
-            >
-              <ShoppingBag size={16} />
-              <span>
-                {!product.inStock 
-                  ? 'Sold Out • สินค้าหมดชั่วคราว'
-                  : addedAnimation 
-                    ? 'Added to Bag! ✓' 
-                    : `Add to Bag • $${currentTotal.toFixed(2)}`}
-              </span>
-            </button>
+            <div className="flex items-center gap-2.5">
+              <button
+                onClick={handleAdd}
+                disabled={!product.inStock || selectedSize === null}
+                className={`flex-1 py-4 rounded-2xl font-mono font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer ${
+                  product.inStock && selectedSize !== null
+                    ? addedAnimation 
+                      ? 'bg-emerald-600 text-white' 
+                      : 'bg-[#042509] hover:bg-[#021505] text-white shadow-[#042509]/25'
+                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                <ShoppingBag size={16} />
+                <span>
+                  {!product.inStock 
+                    ? 'Sold Out • สินค้าหมดชั่วคราว'
+                    : addedAnimation 
+                      ? 'Added to Bag! ✓' 
+                      : `Add to Bag • $${currentTotal.toFixed(2)}`}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleWishlistToggle}
+                aria-label={wishlistActive ? 'Remove from wishlist' : 'Add to wishlist'}
+                className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-center active:scale-95 shadow-sm ${
+                  wishlistActive
+                    ? 'bg-[#C91D1D]/10 border-[#C91D1D] text-[#C91D1D]'
+                    : 'bg-white border-[#DCDCDC] text-[#666666] hover:text-[#C91D1D] hover:border-[#C91D1D]'
+                }`}
+              >
+                <Heart size={18} fill={wishlistActive ? '#C91D1D' : 'none'} />
+              </button>
+            </div>
 
             {/* ค่าส่งมาจากตารางกลางเดียวกับเซิร์ฟเวอร์ — ตัวเลขที่นี่คือตัวแรกที่ผู้ซื้อเห็น */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] font-mono text-[#666666] pt-1">

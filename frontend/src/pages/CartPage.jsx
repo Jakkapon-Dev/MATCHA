@@ -11,9 +11,16 @@ const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color 
 export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBackToStore, onCheckout }) {
   const cartMotionRef = useChangeMotion(cartItems.map(item => `${getCartKey(item)}:${item.quantity}`).join('|'), 'outfit');
   const subtotal = cartItems.reduce((sum, item) => sum + parsePrice(item.price) * (item.quantity || 1), 0);
-  const shipping = cartItems.length === 0 ? 0 : shippingCostFor(subtotal);
-  const total = subtotal + shipping;
-  const awayFromFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  
+  // Calculate bundle savings if bundle pieces are in the cart
+  const bundleItems = cartItems.filter(item => item.isBundleItem);
+  const bundleSavings = bundleItems.length >= 2 
+    ? bundleItems.reduce((sum, item) => sum + parsePrice(item.price) * (item.quantity || 1) * (item.bundleDiscountRate || 0.12), 0)
+    : 0;
+  const netSubtotal = Math.max(0, subtotal - bundleSavings);
+  const shipping = cartItems.length === 0 ? 0 : shippingCostFor(netSubtotal);
+  const total = netSubtotal + shipping;
+  const awayFromFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - netSubtotal);
 
   if (cartItems.length === 0) {
     return (
@@ -93,11 +100,18 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <h3 className="font-bold text-[#000000] truncate">{item.name}</h3>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <h3 className="font-bold text-[#000000] truncate">{item.name}</h3>
+                          {item.isBundleItem && (
+                            <span className="px-1.5 py-0.5 rounded text-[8px] font-mono font-bold bg-[#042509] text-white uppercase">
+                              Bundle Item (−12%)
+                            </span>
+                          )}
+                        </div>
                         <p className="text-[11px] font-mono text-[#666666] mt-0.5 uppercase tracking-wider">
                           {item.size || 'One Size'} / {item.color || 'Matcha Green'}
                         </p>
-                        <p className="text-xs font-bold text-[#C91D1D] mt-1">{item.price}</p>
+                        <p className="text-xs font-bold text-[#C91D1D] mt-1">${parsePrice(item.price).toFixed(2)}</p>
                       </div>
                       <button
                         onClick={() => onRemove(key)}
@@ -155,20 +169,32 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                   <span>SUBTOTAL</span>
                   <span className="font-bold text-[#000000]">${subtotal.toFixed(2)}</span>
                 </div>
+
+                {bundleSavings > 0 && (
+                  <div className="flex justify-between text-[#042509] font-bold">
+                    <span>OUTFIT BUNDLE SAVINGS (−12%)</span>
+                    <span>−${bundleSavings.toFixed(2)}</span>
+                  </div>
+                )}
+
                 <div className="flex justify-between text-[#666666]">
-                  <span>SHIPPING</span>
-                  {shipping === 0 ? (
-                    <span className="font-bold text-[#042509] uppercase">FREE</span>
-                  ) : (
-                    <span className="font-bold text-[#000000]">${shipping.toFixed(2)}</span>
-                  )}
+                  <span>STANDARD SHIPPING (3-5 DAYS)</span>
+                  <span className="font-bold text-[#042509] uppercase">FREE</span>
+                </div>
+
+                <div className="flex justify-between text-[#666666]">
+                  <span>EXPRESS SHIPPING (1-2 DAYS)</span>
+                  <span className="font-bold text-[#000000]">
+                    {netSubtotal >= FREE_SHIPPING_THRESHOLD ? 'FREE (QUALIFIED)' : '$12.00'}
+                  </span>
                 </div>
               </div>
 
               {awayFromFreeShipping > 0 && (
-                <div className="mt-4 p-3 rounded-xl bg-[#C91D1D]/10 border border-[#C91D1D]/30">
-                  <p className="text-[11px] font-mono text-[#C91D1D] font-bold leading-relaxed">
-                    ✦ Add ${awayFromFreeShipping.toFixed(2)} more to unlock FREE express shipping!
+                <div className="mt-4 p-3 rounded-xl bg-[#518F5C]/15 border border-[#518F5C]/40 text-[#042509]">
+                  <p className="text-[11px] font-mono font-bold leading-relaxed flex items-center gap-1.5">
+                    <span className="text-sm">✦</span>
+                    <span>ซื้อเพิ่มอีก ${awayFromFreeShipping.toFixed(2)} เพื่อรับสิทธิ์ส่งด่วนฟรี (FREE Express Delivery)!</span>
                   </p>
                 </div>
               )}

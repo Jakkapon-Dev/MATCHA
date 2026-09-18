@@ -129,6 +129,12 @@ export default function MixMatchStudioPage() {
   const [activeSlotTab, setActiveSlotTab] = useState('tops'); // 'tops' | 'bottoms' | 'footwear' | 'accessories'
   const [activePresetId, setActivePresetId] = useState(initialPreset.id);
   const [justAddedBundle, setJustAddedBundle] = useState(false);
+  const [selectedSizes, setSelectedSizes] = useState({
+    tops: 'M',
+    bottoms: '32',
+    footwear: 'EU 41',
+    accessories: 'OS'
+  });
   const outfitMotionRef = useChangeMotion([selectedTop?.id, selectedBottom?.id, selectedFootwear?.id, selectedAccessory?.id].join('|'), 'outfit');
   const pickerMotionRef = useChangeMotion(activeSlotTab, 'grid');
 
@@ -225,17 +231,21 @@ export default function MixMatchStudioPage() {
     setTimeout(() => setJustAddedBundle(false), 1200);
 
     buyableItems.forEach(item => {
-      const unitPrice = isCompleteBundle
-        ? Number((Number(item.price) * (1 - BUNDLE_DISCOUNT_RATE)).toFixed(2))
-        : Number(item.price);
+      const slotKey = (item.category === 'Tops' || item.category === 'Outerwear') ? 'tops' :
+                      item.category === 'Bottoms' ? 'bottoms' :
+                      item.category === 'Shoes' ? 'footwear' : 'accessories';
+
+      const chosenSize = selectedSizes[slotKey] || item.sizes?.[0] || (item.category === 'Accessories' ? 'OS' : item.category === 'Shoes' ? 'EU 40' : 'M');
 
       addToCart({
         ...item,
-        // ส่วนลดต้องติดไปกับราคาจริง ไม่งั้นตะกร้าจะเก็บเงินเต็มทั้งที่หน้านี้โฆษณาว่าลด
-        price: unitPrice,
+        // ส่งราคาเต็มเพื่อความโปร่งใส ส่วนลด bundle แสดงแยกบรรทัดใน Order Summary
+        price: Number(item.price),
         originalPrice: Number(item.price),
+        isBundleItem: isCompleteBundle,
+        bundleDiscountRate: isCompleteBundle ? BUNDLE_DISCOUNT_RATE : 0,
         quantity: 1,
-        size: item.sizes?.[0] || (item.category === 'Accessories' ? 'OS' : item.category === 'Shoes' ? 'EU 40' : 'M')
+        size: chosenSize
       });
     });
 
@@ -243,7 +253,7 @@ export default function MixMatchStudioPage() {
       const oosNames = outOfStockItems.map(i => i.name).join(', ');
       showToast(`⚠️ เพิ่มลงตะกร้า ${buyableItems.length} ชิ้น (ยกเว้น ${oosNames} เนื่องจากหมดสต็อก) — ส่วนลดเซ็ต ${BUNDLE_DISCOUNT_PERCENT}% ใช้ได้เมื่อครบ 4 ชิ้นเท่านั้น`, 'info');
     } else {
-      showToast(`✨ เพิ่มเซ็ตชุดครบ ${buyableItems.length} ชิ้น (Head-to-Toe) ลงตะกร้าพร้อมส่วนลด ${BUNDLE_DISCOUNT_PERCENT}% เรียบร้อยแล้ว!`, 'success');
+      showToast(`✨ เพิ่มเซ็ตชุดครบ ${buyableItems.length} ชิ้นลงตะกร้าเรียบร้อยแล้ว (ส่วนลดเซ็ต ${BUNDLE_DISCOUNT_PERCENT}% จะแสดงในใบสรุปยอด)`, 'success');
     }
   };
 
@@ -413,6 +423,25 @@ export default function MixMatchStudioPage() {
                     )}
                     <span className="text-[10px] font-mono text-[#8C7E74]">({selectedTop?.fit || 'Regular'})</span>
                   </div>
+
+                  {/* Size Selector */}
+                  <div className="flex items-center gap-1.5 mt-2 overflow-x-auto pt-1 border-t border-[#DCDCDC]/50" onClick={(e) => e.stopPropagation()}>
+                    <span className="text-[9px] font-mono font-bold text-[#666666] uppercase">ไซซ์:</span>
+                    {(selectedTop?.sizes || ['S', 'M', 'L', 'XL']).map((sz) => (
+                      <button
+                        key={sz}
+                        type="button"
+                        onClick={() => setSelectedSizes(prev => ({ ...prev, tops: sz }))}
+                        className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold transition-all cursor-pointer ${
+                          selectedSizes.tops === sz
+                            ? 'bg-[#042509] text-white shadow-2xs'
+                            : 'bg-[#F1F1F1] text-[#666666] hover:bg-[#DCDCDC]'
+                        }`}
+                      >
+                        {sz}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -443,6 +472,25 @@ export default function MixMatchStudioPage() {
                       <span className="text-[9px] font-mono font-bold text-[#B42318] bg-[#FEE4E2] px-1.5 py-0.5 rounded">หมดสต็อก</span>
                     )}
                     <span className="text-[10px] font-mono text-[#8C7E74]">({selectedBottom?.fit || 'Regular'})</span>
+                  </div>
+
+                  {/* Size Selector */}
+                  <div className="flex items-center gap-1.5 mt-2 overflow-x-auto pt-1 border-t border-[#DCDCDC]/50" onClick={(e) => e.stopPropagation()}>
+                    <span className="text-[9px] font-mono font-bold text-[#666666] uppercase">ไซซ์:</span>
+                    {(selectedBottom?.sizes || ['30', '32', '34', '36']).map((sz) => (
+                      <button
+                        key={sz}
+                        type="button"
+                        onClick={() => setSelectedSizes(prev => ({ ...prev, bottoms: sz }))}
+                        className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold transition-all cursor-pointer ${
+                          selectedSizes.bottoms === sz
+                            ? 'bg-[#042509] text-white shadow-2xs'
+                            : 'bg-[#F1F1F1] text-[#666666] hover:bg-[#DCDCDC]'
+                        }`}
+                      >
+                        {sz}
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -475,6 +523,25 @@ export default function MixMatchStudioPage() {
                     )}
                     <span className="text-[10px] font-mono text-[#8C7E74]">({selectedFootwear?.color})</span>
                   </div>
+
+                  {/* Size Selector */}
+                  <div className="flex items-center gap-1.5 mt-2 overflow-x-auto pt-1 border-t border-[#DCDCDC]/50" onClick={(e) => e.stopPropagation()}>
+                    <span className="text-[9px] font-mono font-bold text-[#666666] uppercase">ไซซ์:</span>
+                    {(selectedFootwear?.sizes || ['EU 40', 'EU 41', 'EU 42', 'EU 43']).map((sz) => (
+                      <button
+                        key={sz}
+                        type="button"
+                        onClick={() => setSelectedSizes(prev => ({ ...prev, footwear: sz }))}
+                        className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold transition-all cursor-pointer ${
+                          selectedSizes.footwear === sz
+                            ? 'bg-[#042509] text-white shadow-2xs'
+                            : 'bg-[#F1F1F1] text-[#666666] hover:bg-[#DCDCDC]'
+                        }`}
+                      >
+                        {sz}
+                      </button>
+                    ))}
+                  </div>
                 </div>
               </div>
 
@@ -505,6 +572,25 @@ export default function MixMatchStudioPage() {
                       <span className="text-[9px] font-mono font-bold text-[#B42318] bg-[#FEE4E2] px-1.5 py-0.5 rounded">หมดสต็อก</span>
                     )}
                     <span className="text-[10px] font-mono text-[#8C7E74]">({selectedAccessory?.color})</span>
+                  </div>
+
+                  {/* Size Selector */}
+                  <div className="flex items-center gap-1.5 mt-2 overflow-x-auto pt-1 border-t border-[#DCDCDC]/50" onClick={(e) => e.stopPropagation()}>
+                    <span className="text-[9px] font-mono font-bold text-[#666666] uppercase">ไซซ์:</span>
+                    {(selectedAccessory?.sizes || ['One Size']).map((sz) => (
+                      <button
+                        key={sz}
+                        type="button"
+                        onClick={() => setSelectedSizes(prev => ({ ...prev, accessories: sz }))}
+                        className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold transition-all cursor-pointer ${
+                          selectedSizes.accessories === sz
+                            ? 'bg-[#042509] text-white shadow-2xs'
+                            : 'bg-[#F1F1F1] text-[#666666] hover:bg-[#DCDCDC]'
+                        }`}
+                      >
+                        {sz}
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>

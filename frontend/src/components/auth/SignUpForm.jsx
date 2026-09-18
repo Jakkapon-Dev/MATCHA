@@ -84,25 +84,11 @@ export default function SignupForm({ onBackToStore }) {
       showToast(`Account created for ${newUser.name}! Welcome to MatchA 🎉`);
       navigate('/');
     } catch (err) {
-      // Demo mode is limited to connectivity failures. Server validation/auth errors
-      // remain visible to QA and do not create a local account.
       if (err.message && (err.message.includes('ติดต่อเซิร์ฟเวอร์ไม่ได้') || err.message.includes('Failed to communicate') || err.message.includes('Failed to fetch') || err.message.includes('NetworkError'))) {
-        login(
-          {
-            id: `demo-mem-${Date.now().toString().slice(-4)}`,
-            name: newUser.name,
-            email: newUser.email,
-            role: 'Member',
-            tier: 'Regular Member'
-          },
-          true,
-          'demo-offline-token'
-        );
-        showToast(`Account created for ${newUser.name}! Welcome to MatchA (Demo Mode) 🎉`);
-        navigate('/');
-        return;
+        setError('ตอนนี้เชื่อมต่อระบบไม่ได้ กรุณาลองใหม่อีกครั้ง');
+      } else {
+        setError(err.message || 'ไม่สามารถสร้างบัญชีได้ในขณะนี้ กรุณาลองใหม่อีกครั้ง');
       }
-      setError(err.message || 'Could not create your account. Please try again.');
     } finally {
       // Restore the submit button for both successful and failed requests.
       setIsLoading(false);

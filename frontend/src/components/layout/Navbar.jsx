@@ -62,6 +62,23 @@ export default function Navbar({
     <>
       <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-[#F1F1F1]/95 border-b border-[#DCDCDC] transition-all">
 
+        {/* Persistent Demo Session Warning Banner */}
+        {currentUser?.isDemoSession && (
+          <div className="bg-[#518F5C] text-[#042509] text-[11px] py-1.5 px-4 font-mono font-bold flex items-center justify-between gap-2 shadow-inner border-b border-[#042509]/20">
+            <div className="flex items-center gap-2 mx-auto sm:mx-0">
+              <span className="text-sm">🧪</span>
+              <span>DEMO SESSION — โหมดสาธิตสำหรับการนำเสนอ (ไม่ได้เชื่อมต่อฐานข้อมูลจริง)</span>
+            </div>
+            <button
+              type="button"
+              onClick={handleLogoutClick}
+              className="underline hover:text-black shrink-0 text-[10px] uppercase tracking-wider bg-white/40 hover:bg-white/60 px-2 py-0.5 rounded cursor-pointer transition-all"
+            >
+              [ออกจากโหมดสาธิต]
+            </button>
+          </div>
+        )}
+
         {/* 1. Top Announcement Bar - Sleek Monochrome with Red Sparkle */}
         <div className="bg-[#000000] text-[#F1F1F1] text-[11px] py-1.5 px-4 text-center font-mono flex items-center justify-center gap-2">
           <span className="text-[#C91D1D]">✦</span>

@@ -18,6 +18,8 @@ import { init as initUserStore } from './services/userStore.js';
 import authRoutes from './routes/auth.js';
 import lookbookRoutes from './routes/lookbookRoutes.js';
 import mediaRoutes from './routes/mediaRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
 import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
@@ -64,6 +66,8 @@ app.get('/api/store-config', (req, res) => res.json({ success: true, data: { mod
 initUserStore({ bcrypt, adminPassword: process.env.ADMIN_SEED_PASSWORD });
 
 app.use('/api/auth', authRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/cart', cartRoutes);
 
 // Modular Feature Routes (Lookbook & Media Management)
 app.use('/api', lookbookRoutes);
@@ -225,7 +229,10 @@ app.get('/api/products', async (req, res) => {
           break;
         case 'featured':
         default:
-          sortObj = { isFeatured: -1, createdAt: -1, _id: -1 };
+          // ลำดับเริ่มต้นของหน้าร้าน: ของที่คัดมาก่อน แล้วไล่ตามคะแนนและจำนวนรีวิว
+          // ก่อนจะตกไปที่ของใหม่สุด — เดิมเรียงตามวันที่ทันทีหลัง isFeatured ทำให้
+          // สินค้าที่คนชอบที่สุดไปกองอยู่หน้าหลัง และลำดับดูเหมือนสุ่มสำหรับคนดู
+          sortObj = { isFeatured: -1, rating: -1, reviewsCount: -1, createdAt: -1, _id: -1 };
           break;
       }
 

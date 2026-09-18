@@ -8,7 +8,7 @@ export const productsData = [
     "name": "MatchA Autumn Bags",
     "description": "กระเป๋าสะพายสไตล์เอิร์ธโทน ดีไซน์มินิมอลผสานช่องใส่สัมภาระอเนกประสงค์ เหมาะสำหรับลุคสตรีทและวันเดินทางในฤดูใบไม้ร่วง",
     "price": 43.99,
-    "originalPrice": 54.99,
+    "originalPrice": 51.5,
     "tag": "New Drop",
     "image": "/images/products/autumn/accessories/bags/color_1_burnt_orange.jpeg",
     "category": "Accessories",
@@ -43,8 +43,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 33,
+    "rating": 4.8,
+    "reviewsCount": 93,
     "isFeatured": false,
     "createdAt": "2026-02-02",
     "specs": {
@@ -57,7 +57,9 @@ export const productsData = [
       "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
       "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
-      "certifications": ["Leather Working Group (LWG)"],
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
       "silhouette": "One Size Fits All",
       "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
       "careInstructions": [
@@ -78,7 +80,7 @@ export const productsData = [
     "name": "MatchA Autumn Scarves",
     "description": "ผ้าพันคอเนื้อนุ่มสัมผัสสบาย ถักทอลวดลายเรียบหรู เสริมเลเยอร์ความอบอุ่นและสไตล์มินิมอลสำหรับฤดูใบไม้ร่วง",
     "price": 57.99,
-    "originalPrice": 72.49,
+    "originalPrice": 66.99,
     "tag": "Limited 2026",
     "image": "/images/products/autumn/accessories/scarves/color_1_burnt_orange.jpeg",
     "category": "Accessories",
@@ -113,8 +115,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 42,
+    "rating": 4.7,
+    "reviewsCount": 80,
     "isFeatured": false,
     "createdAt": "2026-02-03",
     "specs": {
@@ -127,7 +129,9 @@ export const productsData = [
       "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
       "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
-      "certifications": ["Leather Working Group (LWG)"],
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
       "silhouette": "One Size Fits All",
       "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
       "careInstructions": [
@@ -148,7 +152,7 @@ export const productsData = [
     "name": "MatchA Autumn Chinos",
     "description": "กางเกงชิโน่ขากระบอกตรง ทรง Relaxed สวมใส่สบาย คัตติ้งเนี้ยบในโทนสีธรรมชาติที่ผสมผสานความคลาสสิกกับความทันสมัย",
     "price": 81.99,
-    "originalPrice": 102.49,
+    "originalPrice": 108.5,
     "tag": "Essentials",
     "image": "/images/products/autumn/bottoms/chinos/color_1_olive.jpeg",
     "category": "Bottoms",
@@ -192,8 +196,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 51,
+    "rating": 4.7,
+    "reviewsCount": 120,
     "isFeatured": false,
     "createdAt": "2026-02-04",
     "specs": {
@@ -206,7 +210,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Wide Leg Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -265,7 +271,7 @@ export const productsData = [
     "name": "MatchA Autumn Jeans",
     "description": "ยีนส์เดนิมฟอกสีพิเศษ ทรงตรงสไตล์สตรีทวินเทจ สวมใส่สบายและคงทน เข้ากับเสื้อผ้าได้หลากหลายสไตล์",
     "price": 70.99,
-    "originalPrice": 88.74,
+    "originalPrice": 95,
     "tag": "Trending",
     "image": "/images/products/autumn/bottoms/jeans/color_1_brown.jpeg",
     "category": "Bottoms",
@@ -309,8 +315,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 60,
+    "rating": 4.7,
+    "reviewsCount": 133,
     "isFeatured": true,
     "createdAt": "2026-02-05",
     "specs": {
@@ -323,7 +329,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Wide Leg Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -382,7 +390,7 @@ export const productsData = [
     "name": "MatchA Autumn Pants",
     "description": "กางเกงขายาวผ้าทอพรีเมียม สไตล์ Tailored เรียบง่าย ให้ลุคภูมิฐานแต่ผ่อนคลาย เหมาะสำหรับการแมตช์เลเยอร์",
     "price": 74.99,
-    "originalPrice": 93.74,
+    "originalPrice": 86.99,
     "tag": "Popular",
     "image": "/images/products/autumn/bottoms/pants/color_1_burnt_orange.jpeg",
     "category": "Bottoms",
@@ -426,8 +434,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 69,
+    "rating": 4.7,
+    "reviewsCount": 146,
     "isFeatured": false,
     "createdAt": "2026-02-06",
     "specs": {
@@ -440,7 +448,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Wide Leg Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -499,7 +509,7 @@ export const productsData = [
     "name": "MatchA Autumn Skirts",
     "description": "กระโปรงสไตล์โมเดิร์นมินิมอล ทรงพลิ้วไหวในโทนสีอบอุ่นของฤดูกาล เสริมความสง่างามอย่างเป็นธรรมชาติ",
     "price": 68.99,
-    "originalPrice": 86.24,
+    "originalPrice": 78.5,
     "tag": "Best Seller",
     "image": "/images/products/autumn/bottoms/skirts/color_1_brown.jpeg",
     "category": "Bottoms",
@@ -544,7 +554,7 @@ export const productsData = [
     ],
     "inStock": true,
     "rating": 4.7,
-    "reviewsCount": 78,
+    "reviewsCount": 159,
     "isFeatured": false,
     "createdAt": "2026-02-07",
     "specs": {
@@ -557,7 +567,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -616,7 +628,7 @@ export const productsData = [
     "name": "MatchA Autumn Boots",
     "description": "รองเท้าบูทหุ้มข้อสไตล์ออทัมน์ ดีไซน์ร่วมสมัย ทรงหัวมน พื้นรองเท้าทนทานรับแรงกระแทกได้ดี เหมาะสำหรับการเดินในเมือง",
     "price": 102.99,
-    "originalPrice": 128.74,
+    "originalPrice": 125.5,
     "tag": "New Drop",
     "image": "/images/products/autumn/shoes/boots/color_1_burnt_orange.jpeg",
     "category": "Shoes",
@@ -657,8 +669,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 87,
+    "rating": 4.6,
+    "reviewsCount": 170,
     "isFeatured": false,
     "createdAt": "2026-02-08",
     "specs": {
@@ -671,7 +683,10 @@ export const productsData = [
       "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
       "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
-      "certifications": ["Leather Working Group (LWG)", "REACH Compliant"],
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
       "silhouette": "Footwear Standard Fit",
       "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
       "careInstructions": [
@@ -742,7 +757,7 @@ export const productsData = [
     "name": "MatchA Autumn Loafers",
     "description": "รองเท้าโลฟเฟอร์หนังคลาสสิก ตกแต่งสไตล์มินิมอล พื้นนุ่มรองรับสรีระเท้า สวมใส่ง่ายเข้าได้กับทุกลุค",
     "price": 61.99,
-    "originalPrice": 77.49,
+    "originalPrice": 73.99,
     "tag": "Limited 2026",
     "image": "/images/products/autumn/shoes/loafers/color_1_burnt_orange.jpeg",
     "category": "Shoes",
@@ -783,8 +798,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 96,
+    "rating": 4.6,
+    "reviewsCount": 157,
     "isFeatured": true,
     "createdAt": "2026-02-09",
     "specs": {
@@ -797,7 +812,10 @@ export const productsData = [
       "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
       "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
       "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
-      "certifications": ["Leather Working Group (LWG)", "REACH Compliant"],
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
       "silhouette": "Footwear Standard Fit",
       "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
       "careInstructions": [
@@ -868,7 +886,7 @@ export const productsData = [
     "name": "MatchA Autumn Hoodies",
     "description": "เสื้อฮู้ดดี้ทรงโอเวอร์ไซส์ ดีไซน์สตรีทญี่ปุ่น ผ้านุ่มสบายพร้อมกระเป๋าจิงโจ้และเชือกปรับระดับ",
     "price": 65.99,
-    "originalPrice": 82.49,
+    "originalPrice": 87.5,
     "tag": "Essentials",
     "image": "/images/products/autumn/tops/hoodies/color_1_burnt_orange.jpeg",
     "category": "Tops",
@@ -907,8 +925,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 105,
+    "rating": 4.7,
+    "reviewsCount": 104,
     "isFeatured": false,
     "createdAt": "2026-02-10",
     "specs": {
@@ -921,7 +939,10 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
       "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100", "GOTS Organic Cotton"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
       "silhouette": "Oversized Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -980,7 +1001,7 @@ export const productsData = [
     "name": "MatchA Autumn Jackets",
     "description": "เสื้อแจ็กเก็ตทรงหลวม คัตติ้งคมชัด เสริมลุคเอาต์ดอร์ด้วยดีเทลกระเป๋าฟังก์ชันและซิปคู่",
     "price": 139.99,
-    "originalPrice": 174.99,
+    "originalPrice": 159.99,
     "tag": "Trending",
     "image": "/images/products/autumn/tops/jackets/color_1_brown.jpeg",
     "category": "Outerwear",
@@ -1024,8 +1045,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 114,
+    "rating": 4.8,
+    "reviewsCount": 45,
     "isFeatured": false,
     "createdAt": "2026-02-11",
     "specs": {
@@ -1038,7 +1059,10 @@ export const productsData = [
       "fabricComposition": "เปลือกนอกไนลอนรีไซเคิล 100% · ซับในผ้าฝ้าย 100% · เคลือบกันน้ำ DWR ปลอด PFC",
       "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm — สวมไซซ์ L ทับเสื้อชั้นใน",
-      "certifications": ["OEKO-TEX STANDARD 100", "bluesign approved"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "bluesign approved"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -1097,7 +1121,7 @@ export const productsData = [
     "name": "MatchA Autumn Shirts",
     "description": "เสื้อเชิ้ตแขนยาวผ้าเนื้อละเอียด ทรง Relaxed สวมใส่เดี่ยวหรือเป็นเลเยอร์ตัวนอกได้ตลอดวัน",
     "price": 63.99,
-    "originalPrice": 79.99,
+    "originalPrice": 78,
     "tag": "Popular",
     "image": "/images/products/autumn/tops/shirts/color_1_brown.jpeg",
     "category": "Tops",
@@ -1141,8 +1165,8 @@ export const productsData = [
       }
     ],
     "inStock": false,
-    "rating": 4.7,
-    "reviewsCount": 123,
+    "rating": 4.8,
+    "reviewsCount": 115,
     "isFeatured": false,
     "createdAt": "2026-02-12",
     "specs": {
@@ -1155,7 +1179,10 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100", "GOTS Organic Cotton"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -1214,7 +1241,7 @@ export const productsData = [
     "name": "MatchA Autumn Sweaters",
     "description": "สเวตเตอร์ผ้าถักเนื้อนุ่ม คอกลมทรงโมเดิร์น ให้ความอบอุ่นและมีมิติของเนื้อผ้าที่โดดเด่น",
     "price": 92.99,
-    "originalPrice": 116.24,
+    "originalPrice": 109.5,
     "tag": "Best Seller",
     "image": "/images/products/autumn/tops/sweaters/color_1_burnt_orange.jpeg",
     "category": "Tops",
@@ -1259,7 +1286,7 @@ export const productsData = [
     ],
     "inStock": true,
     "rating": 4.8,
-    "reviewsCount": 132,
+    "reviewsCount": 102,
     "isFeatured": true,
     "createdAt": "2026-02-13",
     "specs": {
@@ -1272,7 +1299,10 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100", "GOTS Organic Cotton"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
       "silhouette": "Oversized Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -1331,7 +1361,7 @@ export const productsData = [
     "name": "MatchA Spring Bags",
     "description": "กระเป๋าสะพายผ้าแคนวาสและหนัง ผสมผสานโทนสีพาสเทลสดใส พกพาง่าย จุของได้จุใจ",
     "price": 46.99,
-    "originalPrice": 58.74,
+    "originalPrice": 63.5,
     "tag": "New Drop",
     "image": "/images/products/spring/accessories/bags/color_1_peach.jpeg",
     "category": "Accessories",
@@ -1366,8 +1396,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 141,
+    "rating": 4.5,
+    "reviewsCount": 136,
     "isFeatured": false,
     "createdAt": "2026-02-14",
     "specs": {
@@ -1380,7 +1410,9 @@ export const productsData = [
       "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
       "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
       "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
-      "certifications": ["Leather Working Group (LWG)"],
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
       "silhouette": "One Size Fits All",
       "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
       "careInstructions": [
@@ -1401,7 +1433,7 @@ export const productsData = [
     "name": "MatchA Spring Scarves",
     "description": "ผ้าพันคอบางเบา สีสันอ่อนโยน เหมาะสำหรับวันสบาย ๆ ในฤดูใบไม้ผลิ เสริมลุคละมุนตา",
     "price": 60.99,
-    "originalPrice": 76.24,
+    "originalPrice": 70,
     "tag": "Limited 2026",
     "image": "/images/products/spring/accessories/scarves/color_1_peach.jpeg",
     "category": "Accessories",
@@ -1436,8 +1468,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 150,
+    "rating": 4.5,
+    "reviewsCount": 149,
     "isFeatured": false,
     "createdAt": "2026-02-15",
     "specs": {
@@ -1450,7 +1482,9 @@ export const productsData = [
       "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
       "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
       "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
-      "certifications": ["Leather Working Group (LWG)"],
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
       "silhouette": "One Size Fits All",
       "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
       "careInstructions": [
@@ -1471,7 +1505,7 @@ export const productsData = [
     "name": "MatchA Spring Jeans",
     "description": "ยีนส์เดนิมฟอกสีสว่าง ลุคสดใสต้อนรับฤดูใบไม้ผลิ สวมใส่สบายด้วยเนื้อผ้ายืดหยุ่นปานกลาง",
     "price": 69.99,
-    "originalPrice": 87.49,
+    "originalPrice": 82.5,
     "tag": "Essentials",
     "image": "/images/products/spring/bottoms/jeans/color_1_peach.jpeg",
     "category": "Bottoms",
@@ -1510,8 +1544,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 159,
+    "rating": 4.8,
+    "reviewsCount": 108,
     "isFeatured": false,
     "createdAt": "2026-02-16",
     "specs": {
@@ -1524,7 +1558,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Wide Leg Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -1583,7 +1619,7 @@ export const productsData = [
     "name": "MatchA Spring Pants",
     "description": "กางเกงผ้าเนื้อเบาระบายอากาศ ทรงกระบอกตรง ใส่สบายคล่องตัวในทุกกิจกรรมประจำวัน",
     "price": 73.99,
-    "originalPrice": 92.49,
+    "originalPrice": 84.99,
     "tag": "Trending",
     "image": "/images/products/spring/bottoms/pants/color_1_peach.jpeg",
     "category": "Bottoms",
@@ -1622,8 +1658,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 168,
+    "rating": 4.8,
+    "reviewsCount": 95,
     "isFeatured": true,
     "createdAt": "2026-02-17",
     "specs": {
@@ -1636,7 +1672,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Wide Leg Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -1695,7 +1733,7 @@ export const productsData = [
     "name": "MatchA Spring Shorts",
     "description": "กางเกงขาสั้นลำลอง ทรงพอดีตัว โทนสีพาสเทลสดใส เหมาะกับกิจกรรมกลางแจ้งและวันพักผ่อน",
     "price": 57.99,
-    "originalPrice": 72.49,
+    "originalPrice": 66,
     "tag": "Popular",
     "image": "/images/products/spring/bottoms/shorts/color_1_peach.jpeg",
     "category": "Bottoms",
@@ -1735,7 +1773,7 @@ export const productsData = [
     ],
     "inStock": true,
     "rating": 4.8,
-    "reviewsCount": 177,
+    "reviewsCount": 82,
     "isFeatured": false,
     "createdAt": "2026-02-18",
     "specs": {
@@ -1748,7 +1786,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -1807,7 +1847,7 @@ export const productsData = [
     "name": "MatchA Spring Skirts",
     "description": "กระโปรงทรงเอโทนสว่าง ดีไซน์พลิ้วไหวสดใส ตัดเย็บประณีตขับเน้นความอ่อนหวาน",
     "price": 71.99,
-    "originalPrice": 89.99,
+    "originalPrice": 97.5,
     "tag": "Best Seller",
     "image": "/images/products/spring/bottoms/skirts/color_1_peach.jpeg",
     "category": "Bottoms",
@@ -1846,8 +1886,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 186,
+    "rating": 4.7,
+    "reviewsCount": 69,
     "isFeatured": false,
     "createdAt": "2026-02-19",
     "specs": {
@@ -1860,7 +1900,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -1919,7 +1961,7 @@ export const productsData = [
     "name": "MatchA Spring Loafers",
     "description": "รองเท้าโลฟเฟอร์สไตล์ลำลอง โทนสีอ่อนสบายตา สวมใส่ง่าย น้ำหนักเบา ระบายอากาศดี",
     "price": 60.99,
-    "originalPrice": 76.24,
+    "originalPrice": 80.5,
     "tag": "New Drop",
     "image": "/images/products/spring/shoes/loafers/color_1_coral.jpeg",
     "category": "Shoes",
@@ -1960,8 +2002,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 195,
+    "rating": 4.7,
+    "reviewsCount": 59,
     "isFeatured": false,
     "createdAt": "2026-02-20",
     "specs": {
@@ -1974,7 +2016,10 @@ export const productsData = [
       "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
       "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
       "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
-      "certifications": ["Leather Working Group (LWG)", "REACH Compliant"],
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
       "silhouette": "Footwear Standard Fit",
       "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
       "careInstructions": [
@@ -2045,7 +2090,7 @@ export const productsData = [
     "name": "MatchA Spring Sneakers",
     "description": "สนีกเกอร์ข้อสั้นโทนสีสดใส พื้นยางยึดเกาะดีเยี่ยม นุ่มเบาทุกย่างก้าวสำหรับไลฟ์สไตล์คนเมือง",
     "price": 64.99,
-    "originalPrice": 81.24,
+    "originalPrice": 87,
     "tag": "Limited 2026",
     "image": "/images/products/spring/shoes/sneakers/color_1_gold.jpeg",
     "category": "Shoes",
@@ -2086,8 +2131,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 204,
+    "rating": 4.5,
+    "reviewsCount": 35,
     "isFeatured": true,
     "createdAt": "2026-02-21",
     "specs": {
@@ -2100,7 +2145,10 @@ export const productsData = [
       "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
       "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
       "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
-      "certifications": ["Leather Working Group (LWG)", "REACH Compliant"],
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
       "silhouette": "Footwear Standard Fit",
       "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
       "careInstructions": [
@@ -2171,7 +2219,7 @@ export const productsData = [
     "name": "MatchA Spring Band Collar Shirts",
     "description": "เสื้อเชิ้ตคอจีนมินิมอล ดีไซน์เรียบเท่ สะอาดตา เข้ากับสภาพอากาศฤดูใบไม้ผลิได้สมบูรณ์แบบ",
     "price": 58.99,
-    "originalPrice": 73.74,
+    "originalPrice": 71.5,
     "tag": "Essentials",
     "image": "/images/products/spring/tops/band-collar-shirts/color_1_coral.jpeg",
     "category": "Tops",
@@ -2210,8 +2258,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 213,
+    "rating": 4.8,
+    "reviewsCount": 88,
     "isFeatured": false,
     "createdAt": "2026-02-22",
     "specs": {
@@ -2224,7 +2272,10 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100", "GOTS Organic Cotton"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -2283,7 +2334,7 @@ export const productsData = [
     "name": "MatchA Spring Cardigans",
     "description": "คาร์ดิแกนผ้าถักบางเบา กระดุมหน้าลายไม้ เสริมความอบอุ่นกำลังดีและลุคน่ารักสดใส",
     "price": 62.99,
-    "originalPrice": 78.74,
+    "originalPrice": 80,
     "tag": "Trending",
     "image": "/images/products/spring/tops/cardigans/color_1_coral.jpeg",
     "category": "Tops",
@@ -2322,8 +2373,8 @@ export const productsData = [
       }
     ],
     "inStock": false,
-    "rating": 4.8,
-    "reviewsCount": 32,
+    "rating": 4.5,
+    "reviewsCount": 101,
     "isFeatured": false,
     "createdAt": "2026-02-23",
     "specs": {
@@ -2336,7 +2387,10 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100", "GOTS Organic Cotton"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
       "silhouette": "Vintage Boxy Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -2395,7 +2449,7 @@ export const productsData = [
     "name": "MatchA Spring Polo Shirts",
     "description": "เสื้อโปโลผ้าปีเก้สัมผัสนุ่ม คอปกเนี้ยบ ทรงสมาร์ทแคชชวลที่ใส่ได้ทั้งวันทำงานและวันพักผ่อน",
     "price": 51.99,
-    "originalPrice": 64.99,
+    "originalPrice": 68.99,
     "tag": "Popular",
     "image": "/images/products/spring/tops/polo-shirts/color_1_coral.jpeg",
     "category": "Tops",
@@ -2434,8 +2488,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 41,
+    "rating": 4.5,
+    "reviewsCount": 114,
     "isFeatured": false,
     "createdAt": "2026-02-24",
     "specs": {
@@ -2448,7 +2502,10 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
       "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100", "GOTS Organic Cotton"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
       "silhouette": "Vintage Boxy Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -2507,7 +2564,7 @@ export const productsData = [
     "name": "MatchA Spring Shirts",
     "description": "เสื้อเชิ้ตผ้าคอตตอนเบาสบาย ระบายอากาศได้ดีเยี่ยม ลายเส้นและสีสันโปร่งโล่งสบายตา",
     "price": 55.99,
-    "originalPrice": 69.99,
+    "originalPrice": 75.5,
     "tag": "Best Seller",
     "image": "/images/products/spring/tops/shirts/color_1_coral.jpeg",
     "category": "Tops",
@@ -2546,8 +2603,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 50,
+    "rating": 4.5,
+    "reviewsCount": 127,
     "isFeatured": true,
     "createdAt": "2026-02-25",
     "specs": {
@@ -2560,7 +2617,10 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
       "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100", "GOTS Organic Cotton"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -2619,7 +2679,7 @@ export const productsData = [
     "name": "MatchA Artisan Cobalt Coat",
     "description": "โค้ตยาวสีน้ำเงินโคบอลต์ คัตติ้งเชิงสถาปัตยกรรมระดับงานฝีมือ สวยเด่นสง่างามทุกมุมมอง",
     "price": 139.99,
-    "originalPrice": 174.99,
+    "originalPrice": 170.99,
     "tag": "New Drop",
     "image": "/images/products/standalone/cobalt_coat.jpg",
     "category": "Outerwear",
@@ -2644,7 +2704,7 @@ export const productsData = [
     ],
     "inStock": true,
     "rating": 4.6,
-    "reviewsCount": 59,
+    "reviewsCount": 117,
     "isFeatured": false,
     "createdAt": "2026-02-26",
     "specs": {
@@ -2657,7 +2717,10 @@ export const productsData = [
       "fabricComposition": "เปลือกนอกไนลอนรีไซเคิล 100% · ซับในผ้าฝ้าย 100% · เคลือบกันน้ำ DWR ปลอด PFC",
       "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm — สวมไซซ์ L ทับเสื้อชั้นใน",
-      "certifications": ["OEKO-TEX STANDARD 100", "bluesign approved"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "bluesign approved"
+      ],
       "silhouette": "Tailored Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -2716,7 +2779,7 @@ export const productsData = [
     "name": "MatchA Artisan Cognac Boots",
     "description": "บูทหนังแท้สีคอนญัก งานเย็บมือประณีต ทรงคลาสสิกเหนือกาลเวลา ยิ่งใส่ยิ่งนุ่มกระชับเท้า",
     "price": 103.99,
-    "originalPrice": 129.99,
+    "originalPrice": 137,
     "tag": "Limited 2026",
     "image": "/images/products/standalone/cognac_boots.jpg",
     "category": "Shoes",
@@ -2743,7 +2806,7 @@ export const productsData = [
     ],
     "inStock": true,
     "rating": 4.7,
-    "reviewsCount": 68,
+    "reviewsCount": 32,
     "isFeatured": false,
     "createdAt": "2026-02-01",
     "specs": {
@@ -2756,7 +2819,10 @@ export const productsData = [
       "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
       "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
-      "certifications": ["Leather Working Group (LWG)", "REACH Compliant"],
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
       "silhouette": "Footwear Standard Fit",
       "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
       "careInstructions": [
@@ -2827,7 +2893,7 @@ export const productsData = [
     "name": "MatchA Artisan Coral Bag",
     "description": "กระเป๋าถือทรงมินิมอลสีคอรัล ดีไซน์งานฝีมือโดดเด่นสะดุดตา สายสะพายปรับระดับได้",
     "price": 42.99,
-    "originalPrice": 53.74,
+    "originalPrice": 55.5,
     "tag": "Essentials",
     "image": "/images/products/standalone/coral_bag.jpg",
     "category": "Accessories",
@@ -2847,8 +2913,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 77,
+    "rating": 4.7,
+    "reviewsCount": 19,
     "isFeatured": false,
     "createdAt": "2026-02-02",
     "specs": {
@@ -2861,7 +2927,9 @@ export const productsData = [
       "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
       "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
-      "certifications": ["Leather Working Group (LWG)"],
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
       "silhouette": "One Size Fits All",
       "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
       "careInstructions": [
@@ -2882,7 +2950,7 @@ export const productsData = [
     "name": "MatchA Artisan Coral Blouse",
     "description": "เสื้อเบลาส์สีคอรัลผ้าทอมือ คอปกเอกลักษณ์ พลิ้วไหวหรูหราสะท้อนเสน่ห์ของงานคราฟต์",
     "price": 56.99,
-    "originalPrice": 71.24,
+    "originalPrice": 69.99,
     "tag": "Trending",
     "image": "/images/products/standalone/coral_blouse.jpg",
     "category": "Tops",
@@ -2906,8 +2974,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 86,
+    "rating": 4.7,
+    "reviewsCount": 161,
     "isFeatured": true,
     "createdAt": "2026-02-03",
     "specs": {
@@ -2920,7 +2988,10 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
       "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100", "GOTS Organic Cotton"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -2979,7 +3050,7 @@ export const productsData = [
     "name": "MatchA Artisan Coral Sneakers",
     "description": "สนีกเกอร์งานคราฟต์สีคอรัล ดีเทลตัดเย็บละเอียดพิเศษ พื้นรองเท้าซัพพอร์ตสรีระอย่างดีเยี่ยม",
     "price": 70.99,
-    "originalPrice": 88.74,
+    "originalPrice": 83,
     "tag": "Popular",
     "image": "/images/products/standalone/coral_sneakers.jpg",
     "category": "Shoes",
@@ -3005,8 +3076,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 95,
+    "rating": 4.9,
+    "reviewsCount": 148,
     "isFeatured": false,
     "createdAt": "2026-02-04",
     "specs": {
@@ -3019,7 +3090,10 @@ export const productsData = [
       "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
       "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
       "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
-      "certifications": ["Leather Working Group (LWG)", "REACH Compliant"],
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
       "silhouette": "Footwear Standard Fit",
       "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
       "careInstructions": [
@@ -3090,7 +3164,7 @@ export const productsData = [
     "name": "MatchA Artisan Cream Bag",
     "description": "กระเป๋าสะพายโทนสีครีม มินิมอลเรียบหรู แมตช์ได้กับทุกลุค พร้อมช่องใส่ของแบบแบ่งสัดส่วน",
     "price": 39.99,
-    "originalPrice": 49.99,
+    "originalPrice": 45.5,
     "tag": "Best Seller",
     "image": "/images/products/standalone/cream_bag.jpg",
     "category": "Accessories",
@@ -3110,8 +3184,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 104,
+    "rating": 4.8,
+    "reviewsCount": 17,
     "isFeatured": false,
     "createdAt": "2026-02-05",
     "specs": {
@@ -3124,7 +3198,9 @@ export const productsData = [
       "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
       "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
       "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
-      "certifications": ["Leather Working Group (LWG)"],
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
       "silhouette": "One Size Fits All",
       "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
       "careInstructions": [
@@ -3145,7 +3221,7 @@ export const productsData = [
     "name": "MatchA Artisan Gold Necklace",
     "description": "สร้อยคอทองเหลืองชุบทองคำแท้สไตล์อาร์ติซาน เส้นเรียบเก๋ มีเสน่ห์ความหรูหราแบบพอดี",
     "price": 53.99,
-    "originalPrice": 67.49,
+    "originalPrice": 62.99,
     "tag": "New Drop",
     "image": "/images/products/standalone/gold_necklace.jpg",
     "category": "Accessories",
@@ -3165,8 +3241,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 113,
+    "rating": 4.8,
+    "reviewsCount": 159,
     "isFeatured": false,
     "createdAt": "2026-02-06",
     "specs": {
@@ -3179,7 +3255,9 @@ export const productsData = [
       "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
       "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
-      "certifications": ["Leather Working Group (LWG)"],
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
       "silhouette": "One Size Fits All",
       "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
       "careInstructions": [
@@ -3200,7 +3278,7 @@ export const productsData = [
     "name": "MatchA Artisan Mustard Sweater",
     "description": "สเวตเตอร์ผ้าทอเนื้อหนาสีมัสตาร์ด โทนสีอบอุ่นเป็นเอกลักษณ์ สร้างความโดดเด่นในทุกโอกาส",
     "price": 97.99,
-    "originalPrice": 122.49,
+    "originalPrice": 132,
     "tag": "Limited 2026",
     "image": "/images/products/standalone/mustard_sweater.jpg",
     "category": "Tops",
@@ -3224,8 +3302,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 122,
+    "rating": 4.7,
+    "reviewsCount": 146,
     "isFeatured": true,
     "createdAt": "2026-02-07",
     "specs": {
@@ -3238,7 +3316,10 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100", "GOTS Organic Cotton"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
       "silhouette": "Oversized Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -3297,7 +3378,7 @@ export const productsData = [
     "name": "MatchA Artisan Peach Skirt",
     "description": "กระโปรงผ้าทอมือสีพีช คัตติ้งละเอียดอ่อน ละมุนทุกการเคลื่อนไหว ดีไซน์เอวสูงเสริมทรวดทรง",
     "price": 71.99,
-    "originalPrice": 89.99,
+    "originalPrice": 95.5,
     "tag": "Essentials",
     "image": "/images/products/standalone/peach_skirt.jpg",
     "category": "Bottoms",
@@ -3321,8 +3402,8 @@ export const productsData = [
       }
     ],
     "inStock": false,
-    "rating": 4.9,
-    "reviewsCount": 131,
+    "rating": 4.7,
+    "reviewsCount": 133,
     "isFeatured": false,
     "createdAt": "2026-02-08",
     "specs": {
@@ -3335,7 +3416,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -3394,7 +3477,7 @@ export const productsData = [
     "name": "MatchA Artisan Silk Scarf",
     "description": "ผ้าพันคอผ้าไหมธรรมชาติพิมพ์ลายสไตล์ญี่ปุ่น ผิวสัมผัสเนียนลื่น อ่อนโยนต่อผิวพรรณ",
     "price": 29.99,
-    "originalPrice": 37.49,
+    "originalPrice": 38.99,
     "tag": "Trending",
     "image": "/images/products/standalone/silk_scarf.jpg",
     "category": "Accessories",
@@ -3414,8 +3497,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 140,
+    "rating": 4.7,
+    "reviewsCount": 120,
     "isFeatured": false,
     "createdAt": "2026-02-09",
     "specs": {
@@ -3428,7 +3511,9 @@ export const productsData = [
       "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
       "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
       "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
-      "certifications": ["Leather Working Group (LWG)"],
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
       "silhouette": "One Size Fits All",
       "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
       "careInstructions": [
@@ -3449,7 +3534,7 @@ export const productsData = [
     "name": "MatchA Artisan Silver Earrings",
     "description": "ต่างหูเงินแท้ดีไซน์เรขาคณิต เรียบหรูน้ำหนักเบา สวมใส่สบายไม่ถ่วงหู ไม่ระคายเคือง",
     "price": 54.99,
-    "originalPrice": 68.74,
+    "originalPrice": 67,
     "tag": "Popular",
     "image": "/images/products/standalone/silver_earrings.jpg",
     "category": "Accessories",
@@ -3469,8 +3554,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 149,
+    "rating": 4.7,
+    "reviewsCount": 107,
     "isFeatured": false,
     "createdAt": "2026-02-10",
     "specs": {
@@ -3483,7 +3568,9 @@ export const productsData = [
       "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
       "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
       "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
-      "certifications": ["Leather Working Group (LWG)"],
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
       "silhouette": "One Size Fits All",
       "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
       "careInstructions": [
@@ -3504,7 +3591,7 @@ export const productsData = [
     "name": "MatchA Artisan Teal Pants",
     "description": "กางเกงเทเลอร์สีเขียวทีล คัตติ้งเนี้ยบ ทรงสวยสง่างาม เพิ่มความมั่นใจในสไตล์ของคุณ",
     "price": 78.99,
-    "originalPrice": 98.74,
+    "originalPrice": 93.5,
     "tag": "Best Seller",
     "image": "/images/products/standalone/teal_pants.jpg",
     "category": "Bottoms",
@@ -3528,8 +3615,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 158,
+    "rating": 4.9,
+    "reviewsCount": 94,
     "isFeatured": true,
     "createdAt": "2026-02-11",
     "specs": {
@@ -3542,7 +3629,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Wide Leg Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -3601,7 +3690,7 @@ export const productsData = [
     "name": "MatchA Summer Hats",
     "description": "หมวกสานปีกกว้างกันแดด ดีไซน์ธรรมชาติ ช่วยปกป้องรังสียูวี เหมาะสำหรับทริปทะเลและวันแดดจัด",
     "price": 52.99,
-    "originalPrice": 66.24,
+    "originalPrice": 60.5,
     "tag": "New Drop",
     "image": "/images/products/summer/accessories/hats/color_1_fuchsia.jpeg",
     "category": "Accessories",
@@ -3636,8 +3725,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 167,
+    "rating": 4.7,
+    "reviewsCount": 148,
     "isFeatured": false,
     "createdAt": "2026-02-12",
     "specs": {
@@ -3650,7 +3739,9 @@ export const productsData = [
       "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
       "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
-      "certifications": ["Leather Working Group (LWG)"],
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
       "silhouette": "One Size Fits All",
       "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
       "careInstructions": [
@@ -3671,7 +3762,7 @@ export const productsData = [
     "name": "MatchA Summer Sunglasses",
     "description": "แว่นตากันแดดทรงคลาสสิก เลนส์กรองแสง UV400 กรอบน้ำหนักเบา สวมใส่สบายตลอดวัน",
     "price": 41.99,
-    "originalPrice": 52.49,
+    "originalPrice": 47,
     "tag": "Limited 2026",
     "image": "/images/products/summer/accessories/sunglasses/color_1_fuchsia.jpeg",
     "category": "Accessories",
@@ -3706,8 +3797,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 176,
+    "rating": 4.7,
+    "reviewsCount": 161,
     "isFeatured": false,
     "createdAt": "2026-02-13",
     "specs": {
@@ -3720,7 +3811,9 @@ export const productsData = [
       "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
       "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
       "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
-      "certifications": ["Leather Working Group (LWG)"],
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
       "silhouette": "One Size Fits All",
       "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
       "careInstructions": [
@@ -3741,7 +3834,7 @@ export const productsData = [
     "name": "MatchA Summer Jeans",
     "description": "กางเกงยีนส์เดนิมฟอกบาง สวมใส่สบายไม่อึดอัดในหน้าร้อน ระบายเหงื่อได้ดีเยี่ยม",
     "price": 75.99,
-    "originalPrice": 94.99,
+    "originalPrice": 100.99,
     "tag": "Essentials",
     "image": "/images/products/summer/bottoms/jeans/color_1_fuchsia.jpeg",
     "category": "Bottoms",
@@ -3780,8 +3873,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 185,
+    "rating": 4.7,
+    "reviewsCount": 19,
     "isFeatured": false,
     "createdAt": "2026-02-14",
     "specs": {
@@ -3794,7 +3887,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Wide Leg Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -3853,7 +3948,7 @@ export const productsData = [
     "name": "MatchA Summer Linen Pants",
     "description": "กางเกงผ้าลินินแท้ 100% ระบายอากาศยอดเยี่ยม แห้งไว เบาสบาย ทรงหลวมสไตล์รีสอร์ต",
     "price": 79.99,
-    "originalPrice": 99.99,
+    "originalPrice": 107.5,
     "tag": "Trending",
     "image": "/images/products/summer/bottoms/linen-pants/color_1_blue.jpeg",
     "category": "Bottoms",
@@ -3892,8 +3987,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 194,
+    "rating": 4.9,
+    "reviewsCount": 150,
     "isFeatured": true,
     "createdAt": "2026-02-15",
     "specs": {
@@ -3906,7 +4001,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Wide Leg Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -3965,7 +4062,7 @@ export const productsData = [
     "name": "MatchA Summer Shorts",
     "description": "กางเกงขาสั้นผ้าเบา คล่องตัวในทุกกิจกรรมริมหาดและในเมือง มาพร้อมขอบเอวยางยืดปรับได้",
     "price": 63.99,
-    "originalPrice": 79.99,
+    "originalPrice": 73,
     "tag": "Popular",
     "image": "/images/products/summer/bottoms/shorts/color_1_fuchsia.jpeg",
     "category": "Bottoms",
@@ -4004,8 +4101,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 203,
+    "rating": 4.9,
+    "reviewsCount": 163,
     "isFeatured": false,
     "createdAt": "2026-02-16",
     "specs": {
@@ -4018,7 +4115,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -4077,7 +4176,7 @@ export const productsData = [
     "name": "MatchA Summer Skirts",
     "description": "กระโปรงผ้าเบาพลิ้วไหวรับลมทะเล ดีไซน์สดใสให้ความรู้สึกสดชื่นตลอดฤดูร้อน",
     "price": 62.99,
-    "originalPrice": 78.74,
+    "originalPrice": 71.99,
     "tag": "Best Seller",
     "image": "/images/products/summer/bottoms/skirts/color_1_blue.jpeg",
     "category": "Bottoms",
@@ -4116,8 +4215,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 212,
+    "rating": 4.9,
+    "reviewsCount": 21,
     "isFeatured": false,
     "createdAt": "2026-02-17",
     "specs": {
@@ -4130,7 +4229,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -4189,7 +4290,7 @@ export const productsData = [
     "name": "MatchA Summer Sandals",
     "description": "รองเท้าแตะแซนดัลสไตล์สตรีท สายรัดปรับระดับได้ พื้นนุ่มกันลื่น สบายเท้าในทุกก้าว",
     "price": 43.99,
-    "originalPrice": 54.99,
+    "originalPrice": 59.5,
     "tag": "New Drop",
     "image": "/images/products/summer/shoes/sandals/color_1_blue.jpeg",
     "category": "Shoes",
@@ -4230,8 +4331,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 31,
+    "rating": 4.7,
+    "reviewsCount": 34,
     "isFeatured": false,
     "createdAt": "2026-02-18",
     "specs": {
@@ -4244,7 +4345,10 @@ export const productsData = [
       "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
       "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
       "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
-      "certifications": ["Leather Working Group (LWG)", "REACH Compliant"],
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
       "silhouette": "Footwear Standard Fit",
       "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
       "careInstructions": [
@@ -4315,7 +4419,7 @@ export const productsData = [
     "name": "MatchA Summer Sneakers",
     "description": "สนีกเกอร์ผ้าตาข่ายระบายอากาศ เบาพิเศษ ป้องกันกลิ่นอับ เหมาะกับสภาพอากาศร้อน",
     "price": 70.99,
-    "originalPrice": 88.74,
+    "originalPrice": 81,
     "tag": "Limited 2026",
     "image": "/images/products/summer/shoes/sneakers/color_1_sky.jpeg",
     "category": "Shoes",
@@ -4356,8 +4460,8 @@ export const productsData = [
       }
     ],
     "inStock": false,
-    "rating": 5,
-    "reviewsCount": 40,
+    "rating": 4.7,
+    "reviewsCount": 47,
     "isFeatured": true,
     "createdAt": "2026-02-19",
     "specs": {
@@ -4370,7 +4474,10 @@ export const productsData = [
       "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
       "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
       "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
-      "certifications": ["Leather Working Group (LWG)", "REACH Compliant"],
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
       "silhouette": "Footwear Standard Fit",
       "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
       "careInstructions": [
@@ -4441,7 +4548,7 @@ export const productsData = [
     "name": "MatchA Summer Crop Tops",
     "description": "เสื้อครอปท็อปผ้าคอตตอนสัมผัสนุ่ม สดใส มิกซ์แอนด์แมตช์กับกางเกงเอวสูงได้อย่างลงตัว",
     "price": 36.99,
-    "originalPrice": 46.24,
+    "originalPrice": 47.5,
     "tag": "Essentials",
     "image": "/images/products/summer/tops/crop-tops/color_1_lavender.jpeg",
     "category": "Tops",
@@ -4481,7 +4588,7 @@ export const productsData = [
     ],
     "inStock": true,
     "rating": 4.6,
-    "reviewsCount": 49,
+    "reviewsCount": 100,
     "isFeatured": false,
     "createdAt": "2026-02-20",
     "specs": {
@@ -4494,7 +4601,10 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
       "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100", "GOTS Organic Cotton"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
       "silhouette": "Oversized Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -4553,7 +4663,7 @@ export const productsData = [
     "name": "MatchA Summer Shirts",
     "description": "เสื้อเชิ้ตเปิดคอรับลมร้อน สไตล์รีสอร์ต ลายพิมพ์และสีสันโปร่งโล่งสบายตา",
     "price": 53.99,
-    "originalPrice": 67.49,
+    "originalPrice": 71,
     "tag": "Trending",
     "image": "/images/products/summer/tops/shirts/color_1_blue.jpeg",
     "category": "Tops",
@@ -4593,7 +4703,7 @@ export const productsData = [
     ],
     "inStock": true,
     "rating": 4.7,
-    "reviewsCount": 58,
+    "reviewsCount": 113,
     "isFeatured": false,
     "createdAt": "2026-02-21",
     "specs": {
@@ -4606,7 +4716,10 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100", "GOTS Organic Cotton"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -4665,7 +4778,7 @@ export const productsData = [
     "name": "MatchA Summer T Shirts",
     "description": "เสื้อยืดคอกลมผ้าฝ้ายระบายอากาศดี เบาสบายตลอดวัน ดีไซน์มินิมอลใส่ง่ายได้ทุกวัน",
     "price": 57.99,
-    "originalPrice": 72.49,
+    "originalPrice": 78.99,
     "tag": "Popular",
     "image": "/images/products/summer/tops/t-shirts/color_1_blue.jpeg",
     "category": "Tops",
@@ -4704,8 +4817,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 67,
+    "rating": 4.7,
+    "reviewsCount": 126,
     "isFeatured": false,
     "createdAt": "2026-02-22",
     "specs": {
@@ -4718,7 +4831,10 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100", "GOTS Organic Cotton"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -4777,7 +4893,7 @@ export const productsData = [
     "name": "MatchA Summer Tank Tops",
     "description": "เสื้อกล้ามทรงสวย คอกลมกว้าง ระบายเหงื่อได้ดีเยี่ยม เหมาะกับกิจกรรมกลางแจ้ง",
     "price": 48.99,
-    "originalPrice": 61.24,
+    "originalPrice": 56.5,
     "tag": "Best Seller",
     "image": "/images/products/summer/tops/tank-tops/color_1_fuchsia.jpeg",
     "category": "Tops",
@@ -4816,8 +4932,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 76,
+    "rating": 4.7,
+    "reviewsCount": 139,
     "isFeatured": true,
     "createdAt": "2026-02-23",
     "specs": {
@@ -4830,7 +4946,10 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
       "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100", "GOTS Organic Cotton"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
       "silhouette": "Oversized Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -4889,7 +5008,7 @@ export const productsData = [
     "name": "MatchA Winter Beanies",
     "description": "หมวกบีนนี่ไหมพรมหนานุ่ม กระชับศีรษะ กักเก็บความอบอุ่นและกันลมหนาวได้ดีเยี่ยม",
     "price": 29.99,
-    "originalPrice": 37.49,
+    "originalPrice": 34,
     "tag": "New Drop",
     "image": "/images/products/winter/accessories/beanies/color_1_charcoal.jpeg",
     "category": "Accessories",
@@ -4924,8 +5043,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 85,
+    "rating": 4.6,
+    "reviewsCount": 109,
     "isFeatured": false,
     "createdAt": "2026-02-24",
     "specs": {
@@ -4938,7 +5057,9 @@ export const productsData = [
       "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
       "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
       "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
-      "certifications": ["Leather Working Group (LWG)"],
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
       "silhouette": "One Size Fits All",
       "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
       "careInstructions": [
@@ -4959,7 +5080,7 @@ export const productsData = [
     "name": "MatchA Winter Gloves",
     "description": "ถุงมือไหมพรมถักทอแน่นหนา พร้อมปลายนิ้วสัมผัสหน้าจอสมาร์ตโฟน ใช้งานสะดวก",
     "price": 33.99,
-    "originalPrice": 42.49,
+    "originalPrice": 39.5,
     "tag": "Limited 2026",
     "image": "/images/products/winter/accessories/gloves/color_1_crimson.jpeg",
     "category": "Accessories",
@@ -4994,8 +5115,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 94,
+    "rating": 4.7,
+    "reviewsCount": 133,
     "isFeatured": false,
     "createdAt": "2026-02-25",
     "specs": {
@@ -5008,7 +5129,9 @@ export const productsData = [
       "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
       "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
       "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
-      "certifications": ["Leather Working Group (LWG)"],
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
       "silhouette": "One Size Fits All",
       "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
       "careInstructions": [
@@ -5029,7 +5152,7 @@ export const productsData = [
     "name": "MatchA Winter Jeans",
     "description": "กางเกงยีนส์ผ้าเดนิมหนาพิเศษ ทนทาน กักเก็บความอบอุ่นในวันที่อากาศเย็นยะเยือก",
     "price": 78.99,
-    "originalPrice": 98.74,
+    "originalPrice": 96.99,
     "tag": "Essentials",
     "image": "/images/products/winter/bottoms/jeans/color_1_charcoal.jpeg",
     "category": "Bottoms",
@@ -5068,8 +5191,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 103,
+    "rating": 4.8,
+    "reviewsCount": 120,
     "isFeatured": false,
     "createdAt": "2026-02-26",
     "specs": {
@@ -5082,7 +5205,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Wide Leg Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -5141,7 +5266,7 @@ export const productsData = [
     "name": "MatchA Winter Joggers",
     "description": "กางเกงจ็อกเกอร์บุผ้าฟลีซด้านใน อบอุ่น นุ่มสบาย คล่องตัว เหมาะกับวันพักผ่อนฤดูหนาว",
     "price": 82.99,
-    "originalPrice": 103.74,
+    "originalPrice": 97,
     "tag": "Trending",
     "image": "/images/products/winter/bottoms/joggers/color_1_charcoal.jpeg",
     "category": "Bottoms",
@@ -5181,7 +5306,7 @@ export const productsData = [
     ],
     "inStock": true,
     "rating": 4.8,
-    "reviewsCount": 112,
+    "reviewsCount": 107,
     "isFeatured": true,
     "createdAt": "2026-02-01",
     "specs": {
@@ -5194,7 +5319,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -5253,7 +5380,7 @@ export const productsData = [
     "name": "MatchA Winter Pants",
     "description": "กางเกงสแล็คผ้าทอเนื้อหนากันลม ทรงสมาร์ทเนี้ยบสำหรับฤดูหนาวทั้งทางการและลำลอง",
     "price": 71.99,
-    "originalPrice": 89.99,
+    "originalPrice": 82.5,
     "tag": "Popular",
     "image": "/images/products/winter/bottoms/pants/color_1_charcoal.jpeg",
     "category": "Bottoms",
@@ -5292,8 +5419,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 121,
+    "rating": 4.8,
+    "reviewsCount": 94,
     "isFeatured": false,
     "createdAt": "2026-02-02",
     "specs": {
@@ -5306,7 +5433,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Wide Leg Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -5365,7 +5494,7 @@ export const productsData = [
     "name": "MatchA Winter Skirts",
     "description": "กระโปรงผ้าวูลผสมทรงตรง ลุคอบอุ่นภูมิฐานในฤดูหนาว ตัดเย็บสวยงามเข้ารูปพอดีตัว",
     "price": 65.99,
-    "originalPrice": 82.49,
+    "originalPrice": 75.99,
     "tag": "Best Seller",
     "image": "/images/products/winter/bottoms/skirts/color_1_charcoal.jpeg",
     "category": "Bottoms",
@@ -5404,8 +5533,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 130,
+    "rating": 4.8,
+    "reviewsCount": 81,
     "isFeatured": false,
     "createdAt": "2026-02-03",
     "specs": {
@@ -5418,7 +5547,9 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
       "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -5477,7 +5608,7 @@ export const productsData = [
     "name": "MatchA Winter Boots",
     "description": "รองเท้าบูทกันหนาวบุซับในนุ่ม พื้นดอกยางลึกกันลื่นบนพื้นเปียก ทนทานต่อทุกสภาพอากาศ",
     "price": 99.99,
-    "originalPrice": 124.99,
+    "originalPrice": 117,
     "tag": "New Drop",
     "image": "/images/products/winter/shoes/boots/color_1_cobalt.jpeg",
     "category": "Shoes",
@@ -5519,7 +5650,7 @@ export const productsData = [
     ],
     "inStock": false,
     "rating": 4.6,
-    "reviewsCount": 139,
+    "reviewsCount": 68,
     "isFeatured": false,
     "createdAt": "2026-02-04",
     "specs": {
@@ -5532,7 +5663,10 @@ export const productsData = [
       "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
       "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
       "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
-      "certifications": ["Leather Working Group (LWG)", "REACH Compliant"],
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
       "silhouette": "Footwear Standard Fit",
       "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
       "careInstructions": [
@@ -5603,7 +5737,7 @@ export const productsData = [
     "name": "MatchA Winter Sneakers",
     "description": "สนีกเกอร์หุ้มข้อผ้ากันละอองน้ำ ดีไซน์ไฮสตรีทรับลมหนาว ซัพพอร์ตข้อเท้าได้มั่นคง",
     "price": 73.99,
-    "originalPrice": 92.49,
+    "originalPrice": 84.5,
     "tag": "Limited 2026",
     "image": "/images/products/winter/shoes/sneakers/color_1_charcoal.jpeg",
     "category": "Shoes",
@@ -5644,8 +5778,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 148,
+    "rating": 4.6,
+    "reviewsCount": 55,
     "isFeatured": true,
     "createdAt": "2026-02-05",
     "specs": {
@@ -5658,7 +5792,10 @@ export const productsData = [
       "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
       "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
-      "certifications": ["Leather Working Group (LWG)", "REACH Compliant"],
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
       "silhouette": "Footwear Standard Fit",
       "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
       "careInstructions": [
@@ -5729,7 +5866,7 @@ export const productsData = [
     "name": "MatchA Winter Coats",
     "description": "โค้ตผ้าวูลตัวยาว คัตติ้งเนี้ยบ ปกคอสูงกันลมหนาวได้อย่างสมบูรณ์แบบ เพิ่มความภูมิฐาน",
     "price": 132.99,
-    "originalPrice": 166.24,
+    "originalPrice": 151,
     "tag": "Essentials",
     "image": "/images/products/winter/tops/coats/color_1_charcoal.jpeg",
     "category": "Outerwear",
@@ -5768,8 +5905,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 157,
+    "rating": 4.9,
+    "reviewsCount": 74,
     "isFeatured": false,
     "createdAt": "2026-02-06",
     "specs": {
@@ -5782,7 +5919,10 @@ export const productsData = [
       "fabricComposition": "เปลือกนอกไนลอนรีไซเคิล 100% · ซับในผ้าฝ้าย 100% · เคลือบกันน้ำ DWR ปลอด PFC",
       "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm — สวมไซซ์ L ทับเสื้อชั้นใน",
-      "certifications": ["OEKO-TEX STANDARD 100", "bluesign approved"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "bluesign approved"
+      ],
       "silhouette": "Tailored Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -5841,7 +5981,7 @@ export const productsData = [
     "name": "MatchA Winter Hoodies",
     "description": "เสื้อฮู้ดผ้าหนานุ่มพิเศษ ทรงโอเวอร์ไซส์ บุซับในกันหนาว อบอุ่นมั่นใจในทุกทริป",
     "price": 66.99,
-    "originalPrice": 83.74,
+    "originalPrice": 81.5,
     "tag": "Trending",
     "image": "/images/products/winter/tops/hoodies/color_1_charcoal.jpeg",
     "category": "Tops",
@@ -5880,8 +6020,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 166,
+    "rating": 4.6,
+    "reviewsCount": 144,
     "isFeatured": false,
     "createdAt": "2026-02-07",
     "specs": {
@@ -5894,7 +6034,10 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
       "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100", "GOTS Organic Cotton"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
       "silhouette": "Oversized Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -5953,7 +6096,7 @@ export const productsData = [
     "name": "MatchA Winter Jackets",
     "description": "แจ็กเก็ตดาวน์น้ำหนักเบา เก็บกักอุณหภูมิร่างกายได้ดีเยี่ยม พกพาสะดวกพร้อมลุยทุกความหนาว",
     "price": 140.99,
-    "originalPrice": 176.24,
+    "originalPrice": 190.99,
     "tag": "Popular",
     "image": "/images/products/winter/tops/jackets/color_1_charcoal.jpeg",
     "category": "Outerwear",
@@ -5992,8 +6135,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 175,
+    "rating": 4.9,
+    "reviewsCount": 48,
     "isFeatured": false,
     "createdAt": "2026-02-08",
     "specs": {
@@ -6006,7 +6149,10 @@ export const productsData = [
       "fabricComposition": "เปลือกนอกไนลอนรีไซเคิล 100% · ซับในผ้าฝ้าย 100% · เคลือบกันน้ำ DWR ปลอด PFC",
       "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm — สวมไซซ์ L ทับเสื้อชั้นใน",
-      "certifications": ["OEKO-TEX STANDARD 100", "bluesign approved"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "bluesign approved"
+      ],
       "silhouette": "Relaxed Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [
@@ -6065,7 +6211,7 @@ export const productsData = [
     "name": "MatchA Winter Sweaters",
     "description": "สเวตเตอร์คอกลมไหมพรมเนื้อหนา สัมผัสนุ่มละมุน ลายถักคลาสสิกสร้างลุคฤดูหนาวที่อบอุ่น",
     "price": 89.99,
-    "originalPrice": 112.49,
+    "originalPrice": 102,
     "tag": "Best Seller",
     "image": "/images/products/winter/tops/sweaters/color_1_charcoal.jpeg",
     "category": "Tops",
@@ -6104,8 +6250,8 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 184,
+    "rating": 4.7,
+    "reviewsCount": 155,
     "isFeatured": true,
     "createdAt": "2026-02-09",
     "specs": {
@@ -6118,7 +6264,10 @@ export const productsData = [
       "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
       "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
       "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
-      "certifications": ["OEKO-TEX STANDARD 100", "GOTS Organic Cotton"],
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
       "silhouette": "Oversized Cut",
       "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
       "careInstructions": [

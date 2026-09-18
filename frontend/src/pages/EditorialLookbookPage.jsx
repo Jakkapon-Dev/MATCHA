@@ -145,8 +145,8 @@ export default function EditorialLookbookPage() {
   }, [selectedSeason, curatedEditorialSpreads]);
 
   // Cover story is the first spread in filtered list
-  const coverStory = filteredSpreads[0] || curatedEditorialSpreads[0];
-  const remainingSpreads = filteredSpreads.slice(1);
+  const coverStory = filteredSpreads[0] || curatedEditorialSpreads?.[0] || null;
+  const remainingSpreads = filteredSpreads.length > 0 ? filteredSpreads.slice(1) : [];
   const { imageRef: coverImageRef, position: coverPosition } = useCoverCoordinates(coverStory?.heroImage);
 
   // Keyboard navigation for Lightbox & Hotspot Pin
@@ -283,7 +283,21 @@ export default function EditorialLookbookPage() {
   const isHotspotActive = (hs) => Boolean(activeItemId) && hsKey(hs) === activeItemId;
   const isItemActive = (item) => Boolean(activeItemId) && item.id === activeItemId;
 
-  if (!curatedEditorialSpreads.length) return <div className="max-w-3xl mx-auto my-16 p-8 border border-dashed rounded-xl"><h1 className="text-2xl font-bold">{loading ? 'กำลังโหลด Lookbook' : 'ยังไม่มี Lookbook ที่เผยแพร่'}</h1><p className="my-4">กลับมาดูลุคใหม่ของเราได้เร็ว ๆ นี้</p><button disabled={loading} onClick={retry}>โหลดใหม่</button></div>;
+  if (!curatedEditorialSpreads?.length || !coverStory) {
+    return (
+      <div className="max-w-3xl mx-auto my-16 p-8 border border-dashed border-[#DCDCDC] rounded-3xl bg-white text-center shadow-sm">
+        <h1 className="text-2xl font-bold text-[#000000]">{loading ? 'กำลังโหลด Lookbook' : 'ยังไม่มี Lookbook ที่เผยแพร่'}</h1>
+        <p className="my-4 text-xs font-mono text-[#666666]">กลับมาดูลุคใหม่ของเราได้เร็ว ๆ นี้ หรือลองเลือกซีซันอื่น</p>
+        <button
+          disabled={loading}
+          onClick={retry}
+          className="px-5 py-2.5 bg-[#000000] text-white font-mono text-xs font-bold rounded-xl cursor-pointer hover:bg-black/80 transition-all disabled:opacity-50"
+        >
+          {loading ? 'กำลังโหลด...' : 'โหลดใหม่'}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full bg-[#F1F1F1] text-[#000000] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
