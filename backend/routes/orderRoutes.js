@@ -7,6 +7,7 @@ import Product from '../models/Product.js';
 import productsData from '../data/products.js';
 import { getJwtSecret } from '../middleware/auth.js';
 import { isDemo } from '../config/storeMode.js';
+import { normaliseCode, discountFor, isFreeShippingCoupon } from '../config/coupons.js';
 
 const router = express.Router();
 
@@ -20,15 +21,7 @@ const withStoreMode = (order) => ({
 // Fallback store in memory if database is disconnected during local evaluation
 const memoryOrders = [];
 
-// Coupon definitions matching client & store policy
-const COUPONS = {
-  '01': { discount: 10, type: 'percent' },
-  '02': { discount: 20, type: 'percent' },
-  '03': { discount: 50, type: 'percent' },
-  'MATCHA15': { discount: 15, type: 'percent' },
-  'WELCOME10': { discount: 10, type: 'percent' },
-  'FREESHIP': { discount: 0, type: 'free_shipping' }
-};
+// Coupon rates live in config/coupons.js, shared with the checkout screen.
 
 const SHIPPING_RATES = {
   standard: 0,
@@ -122,15 +115,12 @@ router.post('/', async (req, res) => {
     bundleDiscountAmount = Math.round(bundleDiscountAmount * 100) / 100;
 
     // 3. Coupon and Shipping Calculation
-    const cleanCoupon = (couponCode || '').trim().toUpperCase();
-    const couponObj = COUPONS[cleanCoupon] || null;
-
-    let couponDiscount = 0;
-    if (couponObj && couponObj.type === 'percent') {
-      couponDiscount = Math.round(subtotal * (couponObj.discount / 100) * 100) / 100;
-    }
-
-    const isFreeShipping = (couponObj && couponObj.type === 'free_shipping') || subtotal >= 100;
+    // The discount is recomputed here from the server's own table and the
+    // server's own subtotal. Whatever the browser believed it had applied is
+    // only ever a code string.
+    const cleanCoupon = normaliseCode(couponCode);
+    const couponDiscount = discountFor(cleanCoupon, subtotal);
+    const isFreeShipping = isFreeShippingCoupon(cleanCoupon) || subtotal >= 100;
     const shippingBaseRate = SHIPPING_RATES[shippingOption] ?? 0;
     const shippingCost = isFreeShipping ? 0 : shippingBaseRate;
 

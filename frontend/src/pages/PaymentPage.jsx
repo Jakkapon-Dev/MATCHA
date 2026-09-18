@@ -10,6 +10,7 @@ import OrderSuccessModal from '../components/payment/OrderSuccessModal';
 import { api } from '../services/api';
 import { useStoreMode } from '../context/StoreModeContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, shippingCostFor } from '../config/shipping';
+import { couponFor, discountFor, normaliseCode, FEATURED_CODES } from '../config/coupons';
 import PreviewNote from '../components/ui/PreviewNote';
 import { QrCode, Truck, Shield, AlertTriangle, RotateCcw } from 'lucide-react';
 
@@ -26,15 +27,6 @@ const SHIPPING_OPTIONS = [
   { id: 'express', name: 'Priority Courier Shipping', price: SHIPPING_RATES.express, days: '1-2 business days' },
   { id: 'premium', name: 'VIP Same-Day Delivery', price: SHIPPING_RATES.premium, days: 'Guaranteed 24 Hours' },
 ];
-
-const COUPONS = {
-  '01': { discount: 10, type: 'percent', label: '10% OFF' },
-  '02': { discount: 20, type: 'percent', label: '20% OFF' },
-  '03': { discount: 50, type: 'percent', label: '50% OFF' },
-  'MATCHA15': { discount: 15, type: 'percent', label: '15% OFF' },
-  'WELCOME10': { discount: 10, type: 'percent', label: '10% OFF' },
-  'FREESHIP': { discount: 0, type: 'free_shipping', label: 'Free Shipping' },
-};
 
 const initialFormData = {
   firstName: '',
@@ -94,20 +86,20 @@ export default function PaymentPage() {
     freeShippingCoupon: appliedCoupon?.type === 'free_shipping'
   });
 
-  const discount = appliedCoupon?.type === 'percent' 
-    ? subtotal * (appliedCoupon.discount / 100) 
-    : 0;
+  // ปัดเศษด้วยกฎเดียวกับเซิร์ฟเวอร์ ไม่งั้นยอดพรีวิวกับยอดที่เรียกเก็บจะต่างกันเศษสตางค์
+  const discount = discountFor(appliedCoupon, subtotal);
 
   const total = Math.max(0, subtotal + shippingCost - discount);
 
   const handleApplyCoupon = (e) => {
     e.preventDefault();
     setCouponError('');
-    const code = couponCode.trim().toUpperCase();
-    const coupon = COUPONS[code];
+    const code = normaliseCode(couponCode);
+    const coupon = couponFor(code);
 
     if (!coupon) {
-      setCouponError('Invalid promo code. Try MATCHA15 or FREESHIP');
+      // รหัสตัวอย่างดึงจาก config ไม่ได้พิมพ์ซ้ำไว้ตรงนี้ จะได้ไม่ลืมแก้ตอนเปลี่ยนโปรโมชัน
+      setCouponError(`Invalid promo code. Try ${FEATURED_CODES.join(' or ')}`);
       return;
     }
 

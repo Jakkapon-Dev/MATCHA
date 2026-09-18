@@ -1,0 +1,37 @@
+// ตารางคูปองชุดเดียวกับที่เซิร์ฟเวอร์ใช้ตัดสิน — คู่กับ backend/config/coupons.js
+//
+// เซิร์ฟเวอร์เป็นคนคิดส่วนลดจริงตอนสร้างออเดอร์ ฝั่งหน้าเว็บมีตารางนี้ไว้แสดงผล
+// ล่วงหน้าเท่านั้น ถ้าสองไฟล์นี้ไม่ตรงกัน ยอดบนจอจะไม่ตรงกับที่ถูกเรียกเก็บจริง
+// ซึ่งเป็นความเสี่ยงแบบเดียวกับที่เคยเกิดกับค่าจัดส่งมาแล้ว
+//
+// ก่อนหน้านี้ไม่มีไฟล์นี้: รหัสถูกประกาศซ้ำอยู่สองที่ ที่หัว PaymentPage.jsx
+// และหัว backend/routes/orderRoutes.js โดยไม่มีอะไรยึดให้ตรงกัน
+//
+// `label` อยู่ฝั่งนี้ที่เดียว เพราะเป็นข้อความที่แสดงผล ไม่ใช่ตัวเลขที่ใช้คิดเงิน
+export const COUPONS = {
+  '01': { discount: 10, type: 'percent', label: '10% OFF' },
+  '02': { discount: 20, type: 'percent', label: '20% OFF' },
+  '03': { discount: 50, type: 'percent', label: '50% OFF' },
+  'MATCHA15': { discount: 15, type: 'percent', label: '15% OFF' },
+  'WELCOME10': { discount: 10, type: 'percent', label: '10% OFF' },
+  'FREESHIP': { discount: 0, type: 'free_shipping', label: 'Free Shipping' },
+};
+
+// รหัสที่โปรโมตอยู่บนหน้าเว็บ ใช้เป็นตัวอย่างในข้อความแจ้งเตือนเวลากรอกผิด
+// จะได้ไม่ต้องพิมพ์รหัสซ้ำไว้ในข้อความ แล้วลืมแก้ตอนเปลี่ยนโปรโมชัน
+export const FEATURED_CODES = ['MATCHA15', 'FREESHIP'];
+
+// ฟอร์มส่งรหัสมาแบบไหนก็ได้ ตัดช่องว่างและทำเป็นตัวพิมพ์ใหญ่ให้ตรงกับเซิร์ฟเวอร์
+export function normaliseCode(code) {
+  return String(code || '').trim().toUpperCase();
+}
+
+export function couponFor(code) {
+  return COUPONS[normaliseCode(code)] || null;
+}
+
+// ปัดเศษที่จุดคำนวณเหมือนฝั่งเซิร์ฟเวอร์ ตัวเลขบนจอจะได้ตรงกับใบเสร็จ
+export function discountFor(coupon, subtotal) {
+  if (!coupon || coupon.type !== 'percent') return 0;
+  return Math.round(subtotal * (coupon.discount / 100) * 100) / 100;
+}
