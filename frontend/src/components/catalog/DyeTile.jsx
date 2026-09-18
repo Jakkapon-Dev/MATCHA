@@ -119,8 +119,21 @@ export default function DyeTile({ product, variant, onAddToCart, onQuickView }) 
         </span>
       </div>
 
-      <h3 className="mt-2 text-[13px] leading-snug text-[#0A0A0A] line-clamp-2 group-hover:underline underline-offset-4 decoration-[#C91D1D]">
-        {product?.name}
+      {/* The tile opens on click for a pointer, but a click handler on a
+          container is not reachable by keyboard. The name carries the same
+          action as a real button, which gives the tile a tab stop and, being
+          inside the group, reveals the add control when it takes focus. */}
+      <h3 className="mt-2">
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            openQuickView();
+          }}
+          className="text-left text-[13px] leading-snug text-[#0A0A0A] line-clamp-2 cursor-pointer outline-hidden underline-offset-4 decoration-2 decoration-[#C91D1D] group-hover:underline focus-visible:underline"
+        >
+          {product?.name}
+        </button>
       </h3>
     </article>
   );

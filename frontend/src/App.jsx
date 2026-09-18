@@ -286,10 +286,8 @@ function AppContent() {
             element={
               <CatalogPage
                 initialCategory={catalogCategory}
-                onBackToHome={handleGoToHome}
                 onAddToCart={addToCart}
                 onQuickView={(prod) => setSelectedProduct(prod)}
-                onSelectFit={handleSelectFit}
               />
             }
           />

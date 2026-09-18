@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { RotateCcw } from 'lucide-react';
 import useChangeMotion from '../hooks/useChangeMotion';
 import { api } from '../services/api';
@@ -148,6 +148,26 @@ export default function CatalogPage({
     setSortBy('featured');
   };
 
+  /* A native <details> only closes from its own summary, and this one is an
+     overlay: left open it covers the grid it was used to narrow. Dismiss it
+     the way every other popover on the web dismisses. */
+  const refineRef = useRef(null);
+  useEffect(() => {
+    const dismiss = (event) => {
+      const panel = refineRef.current;
+      if (!panel?.open) return;
+      if (event.type === 'keydown' && event.key !== 'Escape') return;
+      if (event.type === 'pointerdown' && panel.contains(event.target)) return;
+      panel.open = false;
+    };
+    document.addEventListener('pointerdown', dismiss);
+    document.addEventListener('keydown', dismiss);
+    return () => {
+      document.removeEventListener('pointerdown', dismiss);
+      document.removeEventListener('keydown', dismiss);
+    };
+  }, []);
+
   // The grid answers the filter it was given; nothing here animates on scroll.
   const gridMotionRef = useChangeMotion(
     `${loading}-${selectedDye}-${pageItems.map((p) => p.id).join('|')}`,
@@ -163,11 +183,16 @@ export default function CatalogPage({
             Artisan Apparel
           </h1>
           {/* The archive described by its own contents, in a sentence, instead
-              of a tracked-out label stack above the title. */}
+              of a tracked-out label stack above the title. Once a filter is on,
+              the sentence describes the result rather than the archive: the dye
+              count is taken before the dye filter, so pairing it with a
+              narrowed total would be two different numbers in one breath. */}
           <p className="mt-3 font-mono text-xs text-[#666666]">
             {loading
               ? 'Opening the archive'
-              : `${products.length} pieces in ${dyes.length} dyes`}
+              : hasFilters
+                ? `${totalItems} of ${products.length} pieces`
+                : `${products.length} pieces in ${dyes.length} dyes`}
           </p>
         </header>
 
@@ -208,8 +233,8 @@ export default function CatalogPage({
           <div className="flex items-center gap-5">
             {/* Native disclosure: the secondary axes stay available without a
                 permanent second row competing with the dye index. */}
-            <details className="relative">
-              <summary className="font-mono text-xs uppercase tracking-wider text-[#0A0A0A] cursor-pointer list-none marker:hidden">
+            <details ref={refineRef} className="relative">
+              <summary className="font-mono text-xs uppercase tracking-wider text-[#0A0A0A] cursor-pointer list-none marker:hidden outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]">
                 Refine{refineCount > 0 ? ` (${refineCount})` : ''}
               </summary>
               <div className="absolute right-0 z-30 mt-2 w-72 bg-white border border-[#DCDCDC] p-4 space-y-4 shadow-lg">
@@ -297,8 +322,10 @@ export default function CatalogPage({
           </div>
         </div>
 
-        {/* The strip sits above the row; the rail sits inside it. */}
-        {!loading && !error && (
+        {/* The strip sits above the row; the rail sits inside it. Neither is
+            rendered with nothing to show — an index of no colours is a column
+            of empty boxes, and the empty state already explains itself. */}
+        {!loading && !error && dyes.length > 0 && (
           <DyeIndex
             variant="strip"
             dyes={dyes}
@@ -309,7 +336,7 @@ export default function CatalogPage({
         )}
 
         <div className="flex gap-8 items-start">
-          {!loading && !error && (
+          {!loading && !error && dyes.length > 0 && (
             <DyeIndex
               variant="rail"
               dyes={dyes}

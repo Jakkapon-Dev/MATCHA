@@ -1,30 +1,35 @@
 import React from 'react';
-import { PackageOpen, RotateCcw } from 'lucide-react';
+import { RotateCcw } from 'lucide-react';
+
+/* The catalogue's no-results state.
+
+   The old version announced itself with a dashed rounded panel and a filled
+   icon tile, which made an ordinary dead end look like a system failure and
+   carried more visual weight than the garments it replaced. An empty result is
+   a normal outcome of narrowing a filter, so it is set as quietly as the rest
+   of the page and spends its effort on the way out instead. */
 
 export default function EmptyState({
-  title = 'No items found',
-  description = 'We couldn’t find any matches for your current filters. Try loosening your search criteria.',
-  actionLabel = 'Reset All Filters',
+  title = 'Nothing matches yet',
+  description = 'No garment carries this combination. Loosening one filter usually brings the most back.',
+  actionLabel = 'Clear all filters',
   onAction,
-  icon: Icon = PackageOpen,
 }) {
   return (
-    <div className="w-full py-16 px-6 text-center rounded-3xl border-2 border-dashed border-[#DCDCDC] bg-[#F1F1F1]/60 flex flex-col items-center justify-center my-6">
-      <div className="w-20 h-20 rounded-3xl bg-[#518F5C]/50 border border-[#3E7047] flex items-center justify-center text-[#042509] shadow-sm mb-5">
-        <Icon size={36} />
-      </div>
-      <h3 className="text-xl font-extrabold uppercase text-[#000000] tracking-tight">
+    <div className="w-full py-20 border-t border-[#DCDCDC]">
+      <h3 className="text-2xl sm:text-3xl font-black uppercase text-[#0A0A0A] tracking-tight leading-none">
         {title}
       </h3>
-      <p className="text-xs font-mono text-[#666666] max-w-md mt-2 leading-relaxed">
+      <p className="mt-3 text-sm text-[#666666] max-w-md leading-relaxed">
         {description}
       </p>
       {onAction && (
         <button
+          type="button"
           onClick={onAction}
-          className="mt-6 inline-flex items-center gap-2 px-5 py-3 bg-[#042509] hover:bg-[#021505] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-95 cursor-pointer font-mono"
+          className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[#C91D1D] hover:underline underline-offset-4 cursor-pointer"
         >
-          <RotateCcw size={14} />
+          <RotateCcw size={13} />
           <span>{actionLabel}</span>
         </button>
       )}

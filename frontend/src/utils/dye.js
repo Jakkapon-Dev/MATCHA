@@ -51,6 +51,53 @@ export const needsEdge = (hex) => {
   return rgb ? rgb.every((c) => c > 228) : false;
 };
 
+/* Hue, and how much colour there is at all, on 0–1 scales. A dye with almost
+   no chroma is a neutral however light it is: Ivory, Silver, Charcoal and
+   Black belong together in a column, not scattered through the spectrum. */
+function hueOf(hex) {
+  const rgb = toRgb(hex);
+  if (!rgb) return { hue: 0, chroma: 0, light: 0 };
+  const [r, g, b] = rgb.map((c) => c / 255);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const chroma = max - min;
+
+  let hue = 0;
+  if (chroma) {
+    if (max === r) hue = ((g - b) / chroma + 6) % 6;
+    else if (max === g) hue = (b - r) / chroma + 2;
+    else hue = (r - g) / chroma + 4;
+    hue *= 60;
+  }
+  return { hue, chroma, light: (max + min) / 2 };
+}
+
+// Below this there is not enough colour left to place a dye on the wheel.
+const NEUTRAL = 0.12;
+
+/* Ordering the rail by stock count scatters near-identical dyes down the
+   column, which is the one thing a colour index must not do. Ordered by hue
+   instead, the rail unrolls the colour wheel and then runs the neutrals from
+   white down to black, so neighbouring bands are genuinely neighbouring
+   colours and the eye can find a shade by pointing rather than reading. */
+export function sortDyes(dyes) {
+  const chromatic = [];
+  const neutral = [];
+
+  for (const dye of dyes) {
+    const geometry = hueOf(dye.hex);
+    (geometry.chroma < NEUTRAL ? neutral : chromatic).push({ ...dye, ...geometry });
+  }
+
+  chromatic.sort((a, b) => a.hue - b.hue || b.light - a.light);
+  neutral.sort((a, b) => b.light - a.light);
+
+  return [...chromatic, ...neutral].map(({ hue, chroma, light, ...dye }) => ({
+    ...dye,
+    neutral: chroma < NEUTRAL,
+  }));
+}
+
 /** Every dye in a product set, with how many garments carry it. */
 export function buildDyeIndex(products) {
   const byName = new Map();
@@ -76,9 +123,7 @@ export function buildDyeIndex(products) {
     }
   }
 
-  return [...byName.values()].sort(
-    (a, b) => b.count - a.count || a.name.localeCompare(b.name)
-  );
+  return sortDyes([...byName.values()]);
 }
 
 /** The variant matching a selected dye, so filtering shows the dye you picked. */
