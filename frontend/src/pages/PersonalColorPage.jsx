@@ -18,76 +18,8 @@ import { inkOn, needsEdge, dyesForSeason } from '../utils/dye';
 import { useDyeArchive } from '../features/catalog/useDyeArchive';
 
 // 4 Master Personal Color Profiles with Grounded Theory
-const SEASON_PROFILES = {
-  Spring: {
-    season: 'Spring',
-    thaiName: 'ฤดูใบไม้ผลิ (Warm & Bright)',
-    undertone: 'Warm Undertone (โทนอุ่น)',
-    description: 'ผิวโทนสว่างอมเหลือง มีความสดใส มีเลือดฝาด โทนสีที่ช่วยขับผิวให้เปล่งประกายคือเฉดสีสว่าง สดใส อบอุ่น แบบดอกไม้แรกแย้ม',
-    characteristics: ['เส้นเลือดที่ข้อมือเห็นเป็นสีเขียว', 'ใส่เครื่องประดับทองขึ้นกว่าเงิน', 'ผิวออกแดดแล้วเปลี่ยนเป็นสีแทนทอง'],
-    palette: [
-      { name: 'Peach Coral', hex: '#FF7F50' },
-      { name: 'Warm Cream', hex: '#FFFDD0' },
-      { name: 'Matcha Sage', hex: '#8F9779' },
-      { name: 'Honey Mustard', hex: '#E1AD01' },
-      { name: 'Soft Turquoise', hex: '#40E0D0' },
-      { name: 'Salmon Pink', hex: '#FA8072' }
-    ],
-    avoidColors: ['ดำสนิท (Pitch Black)', 'เทาหม่นเข้ม (Dark Charcoal)', 'ม่วงเข้ม (Deep Plum)'],
-    recommendedFabrics: 'ผ้าลินินธรรมชาติ, ผ้าไหมสัมผัสนุ่ม, คอตตอนเนื้อโปร่งเบา'
-  },
-  Summer: {
-    season: 'Summer',
-    thaiName: 'ฤดูร้อน (Cool & Soft/Muted)',
-    undertone: 'Cool Undertone (โทนเย็น)',
-    description: 'ผิวโทนชมพูหรือขาวซีดที่มีความละมุน โทนสีที่เหมาะคือเฉดสีพาสเทล สีควันบุหรี่ สีหม่นที่มีอันเดอร์โทนฟ้า ช่วยให้หน้าดูขาวผ่อง สุภาพ อ่อนโยน',
-    characteristics: ['เส้นเลือดที่ข้อมือเห็นเป็นสีน้ำเงินหรือม่วง', 'ใส่เครื่องประดับเงินหรือไวท์โกลด์ขึ้นมาก', 'ออกแดดแล้วผิวแดงง่าย ไหม้ง่าย'],
-    palette: [
-      { name: 'Lavender Mist', hex: '#E6E6FA' },
-      { name: 'Sky Blue', hex: '#87CEEB' },
-      { name: 'Mint Green', hex: '#98FF98' },
-      { name: 'Dusty Rose', hex: '#DCAE96' },
-      { name: 'Slate Grey', hex: '#708090' },
-      { name: 'Powder Blue', hex: '#B0E0E6' }
-    ],
-    avoidColors: ['ส้มแสด (Bright Orange)', 'เหลืองมัสตาร์ด (Mustard)', 'น้ำตาลทอง (Golden Brown)'],
-    recommendedFabrics: 'ผ้าชีฟอง, ผ้าคอตตอนเจอร์ซีย์, ลินินสีพาสเทลบางเบา'
-  },
-  Autumn: {
-    season: 'Autumn',
-    thaiName: 'ฤดูใบไม้ร่วง (Warm & Deep/Earth)',
-    undertone: 'Warm Undertone (โทนอุ่นลึก)',
-    description: 'ผิวโทนสองสี ผิวสีน้ำผึ้ง หรือผิวขาวเหลืองโทนเข้ม ดูสุขุมและอบอุ่น โทนสีที่เสริมความแพงและสง่างามคือ Earth Tone, สีเครื่องเทศ และโทนไม้',
-    characteristics: ['เส้นเลือดเห็นเป็นสีเขียวชัดเจน', 'ใส่เครื่องประดับทองโบราณ (Antique Gold) หรือทองเหลืองแล้วดูขับผิวที่สุด', 'ผิวแทนสวยเมื่อโดนแดด'],
-    palette: [
-      { name: 'Burnt Orange', hex: '#C05C2B' },
-      { name: 'Mustard Earth', hex: '#C29B38' },
-      { name: 'Deep Olive', hex: '#556B2F' },
-      { name: 'Warm Terracotta', hex: '#C91D1D' },
-      { name: 'Espresso Brown', hex: '#4B3621' },
-      { name: 'Matcha Forest', hex: '#042509' }
-    ],
-    avoidColors: ['สีนีออน (Vivid Neon)', 'ชมพูบาร์บี้ (Cool Magenta)', 'ขาวโอโม่สะท้อนแสง'],
-    recommendedFabrics: 'ผ้าวูลหนานุ่ม (Merino Wool), ผ้าลูกฟูก (Corduroy), หนังกลับ (Suede)'
-  },
-  Winter: {
-    season: 'Winter',
-    thaiName: 'ฤดูหนาว (Cool & Vivid/High Contrast)',
-    undertone: 'Cool Undertone (โทนเย็นจัดชัดเจน)',
-    description: 'ผิวที่มีความคอนทราสต์สูง เช่น ผิวขาวจัดตัดกับผมดำขลับ หรือผิวเข้มโทนเย็น โทนสีที่สร้างความโดดเด่นคือสีสดชัด (Vivid) สีแม่สี และขาว-ดำคลาสสิก',
-    characteristics: ['เส้นเลือดเห็นเป็นสีน้ำเงินชัดเจน', 'ใส่เครื่องประดับเงินหรือแพลทินัมแล้วดูคมสง่า', 'ผมและตามักมีสีดำขลับหรือน้ำตาลเข้มจัด'],
-    palette: [
-      { name: 'Cobalt Royal Blue', hex: '#002366' },
-      { name: 'Charcoal Black', hex: '#232B2B' },
-      { name: 'Emerald Green', hex: '#50C878' },
-      { name: 'True Pure White', hex: '#FFFFFF' },
-      { name: 'Ruby Red', hex: '#E0115F' },
-      { name: 'Deep Indigo', hex: '#4B0082' }
-    ],
-    avoidColors: ['ส้มอิฐอมน้ำตาล (Muted Terracotta)', 'เหลืองดิน (Muddy Ochre)', 'เบจอมส้ม (Warm Beige)'],
-    recommendedFabrics: 'ผ้าแคชเมียร์, ผ้าไหมซาตินเนื้อเงา, ผ้าสูททอแน่นระดับพรีเมียม'
-  }
-};
+const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter'];
+
 
 // ข้อ 5 บอก "ความเข้ม/คอนทราสต์" ส่วนข้อ 1-4 บอก "อันเดอร์โทน" — ต้องใช้ทั้งคู่ถึงจะได้ฤดูที่ถูก
 const SEASON_DEPTH = { Spring: 'Light', Summer: 'Light', Autumn: 'Deep', Winter: 'Deep' };
@@ -103,7 +35,7 @@ const READING_KEY = 'matcha_personal_color_reading';
 const readStoredSeason = () => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
-    return SEASON_PROFILES[stored] ? stored : null;
+    return SEASONS.includes(stored) ? stored : null;
   } catch {
     return null;
   }
@@ -144,15 +76,11 @@ const readStoredReading = () => {
 const QUIZ_QUESTIONS = [
   {
     id: 1,
-    category: 'Undertone Test',
-    question: 'ดูเส้นเลือดที่ข้อมือใต้แสงธรรมชาติ คุณเห็นเป็นสีอะไร?',
-    subtitle: 'เลือกคำตอบที่ใกล้เคียงกับคุณที่สุด',
     image: '/images/personal_test/undertone.jpg',
     icon: <Droplet size={18} className="text-[#042509]" />,
     options: [
       { 
         letter: 'A',
-        label: 'สีเขียวหรือเขียวขี้ม้า (Green / Olive)', 
         score: 'Warm', 
         weight: 2,
         image: '/images/personal_test/warm-skin.jpg',
@@ -160,7 +88,6 @@ const QUIZ_QUESTIONS = [
       },
       { 
         letter: 'B',
-        label: 'น้ำเงินหรือม่วงชัดเจน (Blue / Purple)', 
         score: 'Cool', 
         weight: 2,
         image: '/images/personal_test/cool-skin.jpg',
@@ -168,7 +95,6 @@ const QUIZ_QUESTIONS = [
       },
       { 
         letter: 'C',
-        label: 'ผสมกันทั้งเขียวและน้ำเงิน (Blue-Green Neutral)', 
         score: 'Neutral', 
         weight: 2,
         image: '/images/personal_test/neutral-skin.jpg',
@@ -178,15 +104,11 @@ const QUIZ_QUESTIONS = [
   },
   {
     id: 2,
-    category: 'Jewelry Reflection Test',
-    question: 'เมื่อสวมใส่เครื่องประดับ โลหะชนิดใดทำให้ผิวของคุณดูสว่างและเปล่งปลั่งที่สุด?',
-    subtitle: 'สังเกตความเปล่งประกายของใบหน้าและผิวเมื่อทาบเครื่องประดับ',
     image: '/images/personal_test/acc.jpg',
     icon: <Sun size={18} className="text-[#C91D1D]" />,
     options: [
       { 
         letter: 'A', 
-        label: 'ทองคำ / ทองเหลือง / Yellow Gold (ช่วยขับผิวให้ดูสดใส ไม่หมอง)', 
         score: 'Warm', 
         weight: 2,
         image: '/images/personal_test/acc-gold.jpg',
@@ -194,7 +116,6 @@ const QUIZ_QUESTIONS = [
       },
       { 
         letter: 'B', 
-        label: 'เงิน / แพลทินัม / Silver / White Gold (ช่วยให้ผิวดูขาวผ่อง ดูคมชัด)', 
         score: 'Cool', 
         weight: 2,
         image: '/images/personal_test/acc-silver.jpg',
@@ -202,7 +123,6 @@ const QUIZ_QUESTIONS = [
       },
       { 
         letter: 'C', 
-        label: 'ใส่ได้ทั้งสองสี ดูดีพอๆ กัน', 
         score: 'Neutral', 
         weight: 1,
         image: '/images/personal_test/acc-gold-silver.jpg',
@@ -212,15 +132,11 @@ const QUIZ_QUESTIONS = [
   },
   {
     id: 3,
-    category: 'Sun & Tanning Reaction',
-    question: 'เมื่อต้องอยู่กลางแดดจัดเป็นเวลานาน ผิวของคุณตอบสนองอย่างไร?',
-    subtitle: 'สังเกตปฏิกิริยาของผิวหลังสัมผัสแสงแดดเป็นเวลาต่อเนื่อง',
     image: '/images/personal_test/skin.jpg',
     icon: <Sun size={18} className="text-amber-600" />,
     options: [
       { 
         letter: 'A', 
-        label: 'ผิวเปลี่ยนเป็นสีแทนได้ง่าย ไม่ค่อยไหม้แดด (Tans Easily)', 
         score: 'Warm', 
         weight: 2,
         image: '/images/personal_test/tans-easily.jpg',
@@ -228,7 +144,6 @@ const QUIZ_QUESTIONS = [
       },
       { 
         letter: 'B', 
-        label: 'ผิวไหม้แดง แสบง่าย และไม่ค่อยเปลี่ยนเป็นสีแทน (Burns Easily)', 
         score: 'Cool', 
         weight: 2,
         image: '/images/personal_test/burn-easily.jpg',
@@ -236,7 +151,6 @@ const QUIZ_QUESTIONS = [
       },
       { 
         letter: 'C', 
-        label: 'ผิวแดงเล็กน้อยในวันแรก แล้วค่อยๆ เปลี่ยนเป็นสีแทนในเวลาต่อมา', 
         score: 'Neutral', 
         weight: 1,
         image: '/images/personal_test/skin-neutral.jpg',
@@ -246,15 +160,11 @@ const QUIZ_QUESTIONS = [
   },
   {
     id: 4,
-    category: 'Fabric Color Contrast',
-    question: 'ระหว่างเสื้อสีขาวนวล (Off-White/Ivory) กับ เสื้อสีขาวโอโม่สว่าง (Pure White) ตัวไหนใส่แล้วหน้าไม่ดูโทรม?',
-    subtitle: 'เลือกสีเสื้อเชิ้ตหรือผ้าทาบที่ทำให้ใบหน้าดูสดใสที่สุด',
     image: '/images/personal_test/fabric.jpg',
     icon: <Layers size={18} className="text-[#042509]" />,
     options: [
       { 
         letter: 'A', 
-        label: 'สีขาวนวล (Off-White / Cream) ทำให้ใบหน้าดูนวล อบอุ่น', 
         score: 'Warm', 
         weight: 2,
         image: '/images/personal_test/fabric-warm.jpg',
@@ -262,7 +172,6 @@ const QUIZ_QUESTIONS = [
       },
       { 
         letter: 'B', 
-        label: 'สีขาวสว่างจัด (Pure Bright White) ทำให้ใบหน้าดูสว่าง คมชัด ไม่กลืน', 
         score: 'Cool', 
         weight: 2,
         image: '/images/personal_test/fabric-cool.jpg',
@@ -270,7 +179,6 @@ const QUIZ_QUESTIONS = [
       },
       { 
         letter: 'C', 
-        label: 'ดูเข้ากับใบหน้าได้ทั้งสองสี', 
         score: 'Neutral', 
         weight: 1,
         image: '/images/personal_test/fabric-neutral.jpg',
@@ -280,15 +188,11 @@ const QUIZ_QUESTIONS = [
   },
   {
     id: 5,
-    category: 'Contrast & Intensity',
-    question: 'สีผมตามธรรมชาติ สีตา และริมฝีปากของคุณมีลักษณะอย่างไร?',
-    subtitle: 'พิจารณาความเข้มอ่อนและความคมชัดตามธรรมชาติขององค์ประกอบใบหน้า',
     image: '/images/personal_test/intensity-tone.jpg',
     icon: <Eye size={18} className="text-[#000000]" />,
     options: [
       { 
         letter: 'A', 
-        label: 'ผมน้ำตาลประกายทอง หรือตาสีน้ำตาลสว่าง มีความสดใส (Light & Bright)', 
         score: 'Spring', 
         weight: 3,
         image: '/images/personal_test/intensity-spring.jpg',
@@ -296,7 +200,6 @@ const QUIZ_QUESTIONS = [
       },
       { 
         letter: 'B', 
-        label: 'ผมน้ำตาลหม่น ผิวอมชมพู ริมฝีปากสีชมพูระเรื่อ นุ่มนวล (Soft & Muted)', 
         score: 'Summer', 
         weight: 3,
         image: '/images/personal_test/intensity-summer.jpg',
@@ -304,7 +207,6 @@ const QUIZ_QUESTIONS = [
       },
       { 
         letter: 'C', 
-        label: 'ผมน้ำตาลเข้ม ตาสีน้ำตาลเข้มลึก ผิวสองสีอบอุ่น (Deep & Warm)', 
         score: 'Autumn', 
         weight: 3,
         image: '/images/personal_test/intensity-autumnn.jpg',
@@ -312,7 +214,6 @@ const QUIZ_QUESTIONS = [
       },
       { 
         letter: 'D', 
-        label: 'ผมดำสนิท ตาดำขลับ คอนทราสต์ตัดกับสีผิวชัดเจน (Vivid & Contrast)', 
         score: 'Winter', 
         weight: 3,
         image: '/images/personal_test/intensity-winter.jpg',
@@ -381,7 +282,7 @@ function PaletteBand({ palette, innerRef, emptyLabel }) {
    is two bands, and the visitor's band is the one filled in. Drawing this as a
    second smooth axis with a dot floating in a field would look more scientific
    and would be a lie about the instrument. */
-function ColorAxis({ season, reading }) {
+function ColorAxis({ season, reading, dyes }) {
   const axis = SEASON_AXIS[season];
   const depth = reading?.depth || axis.depth;
 
@@ -428,8 +329,8 @@ function ColorAxis({ season, reading }) {
                   {/* Every season's own colours, so the board is itself a
                       comparison rather than four labelled boxes. */}
                   <span className="flex mt-3 h-2">
-                    {SEASON_PROFILES[cellSeason].palette.map((c, i) => (
-                      <span key={i} className="flex-1" style={{ backgroundColor: c.hex }} />
+                    {dyesForSeason(dyes, cellSeason).map((c) => (
+                      <span key={c.name} className="flex-1" style={{ backgroundColor: c.hex }} />
                     ))}
                   </span>
                 </div>
@@ -468,7 +369,7 @@ function ColorAxis({ season, reading }) {
 
         {diff === null ? (
           <p className="mt-3 font-mono text-[11px] text-[#666666]">
-            ผลนี้ถูกบันทึกไว้ก่อนหน้า จึงเหลือแต่ฤดู — ทำแบบทดสอบใหม่เพื่อดูคะแนนแต่ละแกน
+            {t('quiz.savedNote')}
           </p>
         ) : (
           <div className="mt-3 flex flex-wrap items-baseline gap-x-6 gap-y-1 font-mono text-[11px] text-[#666666]">
@@ -480,7 +381,7 @@ function ColorAxis({ season, reading }) {
               เต็ม <span className="text-[#0A0A0A] tabular-nums">{UNDERTONE_MAX}</span>
             </span>
             <span>
-              ความเข้มจากข้อ 5: <span className="text-[#0A0A0A]">{depth}</span>
+              {t('quiz.depthFromQ5', { depth })}
             </span>
           </div>
         )}
@@ -490,7 +391,7 @@ function ColorAxis({ season, reading }) {
         {diff === 0 && (
           <p className="mt-2 text-sm text-[#0A0A0A] leading-relaxed max-w-prose">
             คะแนนอุ่นกับเย็นเท่ากันพอดี — ฤดูนี้ตัดสินจากข้อ 5 เป็นหลัก คุณอยู่ก้ำกึ่งกับ{' '}
-            <strong>{seasonAt(axis.tone === 'Warm' ? 'Cool' : 'Warm', depth)}</strong> ลองดูพาเลตต์ของทั้งสองฤดูเทียบกัน
+            {t('quiz.compareOther', { season: seasonAt(axis.tone === 'Warm' ? 'Cool' : 'Warm', depth) })}
           </p>
         )}
       </div>
@@ -587,7 +488,7 @@ export default function PersonalColorPage() {
       } catch {
         // โหมดส่วนตัว/ปิด storage — ผลยังแสดงได้ แค่ไม่ถูกจำข้ามหน้า
       }
-      showToast(`วิเคราะห์ผลสำเร็จ: โทนสีผิวของคุณคือ ${SEASON_PROFILES[finalSeason].thaiName} ✨`);
+      showToast(t('colorLab.resultToast', { season: t(`seasons.${finalSeason}.name`) }));
     }, 1200);
   };
 
@@ -612,8 +513,8 @@ export default function PersonalColorPage() {
   };
 
 
-  const profile = diagnosedSeason ? SEASON_PROFILES[diagnosedSeason] : null;
-  const theory = SEASON_PROFILES[selectedSeasonTab];
+  const profile = diagnosedSeason ? t(`seasons.${diagnosedSeason}`) : null;
+  const theory = t(`seasons.${selectedSeasonTab}`);
 
   return (
     <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-5 sm:px-6 lg:px-8">
@@ -626,16 +527,16 @@ export default function PersonalColorPage() {
             every page of this kind arrives at by default. */}
         <header className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-3 border-b border-[#0A0A0A] font-mono text-[11px] uppercase tracking-[0.18em] text-[#666666]">
-            <span className="text-[#0A0A0A] font-bold">Artisan Personal Color Lab &amp; Styling Science</span>
-            <span>{Object.keys(SEASON_PROFILES).length} seasons</span>
+            <span className="text-[#0A0A0A] font-bold">{t('quiz.eyebrow')}</span>
+            <span>{SEASONS.length} seasons</span>
           </div>
 
           <div className="max-w-3xl space-y-4">
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-[#0A0A0A] tracking-tight leading-[1.05]">
-              ค้นหาโทนสีผิวประจำตัว 4 ฤดูกาล
+              {t('quiz.heroTitle')}
             </h1>
             <p className="text-[#666666] text-sm sm:text-base leading-relaxed">
-              เลือกใส่เสื้อผ้าที่ขับออร่าของคุณด้วย <strong className="text-[#0A0A0A]">ทฤษฎี Personal Color สากล</strong> จำแนกตาม 4 ฤดู ช่วยให้ทุกชุดที่คุณสวมใส่เสริมบุคลิกและสะท้อนเสน่ห์ที่เป็นเอกลักษณ์
+              {t('quiz.heroBody')}
             </p>
           </div>
 
@@ -653,7 +554,7 @@ export default function PersonalColorPage() {
                   : 'text-[#666666] hover:text-[#0A0A0A]'
               }`}
             >
-              Diagnostic Quiz (แบบทดสอบสีผิว)
+              {t('quiz.tabQuiz')}
             </button>
             <button
               role="tab"
@@ -666,7 +567,7 @@ export default function PersonalColorPage() {
                   : 'text-[#666666] hover:text-[#0A0A0A]'
               }`}
             >
-              Color Theory (ทฤษฎี 4 ฤดู)
+              {t('quiz.tabTheory')}
             </button>
           </div>
         </header>
@@ -684,7 +585,7 @@ export default function PersonalColorPage() {
                     the questions are countable, so show the count. */}
                 <div>
                   <div className="flex justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">
-                    <span>คำถามที่ {currentStep + 1} จาก {QUIZ_QUESTIONS.length}</span>
+                    <span>{t('quiz.progress', { n: currentStep + 1, total: QUIZ_QUESTIONS.length })}</span>
                     <span>{Math.round(((currentStep + 1) / QUIZ_QUESTIONS.length) * 100)}%</span>
                   </div>
                   <div
@@ -693,7 +594,7 @@ export default function PersonalColorPage() {
                     aria-valuemin={1}
                     aria-valuemax={QUIZ_QUESTIONS.length}
                     aria-valuenow={currentStep + 1}
-                    aria-valuetext={`คำถามที่ ${currentStep + 1} จาก ${QUIZ_QUESTIONS.length}`}
+                    aria-valuetext={t('quiz.progress', { n: currentStep + 1, total: QUIZ_QUESTIONS.length })}
                   >
                     {QUIZ_QUESTIONS.map((q, i) => (
                       <span
@@ -716,14 +617,14 @@ export default function PersonalColorPage() {
                   <div className="max-w-3xl mx-auto text-center">
                     <span className="font-mono text-[10px] font-bold uppercase text-[#C91D1D] tracking-[0.18em] flex items-center justify-center gap-1.5 mb-3">
                       {QUIZ_QUESTIONS[currentStep].icon}
-                      <span>{QUIZ_QUESTIONS[currentStep].category}</span>
+                      <span>{t(`quiz.q${QUIZ_QUESTIONS[currentStep].id}.category`)}</span>
                     </span>
                     <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0A0A0A] leading-snug">
-                      {QUIZ_QUESTIONS[currentStep].question}
+                      {t(`quiz.q${QUIZ_QUESTIONS[currentStep].id}.question`)}
                     </h2>
-                    {QUIZ_QUESTIONS[currentStep].subtitle && (
+                    {t(`quiz.q${QUIZ_QUESTIONS[currentStep].id}.subtitle`) && (
                       <p className="text-xs sm:text-sm text-[#666666] mt-3">
-                        {QUIZ_QUESTIONS[currentStep].subtitle}
+                        {t(`quiz.q${QUIZ_QUESTIONS[currentStep].id}.subtitle`)}
                       </p>
                     )}
 
@@ -737,7 +638,7 @@ export default function PersonalColorPage() {
                             DOM with a warning instead. */}
                         <img
                           src={QUIZ_QUESTIONS[currentStep].image}
-                          alt={QUIZ_QUESTIONS[currentStep].question}
+                          alt=""
                           className="w-full h-full object-cover object-center"
                           referrerPolicy="no-referrer"
                           loading={currentStep === 0 ? 'eager' : 'lazy'}
@@ -788,7 +689,7 @@ export default function PersonalColorPage() {
                                 {letter}
                               </span>
                               <span className="text-xs sm:text-sm font-bold text-[#0A0A0A] leading-snug group-hover:underline underline-offset-4 decoration-[#C91D1D] decoration-2">
-                                {option.label}
+                                {t(`quiz.q${QUIZ_QUESTIONS[currentStep].id}.${letter}`)}
                               </span>
                             </span>
                           </button>
@@ -837,10 +738,10 @@ export default function PersonalColorPage() {
                   <div className="space-y-2">
                     <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C91D1D] flex items-center gap-1.5">
                       <CheckCircle2 size={12} />
-                      <span>ผลการวิเคราะห์สีผิวของคุณ</span>
+                      <span>{t('quiz.resultTitle')}</span>
                     </span>
                     <h2 className="text-3xl sm:text-5xl font-black text-[#0A0A0A] tracking-tight leading-[1.05]">
-                      {profile.season} — {profile.thaiName}
+                      {profile.name} — {profile.tagline}
                     </h2>
                     <p className="font-mono text-xs text-[#666666]">
                       {profile.undertone}
@@ -854,14 +755,14 @@ export default function PersonalColorPage() {
                       className="font-mono text-xs uppercase tracking-wider text-[#666666] hover:text-[#0A0A0A] cursor-pointer flex items-center gap-1.5 transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                     >
                       <RotateCcw size={12} />
-                      <span>ทำแบบทดสอบใหม่</span>
+                      <span>{t('quiz.retake')}</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => navigate('/mix-match')}
                       className="px-5 py-3 bg-[#C91D1D] hover:bg-[#A81515] text-white font-mono text-xs uppercase tracking-[0.15em] flex items-center gap-2 transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                     >
-                      <span>ไปที่ Mix &amp; Match Studio</span>
+                      <span>{t('quiz.toStudio')}</span>
                       <ArrowRight size={13} />
                     </button>
                   </div>
@@ -889,9 +790,9 @@ export default function PersonalColorPage() {
                     answer; this is the evidence for it. */}
                 <div>
                   <h3 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-3">
-                    ตำแหน่งของคุณบนสองแกน
+                    {t('quiz.axisTitle')}
                   </h3>
-                  <ColorAxis season={diagnosedSeason} reading={reading} />
+                  <ColorAxis season={diagnosedSeason} reading={reading} dyes={dyes} />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14">
@@ -920,19 +821,19 @@ export default function PersonalColorPage() {
                   <div className="lg:col-span-5 space-y-6">
                     <div>
                       <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">
-                        เนื้อผ้าที่แนะนำ (Recommended Fabrics)
+                        {t('quiz.fabrics')}
                       </h4>
                       <p className="text-sm text-[#0A0A0A] leading-relaxed">
-                        {profile.recommendedFabrics}
+                        {profile.fabrics}
                       </p>
                     </div>
 
                     <div>
                       <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C91D1D] mb-2">
-                        สีที่ควรหลีกเลี่ยง (Avoid)
+                        {t('quiz.avoid')}
                       </h4>
                       <ul className="divide-y divide-[#DCDCDC] border-t border-[#DCDCDC]">
-                        {profile.avoidColors.map((c, i) => (
+                        {profile.avoid.map((c, i) => (
                           <li key={i} className="py-2.5 text-sm text-[#666666]">{c}</li>
                         ))}
                       </ul>
@@ -947,7 +848,7 @@ export default function PersonalColorPage() {
           /* Theory: the same four palettes, read rather than diagnosed. */
           <div className="space-y-8 animate-fade-in">
             <nav aria-label="เลือกฤดูกาล" className="flex flex-wrap items-baseline gap-x-6 gap-y-2 pb-3 border-b border-[#DCDCDC]">
-              {Object.keys(SEASON_PROFILES).map((seasonKey) => (
+              {SEASONS.map((seasonKey) => (
                 <button
                   key={seasonKey}
                   type="button"
@@ -971,7 +872,7 @@ export default function PersonalColorPage() {
                     The 12-Season Architecture
                   </span>
                   <h3 className="text-3xl sm:text-4xl font-black text-[#0A0A0A] tracking-tight leading-[1.05] mt-1">
-                    {theory.season} — {theory.thaiName}
+                    {theory.name} — {theory.tagline}
                   </h3>
                 </div>
                 <span className="font-mono text-xs text-[#666666] shrink-0">
@@ -985,9 +886,12 @@ export default function PersonalColorPage() {
 
               <div>
                 <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-3">
-                  เฉดสีประจำฤดูกาล {selectedSeasonTab} ({theory.palette.length} Colors)
+                  {t('colorLab.seasonPalette', { season: theory.name, n: dyesForSeason(dyes, selectedSeasonTab).length })}
                 </h4>
-                <PaletteBand palette={theory.palette} />
+                <PaletteBand
+                  palette={dyesForSeason(dyes, selectedSeasonTab)}
+                  emptyLabel={t('colorLab.paletteEmpty')}
+                />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
@@ -1003,10 +907,10 @@ export default function PersonalColorPage() {
                 </div>
                 <div>
                   <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C91D1D] mb-2">
-                    สีที่ควรหลีกเลี่ยง (Avoid)
+                    {t('quiz.avoid')}
                   </h4>
                   <ul className="divide-y divide-[#DCDCDC] border-t border-[#DCDCDC]">
-                    {theory.avoidColors.map((c, i) => (
+                    {theory.avoid.map((c, i) => (
                       <li key={i} className="py-2.5 text-sm text-[#666666]">{c}</li>
                     ))}
                   </ul>
