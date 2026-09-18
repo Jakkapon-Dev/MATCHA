@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
+import { motion, useReducedMotion } from 'motion/react';
+import { Parallax, Reveal, EASE } from '../motion';
 import { webpSrc } from '../../utils/imageFallback';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function BrandHero({ onShopNow, onEnterWebsite }) {
   const { t } = useLanguage();
+  const reduced = useReducedMotion();
 
   // Studio model references for the four independently shuffled slices.
   const models = [
@@ -111,41 +114,60 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
       className="relative w-full bg-[#F1F1F1] text-[#000000] min-h-[92svh] pt-2 pb-8 sm:pb-10 px-4 sm:px-8 lg:px-12 flex flex-col gap-2 sm:gap-4 select-none border-b border-[#DCDCDC]"
     >
       
-      {/* The masthead reveals once and keeps its size while scrolling. */}
-      <div
-        className="w-full text-center z-0 pointer-events-none select-none pt-1 sm:pt-3 -mb-4 sm:-mb-6 md:-mb-8 relative origin-top home-masthead"
+      {/* The masthead wipes up from its own baseline the way a magazine title
+          lands, then drifts slowly — it sits furthest back, so it travels least
+          of anything in the hero. The clip-path does its own masking, so no
+          ancestor needs overflow:hidden to hold the wipe. */}
+      <Parallax
+        distance={22}
+        className="w-full text-center z-0 pointer-events-none select-none pt-1 sm:pt-3 -mb-4 sm:-mb-6 md:-mb-8 relative origin-top"
       >
-        <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10.5rem] font-black tracking-tight uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm font-sans home-masthead-title">
+        <motion.h1
+          initial={reduced ? { opacity: 0 } : { y: '80%', clipPath: 'inset(0 0 100% 0)' }}
+          animate={reduced ? { opacity: 1 } : { y: '0%', clipPath: 'inset(-10% -5% -15% 0)' }}
+          transition={{ duration: 0.9, ease: EASE }}
+          className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10.5rem] font-black tracking-tight uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm font-sans"
+        >
           <span className="text-[#042509]">MATCH</span>
           <span className="text-[#C91D1D]">A</span>
-        </h1>
-      </div>
+        </motion.h1>
+      </Parallax>
 
       {/* 2. Main 3-Column Layout: Cleanly spaced under the lifted MATCHA title */}
       <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center pt-2 pb-6">
         
-        {/* Left Column: Stacked Black Badge Typography */}
-        <div className="md:col-span-3 flex flex-col items-center md:items-start justify-center order-2 md:order-1 z-20">
-          <div 
-            data-enter
-            style={{ '--enter-delay': '0ms' }}
-            className="home-hero-enter flex flex-col items-center md:items-start gap-1"
-          >
-            {badgeLines.map((text, i) => (
+        {/* Left Column: Stacked Black Badge Typography.
+            The side columns are the nearest things in the hero, so they get the
+            largest drift — the gap against the masthead is what reads as depth. */}
+        <Parallax
+          distance={80}
+          className="md:col-span-3 flex flex-col items-center md:items-start justify-center order-2 md:order-1 z-20"
+          innerClassName="flex flex-col items-center md:items-start gap-1"
+        >
+          {badgeLines.map((text, i) => (
+            <Reveal key={i} x={-28} y={0} delay={0.25 + i * 0.07} duration={0.6}>
               <span
-                key={i}
                 className="bg-[#000000] text-[#F1F1F1] px-3.5 py-1 text-xs sm:text-sm font-bold font-mono uppercase tracking-wider inline-block shadow-md select-none"
               >
                 {text}
               </span>
-            ))}
-          </div>
-        </div>
+            </Reveal>
+          ))}
+        </Parallax>
 
-        {/* Center Column: Extra Large Sliced Model Supporting 10 Outfits with Magazine Overlap */}
-        <div className="md:col-span-6 flex flex-col items-center justify-center order-1 md:order-2 z-20">
-          
-          <div 
+        {/* Center Column: Extra Large Sliced Model Supporting 10 Outfits with Magazine Overlap.
+            Mid-depth: it drifts more than the masthead behind it and less than
+            the columns flanking it. The shuffle itself is untouched. */}
+        <Parallax
+          distance={48}
+          className="md:col-span-6 flex flex-col items-center justify-center order-1 md:order-2 z-20"
+          innerClassName="w-full flex justify-center"
+        >
+
+          <motion.div
+            initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.94, y: 34 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.85, delay: 0.1, ease: EASE }}
             className="relative w-full max-w-md sm:max-w-lg lg:max-w-xl aspect-3/4 bg-white rounded-none overflow-hidden shadow-2xl border border-[#000000]/20 flex flex-col select-none group/card z-20"
           >
             
@@ -201,18 +223,24 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
               />
             </div>
 
-          </div>
+          </motion.div>
 
-        </div>
+        </Parallax>
 
         {/* Right Column: Code, Barcode & Action Button */}
-        <div className="md:col-span-3 flex flex-col items-center md:items-start justify-center gap-6 order-3 z-20">
-          
+        <Parallax
+          distance={85}
+          className="md:col-span-3 flex flex-col items-center md:items-start justify-center gap-6 order-3 z-20"
+          innerClassName="flex flex-col items-center md:items-start gap-6"
+        >
+
           {/* Metadata Text */}
-          <div 
-            data-enter
-            style={{ '--enter-delay': '90ms' }}
-            className="home-hero-enter text-center md:text-left font-mono"
+          <Reveal
+            x={28}
+            y={0}
+            delay={0.3}
+            duration={0.6}
+            className="text-center md:text-left font-mono"
           >
             <p className="text-[11px] font-bold tracking-wider text-[#666666]">
               {t('hero.dropCode')}
@@ -220,21 +248,24 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
             <p className="text-[11px] font-bold tracking-wider text-[#666666] mt-0.5">
               {t('hero.runCode')}
             </p>
-          </div>
+          </Reveal>
 
           {/* Action Button: SHOP NEW DROPS / ENTER WEBSITE */}
-          <button 
-            data-enter
-            style={{ '--enter-delay': '180ms' }}
-            onClick={handleAction}
-            className="home-hero-enter w-full sm:w-auto max-w-full px-8 py-4 bg-[#C91D1D] hover:bg-[#A81515] text-white font-mono text-sm font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-[#C91D1D]/30 active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
-          >
-            <span>{onEnterWebsite ? t('hero.enterWebsite') : t('hero.shopNow')}</span>
-            <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
-          </button>
+          <Reveal x={28} y={0} delay={0.38} duration={0.6} className="w-full sm:w-auto">
+            <button
+              onClick={handleAction}
+              className="w-full sm:w-auto max-w-full px-8 py-4 bg-[#C91D1D] hover:bg-[#A81515] text-white font-mono text-sm font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-[#C91D1D]/30 active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
+            >
+              <span>{onEnterWebsite ? t('hero.enterWebsite') : t('hero.shopNow')}</span>
+              <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </Reveal>
 
           {/* Barcode Graphic */}
-          <div className="w-full max-w-[11rem] py-1 opacity-45">
+          {/* The 45% wash lives on an inner element: Motion animates opacity on
+              the element it owns, which would otherwise overwrite the class. */}
+          <Reveal x={28} y={0} delay={0.46} duration={0.6} className="w-full max-w-[11rem] py-1">
+            <div className="opacity-45">
             <svg viewBox="0 0 200 40" className="w-full h-8 text-[#000000] fill-current">
               <rect x="0" y="0" width="3" height="40" />
               <rect x="5" y="0" width="2" height="40" />
@@ -273,9 +304,10 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
             <p className="text-[10px] font-mono text-[#666666] tracking-widest text-center mt-1">
               8 859012 345678
             </p>
-          </div>
+            </div>
+          </Reveal>
 
-        </div>
+        </Parallax>
 
       </div>
 

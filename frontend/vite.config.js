@@ -15,7 +15,7 @@ export default defineConfig({
         // React กับ router แทบไม่เปลี่ยนระหว่าง deploy — แยกไว้ให้เบราว์เซอร์เก็บ cache ยาว ๆ
         manualChunks: {
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'motion-vendor': ['lenis']
+          'motion-vendor': ['lenis', 'motion']
         }
       }
     }

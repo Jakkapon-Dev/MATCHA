@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
+import { Parallax, Reveal } from '../motion';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function VdoSection({ onClaimPromo }) {
@@ -54,19 +55,27 @@ export default function VdoSection({ onClaimPromo }) {
   return (
     <section className="relative w-full min-h-screen bg-[#1A2218] overflow-hidden flex items-center justify-center border-y border-[#042509]/30 select-none py-16 sm:py-24">
       
-      {/* 1. Full-Height Background Video (Anchored to top to prevent head crop) */}
-      <video
-        ref={videoRef}
-        loop
-        muted
-        playsInline
-        preload="none"
-        poster="/videos/lookbook_reel_poster.webp"
-        className="absolute inset-0 w-full h-full object-cover object-top sm:object-[center_15%] opacity-90 pointer-events-none"
+      {/* 1. Full-Height Background Video (Anchored to top to prevent head crop).
+          วิดีโอเลื่อนสวนทางกับข้อความด้านหน้าเล็กน้อย จึงต้องกินพื้นที่เกินขอบ
+          section ไว้ 8% ไม่งั้นจะเห็นขอบว่างตอนมันไหลขึ้น-ลง */}
+      <Parallax
+        distance={48}
+        className="absolute inset-0 overflow-hidden pointer-events-none"
+        innerClassName="absolute inset-[-8%]"
       >
-        <source src="/videos/lookbook_reel.mp4" type="video/mp4" />
-        <source src={videoSrc} type="video/mp4" />
-      </video>
+        <video
+          ref={videoRef}
+          loop
+          muted
+          playsInline
+          preload="none"
+          poster="/videos/lookbook_reel_poster.webp"
+          className="w-full h-full object-cover object-top sm:object-[center_15%] opacity-90"
+        >
+          <source src="/videos/lookbook_reel.mp4" type="video/mp4" />
+          <source src={videoSrc} type="video/mp4" />
+        </video>
+      </Parallax>
 
       {/* 2. Film Gradient Overlays for Readability & Depth */}
       <div className="absolute inset-0 bg-linear-to-r from-black/80 via-black/40 to-black/65 pointer-events-none" />
@@ -76,7 +85,7 @@ export default function VdoSection({ onClaimPromo }) {
       <div className="relative z-10 max-w-7xl mx-auto w-full px-6 sm:px-8 lg:px-12 flex flex-col lg:flex-row items-center justify-between gap-10 sm:gap-14">
         
         {/* Left Side: Editorial Cinematic Title */}
-        <div className="max-w-xl text-center lg:text-left">
+        <Reveal y={44} duration={0.8} className="max-w-xl text-center lg:text-left">
           <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-[#F1F1F1] tracking-tight uppercase leading-[0.95] drop-shadow-xl">
             {t('video.titleTop')} <br />
             <span className="text-[#518F5C] font-light">{t('video.titleBottom')}</span>
@@ -84,10 +93,12 @@ export default function VdoSection({ onClaimPromo }) {
           <p className="mt-6 text-xs sm:text-sm text-neutral-300 font-mono max-w-md leading-relaxed drop-shadow">
             {t('video.description')}
           </p>
-        </div>
+        </Reveal>
 
-        {/* Right Side: Floating Glass Promotion Card (Glassmorphism) */}
-        <div className="w-full max-w-md backdrop-blur-2xl bg-[#F1F1F1]/95 border border-white/60 shadow-2xl rounded-3xl p-6 sm:p-8 transform hover:scale-[1.02] transition-transform duration-300">
+        {/* Right Side: Floating Glass Promotion Card (Glassmorphism).
+            Entrance lives on the wrapper so the card keeps its own hover lift. */}
+        <Reveal x={64} y={0} delay={0.15} duration={0.8} className="w-full max-w-md">
+        <div className="w-full backdrop-blur-2xl bg-[#F1F1F1]/95 border border-white/60 shadow-2xl rounded-3xl p-6 sm:p-8 transform hover:scale-[1.02] transition-transform duration-300">
           
           <div className="flex items-center justify-between mb-4">
             <span className="px-3 py-1 bg-[#C91D1D] text-white text-[10px] font-bold uppercase tracking-widest rounded-full shadow-sm flex items-center gap-1.5">
@@ -117,6 +128,7 @@ export default function VdoSection({ onClaimPromo }) {
           </button>
 
         </div>
+        </Reveal>
 
       </div>
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, ShieldCheck, ArrowRight, CreditCard, CheckCircle2 } from 'lucide-react';
 import BorderBeam from '../ui/BorderBeam';
+import { Reveal } from '../motion';
 import { useToast } from '../../context/ToastContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 
@@ -39,8 +40,9 @@ export default function JoinDropList({ onSubscribe }) {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center relative z-10">
           
-          {/* Left Side: 3D VIP Metal Black Card Showcase with Orbiting Border Beam */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center">
+          {/* Left Side: 3D VIP Metal Black Card Showcase with Orbiting Border Beam.
+              บัตรลอยเข้ามาจากซ้ายแล้วค่อยตั้งตรง ส่วน hover ของบัตรยังเป็นของเดิม */}
+          <Reveal x={-52} y={24} scale={0.92} duration={0.85} amount={0.25} className="lg:col-span-5 flex flex-col items-center justify-center">
             <div className="relative w-full max-w-sm aspect-[1.58/1] bg-linear-to-br from-[#000000] via-[#1A1513] to-black rounded-2xl p-6 text-white shadow-2xl border border-white/20 holographic-sheen transform hover:scale-105 hover:-rotate-1 transition-all duration-300 group overflow-hidden">
               
               {/* ReactVibe Orbiting Border Beam */}
@@ -88,10 +90,10 @@ export default function JoinDropList({ onSubscribe }) {
             <p className="mt-3 text-[11px] font-mono text-[#666666] text-center">
               {t('drop.cardNote')}
             </p>
-          </div>
+          </Reveal>
 
           {/* Right Side: High-Fashion Newsletter Form */}
-          <div className="lg:col-span-7 flex flex-col justify-center">
+          <Reveal x={52} y={0} delay={0.14} duration={0.8} amount={0.25} className="lg:col-span-7 flex flex-col justify-center">
             
             <span className="text-xs font-mono font-bold text-[#C91D1D] tracking-widest uppercase mb-2">
               {t('drop.insider')}
@@ -138,7 +140,7 @@ export default function JoinDropList({ onSubscribe }) {
               <span>{t('drop.noSpam')}</span>
             </div>
 
-          </div>
+          </Reveal>
 
         </div>
 

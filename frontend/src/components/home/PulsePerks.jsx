@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Sparkles, Zap, RotateCcw, ShieldCheck } from 'lucide-react';
+import { Reveal } from '../motion';
 import { webpSrc, handleImageError } from '../../utils/imageFallback';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 
@@ -70,14 +71,16 @@ export default function PulsePerks() {
       <div className="max-w-7xl mx-auto">
         
         {/* 1. Header Title */}
-        <div className="mb-10">
+        <Reveal y={30} className="mb-10">
           <h2 className="text-4xl sm:text-6xl font-black text-[#C91D1D] tracking-tight font-sans">
             {t('perks.title')}
           </h2>
-        </div>
+        </Reveal>
 
-        {/* 2. Main Framed Grid Container (Matching Reference Orange Border Frame) */}
-        <div className="border-2 border-[#C91D1D]/80 rounded-none grid grid-cols-1 lg:grid-cols-12 overflow-hidden bg-white shadow-xl">
+        {/* 2. Main Framed Grid Container (Matching Reference Orange Border Frame).
+            กรอบทั้งกล่องเข้ามาเป็นชิ้นเดียว แล้วค่อยให้สิทธิพิเศษ 3 ข้อทยอยเข้า
+            ข้างใน — การ์ด 3 มิติไม่ถูกแตะ เพราะ transform ของมันเป็นของผู้ใช้ */}
+        <Reveal y={44} delay={0.1} duration={0.8} amount={0.15} className="border-2 border-[#C91D1D]/80 rounded-none grid grid-cols-1 lg:grid-cols-12 overflow-hidden bg-white shadow-xl">
           
           {/* Left Column (Col 1-7): 3D Perspective Rotating Sitting Model Card */}
           <div
@@ -142,12 +145,17 @@ export default function PulsePerks() {
 
           {/* Right Column (Col 8-12): 3 Perk Sections with Orange Dividing Borders */}
           <div className="lg:col-span-5 flex flex-col justify-between divide-y-2 divide-[#C91D1D]/80 bg-white">
-            {perks.map((perk) => {
+            {perks.map((perk, i) => {
               const Icon = perk.icon;
-              
+
               return (
-                <div
+                <Reveal
                   key={perk.num}
+                  x={44}
+                  y={0}
+                  delay={0.25 + i * 0.12}
+                  duration={0.6}
+                  amount={0.3}
                   className="p-8 sm:p-10 flex flex-col justify-center flex-1 hover:bg-[#F1F1F1] transition-colors duration-300 group"
                 >
                   {/* Perk Number */}
@@ -164,12 +172,12 @@ export default function PulsePerks() {
                   <p className="text-xs sm:text-sm text-[#666666] mt-2 leading-relaxed font-sans font-medium">
                     {perk.desc}
                   </p>
-                </div>
+                </Reveal>
               );
             })}
           </div>
 
-        </div>
+        </Reveal>
 
       </div>
     </section>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
+import { Parallax, Reveal } from '../motion';
 import { webpSrc, handleImageError } from '../../utils/imageFallback';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 
@@ -68,8 +69,13 @@ export default function ChooseYourFit({ onSelectFit }) {
 
   return (
     <section className="relative w-full min-h-240 lg:min-h-screen bg-white overflow-hidden select-none flex items-center justify-center border-b border-[#DCDCDC] py-12">
-      {/* 1. Full-Bleed Center Model Canvas (เห็นครบทั้งตัว 100% ไม่ขาด) */}
-      <div className="absolute inset-0 w-full h-full pointer-events-none z-0 flex items-center justify-center p-2 sm:p-6">
+      {/* 1. Full-Bleed Center Model Canvas (เห็นครบทั้งตัว 100% ไม่ขาด)
+          รูปแบนเนอร์อยู่ชั้นหลังสุด จึงเลื่อนช้าที่สุดในหน้านี้ */}
+      <Parallax
+        distance={40}
+        className="absolute inset-0 w-full h-full pointer-events-none z-0 flex items-center justify-center p-2 sm:p-6"
+        innerClassName="w-full h-full"
+      >
         <img
           src={webpSrc("/images/studio_white_bg/standing_straight/spring/studio_straight_spring_nude_beige_wide_banner_2k_001.jpeg")}
           data-original-src="/images/studio_white_bg/standing_straight/spring/studio_straight_spring_nude_beige_wide_banner_2k_001.jpeg"
@@ -79,10 +85,10 @@ export default function ChooseYourFit({ onSelectFit }) {
           alt={t('fit.bannerAlt')}
           className="w-full h-full object-contain object-center opacity-100"
         />
-      </div>
+      </Parallax>
 
       {/* 2. Independent Title & Badge: คุมโทนสี MatchA Espresso & Terracotta */}
-      <div className="absolute top-12 left-[24%] z-30 pointer-events-none">
+      <Reveal x={-44} y={0} duration={0.8} amount={0.1} className="absolute top-12 left-[24%] z-30 pointer-events-none">
         <div className="bg-[#000000] px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block border-l-4 border-[#C91D1D]">
           <span className="animate-text-shimmer-light inline-block">
             {t('fit.title')}
@@ -91,7 +97,7 @@ export default function ChooseYourFit({ onSelectFit }) {
         <p className="text-[10px] sm:text-xs font-mono text-[#C91D1D] tracking-[0.25em] uppercase mt-1.5 font-bold">
           {t('fit.subtitle')}
         </p>
-      </div>
+      </Reveal>
 
       {/* 3. Floating Cards Layer (แอนิเมชันลอย 3 มิติ Ambient Floating) */}
       <div className="relative w-full max-w-[1700px] mx-auto h-215 sm:h-230 lg:h-245 px-4 sm:px-8 z-10 pointer-events-auto">
@@ -101,16 +107,27 @@ export default function ChooseYourFit({ onSelectFit }) {
           const copy = t(`fit.items.${item.code}`);
 
           return (
-            <div
+            // การ์ดสลับกันเลื่อนเร็ว/ช้า ใบคี่กับใบคู่จึงแยกชั้นความลึกออกจากกัน
+            // แทนที่จะลอยขึ้นมาพร้อมกันทั้งแถบ
+            //
+            // z-index ตอน hover ต้องอยู่ที่กล่องนอกสุด เพราะ z-index บนกล่องนอก
+            // สร้าง stacking context ใหม่ — ถ้าไปใส่ที่ตัวการ์ดข้างใน มันจะยกตัวเอง
+            // ขึ้นเหนือการ์ดใบอื่นไม่ได้
+            <Parallax
               key={item.id}
-              data-reveal="fit"
-              style={{ '--enter-delay': `${(index % 2) * 80}ms` }}
+              distance={index % 2 === 0 ? 52 : 96}
+              style={{ zIndex: isHovered ? 40 : 20 }}
+              className={`absolute ${item.positionClass} w-36 sm:w-48 lg:w-56 xl:w-60 aspect-3/4`}
+              innerClassName="w-full h-full"
+            >
+            <Reveal y={38} scale={0.92} delay={index * 0.07} amount={0.1} className="w-full h-full">
+            <div
               onMouseEnter={() => setHoveredCard(item.id)}
               onMouseLeave={() => setHoveredCard(null)}
               onClick={() => onSelectFit && onSelectFit(item)}
-              className={`absolute ${item.positionClass} w-36 sm:w-48 lg:w-56 xl:w-60 aspect-3/4 z-20 cursor-pointer transition-all duration-300 transform ${
+              className={`relative w-full h-full cursor-pointer transition-all duration-300 transform ${
                 isHovered
-                  ? "scale-108 z-40 shadow-2xl -translate-y-1.5 ring-2 ring-[#C91D1D]"
+                  ? "scale-108 shadow-2xl -translate-y-1.5 ring-2 ring-[#C91D1D]"
                   : "shadow-md hover:shadow-xl"
               } overflow-hidden bg-transparent border-0`}
             >
@@ -146,6 +163,8 @@ export default function ChooseYourFit({ onSelectFit }) {
                 </div>
               )}
             </div>
+            </Reveal>
+            </Parallax>
           );
         })}
       </div>

@@ -1,5 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, ShoppingBag, Sparkles, Star, Check, Eye } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import { Reveal, EASE } from '../motion';
 import SpotlightCard from '../ui/SpotlightCard';
 import useStreetProducts from '../../hooks/useStreetProducts';
 import ProductCardSkeleton from '../ui/ProductCardSkeleton';
@@ -164,6 +166,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
   const { t } = useLanguage();
   const scrollRef = useRef(null);
   const [activeCategory, setActiveCategory] = useState('ALL');
+  const reduced = useReducedMotion();
 
   // The hook owns remote loading and retry behavior; this component selects which
   // loading, error, empty, or product-list state to render.
@@ -173,9 +176,16 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
   const categories = ['ALL', 'Tops', 'Bottoms', 'Outerwear', 'Shoes', 'Accessories'];
 
   // Limit the unfiltered home carousel to 24 items; category views show every match.
-  const filteredProducts = activeCategory === 'ALL' 
+  const filteredProducts = activeCategory === 'ALL'
     ? products.slice(0, 24)
     : products.filter(p => p.category === activeCategory);
+
+  // A narrow category can be shorter than the distance already scrolled, which
+  // would land the viewer on empty rail. Snap back so the new set animates in
+  // where they are looking.
+  useEffect(() => {
+    if (scrollRef.current) scrollRef.current.scrollLeft = 0;
+  }, [activeCategory]);
 
   const scrollLeft = () => {
     // One navigation click moves approximately one desktop card plus its spacing.
@@ -195,7 +205,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
       <div className="max-w-7xl mx-auto">
         
         {/* 1. Header Title & Navigation Controls */}
-        <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+        <Reveal y={30} className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <h2 className="text-4xl sm:text-6xl font-black text-[#C91D1D] tracking-tight font-sans">
               {t('favorites.title')}
@@ -226,31 +236,51 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
               <ChevronRight size={20} />
             </button>
           </div>
-        </div>
+        </Reveal>
 
-        {/* 2. Interactive Category Filter Pills */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-4 scrollbar-none">
-          {categories.map((key) => (
-            <button
-              key={key}
-              onClick={() => setActiveCategory(key)}
-              className={`px-4 py-1.5 text-xs font-mono font-bold tracking-wider uppercase transition-all whitespace-nowrap cursor-pointer rounded-lg ${
-                activeCategory === key
-                  ? 'bg-[#C91D1D] text-white shadow-md'
-                  : 'bg-white text-[#000000] border border-[#DCDCDC] hover:border-[#C91D1D]'
-              }`}
-            >
-              {t(`favorites.categories.${key}`)}
-            </button>
-          ))}
-        </div>
+        {/* 2. Interactive Category Filter Pills.
+            The red fill is one shared element that slides between pills rather
+            than six fills switching on and off, so the eye can follow the
+            selection to its new home. */}
+        <Reveal y={24} delay={0.08} className="flex items-center gap-2 overflow-x-auto pb-4 mb-4 scrollbar-none">
+          {categories.map((key) => {
+            const isActive = activeCategory === key;
+            return (
+              <button
+                key={key}
+                onClick={() => setActiveCategory(key)}
+                className={`relative px-4 py-1.5 text-xs font-mono font-bold tracking-wider uppercase transition-colors whitespace-nowrap cursor-pointer rounded-lg ${
+                  isActive
+                    ? 'text-white'
+                    : 'bg-white text-[#000000] border border-[#DCDCDC] hover:border-[#C91D1D]'
+                }`}
+              >
+                {isActive && (
+                  reduced ? (
+                    <span className="absolute inset-0 bg-[#C91D1D] rounded-lg shadow-md" />
+                  ) : (
+                    <motion.span
+                      layoutId="favorites-active-pill"
+                      className="absolute inset-0 bg-[#C91D1D] rounded-lg shadow-md"
+                      transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+                    />
+                  )
+                )}
+                <span className="relative z-10">{t(`favorites.categories.${key}`)}</span>
+              </button>
+            );
+          })}
+        </Reveal>
 
         {/* 3. Main Framed Carousel Container with Spotlight Tracking */}
-        <div className="relative border-2 border-[#C91D1D] bg-white shadow-xl overflow-hidden rounded-2xl">
-          
-          <div 
+        <Reveal y={40} delay={0.16} className="relative border-2 border-[#C91D1D] bg-white shadow-xl overflow-hidden rounded-2xl">
+
+          {/* The dividing rules moved from `divide-x` onto the cards themselves.
+              `divide-x` styles every child but the first, and which card is
+              first changes mid-filter while a card is still animating out. */}
+          <div
             ref={scrollRef}
-            className="flex overflow-x-auto scrollbar-none divide-x-2 divide-[#C91D1D] scroll-smooth"
+            className="flex overflow-x-auto scrollbar-none scroll-smooth"
           >
             {loading ? <div role="status" aria-label={t('common.loading')} className="p-5">
                 {slow && (
@@ -262,17 +292,39 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
               </div>
               : error ? <div role="alert" className="p-6 text-red-900"><p>{t('favorites.loadError')}</p><button onClick={retry} className="mt-3 px-4 py-2 rounded-lg bg-[#042509] text-white hover:bg-[#021505]">{t('common.retry')}</button></div>
               : !filteredProducts.length ? <div className="m-5 p-6 border border-dashed border-[#DCDCDC] rounded-xl"><ShoppingBag aria-hidden="true" /><p className="my-3">{t('favorites.emptyCategory')}</p><button onClick={onExploreCatalog} className="px-4 py-2 rounded-lg bg-[#042509] text-white hover:bg-[#021505]">{t('favorites.viewAll')}</button></div>
-              : filteredProducts.map((item) => (
-              <StreetFavoriteCard 
-                key={item.id} 
-                item={item} 
-                onAddToCart={onAddToCart}
-                onQuickView={onQuickView}
-              />
-            ))}
+              : (
+              /* Changing category reorders one shared set of cards instead of
+                 tearing the rail down and building a new one: what survives the
+                 filter slides to its new slot, what leaves scales away, and what
+                 arrives fades in behind it. `popLayout` takes the leaving cards
+                 out of flow first, so the survivors move exactly once. */
+              <AnimatePresence mode="popLayout" initial={false}>
+                {filteredProducts.map((item) => (
+                  <motion.div
+                    key={item.id}
+                    layout={!reduced}
+                    initial={{ opacity: 0, scale: reduced ? 1 : 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: reduced ? 1 : 0.9 }}
+                    transition={{
+                      duration: 0.35,
+                      ease: EASE,
+                      layout: { type: 'spring', stiffness: 340, damping: 34 },
+                    }}
+                    className="shrink-0 border-r-2 border-[#C91D1D] last:border-r-0"
+                  >
+                    <StreetFavoriteCard
+                      item={item}
+                      onAddToCart={onAddToCart}
+                      onQuickView={onQuickView}
+                    />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            )}
           </div>
 
-        </div>
+        </Reveal>
 
       </div>
     </section>
