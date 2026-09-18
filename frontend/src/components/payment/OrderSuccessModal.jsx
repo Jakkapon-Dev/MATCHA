@@ -45,10 +45,10 @@ export default function OrderSuccessModal({
 
           <div>
             <h2 className="text-2xl font-bold text-[#0A0A0A] tracking-tight">
-              Order Confirmed
+              {t('checkout.orderConfirmed')}
             </h2>
             <p className="text-xs font-mono text-[#666666] mt-1">
-              Thank you, {formData?.firstName || 'Collector'}. Your order #{activeOrderId} is placed.
+              {t('checkout.orderThanks', { name: formData?.firstName || '', ref: `#${activeOrderId}` })}
             </p>
           </div>
         </div>
@@ -78,7 +78,7 @@ export default function OrderSuccessModal({
           </div>
 
           <div className="text-[10px] text-[#666666] pt-1">
-            Date: {currentDateTime}
+            {t('checkout.orderDate')}: {currentDateTime}
           </div>
         </div>
 

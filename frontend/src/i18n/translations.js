@@ -59,6 +59,10 @@ export const translations = {
 
     checkout: {
       stepBag: 'Bag',
+      orderConfirmed: 'Order confirmed',
+      orderThanks: 'Thank you, {name}. Order {ref} is placed.',
+      orderDate: 'Placed',
+      placeOrder: 'Place order ({amount})',
       phFirst: 'Your first name',
       phLast: 'Your last name',
       phEmail: 'you@example.com',
@@ -496,6 +500,10 @@ export const translations = {
 
     checkout: {
       stepBag: 'ตะกร้า',
+      orderConfirmed: 'สั่งซื้อสำเร็จ',
+      orderThanks: 'ขอบคุณ {name} คำสั่งซื้อ {ref} เรียบร้อยแล้ว',
+      orderDate: 'สั่งเมื่อ',
+      placeOrder: 'ยืนยันคำสั่งซื้อ ({amount})',
       phFirst: 'ชื่อของคุณ',
       phLast: 'นามสกุลของคุณ',
       phEmail: 'you@example.com',

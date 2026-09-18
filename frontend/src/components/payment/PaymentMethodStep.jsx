@@ -330,7 +330,7 @@ export default function PaymentMethodStep({
               <span>{t('checkout.processing')}</span>
             </span>
           ) : (
-            <span>Place order (${totalAmount.toFixed(2)})</span>
+            <span>{t('checkout.placeOrder', { amount: `$${totalAmount.toFixed(2)}` })}</span>
           )}
         </button>
       </div>

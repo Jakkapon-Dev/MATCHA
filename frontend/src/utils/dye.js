@@ -132,3 +132,67 @@ export function variantForDye(product, dye) {
   if (!dye || dye === 'ALL') return variants[0] || null;
   return variants.find((v) => v?.color === dye) || variants[0] || null;
 }
+
+/* Which of the archive's dyes suit a personal-colour season.
+
+   The colour lab used to answer with a hand-written palette — Peach Coral,
+   Soft Turquoise, Matcha Sage — none of which the shop dyes. A page called
+   "find your colour" that ends on six colours nobody can buy is a dead end,
+   so the answer is drawn from the same 27 dyes the catalogue is built from.
+
+   Two axes decide it, which is what personal-colour theory already uses:
+
+   - Undertone. Whether a dye leans yellow or blue is the red-versus-blue
+     channel comparison, the same test as looking at the veins in a wrist.
+   - Depth. How light the dye sits, which separates Spring from Autumn on the
+     warm side and Summer from Winter on the cool side.
+
+   Neutrals carry almost no undertone, so they belong to whichever depth they
+   match rather than to one temperature. */
+
+const DEPTH_MIDPOINT = 0.5;
+
+/* Warmth, decided by two signals rather than one.
+
+   A warm dye falls away evenly from red through green to blue — Brown
+   (92, 64, 51), Caramel, Mustard, Coral all share that ramp. Magentas break
+   it by carrying more blue than green, which is what makes them read cool:
+   Fuchsia is (194, 24, 91).
+
+   That alone would misfile the deep warm reds, which are also red-blue-green
+   in order: Crimson is (128, 0, 32). They are separated by how much blue is
+   actually present — a quarter of the red in Crimson against nearly half in
+   Fuchsia — so a dye off the ramp is still warm while its blue stays low. */
+const LOW_BLUE = 0.35;
+
+export function seasonFits(hex, season) {
+  const rgb = toRgb(hex);
+  if (!rgb) return false;
+  const { chroma, light } = hueOf(hex);
+
+  const isLight = light >= DEPTH_MIDPOINT;
+  const neutral = chroma < NEUTRAL;
+  const [red, green, blue] = rgb;
+
+  /* Warmth is a yellow lean, and yellow is red and green together — so a warm
+     dye keeps blue under green, and keeps red above blue so a blue-green does
+     not slip through. Olive (85, 107, 47) passes both, Teal (0, 121, 107)
+     fails the second, and Peach stays warm where a ratio against the strongest
+     channel had called it cool for being pale. */
+  const leansYellow = blue < green && red >= blue;
+
+  // Deep reds sit off that pattern — Crimson is (128, 0, 32), its green gone —
+  // but stay warm while almost no blue is present.
+  const warm = leansYellow || blue <= red * LOW_BLUE;
+
+  if (neutral) return isLight ? season === 'Spring' || season === 'Summer'
+                              : season === 'Autumn' || season === 'Winter';
+
+  if (warm) return isLight ? season === 'Spring' : season === 'Autumn';
+  return isLight ? season === 'Summer' : season === 'Winter';
+}
+
+/** The archive's dyes for one season, hue-ordered, with their real counts. */
+export function dyesForSeason(dyes, season) {
+  return (dyes || []).filter((dye) => seasonFits(dye.hex, season));
+}

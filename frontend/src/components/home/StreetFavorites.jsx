@@ -30,13 +30,17 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
   const sizeList = Array.isArray(item?.sizes) ? item.sizes.filter(Boolean) : [];
   const needsSizeChoice = sizeList.length !== 1;
 
-  // Normalize single-image products into the same variant shape used by swatches.
+  /* Normalize single-image products into the same variant shape used by
+     swatches. A garment whose colour was never recorded is left without one:
+     the fallback here used to be the brand's own red, which put a colour on
+     the bar that no dye vat ever mixed and that a customer would reasonably
+     read as the garment's real shade. */
   const variants = item?.variants && item.variants.length > 0
     ? item.variants
     : [
         {
-          color: item?.color || t('favorites.signatureTone'),
-          colorHex: item?.colorHex || '#C91D1D',
+          color: item?.color || null,
+          colorHex: item?.colorHex || null,
           image: item?.image
         }
       ];
@@ -55,7 +59,7 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
     }, 150);
   };
 
-  const hex = activeVariant?.colorHex || '#DCDCDC';
+  const hex = activeVariant?.colorHex || null;
   const openQuickView = () =>
     onQuickView && onQuickView({ ...item, initialVariant: activeVariant, activeImage: activeVariant.image });
 
@@ -76,7 +80,7 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
           896x1200, so a square frame scaled each one down to fit its height
           and left a band of empty wash down both sides; at 320 wide that was
           40px of nothing on each edge with the garment shrunk to match. */}
-      <div className="relative aspect-3/4 overflow-hidden" style={{ backgroundColor: wash(hex) }}>
+      <div className="relative aspect-3/4 overflow-hidden" style={{ backgroundColor: hex ? wash(hex) : '#E4E4E4' }}>
         <img
           src={webpSrc(activeVariant.image)} data-original-src={activeVariant.image}
           alt={`${item.name} - ${activeVariant.color}`}
@@ -125,13 +129,13 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
       <div
         className="flex items-center justify-between gap-2 px-3 py-1"
         style={{
-          backgroundColor: hex,
-          color: inkOn(hex),
-          boxShadow: needsEdge(hex) ? 'inset 0 0 0 1px #DCDCDC' : undefined,
+          backgroundColor: hex || '#F1F1F1',
+          color: hex ? inkOn(hex) : '#666666',
+          boxShadow: !hex || needsEdge(hex) ? 'inset 0 0 0 1px #DCDCDC' : undefined,
         }}
       >
         <span className="font-mono text-[10px] uppercase tracking-wider truncate">
-          {activeVariant.color}
+          {activeVariant.color || t('favorites.signatureTone')}
         </span>
         <span className="font-mono text-[10px] tabular-nums shrink-0">
           ${typeof item.price === 'number' ? item.price.toFixed(2) : item.price}
@@ -159,8 +163,8 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
                     isSelected ? 'ring-2 ring-[#0A0A0A] ring-offset-1' : 'opacity-80 hover:opacity-100'
                   }`}
                   style={{
-                    backgroundColor: v.colorHex,
-                    boxShadow: needsEdge(v.colorHex) ? 'inset 0 0 0 1px #DCDCDC' : undefined,
+                    backgroundColor: v.colorHex || '#F1F1F1',
+                    boxShadow: !v.colorHex || needsEdge(v.colorHex) ? 'inset 0 0 0 1px #DCDCDC' : undefined,
                   }}
                 />
               );
