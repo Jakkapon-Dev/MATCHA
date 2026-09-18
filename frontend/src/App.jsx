@@ -29,6 +29,7 @@ import { ToastProvider, useToast } from './context/ToastContext.jsx';
 import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import { CartProvider, useCart } from './context/CartContext.jsx';
 import { StoreModeProvider } from './context/StoreModeContext.jsx';
+import { LanguageProvider } from './context/LanguageContext.jsx';
 
 // ความสูงคงที่ระหว่างรอ chunk เพื่อไม่ให้หน้ากระตุกตอนหน้าใหม่มาถึง
 function PageSkeleton() {
@@ -213,16 +214,9 @@ function AppContent() {
   };
 
   const handleSelectFit = (fit) => {
-    const cat = fit.category || '';
-    if (cat.toLowerCase().includes('tank') || cat.toLowerCase().includes('tee') || cat.toLowerCase().includes('sweat')) {
-      setCatalogCategory('Tops');
-    } else if (cat.toLowerCase().includes('denim') || cat.toLowerCase().includes('bottom') || cat.toLowerCase().includes('suit')) {
-      setCatalogCategory('Bottoms');
-    } else if (cat.toLowerCase().includes('outerwear')) {
-      setCatalogCategory('Outerwear');
-    } else {
-      setCatalogCategory('ALL');
-    }
+    // Fit cards carry their catalog target as data. Matching on the label would break
+    // the moment the label is translated, so the label is never read here.
+    setCatalogCategory(fit.catalogCategory || 'ALL');
     navigate('/catalog');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -405,12 +399,14 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ToastProvider>
-      <StoreModeProvider><AuthProvider>
-        <CartProvider>
-          <AppContent />
-        </CartProvider>
-      </AuthProvider></StoreModeProvider>
-    </ToastProvider>
+    <LanguageProvider>
+      <ToastProvider>
+        <StoreModeProvider><AuthProvider>
+          <CartProvider>
+            <AppContent />
+          </CartProvider>
+        </AuthProvider></StoreModeProvider>
+      </ToastProvider>
+    </LanguageProvider>
   );
 }

@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Sparkles, ShieldCheck, ArrowRight, CreditCard, CheckCircle2 } from 'lucide-react';
 import BorderBeam from '../ui/BorderBeam';
 import { useToast } from '../../context/ToastContext.jsx';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function JoinDropList({ onSubscribe }) {
+  const { t } = useLanguage();
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
   const { showToast } = useToast();
@@ -24,7 +26,7 @@ export default function JoinDropList({ onSubscribe }) {
     }
     // Switch to the success panel immediately, then let the parent persist the address.
     setSubscribed(true);
-    showToast('คุณได้เข้าร่วม VIP Drop List เรียบร้อยแล้ว (บันทึกในเครื่อง) ✨', 'success');
+    showToast(t('drop.toast'), 'success');
     if (onSubscribe) onSubscribe(email);
   };
 
@@ -55,7 +57,7 @@ export default function JoinDropList({ onSubscribe }) {
                   </span>
                 </div>
                 <span className="px-2.5 py-0.5 rounded-full bg-[#C91D1D] text-[9px] font-mono font-bold tracking-widest text-white uppercase shadow-sm">
-                  15% OFF PASS
+                  {t('drop.vipPass')}
                 </span>
               </div>
 
@@ -65,18 +67,18 @@ export default function JoinDropList({ onSubscribe }) {
                   <div className="w-5 h-4 border border-amber-600/40 rounded-xs" />
                 </div>
                 <span className="text-[10px] font-mono tracking-widest text-[#518F5C] opacity-80">
-                  NFC ENABLED // 2026
+                  {t('drop.nfc')}
                 </span>
               </div>
 
               {/* Cardholder & Pass Details */}
               <div className="mt-5 pt-3 border-t border-white/10 flex items-center justify-between font-mono text-[10px] text-[#518F5C] relative z-10">
                 <div>
-                  <span className="block text-[8px] text-[#666666] uppercase">Member Access</span>
-                  <span className="font-bold text-white tracking-wider">MATCHA COLLECTIVE</span>
+                  <span className="block text-[8px] text-[#666666] uppercase">{t('drop.memberAccess')}</span>
+                  <span className="font-bold text-white tracking-wider">{t('drop.memberName')}</span>
                 </div>
                 <div className="text-right">
-                  <span className="block text-[8px] text-[#666666] uppercase">Promo Code</span>
+                  <span className="block text-[8px] text-[#666666] uppercase">{t('drop.promoLabel')}</span>
                   <span className="font-bold text-[#C91D1D] tracking-wider">MATCHA15</span>
                 </div>
               </div>
@@ -84,7 +86,7 @@ export default function JoinDropList({ onSubscribe }) {
             </div>
             
             <p className="mt-3 text-[11px] font-mono text-[#666666] text-center">
-              ✦ Unlock instant 15% discount + private early drop notifications
+              {t('drop.cardNote')}
             </p>
           </div>
 
@@ -92,23 +94,23 @@ export default function JoinDropList({ onSubscribe }) {
           <div className="lg:col-span-7 flex flex-col justify-center">
             
             <span className="text-xs font-mono font-bold text-[#C91D1D] tracking-widest uppercase mb-2">
-              ✦ PRIVATE INSIDER ACCESS
+              {t('drop.insider')}
             </span>
             
             <h2 className="text-3xl sm:text-5xl font-black text-[#000000] uppercase tracking-tight font-sans leading-none">
-              JOIN THE DROP LIST
+              {t('drop.title')}
             </h2>
             
             <p className="text-xs sm:text-sm text-[#666666] mt-3 leading-relaxed font-sans font-medium">
-              Receive secret lookbook drops, limited archive releases, and custom personal color formulas delivered directly to your inbox.
+              {t('drop.description')}
             </p>
 
             {subscribed ? (
               <div className="mt-6 p-4 bg-[#518F5C]/50 border border-[#042509] rounded-xl flex items-center gap-3 animate-scale-up">
                 <CheckCircle2 size={24} className="text-[#042509] shrink-0" />
                 <div>
-                  <h4 className="text-sm font-bold text-[#000000]">You're officially on the VIP Drop List!</h4>
-                  <p className="text-xs text-[#666666] font-mono mt-0.5">Use code <strong>MATCHA15</strong> at checkout for 15% off.</p>
+                  <h4 className="text-sm font-bold text-[#000000]">{t('drop.successTitle')}</h4>
+                  <p className="text-xs text-[#666666] font-mono mt-0.5">{t('drop.successBodyPrefix')} <strong>MATCHA15</strong> {t('drop.successBody')}</p>
                 </div>
               </div>
             ) : (
@@ -116,7 +118,7 @@ export default function JoinDropList({ onSubscribe }) {
                 <input
                   type="email"
                   required
-                  placeholder="Enter your email address..."
+                  placeholder={t('drop.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="flex-1 px-4 py-3 bg-[#F1F1F1] border border-[#DCDCDC] text-xs sm:text-sm text-[#000000] focus:outline-hidden focus:ring-2 focus:ring-[#C91D1D] font-mono transition-colors"
@@ -125,7 +127,7 @@ export default function JoinDropList({ onSubscribe }) {
                   type="submit"
                   className="px-8 py-3 bg-[#C91D1D] hover:bg-[#A81515] text-white font-sans font-bold text-xs uppercase tracking-widest transition-all shadow-md active:scale-95 cursor-pointer whitespace-nowrap flex items-center justify-center gap-2"
                 >
-                  <span>GET VIP ACCESS</span>
+                  <span>{t('drop.cta')}</span>
                   <ArrowRight size={14} />
                 </button>
               </form>
@@ -133,7 +135,7 @@ export default function JoinDropList({ onSubscribe }) {
 
             <div className="mt-4 flex items-center gap-2 text-[10px] font-mono text-[#666666]">
               <ShieldCheck size={13} className="text-[#042509]" />
-              <span>NO SPAM EVER. ONLY EXCLUSIVE DROPS & LOOKBOOKS.</span>
+              <span>{t('drop.noSpam')}</span>
             </div>
 
           </div>

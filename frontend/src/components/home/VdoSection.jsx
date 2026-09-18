@@ -1,7 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { Sparkles, ArrowRight } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function VdoSection({ onClaimPromo }) {
+  const { t } = useLanguage();
   // Remote video is a fallback: the browser tries the local lookbook source first.
   const videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-stylish-model-posing-outdoors-in-the-city-41222-large.mp4";
 
@@ -76,11 +78,11 @@ export default function VdoSection({ onClaimPromo }) {
         {/* Left Side: Editorial Cinematic Title */}
         <div className="max-w-xl text-center lg:text-left">
           <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-[#F1F1F1] tracking-tight uppercase leading-[0.95] drop-shadow-xl">
-            MOVEMENT <br />
-            <span className="text-[#518F5C] font-light">& EXPRESSION</span>
+            {t('video.titleTop')} <br />
+            <span className="text-[#518F5C] font-light">{t('video.titleBottom')}</span>
           </h2>
           <p className="mt-6 text-xs sm:text-sm text-neutral-300 font-mono max-w-md leading-relaxed drop-shadow">
-            Experience our organic Japanese cotton textures in real-world motion. Engineered for unrestricted movement in the modern urban landscape.
+            {t('video.description')}
           </p>
         </div>
 
@@ -90,19 +92,19 @@ export default function VdoSection({ onClaimPromo }) {
           <div className="flex items-center justify-between mb-4">
             <span className="px-3 py-1 bg-[#C91D1D] text-white text-[10px] font-bold uppercase tracking-widest rounded-full shadow-sm flex items-center gap-1.5">
               <Sparkles size={11} />
-              <span>SPECIAL PROMO</span>
+              <span>{t('video.promoBadge')}</span>
             </span>
             <span className="text-[10px] font-mono text-[#042509] font-bold bg-[#518F5C] px-2.5 py-1 rounded-md">
-              USE: MATCHA15
+              {t('video.promoCode')}
             </span>
           </div>
 
           <h3 className="text-2xl sm:text-3xl font-extrabold text-[#000000] leading-tight">
-            Buy two items get 15% off the total
+            {t('video.promoTitle')}
           </h3>
 
           <p className="text-xs text-[#666666] mt-3 leading-relaxed font-sans">
-            Mix and match any tops and bottoms from our new MatchA series to unlock your discount automatically at checkout.
+            {t('video.promoBody')}
           </p>
 
           {/* Promo behavior is owned by the parent (for example, navigation or cart rules). */}
@@ -110,7 +112,7 @@ export default function VdoSection({ onClaimPromo }) {
             onClick={handleClaim}
             className="mt-6 w-full py-4 bg-[#C91D1D] hover:bg-[#A81515] text-white font-bold font-mono text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg hover:shadow-[#C91D1D]/30 active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
           >
-            <span>Claim 15% Discount</span>
+            <span>{t('video.promoCta')}</span>
             <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
           </button>
 

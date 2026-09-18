@@ -1,20 +1,13 @@
 import React from 'react';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 /**
  * ReactVibe-inspired BrandLoop:
  * Smooth continuous infinite ticker with edge mask fade.
  */
 export default function BrandLoop() {
-  const items = [
-    '✦ MATCHA APPAREL',
-    'TOKYO // PARIS',
-    '✦ ARTISAN STREETWEAR',
-    'LIMITED DROP 2026',
-    '✦ ORGANIC JAPANESE COTTON',
-    'PERSONAL COLOR FORMULAS',
-    '✦ 100% SUSTAINABLE TEXTURES',
-    'HAUTE ARCHIVE PIECES',
-  ];
+  const { t } = useLanguage();
+  const items = t('loop');
 
   return (
     <div className="relative w-full overflow-hidden bg-[#000000] py-4 border-y border-[#3D312A] select-none">

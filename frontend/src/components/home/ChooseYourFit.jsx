@@ -1,38 +1,39 @@
 import React, { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { webpSrc, handleImageError } from '../../utils/imageFallback';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function ChooseYourFit({ onSelectFit }) {
+  const { t } = useLanguage();
   // Hover state controls the raised card and its overlay; selection is delegated to
   // the parent so it can translate a fit card into catalog navigation/filtering.
   const [hoveredCard, setHoveredCard] = useState(null);
 
   // 6 Uniform Large Fit Cards spread widely across the left and right quadrants (ZERO overlap)
+  // `code` keys the translated category/count copy; `catalogCategory` is the catalog
+  // filter this card opens, kept as data so it survives translation.
   const fitItems = [
     // --- ฝั่งซ้าย (3 ใบ) ---
     {
       id: 1,
-      category: "Tanks & Polos",
-      count: "34 Items",
       code: "FIT-01",
+      catalogCategory: "Tops",
       image:
         "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_coral_polo_shirt_001.jpeg",
       positionClass: "top-[8%] left-[4%]",
     },
     {
       id: 2,
-      category: "Oversized Tees",
-      count: "82 Tees",
       code: "FIT-02",
+      catalogCategory: "Tops",
       image:
         "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_striped_tee_001.jpg",
       positionClass: "top-[40%] left-[12%]",
     },
     {
       id: 3,
-      category: "Baggy Denim",
-      count: "58 Fits",
       code: "FIT-03",
+      catalogCategory: "Bottoms",
       image:
         "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_minimal_tee_001.jpg",
       positionClass: "bottom-[6%] left-[20%]",
@@ -41,27 +42,24 @@ export default function ChooseYourFit({ onSelectFit }) {
     // --- ฝั่งขวา (3 ใบ) ---
     {
       id: 4,
-      category: "Statement Sweats",
-      count: "46 Looks",
       code: "FIT-04",
+      catalogCategory: "Tops",
       image:
         "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_crew_001.jpg",
       positionClass: "top-[8%] right-[4%]",
     },
     {
       id: 5,
-      category: "Tailored Suits",
-      count: "29 Tailored",
       code: "FIT-05",
+      catalogCategory: "Bottoms",
       image:
         "/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_green_suit_001.jpeg",
       positionClass: "top-[40%] right-[12%]",
     },
     {
       id: 6,
-      category: "Utility Outerwear",
-      count: "64 Bottoms",
       code: "FIT-06",
+      catalogCategory: "Outerwear",
       image:
         "/images/studio_white_bg/standing_straight/autumn/studio_straight_autumn_matcha_hoodie_terracotta_001.jpg",
       positionClass: "bottom-[6%] right-[20%]",
@@ -78,7 +76,7 @@ export default function ChooseYourFit({ onSelectFit }) {
           onError={handleImageError}
           loading="lazy"
           decoding="async"
-          alt="MatchA Choose Your Fit"
+          alt={t('fit.bannerAlt')}
           className="w-full h-full object-contain object-center opacity-100"
         />
       </div>
@@ -87,11 +85,11 @@ export default function ChooseYourFit({ onSelectFit }) {
       <div className="absolute top-12 left-[24%] z-30 pointer-events-none">
         <div className="bg-[#000000] px-5 py-2 sm:px-8 sm:py-2.5 text-base sm:text-2xl lg:text-3xl font-extrabold font-sans tracking-tight uppercase shadow-xl inline-block border-l-4 border-[#C91D1D]">
           <span className="animate-text-shimmer-light inline-block">
-            Choose Your Fit
+            {t('fit.title')}
           </span>
         </div>
         <p className="text-[10px] sm:text-xs font-mono text-[#C91D1D] tracking-[0.25em] uppercase mt-1.5 font-bold">
-          SIGNATURE SILHOUETTES & FIT GUIDE
+          {t('fit.subtitle')}
         </p>
       </div>
 
@@ -100,6 +98,7 @@ export default function ChooseYourFit({ onSelectFit }) {
         {fitItems.map((item, index) => {
           // Only one card can receive the elevated hover treatment at a time.
           const isHovered = hoveredCard === item.id;
+          const copy = t(`fit.items.${item.code}`);
 
           return (
             <div
@@ -118,7 +117,7 @@ export default function ChooseYourFit({ onSelectFit }) {
               {/* Outfit Photo */}
               <img
                 src={webpSrc(item.image)} data-original-src={item.image}
-                alt={item.category}
+                alt={copy.category}
                 className="w-full h-full object-cover object-top transition-transform duration-500"
               />
 
@@ -129,13 +128,13 @@ export default function ChooseYourFit({ onSelectFit }) {
                 }`}
               >
                 <span className="text-[10px] sm:text-xs font-mono text-[#518F5C] tracking-wider uppercase font-bold">
-                  {item.count}
+                  {copy.count}
                 </span>
                 <h4 className="text-xs sm:text-base font-extrabold text-[#F1F1F1] uppercase tracking-tight mt-1 leading-tight">
-                  {item.category}
+                  {copy.category}
                 </h4>
                 <span className="mt-2.5 inline-flex items-center gap-1 text-[10px] font-mono text-white font-bold uppercase bg-[#C91D1D] hover:bg-[#A81515] px-3 py-1 rounded shadow-sm transition-colors">
-                  <span>Explore Fit</span>
+                  <span>{t('fit.explore')}</span>
                   <ArrowUpRight size={11} />
                 </span>
               </div>

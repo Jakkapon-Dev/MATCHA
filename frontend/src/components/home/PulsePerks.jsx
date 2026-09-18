@@ -1,33 +1,22 @@
 import React, { useState, useRef } from 'react';
 import { Sparkles, Zap, RotateCcw, ShieldCheck } from 'lucide-react';
 import { webpSrc, handleImageError } from '../../utils/imageFallback';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function PulsePerks() {
+  const { t } = useLanguage();
   // Rotation is stored in degrees and initialized to a readable resting perspective.
   const [rotate, setRotate] = useState({ x: 4, y: -18 });
   const [isHovered, setIsHovered] = useState(false);
   const cardRef = useRef(null);
 
-  const perks = [
-    {
-      num: '01.',
-      title: 'LIGHTNING FAST SHIPPING',
-      desc: 'Get your drip in 48 hours (because the streets won\'t wait to flex).',
-      icon: Zap,
-    },
-    {
-      num: '02.',
-      title: 'EASY STORE CREDIT EXCHANGES',
-      desc: 'Wrong size? Swap it fast and keep your fit game flawless.',
-      icon: RotateCcw,
-    },
-    {
-      num: '03.',
-      title: 'SECURE CHECKOUT PROTECTION',
-      desc: 'Encrypted checkout shields every drop. Shop safe, stay unstoppable.',
-      icon: ShieldCheck,
-    }
-  ];
+  // Numbering and icons stay here; the wording comes from the dictionary in order.
+  const perkIcons = [Zap, RotateCcw, ShieldCheck];
+  const perks = t('perks.items').map((perk, i) => ({
+    ...perk,
+    num: `0${i + 1}.`,
+    icon: perkIcons[i],
+  }));
 
   // Interactive 3D Card Rotation based on Mouse Movement
   const handleMouseMove = (e) => {
@@ -83,7 +72,7 @@ export default function PulsePerks() {
         {/* 1. Header Title */}
         <div className="mb-10">
           <h2 className="text-4xl sm:text-6xl font-black text-[#C91D1D] tracking-tight font-sans">
-            The Pulse Perks
+            {t('perks.title')}
           </h2>
         </div>
 
@@ -120,7 +109,7 @@ export default function PulsePerks() {
                 onError={handleImageError}
                 loading="lazy"
                 decoding="async"
-                alt="MatchA Seated Lookbook Model"
+                alt={t('perks.modelAlt')}
                 className="w-full h-full object-cover rounded-none border border-white/80 shadow-2xl"
               />
 
@@ -136,7 +125,7 @@ export default function PulsePerks() {
                 style={{ transform: 'translateZ(35px)' }}
               >
                 <Sparkles size={12} className="text-[#518F5C]" />
-                <span>3D LOOKBOOK</span>
+                <span>{t('perks.badge')}</span>
               </div>
 
               {/* Interactive Rotate Hint */}
@@ -146,7 +135,7 @@ export default function PulsePerks() {
               >
                 {/* การ์ดหมุนได้ทั้งด้วยเมาส์และการลากนิ้ว ข้อความจึงต้องไม่สั่งให้ใช้เมาส์
                     อย่างเดียว ไม่งั้นคนเปิดจากมือถือจะเห็นคำสั่งที่ทำตามไม่ได้ */}
-                <span>↻ MOVE OR DRAG TO ROTATE</span>
+                <span>{t('perks.rotateHint')}</span>
               </div>
             </div>
           </div>

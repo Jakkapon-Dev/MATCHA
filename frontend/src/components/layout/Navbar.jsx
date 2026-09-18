@@ -11,6 +11,8 @@ import {
   Loader2
 } from 'lucide-react';
 import { BorderBeam } from '../ui/BorderBeam';
+import LanguageToggle from '../ui/LanguageToggle';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function Navbar({
   cartCount = 0,
@@ -21,6 +23,7 @@ export default function Navbar({
   onNavigate = () => { },
   onGoToLanding = () => { }
 }) {
+  const { t } = useLanguage();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartAnimated, setCartAnimated] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
@@ -35,9 +38,9 @@ export default function Navbar({
   }, [cartCount]);
 
   const navLinks = [
-    { label: 'Color Lab', href: '/personal-color' },
-    { label: 'Catalog', href: '/catalog' },
-    { label: 'Lookbook', href: '/lookbook' },
+    { id: 'colorLab', href: '/personal-color' },
+    { id: 'catalog', href: '/catalog' },
+    { id: 'lookbook', href: '/lookbook' },
   ];
 
   const handleLinkClick = (href) => {
@@ -67,14 +70,14 @@ export default function Navbar({
           <div className="bg-[#518F5C] text-[#042509] text-[11px] py-1.5 px-4 font-mono font-bold flex items-center justify-between gap-2 shadow-inner border-b border-[#042509]/20">
             <div className="flex items-center gap-2 mx-auto sm:mx-0">
               <span className="text-sm">🧪</span>
-              <span>DEMO SESSION — โหมดสาธิตสำหรับการนำเสนอ (ไม่ได้เชื่อมต่อฐานข้อมูลจริง)</span>
+              <span>{t('nav.demoBanner')}</span>
             </div>
             <button
               type="button"
               onClick={handleLogoutClick}
               className="underline hover:text-black shrink-0 text-[10px] uppercase tracking-wider bg-white/40 hover:bg-white/60 px-2 py-0.5 rounded cursor-pointer transition-all"
             >
-              [ออกจากโหมดสาธิต]
+              {t('nav.demoExit')}
             </button>
           </div>
         )}
@@ -82,9 +85,9 @@ export default function Navbar({
         {/* 1. Top Announcement Bar - Sleek Monochrome with Red Sparkle */}
         <div className="bg-[#000000] text-[#F1F1F1] text-[11px] py-1.5 px-4 text-center font-mono flex items-center justify-center gap-2">
           <span className="text-[#C91D1D]">✦</span>
-          <span>FREE EXPRESS SHIPPING ON ORDERS OVER $100</span>
+          <span>{t('nav.shippingPromo')}</span>
           <span className="text-[#C91D1D] hidden sm:inline">✦</span>
-          <span className="hidden sm:inline text-[#F1F1F1]/70">ECO TEA-DYE CAPSULE NOW LIVE</span>
+          <span className="hidden sm:inline text-[#F1F1F1]/70">{t('nav.capsulePromo')}</span>
         </div>
 
         {/* 2. Main Navigation Bar */}
@@ -95,7 +98,7 @@ export default function Navbar({
             <button
               onClick={onGoToLanding}
               className="flex flex-col justify-center group cursor-pointer text-left py-1"
-              aria-label="MatchA Home"
+              aria-label={t('nav.homeAria')}
             >
               <img 
                 src="/images/brand/matcha-logo-primary.png" 
@@ -103,7 +106,7 @@ export default function Navbar({
                 className="h-8 sm:h-9 w-auto object-contain object-left group-hover:scale-[1.02] transition-transform duration-200" 
               />
               <span className="block text-[9px] font-mono tracking-[0.22em] text-[#666666] uppercase mt-0.5 group-hover:text-[#000000] transition-colors">
-                Artisan Color Archive
+                {t('nav.tagline')}
               </span>
             </button>
           </div>
@@ -115,14 +118,14 @@ export default function Navbar({
 
               return (
                 <a
-                  key={link.label}
+                  key={link.id}
                   href={link.href}
                   onClick={(e) => { e.preventDefault(); handleLinkClick(link.href); }}
                   className={`text-xs font-semibold tracking-wider uppercase font-mono transition-colors relative py-1 ${
                     isActive ? 'text-[#000000] font-bold' : 'text-[#000000]/80 hover:text-[#000000]'
                   }`}
                 >
-                  {link.label}
+                  {t(`nav.links.${link.id}`)}
                   {isActive && (
                     <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#000000] rounded-full" />
                   )}
@@ -144,10 +147,13 @@ export default function Navbar({
               <span className="relative z-10">MIX@MATCH</span>
             </button>
 
+            {/* Language Switch: EN / TH */}
+            <LanguageToggle />
+
             {/* Cart Trigger Button (Black & White with Red Count Badge) */}
             <button
               onClick={onOpenCart}
-              aria-label="View Cart"
+              aria-label={t('nav.cartAria')}
               data-cart-target
               className={`relative p-2.5 rounded-xl bg-white hover:bg-[#F1F1F1] text-[#000000] border border-[#DCDCDC] transition-all cursor-pointer shadow-xs ${
                 cartAnimated ? 'animate-cart-pop ring-3 ring-[#C91D1D]' : ''
@@ -170,11 +176,11 @@ export default function Navbar({
                 <button
                   onClick={() => handleLinkClick(currentUser.role === 'Admin' ? '/admin' : '/account')}
                   className="flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-[#F1F1F1] border border-[#000000]/20 hover:border-[#000000] rounded-xl text-xs font-bold text-[#000000] transition-all cursor-pointer shadow-xs group"
-                  title={currentUser.role === 'Admin' ? 'Open Admin Command Center' : 'Go to My Account'}
+                  title={currentUser.role === 'Admin' ? t('nav.adminTitle') : t('nav.myAccountTitle')}
                 >
                   <User size={14} className="text-[#000000]" />
                   <span className="font-mono text-xs font-bold tracking-wide uppercase">
-                    {currentUser.role === 'Admin' ? '👑 Admin Dashboard' : 'My Account'}
+                    {currentUser.role === 'Admin' ? t('nav.adminDashboard') : t('nav.myAccount')}
                   </span>
                 </button>
 
@@ -182,15 +188,15 @@ export default function Navbar({
                   onClick={handleLogoutClick}
                   disabled={isLoggingOut}
                   className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-[#C91D1D] hover:bg-[#C91D1D]/10 rounded-lg transition-all cursor-pointer disabled:opacity-70 font-mono"
-                  title="Sign out of MatchA"
+                  title={t('nav.logOutTitle')}
                 >
                   {isLoggingOut ? (
                     <>
                       <Loader2 size={12} className="animate-spin text-[#C91D1D]" />
-                      <span>EXITING...</span>
+                      <span>{t('nav.exiting')}</span>
                     </>
                   ) : (
-                    <span>LOG OUT</span>
+                    <span>{t('nav.logOut')}</span>
                   )}
                 </button>
               </div>
@@ -201,14 +207,14 @@ export default function Navbar({
                   className="px-3 py-1.5 text-xs font-bold text-[#000000] hover:bg-black/5 rounded-lg transition-colors cursor-pointer flex items-center gap-1"
                 >
                   <User size={13} />
-                  <span>LOG IN</span>
+                  <span>{t('nav.logIn')}</span>
                 </button>
                 <span className="text-[#DCDCDC]">/</span>
                 <button
                   onClick={() => handleLinkClick('/signup')}
                   className="px-3.5 py-1.5 text-xs font-bold bg-[#000000] text-white hover:bg-black/80 rounded-xl transition-colors cursor-pointer shadow-xs"
                 >
-                  SIGN UP
+                  {t('nav.signUp')}
                 </button>
               </div>
             )}
@@ -217,7 +223,7 @@ export default function Navbar({
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="md:hidden p-2.5 rounded-xl bg-white text-[#000000] border border-[#DCDCDC] transition-all cursor-pointer"
-              aria-label="Toggle Menu"
+              aria-label={t('nav.menuAria')}
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
@@ -246,7 +252,7 @@ export default function Navbar({
                     </div>
                     <div>
                       <p className="text-xs font-mono font-bold text-[#000000]">{currentUser.name}</p>
-                      <p className="text-[10px] font-mono text-[#666666]">{currentUser.role === 'Admin' ? '👑 Admin Command Center' : '👤 My Account'}</p>
+                      <p className="text-[10px] font-mono text-[#666666]">{currentUser.role === 'Admin' ? t('nav.adminCenter') : t('nav.myAccountMobile')}</p>
                     </div>
                   </button>
                   <button
@@ -258,7 +264,7 @@ export default function Navbar({
                     className="text-xs font-mono font-bold text-[#C91D1D] hover:underline cursor-pointer flex items-center gap-1 disabled:opacity-60"
                   >
                     {isLoggingOut && <Loader2 size={11} className="animate-spin" />}
-                    <span>{isLoggingOut ? 'Exiting...' : 'Log Out'}</span>
+                    <span>{isLoggingOut ? t('nav.exitingMobile') : t('nav.logOutMobile')}</span>
                   </button>
                 </div>
               ) : (
@@ -268,13 +274,13 @@ export default function Navbar({
                     className="py-2 px-3 bg-white border border-[#DCDCDC] rounded-xl text-xs font-mono font-bold text-[#000000] hover:border-black flex items-center justify-center gap-1.5 shadow-xs cursor-pointer"
                   >
                     <User size={13} />
-                    <span>LOG IN</span>
+                    <span>{t('nav.logIn')}</span>
                   </button>
                   <button
                     onClick={() => { setMobileMenuOpen(false); handleLinkClick('/signup'); }}
                     className="py-2 px-3 bg-[#000000] text-white rounded-xl text-xs font-mono font-bold hover:bg-black/80 flex items-center justify-center gap-1.5 shadow-sm cursor-pointer"
                   >
-                    <span>SIGN UP</span>
+                    <span>{t('nav.signUp')}</span>
                   </button>
                 </div>
               )}
@@ -283,17 +289,17 @@ export default function Navbar({
                 onClick={() => { setMobileMenuOpen(false); onGoToLanding(); }}
                 className="text-left text-sm font-semibold text-[#000000] py-1 border-b border-[#DCDCDC]"
               >
-                <span className="text-[#C91D1D] mr-1">✦</span> RETURN TO LANDING LOOKBOOK
+                <span className="text-[#C91D1D] mr-1">✦</span> {t('nav.returnToLanding')}
               </button>
 
               {navLinks.map((link) => (
                 <a
-                  key={link.label}
+                  key={link.id}
                   href={link.href}
                   onClick={(e) => { e.preventDefault(); handleLinkClick(link.href); }}
                   className="text-sm font-semibold text-[#000000]/80 hover:text-[#000000] py-1 border-b border-[#DCDCDC]"
                 >
-                  {link.label}
+                  {t(`nav.links.${link.id}`)}
                 </a>
               ))}
             </nav>

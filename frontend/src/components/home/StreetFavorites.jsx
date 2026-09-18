@@ -4,8 +4,10 @@ import SpotlightCard from '../ui/SpotlightCard';
 import useStreetProducts from '../../hooks/useStreetProducts';
 import ProductCardSkeleton from '../ui/ProductCardSkeleton';
 import { webpSrc } from '../../utils/imageFallback';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
+  const { t } = useLanguage();
   // Products with zero or multiple sizes must open quick view for an explicit choice;
   // exactly one size can be added directly from the carousel.
   const sizeList = Array.isArray(item?.sizes) ? item.sizes.filter(Boolean) : [];
@@ -16,7 +18,7 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
     ? item.variants
     : [
         { 
-          color: item?.color || 'Signature Tone', 
+          color: item?.color || t('favorites.signatureTone'), 
           colorHex: item?.colorHex || '#C91D1D', 
           image: item?.image 
         }
@@ -75,7 +77,7 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
         {!item.inStock && (
           <div className="absolute inset-0 bg-[#000000]/60 backdrop-blur-[1px] flex items-center justify-center z-25">
             <span className="px-3 py-1 bg-white text-[#000000] text-xs font-mono font-bold uppercase tracking-wider rounded-lg shadow-md">
-              Sold Out
+              {t('favorites.soldOutBadge')}
             </span>
           </div>
         )}
@@ -140,7 +142,7 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
           }`}
         >
           {needsSizeChoice && item.inStock ? <Eye size={13} /> : <ShoppingBag size={13} />}
-          <span>{!item.inStock ? 'SOLD OUT' : needsSizeChoice ? 'SELECT SIZE' : 'ADD TO CART'}</span>
+          <span>{!item.inStock ? t('favorites.soldOut') : needsSizeChoice ? t('favorites.selectSize') : t('favorites.addToCart')}</span>
         </button>
       </div>
 
@@ -159,6 +161,7 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
 }
 
 export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCatalog }) {
+  const { t } = useLanguage();
   const scrollRef = useRef(null);
   const [activeCategory, setActiveCategory] = useState('ALL');
 
@@ -166,14 +169,8 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
   // loading, error, empty, or product-list state to render.
   const { products, loading, error, slow, retry } = useStreetProducts();
 
-  const categories = [
-    { key: 'ALL', label: 'ALL DROPS' },
-    { key: 'Tops', label: 'TOPS & KNIT' },
-    { key: 'Bottoms', label: 'BOTTOMS & DENIM' },
-    { key: 'Outerwear', label: 'OUTERWEAR' },
-    { key: 'Shoes', label: 'SHOES & FOOTWEAR' },
-    { key: 'Accessories', label: 'ACCESSORIES' },
-  ];
+  // Keys double as the product-category filter, so they stay untranslated.
+  const categories = ['ALL', 'Tops', 'Bottoms', 'Outerwear', 'Shoes', 'Accessories'];
 
   // Limit the unfiltered home carousel to 24 items; category views show every match.
   const filteredProducts = activeCategory === 'ALL' 
@@ -201,7 +198,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
         <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
             <h2 className="text-4xl sm:text-6xl font-black text-[#C91D1D] tracking-tight font-sans">
-              Street Favorites
+              {t('favorites.title')}
             </h2>
           </div>
           <div className="flex items-center gap-2">
@@ -211,19 +208,19 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
                 className="px-4 py-2 bg-[#042509] hover:bg-[#021505] text-white font-mono font-bold text-xs uppercase tracking-wider rounded-lg shadow-sm transition-all flex items-center gap-1.5 cursor-pointer mr-2"
               >
                 <Sparkles size={13} className="text-[#518F5C]" />
-                <span>VIEW FULL CATALOG{!loading && !error ? ` (${products.length})` : ''}</span>
+                <span>{t('favorites.viewCatalog')}{!loading && !error ? ` (${products.length})` : ''}</span>
               </button>
             )}
             <button
               onClick={scrollLeft}
-              aria-label="Previous Products"
+              aria-label={t('favorites.prevAria')}
               className="w-10 h-10 border-2 border-[#C91D1D] text-[#C91D1D] hover:bg-[#C91D1D] hover:text-white flex items-center justify-center transition-colors shadow-sm cursor-pointer active:scale-95 rounded-lg"
             >
               <ChevronLeft size={20} />
             </button>
             <button
               onClick={scrollRight}
-              aria-label="Next Products"
+              aria-label={t('favorites.nextAria')}
               className="w-10 h-10 border-2 border-[#C91D1D] text-[#C91D1D] hover:bg-[#C91D1D] hover:text-white flex items-center justify-center transition-colors shadow-sm cursor-pointer active:scale-95 rounded-lg"
             >
               <ChevronRight size={20} />
@@ -233,17 +230,17 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
 
         {/* 2. Interactive Category Filter Pills */}
         <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-4 scrollbar-none">
-          {categories.map((cat) => (
+          {categories.map((key) => (
             <button
-              key={cat.key}
-              onClick={() => setActiveCategory(cat.key)}
+              key={key}
+              onClick={() => setActiveCategory(key)}
               className={`px-4 py-1.5 text-xs font-mono font-bold tracking-wider uppercase transition-all whitespace-nowrap cursor-pointer rounded-lg ${
-                activeCategory === cat.key
+                activeCategory === key
                   ? 'bg-[#C91D1D] text-white shadow-md'
                   : 'bg-white text-[#000000] border border-[#DCDCDC] hover:border-[#C91D1D]'
               }`}
             >
-              {cat.label}
+              {t(`favorites.categories.${key}`)}
             </button>
           ))}
         </div>
@@ -255,16 +252,16 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
             ref={scrollRef}
             className="flex overflow-x-auto scrollbar-none divide-x-2 divide-[#C91D1D] scroll-smooth"
           >
-            {loading ? <div role="status" aria-label="กำลังโหลดสินค้า" className="p-5">
+            {loading ? <div role="status" aria-label={t('common.loading')} className="p-5">
                 {slow && (
                   <p className="mb-4 text-xs font-mono text-[#666666] leading-relaxed">
-                    ⏳ กำลังปลุกเซิร์ฟเวอร์ ครั้งแรกหลังไม่มีคนเข้าสักพักอาจใช้เวลาถึงหนึ่งนาที
+                    {t('favorites.wakingServer')}
                   </p>
                 )}
                 <div className="flex gap-4">{[0, 1, 2, 3].map(i => <div key={i} className="w-64 sm:w-72 lg:w-80 shrink-0"><ProductCardSkeleton /></div>)}</div>
               </div>
-              : error ? <div role="alert" className="p-6 text-red-900"><p>{error}</p><button onClick={retry} className="mt-3 px-4 py-2 rounded-lg bg-[#042509] text-white hover:bg-[#021505]">ลองใหม่</button></div>
-              : !filteredProducts.length ? <div className="m-5 p-6 border border-dashed border-[#DCDCDC] rounded-xl"><ShoppingBag aria-hidden="true" /><p className="my-3">ยังไม่มีสินค้าในหมวดนี้</p><button onClick={onExploreCatalog} className="px-4 py-2 rounded-lg bg-[#042509] text-white hover:bg-[#021505]">ดูสินค้าทั้งหมด</button></div>
+              : error ? <div role="alert" className="p-6 text-red-900"><p>{t('favorites.loadError')}</p><button onClick={retry} className="mt-3 px-4 py-2 rounded-lg bg-[#042509] text-white hover:bg-[#021505]">{t('common.retry')}</button></div>
+              : !filteredProducts.length ? <div className="m-5 p-6 border border-dashed border-[#DCDCDC] rounded-xl"><ShoppingBag aria-hidden="true" /><p className="my-3">{t('favorites.emptyCategory')}</p><button onClick={onExploreCatalog} className="px-4 py-2 rounded-lg bg-[#042509] text-white hover:bg-[#021505]">{t('favorites.viewAll')}</button></div>
               : filteredProducts.map((item) => (
               <StreetFavoriteCard 
                 key={item.id} 

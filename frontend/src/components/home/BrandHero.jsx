@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { webpSrc } from '../../utils/imageFallback';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function BrandHero({ onShopNow, onEnterWebsite }) {
+  const { t } = useLanguage();
 
   // Studio model references for the four independently shuffled slices.
   const models = [
@@ -90,11 +92,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
   };
 
   // Stacked badge words matching the reference design
-  const badgeLines = [
-    'FRESH CUTS AND BOLD STATEMENT',
-    'STREETWEAR DESIGNED FOR',
-    'THE ULTIMATE URBAN PLAYGROUND ☺'
-  ];
+  const badgeLines = t('hero.badges');
 
 
   const handleAction = () => {
@@ -155,11 +153,11 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
             <div 
               onClick={() => cycleSingleSlice(0)}
               className="relative w-full h-[25%] overflow-hidden border-b border-[#000000]/15 bg-neutral-100 cursor-pointer group"
-              title="Click to randomize head slice"
+              title={t('hero.sliceHead')}
             >
               <img 
                 src={webpSrc(models[sliceModels[0]].src)} data-original-src={models[sliceModels[0]].src} 
-                alt="MatchA Head Slice" 
+                alt={t('hero.altHead')} 
                 className="absolute inset-x-0 w-full h-[400%] top-0 object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
               />
             </div>
@@ -168,11 +166,11 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
             <div 
               onClick={() => cycleSingleSlice(1)}
               className="relative w-full h-[25%] overflow-hidden border-b border-[#000000]/15 bg-neutral-100 cursor-pointer group"
-              title="Click to randomize torso slice"
+              title={t('hero.sliceTorso')}
             >
               <img 
                 src={webpSrc(models[sliceModels[1]].src)} data-original-src={models[sliceModels[1]].src} 
-                alt="MatchA Torso Slice" 
+                alt={t('hero.altTorso')} 
                 className="absolute inset-x-0 w-full h-[400%] -top-full object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
               />
             </div>
@@ -181,11 +179,11 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
             <div 
               onClick={() => cycleSingleSlice(2)}
               className="relative w-full h-[25%] overflow-hidden border-b border-[#000000]/15 bg-neutral-100 cursor-pointer group"
-              title="Click to randomize pants/skirt slice"
+              title={t('hero.sliceLower')}
             >
               <img 
                 src={webpSrc(models[sliceModels[2]].src)} data-original-src={models[sliceModels[2]].src} 
-                alt="MatchA Pants/Skirt Slice" 
+                alt={t('hero.altLower')} 
                 className="absolute inset-x-0 w-full h-[400%] top-[-200%] object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
               />
             </div>
@@ -194,11 +192,11 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
             <div 
               onClick={() => cycleSingleSlice(3)}
               className="relative w-full h-[25%] overflow-hidden bg-neutral-100 cursor-pointer group"
-              title="Click to randomize footwear slice"
+              title={t('hero.sliceShoes')}
             >
               <img 
                 src={webpSrc(models[sliceModels[3]].src)} data-original-src={models[sliceModels[3]].src} 
-                alt="MatchA Footwear Slice" 
+                alt={t('hero.altShoes')} 
                 className="absolute inset-x-0 w-full h-[400%] top-[-300%] object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
               />
             </div>
@@ -217,10 +215,10 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
             className="home-hero-enter text-center md:text-left font-mono"
           >
             <p className="text-[11px] font-bold tracking-wider text-[#666666]">
-              DROP_35 &nbsp;//&nbsp; URBAN
+              {t('hero.dropCode')}
             </p>
             <p className="text-[11px] font-bold tracking-wider text-[#666666] mt-0.5">
-              CODE &nbsp;//&nbsp; LIMITED RUN
+              {t('hero.runCode')}
             </p>
           </div>
 
@@ -231,7 +229,7 @@ export default function BrandHero({ onShopNow, onEnterWebsite }) {
             onClick={handleAction}
             className="home-hero-enter w-full sm:w-auto max-w-full px-8 py-4 bg-[#C91D1D] hover:bg-[#A81515] text-white font-mono text-sm font-bold uppercase tracking-widest transition-all shadow-lg hover:shadow-[#C91D1D]/30 active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
           >
-            <span>{onEnterWebsite ? 'เข้าสู่เว็บไซต์' : 'SHOP NEW DROPS'}</span>
+            <span>{onEnterWebsite ? t('hero.enterWebsite') : t('hero.shopNow')}</span>
             <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
           </button>
 
