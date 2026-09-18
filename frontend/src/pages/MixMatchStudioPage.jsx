@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import { useNavigate } from 'react-router-dom';
 import { 
   ShoppingBag, 
@@ -32,7 +33,6 @@ const OUTFIT_PRESETS = [
     name: 'Kyoto Artisan Earth (Warm Autumn)',
     season: 'Autumn',
     harmonyType: 'Analogous Warm Palette',
-    description: 'เสื้อฮู้ดสีเอิร์ธโทน กางเกงชิโน่ บูทหนังแท้ และกระเป๋าหนังโทนอุ่น ขับเน้นเสน่ห์สาวผิว Warm Autumn',
     topId: 'AUT-TOP-009',
     bottomId: 'AUT-BOT-003',
     footwearId: 'AUT-ACC-007',
@@ -43,7 +43,6 @@ const OUTFIT_PRESETS = [
     name: 'Spring Floral Blossom (Bright Spring)',
     season: 'Spring',
     harmonyType: 'Complementary Pastel',
-    description: 'เสื้อคาร์ดิแกนสีพีช ยีนส์สว่าง สนีกเกอร์คอรัล และกระเป๋าสะพายลินิน ลุคสดใสร่าเริง Bright Spring',
     topId: 'SPR-TOP-022',
     bottomId: 'SPR-BOT-015',
     footwearId: 'SPR-ACC-020',
@@ -54,7 +53,6 @@ const OUTFIT_PRESETS = [
     name: 'Summer Coastal Breeze (Cool Summer)',
     season: 'Summer',
     harmonyType: 'Monochromatic Muted Sky',
-    description: 'เสื้อเชิ้ตซัมเมอร์สีฟ้าพาสเทล กางเกงลินิน แซนดัลเบาสบาย และหมวกสาน สุภาพผ่อนคลาย Cool Summer',
     topId: 'SUM-TOP-046',
     bottomId: 'SUM-BOT-040',
     footwearId: 'SUM-ACC-043',
@@ -65,7 +63,6 @@ const OUTFIT_PRESETS = [
     name: 'Winter Midnight Tailored (Vivid Winter)',
     season: 'Winter',
     harmonyType: 'High Contrast Dramatic',
-    description: 'โค้ทฤดูหนาวคัตติ้งเนี้ยบ กางเกงสแล็ค บูทหนังดำ และหมวกบีนนี่ ภูมิฐาน คมกริบ Vivid Winter',
     topId: 'WIN-OUT-057',
     bottomId: 'WIN-BOT-053',
     footwearId: 'WIN-ACC-055',
@@ -107,6 +104,7 @@ const PRESET_HARMONY = OUTFIT_PRESETS.reduce((acc, preset) => {
 }, {});
 
 export default function MixMatchStudioPage() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { showToast } = useToast();
@@ -224,7 +222,7 @@ export default function MixMatchStudioPage() {
   // 1-Click Add Entire Outfit to Cart
   const handleAddBundleToCart = () => {
     if (buyableItems.length === 0) {
-      showToast('ไม่สามารถเพิ่มชุดได้ เนื่องจากสินค้าทั้งหมดในเซ็ตนี้หมดสต็อกชั่วคราว', 'error');
+      showToast(t('mixMatch.allSoldOut'), 'error');
       return;
     }
 
@@ -281,8 +279,8 @@ export default function MixMatchStudioPage() {
             used to sit above the title said nothing the title does not. */}
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-3 border-b border-[#0A0A0A] font-mono text-[11px] uppercase tracking-[0.18em] text-[#666666]">
-            <span className="text-[#0A0A0A] font-bold">Head-to-Toe 4-Slot Wardrobe Canvas</span>
-            <span>{BUNDLE_DISCOUNT_PERCENT}% off the complete outfit</span>
+            <span className="text-[#0A0A0A] font-bold">{t('mixMatch.eyebrow')}</span>
+            <span>{t('mixMatch.discount', { n: BUNDLE_DISCOUNT_PERCENT })}</span>
           </div>
 
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -291,7 +289,7 @@ export default function MixMatchStudioPage() {
               Mix &amp; Match Fashion Studio
             </h1>
             <p className="text-[#666666] text-xs sm:text-sm mt-3 leading-relaxed">
-              จับคู่ลุคสมบูรณ์แบบ เสื้อ • กางเกง • รองเท้า • เครื่องประดับ พร้อมระบบคำนวณ Color Harmony ตามทฤษฎีสากล
+              {t('mixMatch.heroBody')}
             </p>
           </div>
 
@@ -301,14 +299,14 @@ export default function MixMatchStudioPage() {
               className="px-4 py-2.5  border border-[#DCDCDC] bg-white hover:bg-[#F1F1F1] text-[#000000] font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer "
             >
               <Shuffle size={14} />
-              <span>สุ่มชุดใหม่ (Shuffle)</span>
+              <span>{t('mixMatch.shuffle')}</span>
             </button>
             <button
               onClick={() => navigate('/personal-color')}
               className="px-4 py-2.5  bg-[#000000] text-[#518F5C] hover:text-white font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer "
             >
               <Palette size={14} />
-              <span>Personal Color Lab</span>
+              <span>{t('mixMatch.colorLab')}</span>
             </button>
           </div>
           </div>
@@ -319,8 +317,8 @@ export default function MixMatchStudioPage() {
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-mono font-bold uppercase text-[#666666] tracking-wider block">
               {userSeason
-                ? `ลุคแนะนำตามโทนสีผิวของคุณ (${userSeason}) 4-Piece Presets:`
-                : 'ลุคแฟชั่นยอดนิยม 4-Piece Presets:'}
+                ? t('mixMatch.presetsForYou', { season: userSeason })
+                : t('mixMatch.presetsPopular')}
             </span>
             {activePresetId && (
               <span className="text-[10px] font-mono text-[#042509] font-bold bg-[#F1F1F1] px-2.5 py-0.5 ">
@@ -362,7 +360,7 @@ export default function MixMatchStudioPage() {
                   <p className={`text-[11px] line-clamp-2 leading-relaxed transition-colors ${
                     isActive ? 'text-[#000000] font-medium' : 'text-[#666666]'
                   }`}>
-                    {preset.description}
+                    {t(`mixMatch.presets.${preset.id}`)}
                   </p>
                   {isUserSeason && (
                     <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-mono font-bold text-[#042509] bg-[#F1F1F1] px-2 py-0.5 ">
@@ -387,7 +385,7 @@ export default function MixMatchStudioPage() {
             <div className="flex items-center justify-between border-b border-[#DCDCDC]/60 pb-3">
               <div className="flex items-center gap-2">
                 <Layers size={18} className="text-[#042509]" />
-                <h3 className="font-serif text-lg font-bold text-[#000000]">Head-to-Toe Canvas</h3>
+                <h3 className="font-serif text-lg font-bold text-[#000000]">{t('mixMatch.canvas')}</h3>
               </div>
               <span className={`text-xs font-mono font-bold px-2.5 py-1  ${
                 isCompleteBundle ? 'bg-[#042509] text-white' : 'bg-[#FEE4E2] text-[#B42318]'
@@ -445,7 +443,7 @@ export default function MixMatchStudioPage() {
                       />
                       {item && !item.inStock && (
                         <div className="absolute inset-0 bg-[#F1F1F1]/70 flex items-center justify-center">
-                          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#0A0A0A]">หมดสต็อก</span>
+                          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#0A0A0A]">{t('mixMatch.soldOut')}</span>
                         </div>
                       )}
                     </div>
@@ -501,7 +499,7 @@ export default function MixMatchStudioPage() {
             {/* Color Harmony Score Metric (Computational Fashion Engine) */}
             <div className="p-4  bg-[#F1F1F1] border border-[#DCDCDC] space-y-3">
               <div className="flex items-center justify-between text-xs font-mono font-bold">
-                <span className="uppercase text-[#666666]">Color Harmony Index:</span>
+                <span className="uppercase text-[#666666]">{t('mixMatch.harmony')}:</span>
                 <span className="text-[#042509] font-black text-sm">{harmonyScore}% Synergy</span>
               </div>
               <div className="w-full h-2  bg-white border border-[#DCDCDC] overflow-hidden">
@@ -532,8 +530,8 @@ export default function MixMatchStudioPage() {
               {synergy.proportion60_30_10 && (
                 <div className="pt-3 border-t border-[#DCDCDC] space-y-2">
                   <div className="flex items-baseline justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666]">
-                    <span>Rule 60-30-10 proportion</span>
-                    <span>Base · Top · Shoes · Bag</span>
+                    <span>{t('mixMatch.proportion')}</span>
+                    <span>{t('mixMatch.slots')}</span>
                   </div>
                   <div className="flex w-full">
                     {[
@@ -594,7 +592,12 @@ export default function MixMatchStudioPage() {
 
               {/* Styling Critique Advice */}
               <p className="text-[11px] text-[#000000] leading-relaxed pt-1 font-medium bg-white/60 p-2  border border-[#DCDCDC]/50">
-                💡 {synergy.stylingAdvice}
+                {/* The season is a name the site already translates, so it
+                    reads as it does in the colour lab. The harmony type stays
+                    as written — it is a term of art, not a word to localise. */}
+                {t(synergy.advice.key, synergy.advice.vars?.season
+                  ? { ...synergy.advice.vars, season: t(`seasons.${synergy.advice.vars.season}.name`) }
+                  : synergy.advice.vars)}
               </p>
             </div>
 
@@ -630,7 +633,7 @@ export default function MixMatchStudioPage() {
                 {justAddedBundle ? (
                   <>
                     <CheckCircle2 size={16} />
-                    <span>Added Complete Outfit to Bag! ✓</span>
+                    <span>{t('mixMatch.addedToast')}</span>
                   </>
                 ) : (
                   <>
@@ -644,7 +647,7 @@ export default function MixMatchStudioPage() {
                 )}
               </button>
               <p className="text-[10px] font-mono text-center text-[#8C7E74] pt-1">
-                * ข้อมูลสเปกและไซซ์เป็นข้อมูลตัวอย่าง รอยืนยันจากร้าน (Sample Spec)
+                {t('mixMatch.sampleSpec')}
               </p>
             </div>
 

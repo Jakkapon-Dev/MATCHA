@@ -11,6 +11,35 @@ export const DEFAULT_LANG = 'en';
 
 export const translations = {
   en: {
+    mixMatch: {
+      eyebrow: 'Four slots, head to toe',
+      discount: '{n}% off the complete outfit',
+      heroBody: 'Build a look across four slots — top, bottom, shoes and a bag — and see how the colours sit together.',
+      presetsForYou: 'Looks for your {season} reading',
+      presetsPopular: 'Four looks to start from',
+      sampleSpec: 'Sizes and specifications are sample data, awaiting the studio.',
+      adviceSameSeason: 'One palette from head to toe in {season}, held together by a {harmony}.',
+      adviceSameUndertone: 'Four pieces sharing a {undertone} undertone, with the shoes anchoring the bag.',
+      adviceContrast: 'A deliberate contrast, with the shoes and bag holding the last tenth in check.',
+      adviceEmpty: 'Pick a top, shoes and an accessory to see how the colours sit together.',
+      shuffle: 'Shuffle',
+      colorLab: 'Colour lab',
+      canvas: 'The canvas',
+      soldOut: 'Sold out',
+      harmony: 'Colour harmony',
+      proportion: 'A 60-30-10 split',
+      slots: 'Base, top, shoes, bag',
+      addedToast: 'Outfit added to your bag',
+      allSoldOut: 'This set cannot be added — every piece in it is out of stock.',
+      presetsTitle: 'Four looks to start from',
+      presets: {
+        'PRESET-01': 'An earth-toned hoodie, chinos, leather boots and a warm leather bag.',
+        'PRESET-02': 'Soft florals with light denim and pale leather, cut for bright days.',
+        'PRESET-03': 'Linen and cotton in cool pastels, kept light and unfussy.',
+        'PRESET-04': 'A sharp winter coat, tailored trousers, black leather boots and a beanie.',
+      },
+    },
+
     quiz: {
       progress: 'Question {n} of {total}',
       eyebrow: 'Personal colour lab',
@@ -576,6 +605,35 @@ export const translations = {
   },
 
   th: {
+    mixMatch: {
+      eyebrow: 'สี่ช่อง ครบทั้งลุค',
+      discount: 'ลด {n}% เมื่อจัดครบชุด',
+      heroBody: 'จัดลุคจากสี่ช่อง เสื้อ กางเกง รองเท้า และกระเป๋า แล้วดูว่าสีเข้ากันแค่ไหน',
+      presetsForYou: 'ลุคที่เข้ากับผลวิเคราะห์ {season} ของคุณ',
+      presetsPopular: 'สี่ลุคให้เริ่มต้น',
+      sampleSpec: 'ข้อมูลไซซ์และสเปกเป็นข้อมูลตัวอย่าง รอยืนยันจากร้าน',
+      adviceSameSeason: 'คุมโทนเดียวกันทั้งลุคในพาเลตต์ {season} ยึดด้วยหลัก {harmony}',
+      adviceSameUndertone: 'สี่ชิ้นใช้อันเดอร์โทน {undertone} ร่วมกัน โดยมีรองเท้าถ่วงสมดุลกับกระเป๋า',
+      adviceContrast: 'จงใจให้ตัดกัน โดยรองเท้าและกระเป๋าคุมสัดส่วนสุดท้ายไว้',
+      adviceEmpty: 'เลือกเสื้อ รองเท้า และเครื่องประดับ เพื่อดูว่าสีเข้ากันแค่ไหน',
+      shuffle: 'สุ่มชุดใหม่',
+      colorLab: 'ค้นหาสีประจำตัว',
+      canvas: 'พื้นที่จัดชุด',
+      soldOut: 'หมดสต็อก',
+      harmony: 'ความกลมกลืนของสี',
+      proportion: 'สัดส่วน 60-30-10',
+      slots: 'ตัวหลัก เสื้อ รองเท้า กระเป๋า',
+      addedToast: 'เพิ่มชุดลงตะกร้าแล้ว',
+      allSoldOut: 'เพิ่มชุดนี้ไม่ได้ เพราะสินค้าในเซ็ตหมดสต็อกทั้งหมด',
+      presetsTitle: 'สี่ลุคให้เริ่มต้น',
+      presets: {
+        'PRESET-01': 'เสื้อฮู้ดโทนดิน กางเกงชิโน่ บูทหนังแท้ และกระเป๋าหนังโทนอุ่น',
+        'PRESET-02': 'ลายดอกไม้นุ่มตา คู่เดนิมสีอ่อนและหนังสีจาง เหมาะกับวันสดใส',
+        'PRESET-03': 'ลินินและคอตตอนโทนเย็น เบาสบาย ไม่ซับซ้อน',
+        'PRESET-04': 'โค้ทฤดูหนาวคัตติ้งเนี้ยบ กางเกงสแล็ค บูทหนังดำ และหมวกบีนนี่',
+      },
+    },
+
     quiz: {
       progress: 'คำถามที่ {n} จาก {total}',
       eyebrow: 'ห้องวิเคราะห์สีประจำตัว',
