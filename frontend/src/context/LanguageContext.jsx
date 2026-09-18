@@ -41,7 +41,22 @@ export function LanguageProvider({ children }) {
       toggleLang: () => setLangState(prev => (prev === 'th' ? 'en' : 'th')),
       // Missing keys fall back to English, then to the key itself, so a gap in the
       // dictionary shows up as a visible breadcrumb instead of a blank screen.
-      t: (key) => resolve(translations[lang], key) ?? resolve(translations[DEFAULT_LANG], key) ?? key,
+      //
+      // `vars` fills {placeholders} in the result. Without it a sentence carrying
+      // a price or a name had to be assembled in JSX, which is how half of them
+      // ended up hardcoded in the first place: the parts read as code, not copy,
+      // so nobody lifted them out. Non-strings (the care lists) pass straight
+      // through, and a placeholder with no matching value is left alone rather
+      // than blanked, so the gap is visible.
+      t: (key, vars) => {
+        const value = resolve(translations[lang], key)
+          ?? resolve(translations[DEFAULT_LANG], key)
+          ?? key;
+        if (!vars || typeof value !== 'string') return value;
+        return value.replace(/\{(\w+)\}/g, (match, name) => (
+          vars[name] === undefined || vars[name] === null ? match : String(vars[name])
+        ));
+      },
     };
   }, [lang]);
 

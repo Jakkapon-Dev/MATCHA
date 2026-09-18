@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   X, 
   Heart, 
-  Star, 
   ShoppingBag, 
   Sparkles, 
   ShieldCheck, 
@@ -16,11 +15,13 @@ import { handleImageError, webpSrc } from '../../utils/imageFallback';
 import { wash, inkOn, needsEdge } from '../../utils/dye';
 import { useCart } from '../../context/CartContext.jsx';
 import { useToast } from '../../context/ToastContext.jsx';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, FREE_SHIPPING_THRESHOLD } from '../../config/shipping';
 
 export default function ProductModal({ product, onClose, onAddToCart, onToggleWishlist, isWishlisted = false }) {
   const { addToCart: contextAddToCart } = useCart();
   const { showToast } = useToast();
+  const { t } = useLanguage();
 
   // Normalize products without explicit variants so all image/color controls can use
   // one consistent list shape.
@@ -68,11 +69,11 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
       if (exists) {
         updated = saved.filter(item => item.id !== product?.id);
         setWishlistActive(false);
-        showToast(`นำ "${product?.name}" ออกจากรายการโปรดแล้ว`, 'info');
+        showToast(t('product.removedToast', { name: product?.name }), 'info');
       } else {
         updated = [...saved, { id: product?.id, name: product?.name, price: product?.price, image: activeVariant.image }];
         setWishlistActive(true);
-        showToast(`บันทึก "${product?.name}" ในรายการโปรดแล้ว! ❤️`, 'success');
+        showToast(t('product.savedToast', { name: product?.name }), 'success');
       }
       localStorage.setItem('matcha_wishlist', JSON.stringify(updated));
     } catch (err) {
@@ -103,12 +104,12 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
   const specs = product?.specs || {};
   const isSampleSpec = specs.isSampleData === true;
   const specRows = [
-    { label: 'ส่วนประกอบวัสดุ', value: specs.fabricComposition },
-    { label: 'ขนาดตัวนายแบบ', value: specs.modelMeasurements },
-    { label: 'ประเทศผู้ผลิต', value: specs.countryOfOrigin },
+    { label: t('product.specs.fabric'), value: specs.fabricComposition },
+    { label: t('product.specs.model'), value: specs.modelMeasurements },
+    { label: t('product.specs.origin'), value: specs.countryOfOrigin },
     {
-      label: 'มาตรฐานรับรอง',
-      value: Array.isArray(specs.certifications) ? specs.certifications.join(' · ') : specs.certifications,
+      label: t('product.specs.certs'),
+      value: Array.isArray(specs.certifications) ? specs.certifications.join(', ') : specs.certifications,
     },
   ];
 
@@ -230,7 +231,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
         {/* Close Button */}
         <button 
           onClick={onClose}
-          aria-label="Close modal"
+          aria-label={t('product.close')}
           className="absolute top-3 right-3 z-30 w-9 h-9 bg-[#0A0A0A] text-[#F1F1F1] hover:bg-[#C91D1D] flex items-center justify-center transition-colors cursor-pointer"
         >
           <X size={18} />
@@ -267,7 +268,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             {!product.inStock && (
               <div className="absolute inset-0 bg-[#0A0A0A]/65 flex items-center justify-center z-25">
                 <span className="px-4 py-2 bg-[#F1F1F1] text-[#0A0A0A] text-xs font-mono font-bold uppercase tracking-wider">
-                  สินค้าหมดชั่วคราว
+                  {t('product.soldOut')}
                 </span>
               </div>
             )}
@@ -292,7 +293,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
           )}
 
           {/* COLOR VARIANT THUMBNAILS */}
-          {gallery.length > 0 && <div className="flex flex-wrap gap-2 mt-3" aria-label="รูปเพิ่มเติมของสินค้า">{gallery.map((g, i) => <button key={g.url} type="button" aria-label={`ดูรูป ${i + 1}: ${g.alt || product.name}`} aria-pressed={galleryImage?.url === g.url} onClick={() => setGalleryImage(g)} className="w-14 h-16 border border-[#DCDCDC] overflow-hidden hover:border-[#0A0A0A] focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"><img src={webpSrc(g.url)} alt={g.alt || product.name} className="w-full h-full object-contain" /></button>)}</div>}
+          {gallery.length > 0 && <div className="flex flex-wrap gap-2 mt-3" aria-label={t('product.moreImages')}>{gallery.map((g, i) => <button key={g.url} type="button" aria-label={`${t('product.moreImages')} ${i + 1}`} aria-pressed={galleryImage?.url === g.url} onClick={() => setGalleryImage(g)} className="w-14 h-16 border border-[#DCDCDC] overflow-hidden hover:border-[#0A0A0A] focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"><img src={webpSrc(g.url)} alt={g.alt || product.name} className="w-full h-full object-contain" /></button>)}</div>}
           {variants.length > 1 && (
             <div className="w-full flex items-center justify-center gap-2 pt-2.5 overflow-x-auto pb-0.5">
               {variants.map((v, i) => {
@@ -348,15 +349,6 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                 </div>
 
                 {/* Rating - Only display when verified data exists, no fake defaults */}
-                {product.rating && product.reviewsCount ? (
-                  <div className="flex items-center gap-1.5 text-xs font-mono text-[#666666]">
-                    <Star size={13} className="fill-[#0A0A0A] text-[#0A0A0A]" />
-                    <span className="tabular-nums text-[#0A0A0A] font-bold">{product.rating}</span>
-                    <span>({product.reviewsCount})</span>
-                  </div>
-                ) : (
-                  <span className="text-xs font-mono text-[#666666]">ยังไม่มีคะแนนรีวิว</span>
-                )}
               </div>
             </div>
 
@@ -368,9 +360,9 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             {/* 1. Interactive Color Swatches */}
             <div>
               <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-2">
-                <span>Colour: <strong className="text-[#0A0A0A]">{activeVariant.color || 'not recorded'}</strong></span>
+                <span>{t('product.colour')}: <strong className="text-[#0A0A0A]">{activeVariant.color || t('product.notRecorded')}</strong></span>
                 <span className="text-[10px] font-mono text-[#666666]">
-                  {variants.length === 1 ? 'One tone' : `${variants.length} tones`}
+                  {variants.length === 1 ? t('product.oneTone') : t('product.tones', { n: variants.length })}
                 </span>
               </div>
               <div className="flex items-stretch gap-1.5 flex-wrap">
@@ -402,7 +394,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             {/* 2. Interactive Size Selector with Functional Fit Guide Button */}
             <div ref={sizeRef} className="scroll-mt-6">
               <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-2">
-                <span>Size: <strong className="text-[#0A0A0A]">{selectedSize || '—'}</strong></span>
+                <span>{t('product.size')}: <strong className="text-[#0A0A0A]">{selectedSize || '—'}</strong></span>
                 <button
                   type="button"
                   onClick={() => setShowFitGuide(prev => !prev)}
@@ -410,13 +402,13 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   className="text-[11px] font-mono font-bold text-[#C91D1D] hover:text-[#A81515] underline cursor-pointer flex items-center gap-1 transition-colors"
                 >
                   <Ruler size={13} />
-                  <span>{showFitGuide ? 'ซ่อนคำแนะนำไซซ์' : 'คำแนะนำไซซ์'}</span>
+                  <span>{showFitGuide ? t('product.hideFitGuide') : t('product.fitGuide')}</span>
                 </button>
               </div>
 
               {needsSize && (
                 <p role="status" className="mb-2 text-xs font-mono text-[#C91D1D]">
-                  {sizeList.length ? 'เลือกไซซ์ก่อนใส่ตะกร้า' : 'สินค้านี้ยังไม่มีข้อมูลไซซ์ ติดต่อร้านเพื่อสั่งซื้อ'}
+                  {sizeList.length ? t('product.pickSize') : t('product.noSizes')}
                 </p>
               )}
 
@@ -444,15 +436,15 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   <div className="p-2.5 bg-[#F1F1F1] border-l-2 border-[#C91D1D] text-[#0A0A0A] text-[11px] font-mono flex items-start gap-2">
                     <AlertCircle size={14} className="shrink-0 text-[#C91D1D] mt-0.5" />
                     <div>
-                      <span className="font-bold">[ป้ายกำกับ: ข้อมูลตัวอย่าง รอยืนยันจากร้าน]</span>: ตารางวัดขนาดนี้เป็นข้อมูลมาตรฐานสากลจำลอง อยู่ระหว่างรอยืนยันสเปกจริงจากแบรนด์ MatchA
+                      <span className="font-bold">{t('product.sampleBadge')}</span> {t('product.sampleNote')}
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between font-mono">
                     <span className="font-bold text-[#000000] uppercase">
-                      {product.specs?.sizeGuide?.system || 'Size & Fit Specification'}
+                      {product.specs?.sizeGuide?.system || t('product.fitGuide')}
                     </span>
-                    <span className="text-[10px] text-[#666666]">หน่วยวัด: เซนติเมตร (cm)</span>
+                    <span className="text-[10px] text-[#666666]">{t('product.unitCm')}</span>
                   </div>
 
                   {/* Shoes Size Guide */}
@@ -461,10 +453,10 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                       <table className="w-full text-left font-mono text-[10px] sm:text-xs border-collapse">
                         <thead>
                           <tr className="border-b border-[#DCDCDC] text-[#666666] bg-[#F1F1F1]">
-                            <th className="py-1.5 px-2">EU Size</th>
-                            <th className="py-1.5 px-2">US Men</th>
-                            <th className="py-1.5 px-2">US Women</th>
-                            <th className="py-1.5 px-2">ความยาวเท้า (cm)</th>
+                            <th className="py-1.5 px-2">{t('product.shoe.eu')}</th>
+                            <th className="py-1.5 px-2">{t('product.shoe.usMen')}</th>
+                            <th className="py-1.5 px-2">{t('product.shoe.usWomen')}</th>
+                            <th className="py-1.5 px-2">{t('product.shoe.footLength')}</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-[#DCDCDC]/50">
@@ -482,10 +474,10 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   ) : product.category === 'Accessories' ? (
                     <div className="p-3 bg-[#F1F1F1] border border-[#DCDCDC] space-y-1.5">
                       <div className="font-bold text-[#000000] text-xs">
-                        ขนาดและสัดส่วน: <span className="text-[#042509]">{product.specs?.sizeGuide?.dimensionText || 'One Size (OS)'}</span>
+                        {t('product.dimensions')}: <span className="text-[#0A0A0A]">{product.specs?.sizeGuide?.dimensionText || 'One Size (OS)'}</span>
                       </div>
                       <p className="text-[11px] text-[#666666] leading-relaxed">
-                        {product.specs?.sizeGuide?.note || 'สินค้าหมวดเครื่องประดับและกระเป๋าออกแบบขนาด One Size เหมาะสำหรับสรีระทั่วไป'}
+                        {product.specs?.sizeGuide?.note || t('product.oneSizeNote')}
                       </p>
                     </div>
                   ) : (
@@ -517,7 +509,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   {/* Measurement Instruction */}
                   {product.specs?.sizeGuide?.measureInstruction && (
                     <div className="pt-2 border-t border-[#DCDCDC]/60 text-[10px] text-[#666666] leading-relaxed">
-                      <strong className="text-[#000000]">วิธีวัดสัดส่วน:</strong> {product.specs.sizeGuide.measureInstruction}
+                      <strong className="text-[#0A0A0A]">{t('product.measure')}:</strong> {product.specs.sizeGuide.measureInstruction}
                     </div>
                   )}
                 </div>
@@ -537,23 +529,23 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                 >
                   <span className="flex items-center gap-2">
                     <Sparkles size={14} className="text-[#042509]" />
-                    <span>วัสดุและคุณลักษณะทรง</span>
+                    <span>{t('product.materials')}</span>
                   </span>
                   <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'materials' ? 'rotate-180 text-[#042509]' : 'text-[#666666]'}`} />
                 </button>
                 {activeAccordion === 'materials' && (
                   <div className="px-4 pb-3.5 pt-1 space-y-2 text-[#666666] font-mono text-[11px] bg-[#F1F1F1]/40 animate-fade-in">
                     <div>
-                      <span className="font-bold text-[#000000]">ลักษณะทรง (Silhouette):</span> {product.specs?.silhouette || product.fit || 'Relaxed Fit'}
+                      <span className="font-bold text-[#0A0A0A]">{t('product.silhouette')}:</span> {product.specs?.silhouette || product.fit || 'Relaxed Fit'}
                     </div>
                     <div>
-                      <span className="font-bold text-[#000000]">รายละเอียดความพอดี:</span> {product.specs?.fitDetails || 'สวมใส่สบาย คัตติ้งสไตล์มินิมอล'}
+                      <span className="font-bold text-[#0A0A0A]">{t('product.fitDetails')}:</span> {product.specs?.fitDetails || '—'}
                     </div>
                     <div>
-                      <span className="font-bold text-[#000000]">วัตถุดิบแนะนำ:</span> {product.specs?.materialHint || 'ผ้าทอคอลเลกชันคุณภาพดี (ข้อมูลตัวอย่าง)'}
+                      <span className="font-bold text-[#0A0A0A]">{t('product.materialHint')}:</span> {product.specs?.materialHint || '—'}
                     </div>
                     <div className="p-2 bg-[#F1F1F1] border-l-2 border-[#C91D1D] text-[#0A0A0A] text-[10px]">
-                      <strong>สัดส่วนเส้นใยผ้า:</strong> รอข้อมูลยืนยันจากร้านค้า (ไม่ระบุเป็นข้อเท็จจริงจนกว่าจะมีสเปกทางการ)
+                      <strong>{t('product.fibreLabel')}:</strong> {t('product.fibrePending')}
                     </div>
                   </div>
                 )}
@@ -569,17 +561,13 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                 >
                   <span className="flex items-center gap-2">
                     <RefreshCw size={14} className="text-[#042509]" />
-                    <span>วิธีดูแลรักษา</span>
+                    <span>{t('product.care')}</span>
                   </span>
                   <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'care' ? 'rotate-180 text-[#042509]' : 'text-[#666666]'}`} />
                 </button>
                 {activeAccordion === 'care' && (
                   <div className="px-4 pb-3.5 pt-1 space-y-1.5 text-[#666666] font-mono text-[11px] bg-[#F1F1F1]/40 animate-fade-in">
-                    {(product.specs?.careInstructions || [
-                      'ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า',
-                      'หลีกเลี่ยงการใช้น้ำยาฟอกขาว',
-                      'ตากในที่ร่ม หลีกเลี่ยงแดดจัด'
-                    ]).map((item, idx) => (
+                    {(product.specs?.careInstructions || t('product.careDefaults')).map((item, idx) => (
                       <div key={idx} className="flex items-start gap-1.5">
                         <span className="text-[#042509] font-bold">✓</span>
                         <span>{item}</span>
@@ -599,16 +587,16 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                 >
                   <span className="flex items-center gap-2">
                     <ShieldCheck size={14} className="text-[#042509]" />
-                    <span>สถานะข้อมูลสินค้า</span>
+                    <span>{t('product.status')}</span>
                   </span>
                   <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'status' ? 'rotate-180 text-[#042509]' : 'text-[#666666]'}`} />
                 </button>
                 {activeAccordion === 'status' && (
                   <div className="px-4 pb-3.5 pt-1 space-y-2 text-[#666666] font-mono text-[11px] bg-[#F1F1F1]/40 animate-fade-in">
                     <div className="flex items-center justify-between py-1 border-b border-[#DCDCDC]/40">
-                      <span className="font-bold text-[#000000]">สถานะสเปก:</span>
+                      <span className="font-bold text-[#0A0A0A]">{t('product.specStatus')}:</span>
                       <span className="px-2 py-0.5 bg-[#0A0A0A] text-[#F1F1F1] font-bold text-[10px]">
-                        {product.specs?.statusLabel || 'ข้อมูลตัวอย่าง รอยืนยันจากร้าน'}
+                        {product.specs?.statusLabel || t('product.sampleBadge')}
                       </span>
                     </div>
                     {specRows.map(({ label, value }, i) => (
@@ -616,18 +604,18 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                         key={label}
                         className={`flex items-start justify-between gap-4 py-1 ${i < specRows.length - 1 ? 'border-b border-[#DCDCDC]/40' : ''}`}
                       >
-                        <span className="font-bold text-[#000000] shrink-0">{label}:</span>
+                        <span className="font-bold text-[#0A0A0A] shrink-0">{label}:</span>
                         {value ? (
                           <span className="text-right text-[#666666] flex items-baseline justify-end gap-1.5 flex-wrap">
                             <span>{value}</span>
                             {isSampleSpec && (
                               <span className="px-1 bg-[#0A0A0A] text-[#F1F1F1] text-[9px] font-bold shrink-0">
-                                ตัวอย่าง
+                                {t('product.sampleTag')}
                               </span>
                             )}
                           </span>
                         ) : (
-                          <span className="text-[#8C7E74] text-right">รอข้อมูลยืนยันจากร้านค้า</span>
+                          <span className="text-[#666666] text-right">{t('product.pendingStore')}</span>
                         )}
                       </div>
                     ))}
@@ -639,7 +627,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
 
             {/* 4. Quantity Selector */}
             <div className="flex items-center gap-3">
-              <span className="text-xs font-bold uppercase tracking-wider">Quantity:</span>
+              <span className="text-xs font-bold uppercase tracking-wider">{t('product.quantity')}</span>
               <div className="flex items-center border border-[#DCDCDC] bg-[#F1F1F1] overflow-hidden font-mono text-xs">
                 <button 
                   onClick={() => setQuantity(q => Math.max(1, q - 1))}
@@ -676,17 +664,17 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                 <ShoppingBag size={16} />
                 <span>
                   {!product.inStock
-                    ? 'สินค้าหมดชั่วคราว'
+                    ? t('product.soldOut')
                     : addedAnimation
-                      ? 'Added to bag'
-                      : `Add to bag — $${currentTotal.toFixed(2)}`}
+                      ? t('product.added')
+                      : `${t('product.addToBag')} — $${currentTotal.toFixed(2)}`}
                 </span>
               </button>
 
               <button
                 type="button"
                 onClick={handleWishlistToggle}
-                aria-label={wishlistActive ? 'Remove from wishlist' : 'Add to wishlist'}
+                aria-label={wishlistActive ? t('product.wishlistRemove') : t('product.wishlistAdd')}
                 className={`p-4 border transition-colors cursor-pointer flex items-center justify-center outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
                   wishlistActive
                     ? 'bg-[#C91D1D] border-[#C91D1D] text-[#F1F1F1]'
@@ -702,9 +690,13 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
               <div className="flex items-center gap-1.5">
                 <Truck size={13} className={isFreeShippingEligible ? 'text-[#042509]' : 'text-[#C91D1D]'} />
                 <span>
-                  {isFreeShippingEligible 
-                    ? `ส่งฟรีทุกแบบ (ยอดถึงเกณฑ์ $${FREE_SHIPPING_THRESHOLD}+)` 
-                    : `ส่งมาตรฐานฟรี · ส่งด่วน $${SHIPPING_RATES.express} (ฟรีเมื่อครบ $${FREE_SHIPPING_THRESHOLD} - ขาดอีก $${remainingForFreeShipping.toFixed(2)})`}
+                  {isFreeShippingEligible
+                    ? t('product.shippingFree', { threshold: FREE_SHIPPING_THRESHOLD })
+                    : t('product.shippingStd', {
+                        express: SHIPPING_RATES.express,
+                        threshold: FREE_SHIPPING_THRESHOLD,
+                        remaining: remainingForFreeShipping.toFixed(2),
+                      })}
                 </span>
               </div>
             </div>
