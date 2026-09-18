@@ -29,6 +29,9 @@ const SHIPPING_RATES = {
   premium: 25.0
 };
 
+const BUNDLE_DISCOUNT_RATE = 0.12;
+const FREE_SHIPPING_THRESHOLD = 100.0;
+
 // Safe helper to extract auth payload if provided
 const extractAuthUser = (req) => {
   const header = req.headers.authorization || '';
@@ -54,7 +57,11 @@ router.post('/', async (req, res) => {
       shippingOption = 'standard'
     } = req.body;
 
-    const effectiveKey = idempotencyKey || req.headers['idempotency-key'] || req.headers['x-request-id'] || `req-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    // Sanitize idempotency key as a strict string to prevent NoSQL query object injection
+    const rawKey = typeof idempotencyKey === 'string' ? idempotencyKey.trim() : null;
+    const headerKey = typeof req.headers['idempotency-key'] === 'string' ? req.headers['idempotency-key'].trim() : null;
+    const reqIdKey = typeof req.headers['x-request-id'] === 'string' ? req.headers['x-request-id'].trim() : null;
+    const effectiveKey = String(rawKey || headerKey || reqIdKey || `req-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`);
 
     // 1. Idempotency Check: คืนออเดอร์เดิมทันทีหากคีย์ซ้ำ
     if (mongoose.connection.readyState === 1) {
@@ -97,7 +104,7 @@ router.post('/', async (req, res) => {
 
       // Bundle Item Discount (12% per item marked as isBundleItem)
       if (item.isBundleItem) {
-        bundleDiscountAmount += (actualPrice * qty) * 0.12;
+        bundleDiscountAmount += (actualPrice * qty) * BUNDLE_DISCOUNT_RATE;
       }
 
       return {
@@ -120,7 +127,7 @@ router.post('/', async (req, res) => {
     // only ever a code string.
     const cleanCoupon = normaliseCode(couponCode);
     const couponDiscount = discountFor(cleanCoupon, subtotal);
-    const isFreeShipping = isFreeShippingCoupon(cleanCoupon) || subtotal >= 100;
+    const isFreeShipping = isFreeShippingCoupon(cleanCoupon) || subtotal >= FREE_SHIPPING_THRESHOLD;
     const shippingBaseRate = SHIPPING_RATES[shippingOption] ?? 0;
     const shippingCost = isFreeShipping ? 0 : shippingBaseRate;
 
@@ -239,7 +246,7 @@ router.get('/', async (req, res) => {
   try {
     const authUser = extractAuthUser(req);
     const guestId = req.headers['x-guest-id'] || req.query.guestId;
-    const queryEmail = (req.query.email || '').toLowerCase().trim();
+    const queryEmail = typeof req.query.email === 'string' ? req.query.email.toLowerCase().trim() : '';
 
     const isAdmin = authUser?.role && String(authUser.role).toLowerCase() === 'admin';
 

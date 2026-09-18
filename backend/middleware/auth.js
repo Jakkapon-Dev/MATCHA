@@ -5,7 +5,14 @@ import mongoose from 'mongoose';
 import { findById } from '../services/userStore.js';
 import User from '../models/User.js';
 
-export const getJwtSecret = () => process.env.JWT_SECRET || 'matcha-dev-secret-change-me';
+import { isDemo } from '../config/storeMode.js';
+
+export const getJwtSecret = () => {
+  if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
+    throw new Error('FATAL: JWT_SECRET environment variable must be explicitly configured in production environment.');
+  }
+  return process.env.JWT_SECRET || 'matcha-dev-secret-change-me';
+};
 
 // 1. ใส่ async และ await ป้องกัน Promise Bug
 export async function requireAuth(req, res, next) {
@@ -14,6 +21,21 @@ export async function requireAuth(req, res, next) {
   if (!token) {
     return res.status(401).json({ success: false, message: 'No token provided' });
   }
+
+  // รองรับ 1-Click Demo Admin ในโหมด Demo โดยไม่ลดความปลอดภัยบน Production
+  if (isDemo && token === 'demo-offline-token') {
+    req.user = {
+      _id: 'demo-admin',
+      id: 'demo-admin',
+      name: 'Demo Admin',
+      email: 'admin@matcha.com',
+      role: 'Admin',
+      tier: 'System Admin',
+      isDemoSession: true
+    };
+    return next();
+  }
+
   try {
     const payload = jwt.verify(token, getJwtSecret());
     
