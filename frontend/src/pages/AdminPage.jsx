@@ -44,8 +44,11 @@ import {
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import AddProductModal from '../components/admin/AddProductModal';
+import OrderTrackingModal from '../components/admin/OrderTrackingModal';
 import MediaManager from '../features/media/MediaManager';
 import { api } from '../services/api';
+import useChangeMotion from '../hooks/useChangeMotion';
+import { webpSrc } from '../utils/imageFallback';
 
 const INITIAL_INVENTORY = [
   {
@@ -155,13 +158,13 @@ const INITIAL_INVENTORY = [
 ];
 
 const INITIAL_ORDERS = [
-  { id: 'ORD-8921', customer: 'Sarah Jenkins', email: 'sarah.j@gmail.com', items: 2, total: 136.00, status: 'Processing', date: '2026-08-25' },
-  { id: 'ORD-8920', customer: 'Kenji Takahashi', email: 'kenji.t@outlook.com', items: 1, total: 88.00, status: 'Shipped', date: '2026-08-24' },
-  { id: 'ORD-8919', customer: 'Elena Rostova', email: 'elena.r@yahoo.com', items: 3, total: 242.00, status: 'Delivered', date: '2026-08-22' },
-  { id: 'ORD-8918', customer: 'Marcus Vance', email: 'marcus.v@proton.me', items: 1, total: 48.00, status: 'Delivered', date: '2026-08-20' },
-  { id: 'ORD-8917', customer: 'Chloe Bennett', email: 'chloe.b@gmail.com', items: 4, total: 310.00, status: 'Processing', date: '2026-08-19' },
-  { id: 'ORD-8916', customer: 'Nattapong Somchai', email: 'nat.somchai@matcha.vip', items: 2, total: 176.00, status: 'Pending', date: '2026-08-18' },
-  { id: 'ORD-8915', customer: 'David Miller', email: 'd.miller@techcorp.io', items: 1, total: 110.00, status: 'Delivered', date: '2026-08-15' }
+  { id: 'ORD-8921', customer: 'Sarah Jenkins', email: 'sarah.j@gmail.com', phone: '+66 89 998-7122', address: '306 North Plaza, South Motera, Sukhumvit Soi 21, Bangkok - 10110', items: 2, total: 136.00, status: 'Processing', paymentStatus: 'Paid', date: '2026-08-25' },
+  { id: 'ORD-8920', customer: 'Kenji Takahashi', email: 'kenji.t@outlook.com', phone: '+66 81 445-9821', address: '88/4 Thonglor Soi 10, Khlong Tan Nuea, Watthana, Bangkok - 10110', items: 1, total: 88.00, status: 'Shipped', paymentStatus: 'Paid', date: '2026-08-24' },
+  { id: 'ORD-8919', customer: 'Elena Rostova', email: 'elena.r@yahoo.com', phone: '+66 92 334-1189', address: '45/12 Nimmanhaemin Rd, Suthep, Mueang Chiang Mai, Chiang Mai - 50200', items: 3, total: 242.00, status: 'Delivered', paymentStatus: 'Paid', date: '2026-08-22' },
+  { id: 'ORD-8918', customer: 'Marcus Vance', email: 'marcus.v@proton.me', phone: '+66 86 771-0023', address: '124 Wireless Road, Lumphini, Pathum Wan, Bangkok - 10330', items: 1, total: 48.00, status: 'Delivered', paymentStatus: 'Paid', date: '2026-08-20' },
+  { id: 'ORD-8917', customer: 'Chloe Bennett', email: 'chloe.b@gmail.com', phone: '+66 95 662-8810', address: '502 Sathorn Square Tower, North Sathorn Rd, Silom, Bang Rak, Bangkok - 10500', items: 4, total: 310.00, status: 'Processing', paymentStatus: 'Paid', date: '2026-08-19' },
+  { id: 'ORD-8916', customer: 'Nattapong Somchai', email: 'nat.somchai@matcha.vip', phone: '+66 81 889-4455', address: '18 Ari Samphan Soi 5, Phahon Yothin Rd, Phaya Thai, Bangkok - 10400', items: 2, total: 176.00, status: 'Pending', paymentStatus: 'Unpaid', date: '2026-08-18' },
+  { id: 'ORD-8915', customer: 'David Miller', email: 'd.miller@techcorp.io', phone: '+66 83 221-9900', address: '77/1 Asoke-Dindaeng Rd, Makkasan, Ratchathewi, Bangkok - 10400', items: 1, total: 110.00, status: 'Delivered', paymentStatus: 'Paid', date: '2026-08-15' }
 ];
 
 const INITIAL_MEMBERS = [
@@ -193,6 +196,7 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const adminMotionRef = useChangeMotion(activeTab);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [selectedOrderForModal, setSelectedOrderForModal] = useState(null);
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
 
   // Core Data States with localStorage persistence & automatic sanitization of legacy images
@@ -232,7 +236,24 @@ export default function AdminPage() {
 
   const [orders, setOrders] = useState(() => {
     const saved = localStorage.getItem('matcha_admin_orders');
-    return saved ? JSON.parse(saved) : INITIAL_ORDERS;
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        return parsed.map(o => {
+          const initMatch = INITIAL_ORDERS.find(init => init.id === o.id);
+          return {
+            ...initMatch,
+            ...o,
+            paymentStatus: o.paymentStatus || initMatch?.paymentStatus || (o.status === 'Pending' ? 'Unpaid' : 'Paid'),
+            phone: o.phone || initMatch?.phone || '+66 89 998-7122',
+            address: o.address || initMatch?.address || '306 North Plaza, South Motera, Bangkok - 10110'
+          };
+        });
+      } catch (err) {
+        return INITIAL_ORDERS;
+      }
+    }
+    return INITIAL_ORDERS;
   });
 
   const [members, setMembers] = useState(() => {
@@ -298,10 +319,12 @@ export default function AdminPage() {
             id: o.orderId || o._id,
             customer: `${o.customer?.firstName || 'Guest'} ${o.customer?.lastName || ''}`.trim(),
             email: o.customer?.email || 'N/A',
+            phone: o.customer?.phone || o.shippingAddress?.phone || '+66 89 998-7122',
+            address: o.shippingAddress ? `${o.shippingAddress.street || ''} ${o.shippingAddress.city || ''} ${o.shippingAddress.postalCode || ''}`.trim() : '306 North Plaza, South Motera, Bangkok - 10110',
             items: o.items?.length || 0,
             total: o.total || 0,
             status: o.status ? o.status.charAt(0).toUpperCase() + o.status.slice(1) : 'Pending',
-            paymentStatus: o.paymentStatus ? o.paymentStatus.charAt(0).toUpperCase() + o.paymentStatus.slice(1) : 'Unpaid',
+            paymentStatus: o.paymentStatus ? (o.paymentStatus.charAt(0).toUpperCase() + o.paymentStatus.slice(1)) : (o.status === 'Pending' ? 'Unpaid' : 'Paid'),
             date: o.createdAt ? o.createdAt.split('T')[0] : new Date().toISOString().split('T')[0]
           }));
           setOrders(normalizedOrders);
@@ -533,13 +556,15 @@ export default function AdminPage() {
 
   // Order Actions
   const handleUpdateOrderStatus = async (orderId, newStatus) => {
+    setOrders(prev => prev.map(ord => ord.id === orderId ? { ...ord, status: newStatus } : ord));
+    setSelectedOrderForModal(prev => (prev && prev.id === orderId ? { ...prev, status: newStatus } : prev));
     try {
-      await api.updateOrderStatus(orderId, { status: newStatus });
-      setOrders(prev => prev.map(ord => ord.id === orderId ? { ...ord, status: newStatus } : ord));
+      if (api.updateOrderStatus) {
+        await api.updateOrderStatus(orderId, { status: newStatus });
+      }
       showToast(`Order ${orderId} updated to ${newStatus}`, 'success');
     } catch (err) {
       console.warn('Failed to update order status on server:', err.message);
-      setOrders(prev => prev.map(ord => ord.id === orderId ? { ...ord, status: newStatus } : ord));
       showToast(`Order ${orderId} updated locally`, 'info');
     }
   };
@@ -1025,7 +1050,17 @@ export default function AdminPage() {
                       {orders.slice(0, 4).map(ord => (
                         <tr key={ord.id} className="hover:bg-[#F1F1F1]/80">
                           <td className="py-3 font-bold text-[#042509]">{ord.id}</td>
-                          <td className="py-3 text-[#000000]">{ord.customer}</td>
+                          <td className="py-3">
+                            <button
+                              type="button"
+                              onClick={() => setSelectedOrderForModal(ord)}
+                              className="text-left font-bold text-[#000000] hover:text-[#042509] hover:underline cursor-pointer flex items-center gap-1 group"
+                              title="View Tracking & Fulfillment Details"
+                            >
+                              <span>{ord.customer}</span>
+                              <ExternalLink size={10} className="opacity-0 group-hover:opacity-100 transition-opacity text-[#042509]" />
+                            </button>
+                          </td>
                           <td className="py-3 text-[#666666]">{ord.date}</td>
                           <td className="py-3 font-bold text-[#000000]">${ord.total.toFixed(2)}</td>
                           <td className="py-3">
@@ -1225,18 +1260,30 @@ export default function AdminPage() {
                         <tr key={ord.id} className="hover:bg-[#F1F1F1]/80 transition-colors">
                           <td className="p-4 font-bold text-[#042509]">{ord.id}</td>
                           <td className="p-4">
-                            <div className="font-bold text-[#000000]">{ord.customer}</div>
-                            <div className="text-[10px] text-[#666666]">{ord.email}</div>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedOrderForModal(ord)}
+                              className="text-left group cursor-pointer"
+                              title="Click to view full Order Tracking & Fulfillment status"
+                            >
+                              <div className="font-bold text-[#000000] group-hover:text-[#042509] group-hover:underline flex items-center gap-1.5">
+                                <span>{ord.customer}</span>
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#042509]/10 text-[#042509] font-semibold group-hover:bg-[#042509] group-hover:text-white transition-colors">
+                                  Track ↗
+                                </span>
+                              </div>
+                              <div className="text-[10px] text-[#666666]">{ord.email}</div>
+                            </button>
                           </td>
                           <td className="p-4 text-[#000000]">{ord.items} pcs</td>
-                          <td className="p-4 font-bold text-[#042509]">${ord.total.toFixed(2)}</td>
+                          <td className="p-4 font-bold text-[#042509]">${Number(ord.total).toFixed(2)}</td>
                           <td className="p-4">
                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                              String(ord.paymentStatus).toLowerCase() === 'paid'
+                              String(ord.paymentStatus || (ord.status === 'Pending' ? 'Unpaid' : 'Paid')).toLowerCase() === 'paid'
                                 ? 'bg-emerald-100 text-emerald-800'
                                 : 'bg-amber-100 text-amber-800'
                             }`}>
-                              {ord.paymentStatus || 'Unpaid'}
+                              {ord.paymentStatus || (ord.status === 'Pending' ? 'Unpaid' : 'Paid')}
                             </span>
                           </td>
                           <td className="p-4 text-[#666666]">{ord.date}</td>
@@ -1466,8 +1513,14 @@ export default function AdminPage() {
         onAddProduct={handleAddProduct}
       />
 
+      {/* Order Tracking & Fulfillment Details Modal */}
+      <OrderTrackingModal
+        isOpen={Boolean(selectedOrderForModal)}
+        onClose={() => setSelectedOrderForModal(null)}
+        order={selectedOrderForModal}
+        onUpdateStatus={handleUpdateOrderStatus}
+      />
+
     </div>
   );
 }
-import useChangeMotion from '../hooks/useChangeMotion';
-import { webpSrc } from '../utils/imageFallback';
