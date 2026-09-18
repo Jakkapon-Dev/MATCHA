@@ -1,20 +1,19 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useChangeMotion from '../hooks/useChangeMotion';
-import { 
-  Sparkles, 
-  CheckCircle2, 
-  ArrowRight, 
-  RotateCcw, 
-  Eye, 
-  BookOpen, 
-  Palette, 
-  Compass, 
-  Sun, 
-  Droplet, 
-  Layers 
+import {
+  CheckCircle2,
+  ArrowRight,
+  RotateCcw,
+  Eye,
+  Sun,
+  Droplet,
+  Layers
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext.jsx';
+// Same contrast and edge rules the catalogue's dye bars use, so a colour named
+// on itself is legible here exactly as it is there.
+import { inkOn, needsEdge } from '../utils/dye';
 
 // 4 Master Personal Color Profiles with Grounded Theory
 const SEASON_PROFILES = {
@@ -288,6 +287,40 @@ const QUIZ_QUESTIONS = [
   }
 ];
 
+/* The palette, at the size the subject deserves.
+
+   This page is called the Colour Lab and it used to show colour as six 20px
+   dots parked in a panel in the corner — measured, 0.19% of the page was
+   actually coloured, against twenty-five rounded chrome containers. The answer
+   to "which colours are you" is the whole point of the quiz, so here it is the
+   largest thing on the page: solid blocks carrying their own name and value,
+   using the ink rule the catalogue's dye bars and the lookbook's palettes use,
+   so all three pages describe colour the same way. */
+function PaletteBand({ palette, innerRef }) {
+  return (
+    <div ref={innerRef} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
+      {palette.map((colour, i) => (
+        <div
+          key={i}
+          className="aspect-square sm:aspect-3/4 flex flex-col justify-end p-3 sm:p-4"
+          style={{
+            backgroundColor: colour.hex,
+            color: inkOn(colour.hex),
+            // Pure white and the palest creams would otherwise dissolve into
+            // the page and read as a missing swatch rather than a pale one.
+            boxShadow: needsEdge(colour.hex) ? 'inset 0 0 0 1px #DCDCDC' : undefined,
+          }}
+        >
+          <span className="font-mono text-[11px] uppercase tracking-wider leading-tight">
+            {colour.name}
+          </span>
+          <span className="font-mono text-[10px] opacity-60 mt-0.5">{colour.hex}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function PersonalColorPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -381,284 +414,291 @@ export default function PersonalColorPage() {
   };
 
 
+  const profile = diagnosedSeason ? SEASON_PROFILES[diagnosedSeason] : null;
+  const theory = SEASON_PROFILES[selectedSeasonTab];
+
   return (
     <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-12 sm:space-y-16">
+      <div className="max-w-7xl mx-auto space-y-10 sm:space-y-14">
 
-        {/* 1. HERO HEADER: Personal Color Studio */}
-        <div className="text-center max-w-3xl mx-auto space-y-4">
-          <div data-enter className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F1F1F1] border border-[#042509]/20 text-[#042509] text-xs font-mono font-bold uppercase tracking-wider">
-            <Sparkles size={14} />
-            <span>Artisan Personal Color Lab & Styling Science</span>
+        {/* 1. HEADER. Left-aligned under a masthead rule, matching the
+            catalogue and the lookbook. The centred pill that used to sit above
+            the title — an icon, a border and a tracked-out line of capitals —
+            said nothing the title does not, and centring it was the one layout
+            every page of this kind arrives at by default. */}
+        <header className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-3 border-b border-[#0A0A0A] font-mono text-[11px] uppercase tracking-[0.18em] text-[#666666]">
+            <span className="text-[#0A0A0A] font-bold">Artisan Personal Color Lab &amp; Styling Science</span>
+            <span>{Object.keys(SEASON_PROFILES).length} seasons</span>
           </div>
-          <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-3xl sm:text-5xl font-black uppercase text-[#000000] tracking-tight font-serif">
-            ค้นหาโทนสีผิวประจำตัว 4 ฤดูกาล
-          </h1>
-          <p data-enter style={{ '--enter-delay': '190ms' }} className="text-[#666666] text-sm sm:text-base leading-relaxed">
-            เลือกใส่เสื้อผ้าที่ขับออร่าของคุณด้วย <strong>ทฤษฎี Personal Color สากล</strong> จำแนกตาม 4 ฤดู ช่วยให้ทุกชุดที่คุณสวมใส่เสริมบุคลิกและสะท้อนเสน่ห์ที่เป็นเอกลักษณ์
-          </p>
 
-          {/* Navigation Pill Tabs */}
-          <div className="flex items-center justify-center gap-2 pt-4" role="tablist" aria-label="โหมดของ Personal Color Lab">
+          <div className="max-w-3xl space-y-4">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-[#0A0A0A] tracking-tight leading-[1.05]">
+              ค้นหาโทนสีผิวประจำตัว 4 ฤดูกาล
+            </h1>
+            <p className="text-[#666666] text-sm sm:text-base leading-relaxed">
+              เลือกใส่เสื้อผ้าที่ขับออร่าของคุณด้วย <strong className="text-[#0A0A0A]">ทฤษฎี Personal Color สากล</strong> จำแนกตาม 4 ฤดู ช่วยให้ทุกชุดที่คุณสวมใส่เสริมบุคลิกและสะท้อนเสน่ห์ที่เป็นเอกลักษณ์
+            </p>
+          </div>
+
+          {/* Mode switch, set as reading matter like every other navigation on
+              the site rather than as two filled pills. */}
+          <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2" role="tablist" aria-label="โหมดของ Personal Color Lab">
             <button
               role="tab"
+              type="button"
               aria-selected={activeTab === 'quiz'}
               onClick={handleQuizTabClick}
-              className={`px-5 py-2.5 rounded-full text-xs font-mono font-bold uppercase transition-all flex items-center gap-2 cursor-pointer ${
+              className={`font-mono text-xs uppercase tracking-wider cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
                 activeTab === 'quiz'
-                  ? 'bg-[#042509] text-white shadow-md'
-                  : 'bg-white border border-[#DCDCDC] text-[#666666] hover:text-[#000000]'
+                  ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-[#C91D1D]'
+                  : 'text-[#666666] hover:text-[#0A0A0A]'
               }`}
             >
-              <Sparkles size={14} />
-              <span>Diagnostic Quiz (แบบทดสอบสีผิว)</span>
+              Diagnostic Quiz (แบบทดสอบสีผิว)
             </button>
             <button
               role="tab"
+              type="button"
               aria-selected={activeTab === 'theory'}
               onClick={() => setActiveTab('theory')}
-              className={`px-5 py-2.5 rounded-full text-xs font-mono font-bold uppercase transition-all flex items-center gap-2 cursor-pointer ${
+              className={`font-mono text-xs uppercase tracking-wider cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
                 activeTab === 'theory'
-                  ? 'bg-[#042509] text-white shadow-md'
-                  : 'bg-white border border-[#DCDCDC] text-[#666666] hover:text-[#000000]'
+                  ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-[#C91D1D]'
+                  : 'text-[#666666] hover:text-[#0A0A0A]'
               }`}
             >
-              <BookOpen size={14} />
-              <span>Color Theory (ทฤษฎี 4 ฤดู)</span>
+              Color Theory (ทฤษฎี 4 ฤดู)
             </button>
           </div>
-        </div>
+        </header>
 
-        {/* 2. TAB CONTENT: Interactive Quiz vs Theory Guide */}
+        {/* 2. TAB CONTENT */}
         {activeTab === 'quiz' ? (
           <div>
             {!diagnosedSeason && !isScanning ? (
-              /* Quiz Questionnaire Card */
-              <div ref={quizAnchorRef} className="max-w-4xl mx-auto space-y-6 animate-fade-in">
-                
-                {/* Progress Bar */}
-                <div className="bg-white rounded-2xl border border-[#DCDCDC] p-4 sm:p-5 shadow-xs">
-                  <div className="flex justify-between text-xs font-mono text-[#666666] mb-2 font-bold">
+              <div ref={quizAnchorRef} className="max-w-4xl space-y-8 animate-fade-in">
+
+                {/* Progress as five rules rather than a bar inside a panel:
+                    the questions are countable, so show the count. */}
+                <div>
+                  <div className="flex justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">
                     <span>คำถามที่ {currentStep + 1} จาก {QUIZ_QUESTIONS.length}</span>
-                    <span className="text-[#042509]">{Math.round(((currentStep + 1) / QUIZ_QUESTIONS.length) * 100)}%</span>
+                    <span>{Math.round(((currentStep + 1) / QUIZ_QUESTIONS.length) * 100)}%</span>
                   </div>
                   <div
-                    className="w-full h-2 rounded-full bg-[#F1F1F1] overflow-hidden border border-[#DCDCDC]/60"
+                    className="flex gap-1.5"
                     role="progressbar"
                     aria-valuemin={1}
                     aria-valuemax={QUIZ_QUESTIONS.length}
                     aria-valuenow={currentStep + 1}
                     aria-valuetext={`คำถามที่ ${currentStep + 1} จาก ${QUIZ_QUESTIONS.length}`}
                   >
-                    <div 
-                      className="h-full bg-[#042509] transition-all duration-300"
-                      style={{ width: `${((currentStep + 1) / QUIZ_QUESTIONS.length) * 100}%` }}
-                    />
+                    {QUIZ_QUESTIONS.map((q, i) => (
+                      <span
+                        key={q.id}
+                        className={`h-0.5 flex-1 transition-colors duration-300 ${
+                          i <= currentStep ? 'bg-[#0A0A0A]' : 'bg-[#DCDCDC]'
+                        }`}
+                      />
+                    ))}
                   </div>
                 </div>
 
-                {/* Current Question Container */}
                 <div ref={questionMotionRef} className="space-y-6" aria-live="polite">
-                  {/* Question Banner Card */}
-                  {QUIZ_QUESTIONS[currentStep].image ? (
-                    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#DCDCDC] overflow-hidden shadow-sm flex flex-col md:flex-row items-stretch min-h-[220px]">
-                      <div className="flex-1 p-6 sm:p-8 lg:p-10 flex flex-col justify-center">
-                        <span className="text-[11px] font-mono font-bold uppercase text-[#C91D1D] tracking-wider flex items-center gap-1.5 mb-2">
-                          {QUIZ_QUESTIONS[currentStep].icon}
-                          <span>{QUIZ_QUESTIONS[currentStep].category}</span>
-                        </span>
-                        <h2 className="text-xl sm:text-2xl font-bold text-[#000000] leading-snug">
-                          {QUIZ_QUESTIONS[currentStep].question}
-                        </h2>
-                        {QUIZ_QUESTIONS[currentStep].subtitle && (
-                          <p className="text-xs sm:text-sm text-[#6F655C] mt-2.5 font-sans">
-                            {QUIZ_QUESTIONS[currentStep].subtitle}
-                          </p>
-                        )}
-                      </div>
-                      <div className="w-full md:w-[320px] lg:w-[350px] h-[200px] sm:h-[220px] md:h-auto shrink-0 self-stretch relative overflow-hidden bg-[#F1F1F1] flex items-center justify-center border-t md:border-t-0 md:border-l border-[#DCDCDC]/60">
-                        <img 
-                          src={QUIZ_QUESTIONS[currentStep].image} 
-                          alt={QUIZ_QUESTIONS[currentStep].question}
-                          className="w-full h-full object-cover object-center"
-                          referrerPolicy="no-referrer"
-                          loading={currentStep === 0 ? 'eager' : 'lazy'}
-                          fetchPriority={currentStep === 0 ? 'high' : 'auto'}
-                        />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#DCDCDC] p-6 sm:p-8 shadow-sm">
-                      <span className="text-[11px] font-mono font-bold uppercase text-[#C91D1D] tracking-wider flex items-center gap-1.5 mb-2">
+                  {/* The question and its reference photograph, flat on the
+                      page. */}
+                  <div className={`flex flex-col md:flex-row items-stretch gap-6 ${QUIZ_QUESTIONS[currentStep].image ? '' : 'md:flex-col'}`}>
+                    <div className="flex-1 flex flex-col justify-center">
+                      <span className="font-mono text-[10px] font-bold uppercase text-[#C91D1D] tracking-[0.18em] flex items-center gap-1.5 mb-3">
                         {QUIZ_QUESTIONS[currentStep].icon}
                         <span>{QUIZ_QUESTIONS[currentStep].category}</span>
                       </span>
-                      <h2 className="text-lg sm:text-2xl font-extrabold text-[#000000] leading-snug">
+                      <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#0A0A0A] leading-snug">
                         {QUIZ_QUESTIONS[currentStep].question}
                       </h2>
                       {QUIZ_QUESTIONS[currentStep].subtitle && (
-                        <p className="text-xs sm:text-sm text-[#6F655C] mt-2 font-sans">
+                        <p className="text-xs sm:text-sm text-[#666666] mt-3">
                           {QUIZ_QUESTIONS[currentStep].subtitle}
                         </p>
                       )}
                     </div>
-                  )}
 
-                  {/* Options List (Vertical Stack) */}
-                  <div className="flex flex-col gap-3.5">
+                    {QUIZ_QUESTIONS[currentStep].image && (
+                      <div className="w-full md:w-[300px] lg:w-[340px] h-[180px] md:h-auto shrink-0 overflow-hidden bg-[#E4E4E4]">
+                        {/* `fetchpriority` is spelled lowercase here: React 18
+                            does not map the camelCase form and passes it to the
+                            DOM with a warning instead. */}
+                        <img
+                          src={QUIZ_QUESTIONS[currentStep].image}
+                          alt={QUIZ_QUESTIONS[currentStep].question}
+                          className="w-full h-full object-cover object-center"
+                          referrerPolicy="no-referrer"
+                          loading={currentStep === 0 ? 'eager' : 'lazy'}
+                          fetchpriority={currentStep === 0 ? 'high' : 'auto'}
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Options as a list with rules between them. The letter is
+                      the marker it always was, set large enough to be one. */}
+                  <ul className="border-t border-[#0A0A0A]">
                     {QUIZ_QUESTIONS[currentStep].options.map((option, idx) => {
                       const letter = option.letter || String.fromCharCode(65 + idx);
                       return (
-                        <button
-                          key={idx}
-                          onClick={() => handleSelectOption(QUIZ_QUESTIONS[currentStep].id, option)}
-                          className="group w-full bg-white hover:bg-[#F1F1F1] border border-[#DCDCDC] hover:border-[#042509] rounded-2xl overflow-hidden text-left transition-all hover:shadow-md cursor-pointer flex items-stretch justify-between h-[105px] sm:h-[115px]"
-                        >
-                          <div className="p-4 sm:p-5 flex-1 flex flex-col justify-center min-w-0 pr-3">
-                            <span className="text-xs font-mono font-bold text-[#6F655C] group-hover:text-[#042509] transition-colors mb-1">
+                        <li key={idx} className="border-b border-[#DCDCDC]">
+                          <button
+                            type="button"
+                            onClick={() => handleSelectOption(QUIZ_QUESTIONS[currentStep].id, option)}
+                            className="group w-full text-left cursor-pointer flex items-stretch gap-4 sm:gap-6 transition-colors hover:bg-white outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-inset"
+                          >
+                            <span className="shrink-0 w-10 sm:w-14 flex items-start justify-center pt-4 sm:pt-5 font-mono text-sm sm:text-base text-[#999999] group-hover:text-[#C91D1D] transition-colors">
                               {letter}
                             </span>
-                            <span className="text-xs sm:text-sm md:text-base font-bold text-[#000000] leading-snug line-clamp-2">
-                              {option.label}
-                            </span>
-                          </div>
 
-                          {option.image ? (
-                            <div className="w-32 sm:w-44 md:w-52 h-full shrink-0 border-l border-[#DCDCDC]/40 overflow-hidden relative bg-white flex items-center justify-center">
-                              <img 
-                                src={option.image} 
-                                alt={option.label}
-                                className="w-full h-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
-                                style={{ objectPosition: option.imagePosition || 'center' }}
-                                referrerPolicy="no-referrer"
-                                loading="lazy"
-                              />
-                            </div>
-                          ) : (
-                            <div className="p-5 flex items-center">
-                              <ArrowRight size={18} className="text-[#666666] group-hover:text-[#042509] group-hover:translate-x-1 transition-all" />
-                            </div>
-                          )}
-                        </button>
+                            <span className="flex-1 min-w-0 py-4 sm:py-5 pr-2 flex items-center">
+                              <span className="text-sm sm:text-base font-bold text-[#0A0A0A] leading-snug">
+                                {option.label}
+                              </span>
+                            </span>
+
+                            {option.image && (
+                              <span className="w-24 sm:w-32 md:w-40 shrink-0 overflow-hidden bg-[#E4E4E4] self-stretch">
+                                <img
+                                  src={option.image}
+                                  alt=""
+                                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                  style={{ objectPosition: option.imagePosition || 'center' }}
+                                  referrerPolicy="no-referrer"
+                                  loading="lazy"
+                                />
+                              </span>
+                            )}
+                          </button>
+                        </li>
                       );
                     })}
-                  </div>
+                  </ul>
 
-                  {/* Back button if step > 0 */}
                   {currentStep > 0 && (
-                    <div className="pt-2">
-                      <button
-                        onClick={() => setCurrentStep(prev => prev - 1)}
-                        className="text-xs font-mono text-[#666666] hover:text-[#000000] font-bold cursor-pointer underline inline-flex items-center gap-1"
-                      >
-                        ← ย้อนกลับข้อก่อนหน้า
-                      </button>
-                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentStep(prev => prev - 1)}
+                      className="font-mono text-xs uppercase tracking-wider text-[#666666] hover:text-[#0A0A0A] cursor-pointer inline-flex items-center gap-1.5 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+                    >
+                      ← ย้อนกลับข้อก่อนหน้า
+                    </button>
                   )}
                 </div>
 
               </div>
             ) : isScanning ? (
-              /* Scanning Animation */
-              <div className="max-w-md mx-auto py-20 text-center space-y-4 bg-white rounded-3xl border border-[#DCDCDC] p-8 shadow-xl">
-                <div className="w-16 h-16 rounded-full bg-[#F1F1F1] text-[#042509] flex items-center justify-center mx-auto animate-spin">
-                  <Compass size={32} />
+              /* A compass spinning on its axis illustrated nothing about
+                 matching a skin tone. The wait says what it is doing. */
+              <div className="max-w-xl py-24 space-y-3" role="status" aria-live="polite">
+                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C91D1D]">
+                  กำลังวิเคราะห์
+                </p>
+                <h2 className="text-2xl sm:text-3xl font-black text-[#0A0A0A] leading-tight">
+                  กำลังวิเคราะห์ข้อมูล Personal Color...
+                </h2>
+                <p className="text-xs font-mono text-[#666666]">
+                  ประมวลผลความสอดคล้องของ Undertone, Contrast และเฉดสีผ้า
+                </p>
+                <div className="flex gap-1.5 pt-3 max-w-xs">
+                  {QUIZ_QUESTIONS.map((q) => (
+                    <span key={q.id} className="h-0.5 flex-1 bg-[#0A0A0A]" />
+                  ))}
                 </div>
-                <h3 className="font-serif text-xl font-bold text-[#000000]">กำลังวิเคราะห์ข้อมูล Personal Color...</h3>
-                <p className="text-xs font-mono text-[#666666]">ประมวลผลความสอดคล้องของ Undertone, Contrast และเฉดสีผ้า</p>
               </div>
             ) : (
-              /* Quiz Result Presentation Card */
-              <div ref={resultMotionRef} className="bg-white rounded-3xl border border-[#DCDCDC] p-6 sm:p-10 shadow-2xl space-y-8" aria-live="polite">
-                <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-[#DCDCDC]">
+              <div ref={resultMotionRef} className="space-y-10" aria-live="polite">
+
+                <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-5 border-b border-[#0A0A0A]">
                   <div className="space-y-2">
-                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-[#042509] text-white text-[11px] font-mono font-bold uppercase">
-                      <CheckCircle2 size={13} />
+                    <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C91D1D] flex items-center gap-1.5">
+                      <CheckCircle2 size={12} />
                       <span>ผลการวิเคราะห์สีผิวของคุณ</span>
-                    </div>
-                    <h2 className="text-3xl sm:text-4xl font-black font-serif text-[#000000]">
-                      {SEASON_PROFILES[diagnosedSeason].season} — {SEASON_PROFILES[diagnosedSeason].thaiName}
+                    </span>
+                    <h2 className="text-3xl sm:text-5xl font-black text-[#0A0A0A] tracking-tight leading-[1.05]">
+                      {profile.season} — {profile.thaiName}
                     </h2>
-                    <p className="text-xs font-mono text-[#C91D1D] font-bold">
-                      {SEASON_PROFILES[diagnosedSeason].undertone}
+                    <p className="font-mono text-xs text-[#666666]">
+                      {profile.undertone}
                     </p>
                   </div>
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-5 shrink-0">
                     <button
+                      type="button"
                       onClick={handleResetQuiz}
-                      className="px-4 py-2 rounded-xl border border-[#DCDCDC] bg-[#F1F1F1] hover:bg-white text-[#000000] font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+                      className="font-mono text-xs uppercase tracking-wider text-[#666666] hover:text-[#0A0A0A] cursor-pointer flex items-center gap-1.5 transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                     >
-                      <RotateCcw size={13} />
+                      <RotateCcw size={12} />
                       <span>ทำแบบทดสอบใหม่</span>
                     </button>
                     <button
+                      type="button"
                       onClick={() => navigate('/mix-match')}
-                      className="px-5 py-2.5 rounded-xl bg-[#042509] hover:bg-[#1E3D1A] text-white font-mono text-xs font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer"
+                      className="px-5 py-3 bg-[#C91D1D] hover:bg-[#A81515] text-white font-mono text-xs uppercase tracking-[0.15em] flex items-center gap-2 transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                     >
-                      <span>ไปที่ Mix & Match Studio</span>
-                      <ArrowRight size={14} />
+                      <span>ไปที่ Mix &amp; Match Studio</span>
+                      <ArrowRight size={13} />
                     </button>
                   </div>
                 </div>
 
-                {/* Profile Breakdown */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {/* Left: Description & Characteristics */}
-                  <div className="md:col-span-2 space-y-5">
+                {/* The answer, at the size of an answer. */}
+                <div>
+                  <h3 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-3">
+                    Signature palette (สีที่ขับผิวที่สุด)
+                  </h3>
+                  <PaletteBand palette={profile.palette} innerRef={paletteMotionRef} />
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14">
+                  <div className="lg:col-span-7 space-y-6">
                     <div>
-                      <h4 className="font-mono text-xs font-bold uppercase text-[#666666] tracking-wider mb-2">ลักษณะเด่นของสีผิวคุณ:</h4>
-                      <p className="text-sm text-[#000000] leading-relaxed">
-                        {SEASON_PROFILES[diagnosedSeason].description}
+                      <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">
+                        ลักษณะเด่นของสีผิวคุณ
+                      </h4>
+                      <p className="text-sm text-[#0A0A0A] leading-relaxed max-w-prose">
+                        {profile.description}
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-2xl bg-[#F1F1F1] border border-[#DCDCDC] space-y-2">
-                      <h5 className="font-mono text-xs font-bold text-[#042509] uppercase">จุดสังเกตตามธรรมชาติ:</h5>
-                      <ul className="space-y-1 text-xs text-[#666666]">
-                        {SEASON_PROFILES[diagnosedSeason].characteristics.map((c, i) => (
-                          <li key={i} className="flex items-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#042509]" />
-                            <span>{c}</span>
-                          </li>
+                    <div>
+                      <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">
+                        จุดสังเกตตามธรรมชาติ
+                      </h4>
+                      <ul className="divide-y divide-[#DCDCDC] border-t border-[#DCDCDC]">
+                        {profile.characteristics.map((c, i) => (
+                          <li key={i} className="py-2.5 text-sm text-[#666666]">{c}</li>
                         ))}
                       </ul>
                     </div>
-
-                    <div>
-                      <h4 className="font-mono text-xs font-bold uppercase text-[#042509] tracking-wider mb-2">เนื้อผ้าที่แนะนำ (Recommended Fabrics):</h4>
-                      <p className="text-xs font-mono text-[#000000] bg-[#F1F1F1] p-3 rounded-xl border border-[#042509]/20">
-                        {SEASON_PROFILES[diagnosedSeason].recommendedFabrics}
-                      </p>
-                    </div>
                   </div>
 
-                  {/* Right: Signature Swatches Palette */}
-                  <div className="bg-[#F1F1F1] p-5 rounded-2xl border border-[#DCDCDC] space-y-4">
-                    <h4 className="font-mono text-xs font-bold uppercase text-[#000000] flex items-center justify-between">
-                      <span>Signature Palette (สีที่ขับผิวที่สุด)</span>
-                      <Palette size={14} className="text-[#042509]" aria-hidden="true" focusable="false" />
-                    </h4>
-                    <div ref={paletteMotionRef} className="grid grid-cols-2 gap-2">
-                      {SEASON_PROFILES[diagnosedSeason].palette.map((color, i) => (
-                        <div key={i} className="p-2 bg-white rounded-xl border border-[#DCDCDC]/60 flex items-center gap-2">
-                          <span 
-                            className="w-5 h-5 rounded-full border border-black/15 shrink-0 shadow-2xs" 
-                            style={{ backgroundColor: color.hex }}
-                          />
-                          <div className="min-w-0">
-                            <p className="text-[11px] font-bold text-[#000000] truncate">{color.name}</p>
-                            <p className="text-[9px] font-mono text-[#666666]">{color.hex}</p>
-                          </div>
-                        </div>
-                      ))}
+                  <div className="lg:col-span-5 space-y-6">
+                    <div>
+                      <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">
+                        เนื้อผ้าที่แนะนำ (Recommended Fabrics)
+                      </h4>
+                      <p className="text-sm text-[#0A0A0A] leading-relaxed">
+                        {profile.recommendedFabrics}
+                      </p>
                     </div>
 
-                    <div className="pt-2 border-t border-[#DCDCDC]/60">
-                      <h5 className="font-mono text-[10px] font-bold uppercase text-[#C91D1D] mb-1">สีที่ควรหลีกเลี่ยง (Avoid):</h5>
-                      <p className="text-xs text-[#666666]">
-                        {SEASON_PROFILES[diagnosedSeason].avoidColors.join(', ')}
-                      </p>
+                    <div>
+                      <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C91D1D] mb-2">
+                        สีที่ควรหลีกเลี่ยง (Avoid)
+                      </h4>
+                      <ul className="divide-y divide-[#DCDCDC] border-t border-[#DCDCDC]">
+                        {profile.avoidColors.map((c, i) => (
+                          <li key={i} className="py-2.5 text-sm text-[#666666]">{c}</li>
+                        ))}
+                      </ul>
                     </div>
                   </div>
                 </div>
@@ -667,67 +707,77 @@ export default function PersonalColorPage() {
             )}
           </div>
         ) : (
-          /* Theory Encyclopedia (4 Seasons Deep Dive) */
+          /* Theory: the same four palettes, read rather than diagnosed. */
           <div className="space-y-8 animate-fade-in">
-            {/* Season Selector Tabs */}
-            <div className="flex items-center justify-center gap-2 flex-wrap">
+            <nav aria-label="เลือกฤดูกาล" className="flex flex-wrap items-baseline gap-x-6 gap-y-2 pb-3 border-b border-[#DCDCDC]">
               {Object.keys(SEASON_PROFILES).map((seasonKey) => (
                 <button
                   key={seasonKey}
+                  type="button"
+                  aria-pressed={selectedSeasonTab === seasonKey}
                   onClick={() => setSelectedSeasonTab(seasonKey)}
-                  className={`px-5 py-2.5 rounded-2xl font-mono text-xs font-bold uppercase transition-all cursor-pointer ${
+                  className={`font-mono text-xs uppercase tracking-wider cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
                     selectedSeasonTab === seasonKey
-                      ? 'bg-[#000000] text-white shadow-lg scale-105'
-                      : 'bg-white border border-[#DCDCDC] text-[#666666] hover:border-[#042509]'
+                      ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-[#C91D1D]'
+                      : 'text-[#666666] hover:text-[#0A0A0A]'
                   }`}
                 >
-                  {seasonKey} Palette
+                  {seasonKey}
                 </button>
               ))}
-            </div>
+            </nav>
 
-            {/* Selected Season Card */}
-            <div ref={seasonMotionRef} className="bg-white rounded-3xl border border-[#DCDCDC] p-6 sm:p-10 shadow-xl space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#DCDCDC]">
+            <div ref={seasonMotionRef} className="space-y-8">
+              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
-                  <span className="text-xs font-mono font-bold text-[#042509] uppercase">The 12-Season Architecture</span>
-                  <h3 className="text-2xl sm:text-3xl font-black font-serif text-[#000000] mt-1">
-                    {SEASON_PROFILES[selectedSeasonTab].season} — {SEASON_PROFILES[selectedSeasonTab].thaiName}
+                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666]">
+                    The 12-Season Architecture
+                  </span>
+                  <h3 className="text-3xl sm:text-4xl font-black text-[#0A0A0A] tracking-tight leading-[1.05] mt-1">
+                    {theory.season} — {theory.thaiName}
                   </h3>
                 </div>
-                <span className="px-3 py-1 rounded-full bg-[#F1F1F1] border border-[#DCDCDC] font-mono text-xs font-bold text-[#C91D1D]">
-                  {SEASON_PROFILES[selectedSeasonTab].undertone}
+                <span className="font-mono text-xs text-[#666666] shrink-0">
+                  {theory.undertone}
                 </span>
               </div>
 
-              <p className="text-sm text-[#000000] leading-relaxed">
-                {SEASON_PROFILES[selectedSeasonTab].description}
+              <p className="text-sm text-[#0A0A0A] leading-relaxed max-w-prose">
+                {theory.description}
               </p>
 
-              {/* Color Swatches Grid */}
               <div>
-                <h4 className="font-mono text-xs font-bold uppercase text-[#666666] tracking-wider mb-3">
-                  เฉดสีประจำฤดูกาล {selectedSeasonTab} ({SEASON_PROFILES[selectedSeasonTab].palette.length} Colors):
+                <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-3">
+                  เฉดสีประจำฤดูกาล {selectedSeasonTab} ({theory.palette.length} Colors)
                 </h4>
-                <div ref={paletteMotionRef} className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-                  {SEASON_PROFILES[selectedSeasonTab].palette.map((c, i) => (
-                    <div key={i} className="p-3 bg-[#F1F1F1] rounded-2xl border border-[#DCDCDC] text-center space-y-2">
-                      <div 
-                        className="w-12 h-12 rounded-xl mx-auto shadow-sm border border-black/10" 
-                        style={{ backgroundColor: c.hex }}
-                      />
-                      <div>
-                        <p className="text-xs font-bold text-[#000000] truncate">{c.name}</p>
-                        <p className="text-[10px] font-mono text-[#666666]">{c.hex}</p>
-                      </div>
-                    </div>
-                  ))}
+                <PaletteBand palette={theory.palette} />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                <div>
+                  <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">
+                    จุดสังเกตตามธรรมชาติ
+                  </h4>
+                  <ul className="divide-y divide-[#DCDCDC] border-t border-[#DCDCDC]">
+                    {theory.characteristics.map((c, i) => (
+                      <li key={i} className="py-2.5 text-sm text-[#666666]">{c}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C91D1D] mb-2">
+                    สีที่ควรหลีกเลี่ยง (Avoid)
+                  </h4>
+                  <ul className="divide-y divide-[#DCDCDC] border-t border-[#DCDCDC]">
+                    {theory.avoidColors.map((c, i) => (
+                      <li key={i} className="py-2.5 text-sm text-[#666666]">{c}</li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             </div>
           </div>
         )}
-
 
       </div>
     </div>
