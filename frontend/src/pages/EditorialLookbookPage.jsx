@@ -84,7 +84,14 @@ export default function EditorialLookbookPage() {
   // Cover story is the first spread in filtered list
   const coverStory = filteredSpreads[0] || curatedEditorialSpreads?.[0] || null;
   const remainingSpreads = filteredSpreads.length > 0 ? filteredSpreads.slice(1) : [];
-  const { imageRef: coverImageRef, position: coverPosition } = useCoverCoordinates(coverStory?.heroImage);
+  /* The archive is shot in portrait, and a cover that is wider than the
+     photograph has to throw away a band top and bottom. Cropping from the
+     centre took a quarter off the top, which is where the heads are. Holding
+     the crop near the top of the frame keeps the subject whole; the same
+     fraction goes to the image's object-position below, or the pins would no
+     longer sit on the garments they point at. */
+  const COVER_FOCUS = { x: 0.5, y: 0.18 };
+  const { imageRef: coverImageRef, position: coverPosition } = useCoverCoordinates(coverStory?.heroImage, COVER_FOCUS);
 
   // Keyboard navigation for Lightbox & Hotspot Pin
   useEffect(() => {
@@ -355,8 +362,12 @@ export default function EditorialLookbookPage() {
                 set on it, and the essay and the shopping list carried beneath
                 in columns. It used to be a bordered, rounded, shadowed pane
                 holding a 7/5 split — a product card at magazine scale. */}
+            {/* Sized by the viewport rather than by a fixed ratio. A landscape
+                ratio over a portrait photograph has to discard a quarter of the
+                frame, and the cover then fights whatever the photographer put
+                at the top and bottom. A tall cover keeps far more of the shot. */}
             <figure
-              className="relative w-full aspect-4/5 sm:aspect-16/10 overflow-hidden bg-[#E4E4E4] cursor-pointer select-none"
+              className="relative w-full h-[78svh] sm:h-[86svh] min-h-[440px] overflow-hidden bg-[#E4E4E4] cursor-pointer select-none"
               onClick={() => setSelectedSpread(coverStory)}
             >
               <img
@@ -364,7 +375,8 @@ export default function EditorialLookbookPage() {
                 src={webpSrc(coverStory.heroImage)} data-original-src={coverStory.heroImage}
                 alt={coverStory.title}
                 onError={handleImageError}
-                className="w-full h-full object-cover object-center"
+                style={{ objectPosition: `${COVER_FOCUS.x * 100}% ${COVER_FOCUS.y * 100}%` }}
+                className="w-full h-full object-cover"
               />
 
               {/* Enough shading to carry type at either end, and no more. */}
@@ -467,7 +479,12 @@ export default function EditorialLookbookPage() {
                 <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-white/80">
                   {coverStory.theme} — {coverStory.seasonThai}
                 </span>
-                <h2 className="mt-2 text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-[-0.02em] leading-[0.9] max-w-3xl">
+                {/* The colour is set here rather than inherited: index.css gives
+                    every heading an explicit colour in @layer base, and a
+                    parent's `text-white` loses to a rule that targets h2
+                    directly — so a heading over a photograph renders black
+                    unless it says otherwise. */}
+                <h2 className="mt-2 text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-[-0.02em] leading-[0.9] max-w-3xl text-white">
                   {coverStory.title}
                 </h2>
                 <div className="mt-3 flex flex-wrap items-baseline gap-x-5 gap-y-1 font-mono text-[11px] text-white/80">
