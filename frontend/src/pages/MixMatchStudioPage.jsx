@@ -425,7 +425,15 @@ export default function MixMatchStudioPage() {
                     onClick={() => setActiveSlotTab(key)}
                     data-motion-slot={key}
                     data-motion-item={item?.id}
-                    className={`bg-white cursor-pointer transition-colors ${active ? 'ring-2 ring-inset ring-[#0A0A0A]' : ''}`}
+                    /* No second line system. The grid already draws one
+                       hairline between tiles; an inset ring on the active one
+                       landed right beside it, so that edge became a 3px grey
+                       and black stack while the shared edges read grey on one
+                       side and black on the other. It also cut across the top
+                       of the photograph. The active slot inverts its caption
+                       instead — the same solid black this site uses everywhere
+                       else to mean "this one". */
+                    className="bg-white cursor-pointer" 
                   >
                     {/* Every garment is shot on white, so `multiply` drops the
                         studio backdrop into the dye wash behind it. */}
@@ -443,13 +451,13 @@ export default function MixMatchStudioPage() {
                       )}
                     </div>
 
-                    <div className="px-2.5 py-2">
-                      <span className="flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-wider text-[#C91D1D]">
+                    <div className={`px-2.5 py-2 transition-colors ${active ? 'bg-[#0A0A0A]' : 'bg-white'}`}>
+                      <span className={`flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-wider ${active ? 'text-[#F1F1F1]/60' : 'text-[#C91D1D]'}`}>
                         <Icon size={11} />
                         <span className="truncate">{label}</span>
                       </span>
-                      <h4 className="text-[11px] font-bold text-[#0A0A0A] truncate mt-0.5">{item?.name}</h4>
-                      <span className="font-mono text-[10px] text-[#666666]">
+                      <h4 className={`text-[11px] font-bold truncate mt-0.5 ${active ? 'text-[#F1F1F1]' : 'text-[#0A0A0A]'}`}>{item?.name}</h4>
+                      <span className={`font-mono text-[10px] ${active ? 'text-[#F1F1F1]/70' : 'text-[#666666]'}`}>
                         ${item?.price} · {item?.fit || item?.color || 'Regular'}
                       </span>
 
@@ -464,10 +472,13 @@ export default function MixMatchStudioPage() {
                             key={sz}
                             type="button"
                             onClick={() => setSelectedSizes(prev => ({ ...prev, [key]: sz }))}
-                            className={`px-1.5 py-0.5 font-mono text-[9px] whitespace-nowrap transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
+                            /* On the inverted caption the usual black chip
+                               would vanish, so the selected size flips to
+                               light on the dark strip. */
+                            className={`px-1.5 py-0.5 font-mono text-[9px] whitespace-nowrap transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#C91D1D] ${
                               selectedSizes[key] === sz
-                                ? 'bg-[#0A0A0A] text-[#F1F1F1]'
-                                : 'bg-[#F1F1F1] text-[#666666] hover:bg-[#DCDCDC]'
+                                ? (active ? 'bg-[#F1F1F1] text-[#0A0A0A]' : 'bg-[#0A0A0A] text-[#F1F1F1]')
+                                : (active ? 'bg-[#F1F1F1]/15 text-[#F1F1F1]/70 hover:bg-[#F1F1F1]/25' : 'bg-[#F1F1F1] text-[#666666] hover:bg-[#DCDCDC]')
                             }`}
                           >
                             {sz}
