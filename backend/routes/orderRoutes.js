@@ -147,11 +147,13 @@ router.post('/', async (req, res) => {
       country: customer.country || 'Thailand'
     };
 
-    // 5. User ID assignment (Valid Mongo ObjectId or null for Guest)
+    // 5. Whose order this is. Any non-empty id the token carries identifies the
+    //    account; the ObjectId test that used to guard this rejected every id
+    //    the user store issues, so no order was ever attributed to anyone.
     let orderUserId = null;
     const candidateId = authUser?.id || authUser?.userId || authUser?._id;
-    if (candidateId && mongoose.Types.ObjectId.isValid(candidateId)) {
-      orderUserId = candidateId;
+    if (candidateId && String(candidateId).trim()) {
+      orderUserId = String(candidateId).trim();
     }
 
     const validPaymentMethods = ['visa', 'mastercard', 'cod', 'qr', 'demo'];
@@ -257,9 +259,11 @@ router.get('/', async (req, res) => {
       filter = {};
     } else if (authUser) {
       const uId = authUser.id || authUser.userId || authUser._id;
+      /* The email match stays as the fallback for the orders already written
+         with a null userId; new orders carry the id and match on it directly. */
       const conditions = [{ 'customer.email': authUser.email?.toLowerCase() }];
-      if (uId && mongoose.Types.ObjectId.isValid(uId)) {
-        conditions.push({ userId: uId });
+      if (uId && String(uId).trim()) {
+        conditions.push({ userId: String(uId).trim() });
       }
       filter = { $or: conditions };
     } else if (queryEmail) {

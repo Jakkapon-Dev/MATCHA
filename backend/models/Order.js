@@ -46,9 +46,14 @@ const orderSchema = new Schema(
       required: true,
       unique: true
     },
+    /* Accounts live in the JSON user store, not in Mongo, so their ids look
+       like `u_3f1c…` rather than a 24-character ObjectId — the same mismatch
+       that detached every cart from its owner. Declared as an ObjectId, this
+       field silently took null for every real customer: all 13 orders in the
+       database were written with userId: null and reachable only by matching
+       the email on the order. */
     userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
+      type: String,
       default: null
     },
     customer: {
