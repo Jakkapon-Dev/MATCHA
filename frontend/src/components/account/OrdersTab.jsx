@@ -60,8 +60,11 @@ export default function OrdersTab({ orders = [], isLoaded = true }) {
             <Package size={24} />
           </div>
           <div className="text-sm font-bold text-[#0A0A0A]">{t('account.noOrders')}</div>
+          {/* Was a Thai sentence written straight into the markup, so an
+              English reader got an English heading and a Thai explanation
+              underneath it. */}
           <p className="text-xs text-[#666666] max-w-sm mx-auto font-mono">
-            คำสั่งซื้อใหม่และสถานะการจัดส่งแบบเรียลไทม์จะปรากฏที่นี่หลังจากทำรายการ
+            {t('account.noOrdersHint')}
           </p>
           <button
             type="button"

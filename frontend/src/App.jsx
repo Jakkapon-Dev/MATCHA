@@ -13,6 +13,7 @@ const CartPage = React.lazy(() => import('./pages/CartPage.jsx'));
 const AccessPage = React.lazy(() => import('./pages/AccessPage.jsx'));
 const PaymentPage = React.lazy(() => import('./pages/PaymentPage.jsx'));
 const UserAccount = React.lazy(() => import('./pages/UserAccount.jsx'));
+const GuestOrdersPage = React.lazy(() => import('./pages/GuestOrdersPage.jsx'));
 const AdminPage = React.lazy(() => import('./pages/AdminPage.jsx'));
 const PersonalColorPage = React.lazy(() => import('./pages/PersonalColorPage.jsx'));
 const MixMatchStudioPage = React.lazy(() => import('./pages/MixMatchStudioPage.jsx'));
@@ -67,6 +68,7 @@ const TITLE_KEYS = [
   ['/payment', 'titles.payment'],
   ['/signup', 'titles.signup'],
   ['/account', 'titles.account'],
+  ['/orders', 'titles.orders'],
   ['/admin', 'titles.admin'],
   ['/login', 'titles.login'],
   ['/legal', 'titles.legal'],
@@ -358,6 +360,11 @@ function AppContent() {
           {/* 5 & 6. Sign in and register, one page */}
           <Route path="/login" element={<AccessPage mode="signin" />} />
           <Route path="/signup" element={<AccessPage mode="register" />} />
+
+          {/* Order history for whoever is asking. Open on purpose: without the
+              browser's guest id the API returns an empty list, so there is
+              nothing here to reach that the caller does not own. */}
+          <Route path="/orders" element={<GuestOrdersPage />} />
 
           {/* 7. User Account Page (Member VIP Lounge) */}
           <Route

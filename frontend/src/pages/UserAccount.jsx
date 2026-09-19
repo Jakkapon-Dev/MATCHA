@@ -23,6 +23,7 @@ import AddressesTab from '../components/account/AddressesTab';
 import PaymentMethodsTab from '../components/account/PaymentMethodsTab';
 import PreferencesTab from '../components/account/PreferencesTab';
 import { api } from '../services/api';
+import { formatOrdersForDisplay } from '../utils/orderHistory';
 
 export default function UserAccount() {
   const { t } = useLanguage();
@@ -76,26 +77,7 @@ export default function UserAccount() {
              people's names, emails, phone numbers and addresses in order to
              discard them. Filtering where the data lives is the fix; this was
              only hiding it. */
-          const displayList = res.data;
-          const formatted = displayList.map((o) => ({
-            id: o.orderId || o._id,
-            date: o.createdAt
-              ? new Date(o.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
-              : 'Today',
-            status: o.status || 'pending',
-            paymentStatus: o.paymentStatus || 'unpaid',
-            paymentMethod: o.paymentMethod || 'visa',
-            total: Number(o.total) || 0,
-            items: (o.items || []).map((i) => ({
-              name: i.name || 'MatchA Garment',
-              color: i.color || 'Default',
-              size: i.size || '',
-              qty: i.quantity || 1,
-              price: i.price || 0,
-              image: i.image || '/images/products/autumn/tops/shirts/color_1_brown.jpeg'
-            }))
-          }));
-          setOrders(formatted);
+          setOrders(formatOrdersForDisplay(res.data));
         }
         setOrdersLoaded(true);
       })
