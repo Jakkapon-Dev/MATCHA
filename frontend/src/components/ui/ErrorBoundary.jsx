@@ -16,6 +16,22 @@ export default class ErrorBoundary extends React.Component {
     console.error('[ErrorBoundary]', error, info?.componentStack);
   }
 
+  /* Clear the error when the thing that caused it changes.
+
+     This boundary used to be given key={location.pathname}, which does clear
+     it on navigation — by destroying and rebuilding the entire subtree every
+     time, taking form state, scroll position and any in-flight work with it.
+     Watching the keys instead resets only this boundary, and only when it is
+     actually holding an error, so a working page is left alone. */
+  componentDidUpdate(prevProps) {
+    if (!this.state.hasError) return;
+    const prev = prevProps.resetKeys || [];
+    const next = this.props.resetKeys || [];
+    const changed = prev.length !== next.length
+      || next.some((key, i) => !Object.is(key, prev[i]));
+    if (changed) this.setState({ hasError: false, error: null });
+  }
+
   handleRetry = () => {
     this.setState({ hasError: false, error: null });
   };

@@ -269,7 +269,11 @@ function AppContent() {
         onGoToLanding={handleGoToHome}
       >
         {/* หน้าเดียวพังไม่ควรลากทั้งแอปไปด้วย — key ทำให้ boundary รีเซ็ตเองเมื่อเปลี่ยนหน้า */}
-        <ErrorBoundary key={location.pathname}>
+        {/* resetKeys rather than key: keying by pathname threw away the whole
+            subtree on every navigation — form state, scroll position and any
+            in-flight work — to achieve something the boundary can now do by
+            clearing its own error. */}
+        <ErrorBoundary resetKeys={[location.pathname]}>
         <Suspense fallback={<PageSkeleton />}>
         <Routes>
           {/* 1. Home Page */}
