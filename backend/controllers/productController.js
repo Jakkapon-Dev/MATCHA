@@ -333,6 +333,16 @@ export async function getProductById(req, res) {
  * POST /api/products
  * Create Garment (Admin Protected)
  */
+/* `quantity` is what the admin console and several older callers send; `stock`
+   is what the schema stores. Accept either, write the one that exists. */
+function normaliseStock(payload) {
+  if (payload.quantity !== undefined) {
+    if (payload.stock === undefined) payload.stock = payload.quantity;
+    delete payload.quantity;
+  }
+  return payload;
+}
+
 export async function createProduct(req, res) {
   if (mongoose.connection.readyState !== 1) return res.status(503).json({ success: false, message: 'Database unavailable; changes were not saved' });
   try {
@@ -340,9 +350,12 @@ export async function createProduct(req, res) {
     if (!data.id && !data.sku) {
       data.id = `PROD-${Date.now().toString().slice(-6)}`;
     }
-    if (data.stock !== undefined && data.quantity === undefined) {
-      data.quantity = data.stock;
-    }
+    /* The stock count is normalised onto `stock`, which is the field the
+       Product schema declares. This used to copy the other way — stock onto
+       quantity — and the schema has no `quantity` path, so with strict mode on
+       Mongoose dropped it before the write. The copy never reached the
+       database and never could. */
+    normaliseStock(data);
     if (mongoose.connection.readyState === 1) {
       const product = new Product(data);
       const saved = await product.save();
@@ -364,9 +377,14 @@ export async function updateProduct(req, res) {
   try {
     const { id } = req.params;
     const updates = { ...req.body };
-    if (updates.stock !== undefined && updates.quantity === undefined) {
-      updates.quantity = updates.stock;
-    }
+    /* Restocking from the admin console sends `quantity` and nothing else, so
+       the old mapping — which only fired when `stock` was present — never ran,
+       and `quantity` went into $set to be dropped by the schema. The update
+       matched a product, changed none of its fields and answered
+       `success: true`. Measured before this fix: PUT {quantity: 53} against a
+       product holding 50 returned success and left it at 50, so every restock
+       an administrator performed was lost on the next reload. */
+    normaliseStock(updates);
     if (mongoose.connection.readyState === 1) {
       const isOid = mongoose.Types.ObjectId.isValid(id);
       const updated = await Product.findOneAndUpdate(

@@ -185,12 +185,46 @@ test('POST /api/products stores the garment for an Admin when the database is up
     assert.equal(saved[0].name, 'Artisan Linen Robe');
     assert.equal(saved[0].stock, 25, 'the stock count is stored');
     assert.ok(saved[0].id, 'an id is generated when none is supplied');
-    /* createProduct also copies stock onto a `quantity` field, which the
-       Product schema does not declare, so Mongoose drops it before the write.
-       Asserted here so the mapping's uselessness is on the record rather than
-       looking like it does something. Nothing depends on it: the admin restock
-       call sends stock and quantity together, and stock is the one that lands. */
-    assert.equal(saved[0].quantity, undefined, 'the quantity copy is discarded by the schema');
+  } finally {
+    mock.restoreAll();
+    mongoose.connection.readyState = 0;
+  }
+});
+
+/* A restock has to reach the database.
+
+   The admin console sends `quantity`; the Product schema stores `stock` and
+   declares no `quantity` path, so with strict mode on Mongoose dropped the
+   field. updateProduct matched the product, set nothing and answered
+   `success: true`. Measured against the running server before the fix: PUT
+   {quantity: 53} on a product holding 50 returned success and left it at 50.
+   Every restock an administrator did was lost at the next reload.
+
+   Both spellings are asserted because both are in use — the console sends
+   quantity, older callers send stock. */
+test('PUT /api/products/:id writes a quantity-only restock to stock', async () => {
+  mongoose.connection.readyState = 1;
+  mock.method(User, 'findById', () => ({ lean: async () => null }));
+  const writes = [];
+  mock.method(Product, 'findOneAndUpdate', async (_filter, update) => {
+    writes.push(update.$set);
+    return { id: 'SKU-1', stock: update.$set.stock };
+  });
+
+  try {
+    for (const [sent, label] of [[{ quantity: 53 }, 'quantity'], [{ stock: 41 }, 'stock']]) {
+      const res = await fetch(`${baseUrl}/products/SKU-1`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${adminToken}` },
+        body: JSON.stringify(sent)
+      });
+      assert.equal(res.status, 200, `a ${label} update is accepted`);
+    }
+
+    assert.equal(writes.length, 2);
+    assert.equal(writes[0].stock, 53, 'quantity is written to the field the schema has');
+    assert.equal(writes[0].quantity, undefined, 'and is not passed through to be dropped');
+    assert.equal(writes[1].stock, 41, 'a stock update still works unchanged');
   } finally {
     mock.restoreAll();
     mongoose.connection.readyState = 0;

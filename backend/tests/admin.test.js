@@ -113,14 +113,21 @@ test('admin normalization never invents stock, payment, identity or revenue', ()
 
 test('stock updates return persisted products and missing products are not reported as saved', async t => {
   connected(t);
+  /* The console sends `quantity`; the write has to land on `stock`, which is
+     the field the Product schema declares. This assertion previously expected
+     `{ $set: { quantity: 0 } }` — the payload as sent — and passed, because
+     the controller forwarded it unchanged. The schema has no `quantity` path
+     and strict mode drops it, so that $set reached the database and changed
+     nothing while the route answered success. The test was green and the
+     feature did not work. */
   t.mock.method(Product, 'findOneAndUpdate', async (filter, update) => {
     assert.equal(filter.$or[0].id, 'p_real');
-    assert.deepEqual(update, { $set: { quantity: 0 } });
-    return { id: 'p_real', name: 'Real product', quantity: 0 };
+    assert.deepEqual(update, { $set: { stock: 0 } });
+    return { id: 'p_real', name: 'Real product', stock: 0 };
   });
   const saved = await fetch(base + '/products/p_real', { method: 'PUT', headers: headers('Admin'), body: JSON.stringify({ quantity: 0 }) });
   assert.equal(saved.status, 200);
-  assert.equal((await saved.json()).data.quantity, 0);
+  assert.equal((await saved.json()).data.stock, 0);
   t.mock.method(Product, 'findOneAndUpdate', async () => null);
   const missing = await fetch(base + '/products/missing', { method: 'PUT', headers: headers('Admin'), body: JSON.stringify({ quantity: 0 }) });
   assert.equal(missing.status, 404);
