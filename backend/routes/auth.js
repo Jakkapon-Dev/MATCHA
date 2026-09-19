@@ -1,10 +1,23 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import rateLimit from 'express-rate-limit';
 import userStore from '../services/userStore.js';
 import { requireAuth, requireRole, getJwtSecret } from '../middleware/auth.js';
 
 const router = express.Router();
+
+// Rate limiter for authentication attempts to prevent brute-force attacks
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: process.env.NODE_ENV === 'test' ? 1000 : 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    success: false,
+    message: 'มีการพยายามเข้าสู่ระบบถี่เกินไป กรุณารอสักครู่แล้วลองใหม่อีกครั้ง'
+  }
+});
 
 export const safeUser = (u) => {
   if (!u) return null;
@@ -26,14 +39,21 @@ export const signToken = (user) =>
   });
 
 // ---- Register ----
-router.post('/register', async (req, res) => {
+router.post('/register', authLimiter, async (req, res) => {
   try {
     const { name, firstName, lastName, email, password } = req.body || {};
-    const fullName = name || `${firstName || ''} ${lastName || ''}`.trim();
-    const cleanEmail = (email || '').toLowerCase().trim();
+    if (typeof email !== 'string' || typeof password !== 'string') {
+      return res.status(400).json({ success: false, message: 'Please provide valid email and password format.' });
+    }
+    const fullName = (typeof name === 'string' ? name : `${firstName || ''} ${lastName || ''}`).trim();
+    const cleanEmail = email.toLowerCase().trim();
 
     if (!cleanEmail || !password || !fullName) {
       return res.status(400).json({ success: false, message: 'Please provide email, password and name.' });
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(cleanEmail)) {
+      return res.status(400).json({ success: false, message: 'Invalid email address format' });
     }
     if (password.length < 8) {
       return res.status(400).json({ success: false, message: 'Password must be at least 8 characters.' });
@@ -58,15 +78,22 @@ router.post('/register', async (req, res) => {
 
     res.status(201).json({ success: true, data: safeUser(user), token: signToken(user) });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    /* The driver's own message can carry index names, collection names or
+       connection detail, and these are the two endpoints most worth probing.
+       It is logged where it is useful and not returned. */
+    console.error('[auth]', err);
+    res.status(500).json({ success: false, message: 'การยืนยันตัวตนขัดข้อง กรุณาลองใหม่อีกครั้ง' });
   }
 });
 
 // ---- Login ----
-router.post('/login', async (req, res) => {
+router.post('/login', authLimiter, async (req, res) => {
   try {
     const { email, password } = req.body || {};
-    const cleanEmail = (email || '').toLowerCase().trim();
+    if (typeof email !== 'string' || typeof password !== 'string') {
+      return res.status(400).json({ success: false, message: 'Invalid credentials format' });
+    }
+    const cleanEmail = email.toLowerCase().trim();
 
     // 3. ใส่ await ในการค้นหา User
     const user = await userStore.findByEmail(cleanEmail);
@@ -81,7 +108,11 @@ router.post('/login', async (req, res) => {
 
     res.json({ success: true, data: safeUser(user), token: signToken(user) });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    /* The driver's own message can carry index names, collection names or
+       connection detail, and these are the two endpoints most worth probing.
+       It is logged where it is useful and not returned. */
+    console.error('[auth]', err);
+    res.status(500).json({ success: false, message: 'การยืนยันตัวตนขัดข้อง กรุณาลองใหม่อีกครั้ง' });
   }
 });
 

@@ -12,12 +12,12 @@ const WAKE_UP_HINT_MS = 4000;
 export default function useStreetProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState(false);
   const [slow, setSlow] = useState(false);
   const [attempt, setAttempt] = useState(0);
   useEffect(() => {
     let active = true;
-    setLoading(true); setError(''); setSlow(false);
+    setLoading(true); setError(false); setSlow(false);
     const slowTimer = setTimeout(() => { if (active) setSlow(true); }, WAKE_UP_HINT_MS);
     async function load() {
       const items = [];
@@ -37,7 +37,7 @@ export default function useStreetProducts() {
       const curatedIds = new Set(curated.map(p => p.id));
       setProducts([...curated, ...items.filter(p => !curatedIds.has(p.id))]);
     }
-    load().catch(() => { if (active) setError('โหลดสินค้ายังไม่สำเร็จ กรุณาลองใหม่'); })
+    load().catch(() => { if (active) setError(true); })
       .finally(() => { if (active) { clearTimeout(slowTimer); setLoading(false); setSlow(false); } });
     return () => { active = false; clearTimeout(slowTimer); };
   }, [attempt]);

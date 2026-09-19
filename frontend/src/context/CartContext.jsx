@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useToast } from './ToastContext.jsx';
 import { api } from '../services/api';
 import { useStoreMode } from './StoreModeContext.jsx';
@@ -42,6 +42,13 @@ export function CartProvider({ children }) {
   const storageKey = isDemo ? 'matcha_demo_cart' : 'matcha_cart';
   const [cartItems, setCartItems] = useState(() => loadInitialCart(storageKey));
   const { showToast } = useToast();
+
+  /* The current items, readable from a callback without putting them in its
+     dependencies. These callbacks go out through context, so rebuilding them on
+     every cart change would re-render every consumer; the ref keeps them stable
+     and still current. */
+  const cartItemsRef = useRef(cartItems);
+  useEffect(() => { cartItemsRef.current = cartItems; }, [cartItems]);
 
   // Sync cart items to localStorage on any change
   useEffect(() => {
@@ -87,21 +94,40 @@ export function CartProvider({ children }) {
     });
   }, []);
 
+  /* The new quantity is worked out from the current items and then applied,
+     rather than captured out of the updater as it runs.
+
+     It used to be the other way round: a variable declared outside the updater,
+     assigned inside it, and read on the next line to send to the server. React
+     does not promise to run an updater synchronously — it happened to, because
+     React computes state eagerly while the update queue is empty. With a second
+     update already queued that shortcut is skipped, the updater has not run,
+     and the initial value goes to the server instead.
+
+     Three clicks on + in one tick showed 10 in the bag and sent 8, 1, 1 — the
+     server settling on 1 while the shopper saw 10, with nothing to reveal the
+     disagreement because every screen reads local state. */
   const updateQty = useCallback((key, delta) => {
-    let newCalculatedQty = 1;
-    setCartItems((prev) =>
-      prev.map((item) => {
-        if (getCartKey(item) === key) {
-          const qty = Math.max(1, (item.quantity || 1) + delta);
-          newCalculatedQty = qty;
-          return { ...item, quantity: qty };
-        }
-        return item;
-      })
-    );
+    const items = cartItemsRef.current;
+    const current = items.find((item) => getCartKey(item) === key);
+    if (!current) return;
+
+    const nextQty = Math.max(1, (current.quantity || 1) + delta);
+    const nextItems = items.map((item) => (
+      getCartKey(item) === key ? { ...item, quantity: nextQty } : item
+    ));
+
+    /* The ref is advanced here rather than left to the effect that mirrors it.
+       That effect runs after the commit, so three clicks inside one tick would
+       all read the same pre-click quantity and each land on the same +1 — the
+       bag would move by one however many times it was pressed. Writing it now
+       makes the ref the synchronous record that rapid presses accumulate on,
+       and the effect still covers changes made through the other callbacks. */
+    cartItemsRef.current = nextItems;
+    setCartItems(nextItems);
 
     // Background sync to backend MongoDB Cart API (Task 8.6)
-    api.updateCartItem(key, newCalculatedQty).catch((err) => {
+    api.updateCartItem(key, nextQty).catch((err) => {
       console.warn('Backend cart update note:', err.message);
     });
   }, []);

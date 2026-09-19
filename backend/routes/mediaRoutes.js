@@ -107,7 +107,12 @@ router.post('/admin/media', rateLimit({ windowMs: 60_000, limit: 20, standardHea
     ...file,
     alt,
     originalName: path.basename(req.file.originalname).slice(0, 180),
-    uploadedBy: req.user?._id || new mongoose.Types.ObjectId()
+    /* No invented fallback here any more. This route sits behind authRequired
+       and adminOnly, so req.user is always set; the old `|| new ObjectId()`
+       could only ever have written a random id pointing at no user, which
+       reads as attribution and is not. If the uploader is somehow unknown,
+       null says so. */
+    uploadedBy: req.user?._id ? String(req.user._id) : null
   });
   res.status(201).json({ success: true, data: asset });
 }));
@@ -174,7 +179,7 @@ router.put('/admin/media/products/:id/gallery', asyncRoute(async (req, res) => {
 
 // Repeatable import: never overwrite existing product facts or stock.
 router.post('/admin/media/import-lookbook', asyncRoute(async (req, res) => {
-  const data = await importLookbookMedia(req.user._id);
+  const data = await importLookbookMedia(req.user?._id ? String(req.user._id) : null);
   res.json({ success: true, data, message: 'นำเข้าภาพเดิมแล้ว สินค้าใหม่รอระบุสต็อกและไซซ์' });
 }));
 

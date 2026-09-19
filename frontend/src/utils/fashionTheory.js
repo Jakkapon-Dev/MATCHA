@@ -251,7 +251,7 @@ export function computeOutfitSynergy(selectedTop, selectedBottom, selectedFootwe
       proportion60_30_10: null,
       ittenContrasts: [],
       deltaE: 0,
-      stylingAdvice: 'เริ่มเลือกเสื้อผ้า รองเท้า และเครื่องประดับเพื่อวิเคราะห์ค่าความเข้ากันได้'
+      advice: { key: 'mixMatch.adviceEmpty' }
     };
   }
 
@@ -346,15 +346,14 @@ export function computeOutfitSynergy(selectedTop, selectedBottom, selectedFootwe
     }
   };
 
-  // F. Editorial Styling Advice Generator
-  let advice = '';
-  if (allSameSeason) {
-    advice = `คุมโทนลุคสมบูรณ์แบบตั้งแต่หัวจรดเท้าในพาเลตต์ ${firstSeason} ขับเน้นออร่าอันเดอร์โทนของผู้สวมใส่ เสริมด้วยทฤษฎี ${harmony.label}`;
-  } else if (sameUndertone) {
-    advice = `จับคู่ 4 ชิ้นที่ใช้อันเดอร์โทน ${undertones[0]} ร่วมกันอย่างประณีต รองเท้าทำหน้าที่เป็น Visual Anchor ถ่วงสมดุลกับกระเป๋าได้ยอดเยี่ยม`;
-  } else {
-    advice = `การผสมผสานสีแบบ Optical Contrast ที่โฉบเฉี่ยว รองเท้าและแอกเซสซอรีช่วยคุมสัดส่วน 10% Accent ได้อย่างลงตัว`;
-  }
+  /* F. The styling note. This module does the colour maths and knows nothing
+     about language, so it names which sentence applies and supplies the values
+     that go in it; the page renders it through the dictionary. */
+  const advice = allSameSeason
+    ? { key: 'mixMatch.adviceSameSeason', vars: { season: firstSeason, harmony: harmony.label } }
+    : sameUndertone
+      ? { key: 'mixMatch.adviceSameUndertone', vars: { undertone: undertones[0] } }
+      : { key: 'mixMatch.adviceContrast' };
 
   return {
     score,
@@ -366,6 +365,6 @@ export function computeOutfitSynergy(selectedTop, selectedBottom, selectedFootwe
     deltaE,
     ittenContrasts,
     proportion60_30_10,
-    stylingAdvice: advice
+    advice
   };
 }

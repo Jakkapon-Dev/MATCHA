@@ -35,7 +35,7 @@ export default function HomePage({
       </section>
 
       {/* 3. STREET FAVORITES & ARCHIVE: Continuous Framed Carousel with Real Product Shots */}
-      <section id="street-favorites" data-reveal="products">
+      <section id="street-favorites">
         <StreetFavorites 
           onAddToCart={onAddToCart} 
           onQuickView={onQuickView}
@@ -47,7 +47,7 @@ export default function HomePage({
       <BrandLoop />
 
       {/* 4. CINEMATIC TEXTURE REEL: Urban Motion Video + 15% Special Promo Glass Card */}
-      <section id="cinematic-reel" data-reveal="film">
+      <section id="cinematic-reel">
         <VdoSection onClaimPromo={onClaimPromo} />
       </section>
 

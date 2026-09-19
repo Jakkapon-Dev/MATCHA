@@ -9,8 +9,8 @@
     "test": "node --test tests/*.test.js",
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "seed": "node seed.js",
-    "seed:users": "node seedUsers.js"
+    "seed": "node scripts/seed.js",
+    "seed:users": "node scripts/seedUsers.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

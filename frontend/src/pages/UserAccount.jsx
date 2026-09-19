@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import { useNavigate } from 'react-router-dom';
 import useChangeMotion from '../hooks/useChangeMotion';
 import {
@@ -11,8 +12,7 @@ import {
   LogOut,
   Sparkles,
   ShieldCheck,
-  ArrowRight,
-  ExternalLink
+  ArrowRight
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
@@ -25,6 +25,7 @@ import PreferencesTab from '../components/account/PreferencesTab';
 import { api } from '../services/api';
 
 export default function UserAccount() {
+  const { t } = useLanguage();
   const { currentUser, updateProfile, logout } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
@@ -154,12 +155,12 @@ export default function UserAccount() {
     if (justLoggedOut) {
       return (
         <div className="min-h-[70vh] flex items-center justify-center p-4 bg-[#F1F1F1]">
-          <div className="bg-white border border-[#DCDCDC] rounded-3xl p-8 sm:p-12 max-w-md w-full text-center space-y-6 shadow-xl">
-            <div data-enter className="w-16 h-16 rounded-2xl bg-[#518F5C]/20 text-[#042509] flex items-center justify-center mx-auto text-2xl font-bold">
-              🍵
+          <div className="bg-white border border-[#DCDCDC] p-8 sm:p-12 max-w-md w-full text-center space-y-6">
+            <div data-enter className="w-16 h-16 bg-[#518F5C]/20 text-[#042509] flex items-center justify-center mx-auto text-2xl font-bold">
+              
             </div>
             <div data-enter style={{ '--enter-delay': '70ms' }} className="space-y-2">
-              <h1 className="text-2xl font-black uppercase text-[#000000]">ออกจากระบบแล้ว</h1>
+              <h1 className="text-2xl font-black uppercase text-[#0A0A0A]">{t('account.signedOut')}</h1>
               <p className="text-xs font-mono text-[#666666]">
                 คุณได้ออกจากระบบ MatchA เรียบร้อยแล้ว สามารถกลับมาเข้าสู่ระบบได้ทุกเมื่อ
               </p>
@@ -167,13 +168,13 @@ export default function UserAccount() {
             <div data-enter style={{ '--enter-delay': '190ms' }} className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => navigate('/login')}
-                className="flex-1 py-3 bg-[#000000] text-white text-xs font-bold font-mono uppercase rounded-xl shadow-md hover:bg-black/80 transition-all cursor-pointer"
+                className="flex-1 py-3 bg-[#0A0A0A] text-white text-xs font-bold font-mono uppercase hover:bg-black/80 transition-all cursor-pointer"
               >
                 เข้าสู่ระบบอีกครั้ง
               </button>
               <button
                 onClick={() => navigate('/')}
-                className="flex-1 py-3 border border-[#DCDCDC] text-xs font-bold font-mono uppercase text-[#000000] hover:bg-[#F1F1F1] rounded-xl transition-all cursor-pointer"
+                className="flex-1 py-3 border border-[#DCDCDC] text-xs font-bold font-mono uppercase text-[#0A0A0A] hover:bg-[#F1F1F1] transition-all cursor-pointer"
               >
                 กลับสู่หน้าร้าน
               </button>
@@ -185,12 +186,12 @@ export default function UserAccount() {
 
     return (
       <div className="min-h-[70vh] flex items-center justify-center p-4 bg-[#F1F1F1]">
-        <div className="bg-white border border-[#DCDCDC] rounded-3xl p-8 sm:p-12 max-w-md w-full text-center space-y-6 shadow-xl">
-          <div data-enter className="w-16 h-16 rounded-2xl bg-[#000000] text-white flex items-center justify-center mx-auto">
+        <div className="bg-white border border-[#DCDCDC] p-8 sm:p-12 max-w-md w-full text-center space-y-6">
+          <div data-enter className="w-16 h-16 bg-[#0A0A0A] text-white flex items-center justify-center mx-auto">
             <User size={28} />
           </div>
           <div data-enter style={{ '--enter-delay': '70ms' }} className="space-y-2">
-            <h1 className="text-2xl font-black uppercase text-[#000000]">กรุณาเข้าสู่ระบบ</h1>
+            <h1 className="text-2xl font-black uppercase text-[#0A0A0A]">{t('account.pleaseSignIn')}</h1>
             <p className="text-xs font-mono text-[#666666]">
               เข้าสู่ระบบสมาชิก MatchA เพื่อดูข้อมูลโปรไฟล์ ประวัติคำสั่งซื้อ และจัดการบัญชีของคุณ
             </p>
@@ -198,13 +199,13 @@ export default function UserAccount() {
           <div data-enter style={{ '--enter-delay': '190ms' }} className="flex flex-col sm:flex-row gap-3">
             <button
               onClick={() => navigate('/login', { state: { from: '/account' } })}
-              className="flex-1 py-3 bg-[#000000] text-white text-xs font-bold font-mono uppercase rounded-xl shadow-md hover:bg-black/80 transition-all cursor-pointer"
+              className="flex-1 py-3 bg-[#0A0A0A] text-white text-xs font-bold font-mono uppercase hover:bg-black/80 transition-all cursor-pointer"
             >
               เข้าสู่ระบบทันที
             </button>
             <button
               onClick={() => navigate('/signup')}
-              className="flex-1 py-3 border border-[#DCDCDC] text-xs font-bold font-mono uppercase text-[#000000] hover:bg-[#F1F1F1] rounded-xl transition-all cursor-pointer"
+              className="flex-1 py-3 border border-[#DCDCDC] text-xs font-bold font-mono uppercase text-[#0A0A0A] hover:bg-[#F1F1F1] transition-all cursor-pointer"
             >
               สมัครสมาชิก
             </button>
@@ -215,14 +216,14 @@ export default function UserAccount() {
   }
 
   return (
-    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-5 sm:px-6 lg:px-8">
       <main className="w-full max-w-7xl mx-auto space-y-8">
         
         {/* Admin Quick Switch Banner if logged in user is Admin */}
         {currentUser?.role === 'Admin' && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 sm:p-5 bg-[#042509] text-white rounded-3xl shadow-md border border-[#021505]">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 sm:p-5 bg-[#042509] text-white border border-[#021505]">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-white/10 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 bg-white/10 flex items-center justify-center shrink-0">
                 <ShieldCheck size={20} className="text-[#518F5C]" />
               </div>
               <div>
@@ -237,9 +238,9 @@ export default function UserAccount() {
 
             <button
               onClick={() => navigate('/admin')}
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-[#F1F1F1] text-[#042509] text-xs font-bold font-mono uppercase tracking-wider rounded-xl transition-all cursor-pointer shadow-sm active:scale-98 shrink-0"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-white hover:bg-[#F1F1F1] text-[#042509] text-xs font-bold font-mono uppercase tracking-wider transition-all cursor-pointer active:scale-98 shrink-0"
             >
-              <span>Open Admin Command Center</span>
+              <span>{t('account.adminConsole')}</span>
               <ArrowRight size={14} />
             </button>
           </div>
@@ -250,18 +251,18 @@ export default function UserAccount() {
           <div>
             <div data-enter className="flex items-center gap-2 text-xs font-mono font-bold text-[#042509] uppercase tracking-widest mb-1">
               <Sparkles size={14} />
-              <span>MatchA Collector Lounge</span>
+              <span>{t('account.lounge')}</span>
             </div>
-            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-3xl sm:text-4xl font-black uppercase text-[#000000] tracking-tight">
-              Member Account
+            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-3xl sm:text-4xl font-black uppercase text-[#0A0A0A] tracking-tight">
+              {t('account.title')}
             </h1>
           </div>
 
           {/* VIP Badge */}
-          <div data-enter style={{ '--enter-delay': '190ms' }} className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-[#518F5C] text-[#042509] font-mono text-xs font-bold shadow-2xs">
+          <div data-enter style={{ '--enter-delay': '190ms' }} className="flex items-center gap-2 px-3.5 py-1.5 bg-[#518F5C] text-[#042509] font-mono text-xs font-bold">
             <span className="w-2 h-2 rounded-full bg-[#042509] animate-pulse" />
             <span>
-              {currentUser?.role === 'Admin' ? '👑 STORE ADMINISTRATOR' : '🟢 MATCHA CONNOISSEUR (VIP)'}
+              {currentUser?.role === 'Admin' ? t('account.admin') : t('account.vip')}
             </span>
           </div>
         </div>
@@ -270,7 +271,7 @@ export default function UserAccount() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
           {/* Left Navigation Sidebar */}
-          <div className="lg:col-span-4 space-y-2 bg-white border border-[#DCDCDC] rounded-3xl p-4 shadow-sm">
+          <div className="lg:col-span-4 space-y-2 bg-white border border-[#DCDCDC] p-4">
             {menuItems.map((item, index) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -280,12 +281,12 @@ export default function UserAccount() {
                   key={item.id}
                   data-enter style={{ '--enter-delay': `${Math.min(index * 45, 270)}ms` }}
                   onClick={() => handleTabClick(item.id)}
-                  className={`w-full flex items-center justify-between p-3.5 rounded-2xl text-xs font-mono font-bold tracking-wider uppercase transition-all cursor-pointer ${
+                  className={`w-full flex items-center justify-between p-3.5 text-xs font-mono font-bold tracking-wider uppercase transition-all cursor-pointer ${
                     item.isDanger
                       ? 'text-[#C91D1D] hover:bg-[#C91D1D]/10'
                       : isActive
-                      ? 'bg-[#042509] text-white shadow-xs'
-                      : 'text-[#666666] hover:bg-[#F1F1F1] hover:text-[#000000]'
+                      ? 'bg-[#042509] text-white'
+                      : 'text-[#666666] hover:bg-[#F1F1F1] hover:text-[#0A0A0A]'
                   }`}
                 >
                   <div className="flex items-center gap-3">
@@ -330,21 +331,21 @@ export default function UserAccount() {
         {/* Logout Confirmation Modal */}
         {showLogoutConfirm && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in select-none">
-            <div className="bg-white border border-[#DCDCDC] rounded-3xl p-6 sm:p-8 max-w-sm w-full text-center space-y-4 shadow-2xl">
-              <h3 className="text-lg font-extrabold uppercase text-[#000000]">Sign Out of MatchA?</h3>
+            <div className="bg-white border border-[#DCDCDC] p-6 sm:p-8 max-w-sm w-full text-center space-y-4">
+              <h3 className="text-lg font-extrabold uppercase text-[#0A0A0A]">{t('account.signOutTitle')}</h3>
               <p className="text-xs font-mono text-[#666666]">
                 You can log back in anytime with your VIP credentials.
               </p>
               <div className="flex gap-3 pt-2">
                 <button
                   onClick={() => setShowLogoutConfirm(false)}
-                  className="flex-1 py-3 border border-[#DCDCDC] text-xs font-bold font-mono uppercase rounded-xl hover:bg-[#F1F1F1] cursor-pointer"
+                  className="flex-1 py-3 border border-[#DCDCDC] text-xs font-bold font-mono uppercase hover:bg-[#F1F1F1] cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleConfirmLogout}
-                  className="flex-1 py-3 bg-[#C91D1D] text-white text-xs font-bold font-mono uppercase rounded-xl shadow-md hover:bg-[#A81515] cursor-pointer"
+                  className="flex-1 py-3 bg-[#C91D1D] text-white text-xs font-bold font-mono uppercase hover:bg-[#A81515] cursor-pointer"
                 >
                   Log Out
                 </button>

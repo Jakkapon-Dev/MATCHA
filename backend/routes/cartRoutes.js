@@ -18,8 +18,11 @@ function resolveOwner(req) {
     try {
       const payload = jwt.verify(token, getJwtSecret());
       const id = payload?.id || payload?.userId || payload?._id;
-      if (id && mongoose.Types.ObjectId.isValid(id)) {
-        return { userId: id, guestId: null };
+      /* Any non-empty id the token carries identifies the account. This used to
+         demand a Mongo ObjectId, which the JSON user store never issues, so a
+         signed-in visitor silently became a guest again on every cart call. */
+      if (id && String(id).trim()) {
+        return { userId: String(id).trim(), guestId: null };
       }
     } catch {
       // โทเคนหมดอายุหรือไม่ถูกต้อง — ถือว่ายังไม่ได้ล็อกอิน แล้วไปใช้ guestId แทน
@@ -136,6 +139,21 @@ router.delete('/:itemId', requireOwner, async (req, res) => {
   } catch (err) {
     console.error('Error deleting cart item:', err);
     res.status(500).json({ success: false, message: 'ลบสินค้าออกจากตะกร้าไม่สำเร็จ กรุณาลองใหม่' });
+  }
+});
+
+// DELETE /api/cart — ล้างตะกร้าทั้งใบของเจ้าของคำขอ
+// ใช้ตอนสั่งซื้อสำเร็จ หรือตอนผู้ใช้กดล้างตะกร้าเอง
+router.delete('/', requireOwner, async (req, res) => {
+  if (!dbReady()) return emptyCart(res);
+  try {
+    const cart = await findOrCreateCart(req.cartOwner);
+    cart.items = [];
+    await cart.save();
+    res.json({ success: true, data: { items: [] } });
+  } catch (err) {
+    console.error('Error clearing cart:', err);
+    res.status(500).json({ success: false, message: 'ล้างตะกร้าไม่สำเร็จ กรุณาลองใหม่' });
   }
 });
 

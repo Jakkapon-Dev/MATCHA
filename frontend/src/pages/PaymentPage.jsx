@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import { useNavigate } from 'react-router-dom';
 import useChangeMotion from '../hooks/useChangeMotion';
 import { useCart } from '../context/CartContext.jsx';
@@ -10,8 +11,9 @@ import OrderSuccessModal from '../components/payment/OrderSuccessModal';
 import { api } from '../services/api';
 import { useStoreMode } from '../context/StoreModeContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, shippingCostFor } from '../config/shipping';
+import { couponFor, discountFor, normaliseCode, FEATURED_CODES, takePendingCoupon } from '../config/coupons';
 import PreviewNote from '../components/ui/PreviewNote';
-import { QrCode, Truck, Shield, AlertTriangle, RotateCcw } from 'lucide-react';
+import { QrCode, AlertTriangle, RotateCcw, Check } from 'lucide-react';
 
 const PAYMENT_METHODS = [
   { id: 'visa', name: 'Visa', icon: '💳' },
@@ -20,21 +22,11 @@ const PAYMENT_METHODS = [
   { id: 'qr', name: 'PromptPay QR', icon: <QrCode size={20} /> },
 ];
 
-// ชื่อและระยะเวลาเป็นเรื่องของหน้าจอ ส่วนราคามาจากตารางกลางที่ตรงกับเซิร์ฟเวอร์
 const SHIPPING_OPTIONS = [
-  { id: 'standard', name: 'Standard Express Shipping', price: SHIPPING_RATES.standard, days: '3-5 business days' },
-  { id: 'express', name: 'Priority Courier Shipping', price: SHIPPING_RATES.express, days: '1-2 business days' },
-  { id: 'premium', name: 'VIP Same-Day Delivery', price: SHIPPING_RATES.premium, days: 'Guaranteed 24 Hours' },
+  { id: 'standard', name: 'Standard Delivery', price: SHIPPING_RATES.standard, days: '3-5 business days' },
+  { id: 'express', name: 'Priority Express Courier', price: SHIPPING_RATES.express, days: '1-2 business days' },
+  { id: 'premium', name: 'Same-Day Dispatch', price: SHIPPING_RATES.premium, days: 'Guaranteed 24 hours' },
 ];
-
-const COUPONS = {
-  '01': { discount: 10, type: 'percent', label: '10% OFF' },
-  '02': { discount: 20, type: 'percent', label: '20% OFF' },
-  '03': { discount: 50, type: 'percent', label: '50% OFF' },
-  'MATCHA15': { discount: 15, type: 'percent', label: '15% OFF' },
-  'WELCOME10': { discount: 10, type: 'percent', label: '10% OFF' },
-  'FREESHIP': { discount: 0, type: 'free_shipping', label: 'Free Shipping' },
-};
 
 const initialFormData = {
   firstName: '',
@@ -56,6 +48,7 @@ const initialCardData = {
 };
 
 export default function PaymentPage() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const { cartItems, clearCart } = useCart();
   const { showToast } = useToast();
@@ -76,13 +69,20 @@ export default function PaymentPage() {
   const [orderError, setOrderError] = useState(null);
   const [checkoutRequestId] = useState(() => `req-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`);
 
-  // โหมดเดโมมีขั้นตอนของตัวเองและล้างตะกร้าทันทีที่ออเดอร์ถูกบันทึก
-  // ถ้าปล่อยให้ guard นี้ทำงานด้วย หน้ายืนยันจะถูกเด้งทิ้งก่อนผู้ซื้อได้เห็นเลขออเดอร์
+  // Redirect to cart if bag is empty and not viewing success modal
   useEffect(() => {
     if (cartItems.length === 0 && !showSuccessModal) {
       navigate('/cart');
     }
   }, [cartItems, showSuccessModal, navigate]);
+
+  // Handle pending coupon applied from banners
+  useEffect(() => {
+    const pending = takePendingCoupon();
+    if (!pending) return;
+    setAppliedCoupon(pending);
+    showToast(`Applied coupon ${pending.code} (${pending.label})`, 'success');
+  }, [showToast]);
 
   // Pricing calculations
   const subtotal = cartItems.reduce(
@@ -94,38 +94,34 @@ export default function PaymentPage() {
     freeShippingCoupon: appliedCoupon?.type === 'free_shipping'
   });
 
-  const discount = appliedCoupon?.type === 'percent' 
-    ? subtotal * (appliedCoupon.discount / 100) 
-    : 0;
-
+  const discount = discountFor(appliedCoupon, subtotal);
   const total = Math.max(0, subtotal + shippingCost - discount);
 
   const handleApplyCoupon = (e) => {
     e.preventDefault();
     setCouponError('');
-    const code = couponCode.trim().toUpperCase();
-    const coupon = COUPONS[code];
+    const code = normaliseCode(couponCode);
+    const coupon = couponFor(code);
 
     if (!coupon) {
-      setCouponError('Invalid promo code. Try MATCHA15 or FREESHIP');
+      setCouponError(`Invalid promo code. Try ${FEATURED_CODES.join(' or ')}`);
       return;
     }
 
     setAppliedCoupon({ ...coupon, code });
-    showToast(`Applied coupon: ${code} (${coupon.label}) 🎉`);
+    showToast(`Applied coupon: ${code} (${coupon.label}) ✨`);
     setCouponCode('');
   };
 
   const handleRemoveCoupon = () => {
     setAppliedCoupon(null);
-    showToast('Removed promotional coupon.');
+    showToast('Removed promo code.');
   };
 
   const handlePlaceOrder = async () => {
     setOrderError(null);
     setIsProcessing(true);
     try {
-      // ราคาไม่ได้ส่งไปแล้ว — เซิร์ฟเวอร์คิดเองจากราคาใน DB และโค้ดส่วนลดที่ส่งไป
       const orderPayload = {
         idempotencyKey: checkoutRequestId,
         customer: formData,
@@ -144,68 +140,79 @@ export default function PaymentPage() {
 
       const res = await api.createOrder(orderPayload);
       if (!res || res.success === false || !res.data) {
-        throw new Error(res?.message || 'เซิร์ฟเวอร์ไม่ได้ยืนยันการสร้างออเดอร์');
+        throw new Error(res?.message || 'Server did not acknowledge order creation.');
       }
       setCreatedOrder(res.data);
-      showToast('รับคำสั่งซื้อเรียบร้อยแล้ว (สถานะ: รอดำเนินการ / รอชำระเงิน)', 'success');
+      showToast('Order confirmed successfully.', 'success');
       setShowSuccessModal(true);
       clearCart();
     } catch (err) {
-      // ออเดอร์ที่เซิร์ฟเวอร์ปฏิเสธคือออเดอร์ที่ไม่เกิดขึ้น — อย่าบอกลูกค้าว่าสำเร็จ
       console.error('Order creation failed:', err.message);
-      showToast(err.message || 'Could not place the order. Please try again.', 'error');
-      setOrderError(err.message || 'ไม่สามารถสร้างออเดอร์ได้ กรุณาลองใหม่อีกครั้ง');
+      showToast(err.message || 'Could not place order. Please try again.', 'error');
+      setOrderError(err.message || 'Could not place order. Please try again.');
     } finally {
       setIsProcessing(false);
     }
   };
 
-  // โหมดทดลองใช้ฟอร์มกรอกที่อยู่และบัตรชุดเดียวกับโหมดร้านจริง เพื่อให้ผู้ที่มาลองใช้
-  // เห็นขั้นตอนการสั่งซื้อครบตามจริง — ต่างกันแค่ไม่มีการตัดเงินและไม่มีการจัดส่ง
-  // เลขบัตรอยู่ใน state ของหน้านี้เท่านั้น ไม่ถูกส่งไปกับ orderPayload และไม่ถูกบันทึกที่ใด
   return (
-    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#F1F1F1] text-[#0A0A0A] min-h-screen py-10 sm:py-14 px-5 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         
-        {/* Step Indicator Header */}
-        <div className="mb-10 pb-6 border-b border-[#DCDCDC] flex items-center justify-between">
+        {/* Confident, Quiet Header */}
+        <div className="mb-8 pb-5 border-b border-[#DCDCDC] flex flex-col md:flex-row md:items-baseline justify-between gap-4">
           <div>
-            <span data-enter className="text-xs font-mono font-bold text-[#042509] uppercase tracking-widest">
-              Checkout Flow
-            </span>
-            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-2xl sm:text-4xl font-black uppercase text-[#000000] tracking-tight mt-1">
-              {step === 'shipping' ? 'Shipping Details' : 'Payment Method'}
+            <h1 className="text-2xl sm:text-3xl font-bold text-[#0A0A0A] tracking-tight">
+              {step === 'shipping' ? t('checkout.pageShipping') : t('checkout.pagePayment')}
             </h1>
           </div>
 
           {/* Stepper Progress */}
           <div className="flex items-center gap-2 font-mono text-xs">
-            <span className={`px-3 py-1 rounded-lg font-bold ${
-              step === 'shipping' ? 'bg-[#042509] text-white' : 'bg-[#518F5C] text-[#042509]'
-            }`}>
-              1. Address
-            </span>
-            <span className="text-[#DCDCDC]">→</span>
-            <span className={`px-3 py-1 rounded-lg font-bold ${
-              step === 'payment' ? 'bg-[#042509] text-white' : 'bg-white border border-[#DCDCDC] text-[#666666]'
-            }`}>
-              2. Payment
-            </span>
+            <button
+              onClick={() => navigate('/cart')}
+              className="flex items-center gap-1 text-[#666666] hover:text-[#042509] cursor-pointer"
+            >
+              <Check size={12} className="text-[#042509]" />
+              <span>{t('checkout.stepBag')}</span>
+            </button>
+
+            <span className="text-[#DCDCDC]">/</span>
+
+            <button
+              onClick={() => setStep('shipping')}
+              className={`flex items-center gap-1 px-2.5 py-1 transition-colors cursor-pointer ${
+                step === 'shipping'
+                  ? 'bg-[#042509] text-white font-bold'
+                  : 'text-[#666666] hover:text-[#042509]'
+              }`}
+            >
+              {step === 'payment' ? <Check size={12} /> : null}
+              <span>{t('checkout.stepAddress')}</span>
+            </button>
+
+            <span className="text-[#DCDCDC]">/</span>
+
+            <div
+              className={`px-2.5 py-1 ${
+                step === 'payment'
+                  ? 'bg-[#042509] text-white font-bold'
+                  : 'text-[#666666]'
+              }`}
+            >
+              <span>{t('checkout.stepPayment')}</span>
+            </div>
           </div>
         </div>
 
         {/* 2-Column Checkout Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           
-          {/* Main Form Steps (Left Column) */}
+          {/* Main Form Step Area */}
           <div ref={stepMotionRef} className="lg:col-span-7">
             {isDemo && (
-              <PreviewNote className="mb-5">
-                <strong>โหมดทดลอง</strong> — ขั้นตอนและฟอร์มเหมือนการสั่งซื้อจริงทุกอย่าง
-                แต่ไม่มีการตัดเงินและไม่มีการจัดส่ง
-                <br />
-                กรุณา<strong>ใช้ข้อมูลสมมติเท่านั้น</strong> อย่ากรอกเลขบัตรจริง
-                (เลขบัตรที่กรอกอยู่ในหน้าจอนี้เท่านั้น ไม่ถูกส่งออกและไม่ถูกบันทึกที่ใด)
+              <PreviewNote className="mb-6">
+                <strong>{t('checkout.simulation')}</strong> {t('checkout.simulationBody')}
               </PreviewNote>
             )}
 
@@ -229,63 +236,57 @@ export default function PaymentPage() {
                 onSelectPayment={setSelectedPayment}
                 cardData={cardData}
                 onCardDataChange={setCardData}
-                onBack={() => setStep('shipping')}
+                onBack={() => {
+                  setStep('shipping');
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
                 onPlaceOrder={handlePlaceOrder}
                 isProcessing={isProcessing}
                 totalAmount={total}
               />
             )}
 
+            {/* Error Notification Banner */}
             {step === 'payment' && orderError && (
               <div
                 role="alert"
-                className="mt-6 p-6 rounded-2xl border border-[#DCDCDC] bg-[#F1F1F1] shadow-sm space-y-4"
+                className="mt-6 p-5 border border-[#C91D1D]/30 bg-[#FBEAEA] space-y-3"
               >
                 <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-xl bg-white border border-[#DCDCDC] text-[#C91D1D] shrink-0 mt-0.5">
-                    <AlertTriangle size={20} />
-                  </div>
+                  <AlertTriangle size={18} className="text-[#C91D1D] shrink-0 mt-0.5" />
                   <div>
-                    <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#C91D1D] block">
-                      ORDER NOT PLACED
-                    </span>
-                    <h3 className="text-lg font-black uppercase tracking-tight text-[#000000] mt-0.5">
-                      ออเดอร์ยังไม่ถูกสร้าง
+                    <h3 className="font-bold text-sm text-[#0A0A0A]">
+                      Unable to place order
                     </h3>
+                    <p className="text-xs font-mono text-[#666666] mt-1 leading-relaxed">
+                      {orderError}. Your items and shipping details remain saved.
+                    </p>
                   </div>
                 </div>
 
-                <div className="p-3.5 rounded-xl border border-[#DCDCDC] bg-white text-xs font-mono text-[#C91D1D] break-words">
-                  {orderError}
-                </div>
-
-                <p className="text-xs text-[#666666] leading-relaxed">
-                  สินค้าในตะกร้าและข้อมูลที่คุณกรอกไว้ยังอยู่ครบถ้วน ไม่มีการตัดเงินเกิดขึ้น
-                </p>
-
-                <div className="flex flex-wrap items-center gap-3 pt-1">
+                <div className="flex items-center gap-3 pt-1">
                   <button
                     type="button"
                     onClick={handlePlaceOrder}
                     disabled={isProcessing}
-                    className="px-6 py-3 bg-[#042509] hover:bg-[#021505] text-white text-xs font-mono font-bold uppercase tracking-widest rounded-xl shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
+                    className="px-5 py-2.5 bg-[#042509] hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-wider transition-all disabled:opacity-40 cursor-pointer flex items-center gap-2"
                   >
-                    <RotateCcw size={14} className={isProcessing ? 'animate-spin' : ''} />
-                    <span>{isProcessing ? 'กำลังดำเนินการ...' : 'ลองสั่งซื้ออีกครั้ง'}</span>
+                    <RotateCcw size={13} className={isProcessing ? 'animate-spin' : ''} />
+                    <span>{isProcessing ? 'Processing...' : 'Try again'}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setStep('shipping')}
-                    className="px-6 py-3 bg-white border border-[#DCDCDC] text-[#666666] hover:text-[#000000] hover:border-[#000000] text-xs font-mono font-bold uppercase tracking-widest rounded-xl transition-colors cursor-pointer"
+                    className="px-4 py-2.5 bg-white border border-[#DCDCDC] text-[#0A0A0A] hover:border-[#042509] text-xs font-mono transition-colors cursor-pointer"
                   >
-                    กลับไปแก้ข้อมูลจัดส่ง
+                    Edit destination
                   </button>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Order Summary Sidebar (Right Column) */}
+          {/* Sticky Order Summary Sidebar */}
           <div className="lg:col-span-5">
             <OrderSummarySidebar
               cartItems={cartItems}
@@ -304,7 +305,7 @@ export default function PaymentPage() {
 
         </div>
 
-        {/* Order Confirmation Receipt Modal */}
+        {/* Confirmation Modal */}
         <OrderSuccessModal
           isOpen={showSuccessModal}
           order={createdOrder}

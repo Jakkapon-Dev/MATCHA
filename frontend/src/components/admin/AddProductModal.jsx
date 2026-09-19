@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Upload, Plus, Sparkles, Image as ImageIcon, Check, Calendar, Tag as TagIcon, AlertCircle } from 'lucide-react';
+import { X, Plus, Sparkles, Calendar, AlertCircle } from 'lucide-react';
 import { webpSrc } from '../../utils/imageFallback';
 
 export default function AddProductModal({ isOpen, onClose, onAddProduct }) {

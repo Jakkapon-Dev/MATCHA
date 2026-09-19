@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import { useNavigate } from 'react-router-dom';
 import { 
-  Sparkles, 
   ShoppingBag, 
   Check, 
   Layers, 
@@ -18,6 +18,8 @@ import { useCart } from '../context/CartContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { handleImageError, webpSrc } from '../utils/imageFallback';
 import { computeOutfitSynergy } from '../utils/fashionTheory';
+// กฎสีชุดเดียวกับที่แค็ตตาล็อกและ Color Lab ใช้
+import { wash, inkOn, needsEdge } from '../utils/dye';
 import useChangeMotion from '../hooks/useChangeMotion';
 
 // ส่วนลดเซ็ต 4 ชิ้น — ประกาศที่เดียวเพื่อไม่ให้ตัวเลขที่โชว์กับที่คิดเงินหลุดจากกัน
@@ -28,10 +30,9 @@ const BUNDLE_DISCOUNT_PERCENT = Math.round(BUNDLE_DISCOUNT_RATE * 100);
 const OUTFIT_PRESETS = [
   {
     id: 'PRESET-01',
-    name: '🍵 Kyoto Artisan Earth (Warm Autumn)',
+    name: 'Kyoto Artisan Earth (Warm Autumn)',
     season: 'Autumn',
     harmonyType: 'Analogous Warm Palette',
-    description: 'เสื้อฮู้ดสีเอิร์ธโทน กางเกงชิโน่ บูทหนังแท้ และกระเป๋าหนังโทนอุ่น ขับเน้นเสน่ห์สาวผิว Warm Autumn',
     topId: 'AUT-TOP-009',
     bottomId: 'AUT-BOT-003',
     footwearId: 'AUT-ACC-007',
@@ -39,10 +40,9 @@ const OUTFIT_PRESETS = [
   },
   {
     id: 'PRESET-02',
-    name: '🌸 Spring Floral Blossom (Bright Spring)',
+    name: 'Spring Floral Blossom (Bright Spring)',
     season: 'Spring',
     harmonyType: 'Complementary Pastel',
-    description: 'เสื้อคาร์ดิแกนสีพีช ยีนส์สว่าง สนีกเกอร์คอรัล และกระเป๋าสะพายลินิน ลุคสดใสร่าเริง Bright Spring',
     topId: 'SPR-TOP-022',
     bottomId: 'SPR-BOT-015',
     footwearId: 'SPR-ACC-020',
@@ -50,10 +50,9 @@ const OUTFIT_PRESETS = [
   },
   {
     id: 'PRESET-03',
-    name: '🌊 Summer Coastal Breeze (Cool Summer)',
+    name: 'Summer Coastal Breeze (Cool Summer)',
     season: 'Summer',
     harmonyType: 'Monochromatic Muted Sky',
-    description: 'เสื้อเชิ้ตซัมเมอร์สีฟ้าพาสเทล กางเกงลินิน แซนดัลเบาสบาย และหมวกสาน สุภาพผ่อนคลาย Cool Summer',
     topId: 'SUM-TOP-046',
     bottomId: 'SUM-BOT-040',
     footwearId: 'SUM-ACC-043',
@@ -61,10 +60,9 @@ const OUTFIT_PRESETS = [
   },
   {
     id: 'PRESET-04',
-    name: '❄️ Winter Midnight Tailored (Vivid Winter)',
+    name: 'Winter Midnight Tailored (Vivid Winter)',
     season: 'Winter',
     harmonyType: 'High Contrast Dramatic',
-    description: 'โค้ทฤดูหนาวคัตติ้งเนี้ยบ กางเกงสแล็ค บูทหนังดำ และหมวกบีนนี่ ภูมิฐาน คมกริบ Vivid Winter',
     topId: 'WIN-OUT-057',
     bottomId: 'WIN-BOT-053',
     footwearId: 'WIN-ACC-055',
@@ -106,6 +104,7 @@ const PRESET_HARMONY = OUTFIT_PRESETS.reduce((acc, preset) => {
 }, {});
 
 export default function MixMatchStudioPage() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const { addToCart } = useCart();
   const { showToast } = useToast();
@@ -223,7 +222,7 @@ export default function MixMatchStudioPage() {
   // 1-Click Add Entire Outfit to Cart
   const handleAddBundleToCart = () => {
     if (buyableItems.length === 0) {
-      showToast('ไม่สามารถเพิ่มชุดได้ เนื่องจากสินค้าทั้งหมดในเซ็ตนี้หมดสต็อกชั่วคราว', 'error');
+      showToast(t('mixMatch.allSoldOut'), 'error');
       return;
     }
 
@@ -272,39 +271,44 @@ export default function MixMatchStudioPage() {
   }, [activeSlotTab, tops, bottoms, footwear, accessories, userSeason]);
 
   return (
-    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
+    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-5 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-10 sm:space-y-14">
 
-        {/* 1. HEADER */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-[#DCDCDC]">
-          <div>
-            <div data-enter className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F1F1F1] border border-[#042509]/20 text-[#042509] text-xs font-mono font-bold uppercase tracking-wider mb-2">
-              <Sparkles size={14} />
-              <span>Head-to-Toe 4-Slot Wardrobe Canvas</span>
-            </div>
-            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-3xl sm:text-5xl font-black uppercase text-[#000000] tracking-tight font-serif">
-              Mix & Match Fashion Studio
+        {/* 1. HEADER — the masthead rule the catalogue, lookbook and colour lab
+            all use, so the five pages read as one site. The bordered pill that
+            used to sit above the title said nothing the title does not. */}
+        <div className="space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-3 border-b border-[#0A0A0A] font-mono text-[11px] uppercase tracking-[0.18em] text-[#666666]">
+            <span className="text-[#0A0A0A] font-bold">{t('mixMatch.eyebrow')}</span>
+            <span>{t('mixMatch.discount', { n: BUNDLE_DISCOUNT_PERCENT })}</span>
+          </div>
+
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="max-w-2xl">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase text-[#0A0A0A] tracking-[-0.02em] leading-[0.95]">
+              Mix &amp; Match Fashion Studio
             </h1>
-            <p data-enter style={{ '--enter-delay': '190ms' }} className="text-[#666666] text-xs sm:text-sm mt-1">
-              จับคู่ลุคสมบูรณ์แบบ เสื้อ • กางเกง • รองเท้า • เครื่องประดับ พร้อมระบบคำนวณ Color Harmony ตามทฤษฎีสากล
+            <p className="text-[#666666] text-xs sm:text-sm mt-3 leading-relaxed">
+              {t('mixMatch.heroBody')}
             </p>
           </div>
 
           <div className="flex items-center gap-3">
             <button
               onClick={handleRandomize}
-              className="px-4 py-2.5 rounded-xl border border-[#DCDCDC] bg-white hover:bg-[#F1F1F1] text-[#000000] font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs"
+              className="px-4 py-2.5  border border-[#DCDCDC] bg-white hover:bg-[#F1F1F1] text-[#000000] font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer "
             >
               <Shuffle size={14} />
-              <span>สุ่มชุดใหม่ (Shuffle)</span>
+              <span>{t('mixMatch.shuffle')}</span>
             </button>
             <button
               onClick={() => navigate('/personal-color')}
-              className="px-4 py-2.5 rounded-xl bg-[#000000] text-[#518F5C] hover:text-white font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-xs"
+              className="px-4 py-2.5  bg-[#000000] text-[#518F5C] hover:text-white font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer "
             >
               <Palette size={14} />
-              <span>Personal Color Lab</span>
+              <span>{t('mixMatch.colorLab')}</span>
             </button>
+          </div>
           </div>
         </div>
 
@@ -313,11 +317,11 @@ export default function MixMatchStudioPage() {
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-mono font-bold uppercase text-[#666666] tracking-wider block">
               {userSeason
-                ? `ลุคแนะนำตามโทนสีผิวของคุณ (${userSeason}) 4-Piece Presets:`
-                : 'ลุคแฟชั่นยอดนิยม 4-Piece Presets:'}
+                ? t('mixMatch.presetsForYou', { season: userSeason })
+                : t('mixMatch.presetsPopular')}
             </span>
             {activePresetId && (
-              <span className="text-[10px] font-mono text-[#042509] font-bold bg-[#F1F1F1] px-2.5 py-0.5 rounded-full">
+              <span className="text-[10px] font-mono text-[#042509] font-bold bg-[#F1F1F1] px-2.5 py-0.5 ">
                 ✓ กำลังแสดงลุคที่เลือก
               </span>
             )}
@@ -330,10 +334,10 @@ export default function MixMatchStudioPage() {
                 <button
                   key={preset.id}
                   onClick={() => handleApplyPreset(preset)}
-                  className={`p-3.5 rounded-2xl border-2 text-left transition-all duration-200 cursor-pointer group relative ${
+                  className={`p-3.5  border-2 text-left transition-all duration-200 cursor-pointer group relative ${
                     isActive
-                      ? 'border-[#042509] bg-[#042509]/8 shadow-lg ring-2 ring-[#042509]/25 scale-[1.02]'
-                      : 'border-[#DCDCDC] bg-white hover:border-[#042509]/50 hover:bg-[#F1F1F1] hover:shadow-md'
+                      ? 'border-[#042509] bg-[#042509]/8  ring-2 ring-[#042509]/25 scale-[1.02]'
+                      : 'border-[#DCDCDC] bg-white hover:border-[#042509]/50 hover:bg-[#F1F1F1] hover:'
                   }`}
                 >
                   <div className="flex items-center justify-between text-xs font-bold font-mono mb-1.5">
@@ -344,9 +348,9 @@ export default function MixMatchStudioPage() {
                     </span>
                     <span
                       title={`Color Harmony: ${preset.harmonyType}`}
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-md transition-colors shrink-0 ${
+                      className={`text-[10px] font-bold px-2 py-0.5  transition-colors shrink-0 ${
                         isActive
-                          ? 'bg-[#042509] text-white shadow-xs'
+                          ? 'bg-[#042509] text-white '
                           : 'bg-[#F1F1F1] text-[#042509]'
                       }`}
                     >
@@ -356,10 +360,10 @@ export default function MixMatchStudioPage() {
                   <p className={`text-[11px] line-clamp-2 leading-relaxed transition-colors ${
                     isActive ? 'text-[#000000] font-medium' : 'text-[#666666]'
                   }`}>
-                    {preset.description}
+                    {t(`mixMatch.presets.${preset.id}`)}
                   </p>
                   {isUserSeason && (
-                    <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-mono font-bold text-[#042509] bg-[#F1F1F1] px-2 py-0.5 rounded-full">
+                    <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-mono font-bold text-[#042509] bg-[#F1F1F1] px-2 py-0.5 ">
                       ✓ ตรงกับผลวิเคราะห์ของคุณ
                     </span>
                   )}
@@ -375,15 +379,15 @@ export default function MixMatchStudioPage() {
           {/* LEFT COLUMN: 4-Slot Interactive Fitting Canvas (5 Cols - Sourced Height) */}
           <div 
             ref={leftColRef}
-            className="lg:col-span-5 bg-white rounded-3xl border border-[#DCDCDC] p-6 shadow-xl space-y-6"
+            className="lg:col-span-5 bg-white  border border-[#DCDCDC] p-6  space-y-6"
           >
             
             <div className="flex items-center justify-between border-b border-[#DCDCDC]/60 pb-3">
               <div className="flex items-center gap-2">
                 <Layers size={18} className="text-[#042509]" />
-                <h3 className="font-serif text-lg font-bold text-[#000000]">Head-to-Toe Canvas</h3>
+                <h3 className="font-serif text-lg font-bold text-[#000000]">{t('mixMatch.canvas')}</h3>
               </div>
-              <span className={`text-xs font-mono font-bold px-2.5 py-1 rounded-lg ${
+              <span className={`text-xs font-mono font-bold px-2.5 py-1  ${
                 isCompleteBundle ? 'bg-[#042509] text-white' : 'bg-[#FEE4E2] text-[#B42318]'
               }`}>
                 {isCompleteBundle
@@ -393,217 +397,112 @@ export default function MixMatchStudioPage() {
             </div>
 
             {/* Visual Canvas Stack (4 Slots) */}
-            <div ref={outfitMotionRef} className="space-y-2.5 bg-[#F1F1F1] p-3.5 rounded-2xl border border-[#DCDCDC]">
-              
-              {/* Slot 1: Top / Upper Body */}
-              <div 
-                onClick={() => setActiveSlotTab('tops')}
-                data-motion-slot="tops" data-motion-item={selectedTop?.id}
-                className={`p-2.5 bg-white rounded-xl border-2 transition-all cursor-pointer flex items-center gap-3 ${
-                  activeSlotTab === 'tops' ? 'border-[#042509] ring-2 ring-[#042509]/20 shadow-sm' : 'border-[#DCDCDC]'
-                }`}
-              >
-                <img 
-                  src={webpSrc(selectedTop?.image)} data-original-src={selectedTop?.image} 
-                  alt={selectedTop?.name} 
-                  onError={handleImageError}
-                  className="w-14 h-16 object-contain bg-[#F1F1F1] rounded-lg p-1" 
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-[#042509]">
-                    <Shirt size={12} />
-                    <span>1. Upper Body (30%)</span>
-                  </div>
-                  <h4 className="font-bold text-xs text-[#000000] truncate">{selectedTop?.name}</h4>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="w-2.5 h-2.5 rounded-full border border-black/10" style={{ backgroundColor: selectedTop?.colorHex }} />
-                    <span className="text-[11px] font-mono text-[#666666]">${selectedTop?.price}</span>
-                    {selectedTop && !selectedTop.inStock && (
-                      <span className="text-[9px] font-mono font-bold text-[#B42318] bg-[#FEE4E2] px-1.5 py-0.5 rounded">หมดสต็อก</span>
-                    )}
-                    <span className="text-[10px] font-mono text-[#8C7E74]">({selectedTop?.fit || 'Regular'})</span>
-                  </div>
+            {/* The outfit, at a size you can actually judge.
 
-                  {/* Size Selector */}
-                  <div className="flex items-center gap-1.5 mt-2 overflow-x-auto pt-1 border-t border-[#DCDCDC]/50" onClick={(e) => e.stopPropagation()}>
-                    <span className="text-[9px] font-mono font-bold text-[#666666] uppercase">ไซซ์:</span>
-                    {(selectedTop?.sizes || ['S', 'M', 'L', 'XL']).map((sz) => (
-                      <button
-                        key={sz}
-                        type="button"
-                        onClick={() => setSelectedSizes(prev => ({ ...prev, tops: sz }))}
-                        className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold transition-all cursor-pointer ${
-                          selectedSizes.tops === sz
-                            ? 'bg-[#042509] text-white shadow-2xs'
-                            : 'bg-[#F1F1F1] text-[#666666] hover:bg-[#DCDCDC]'
-                        }`}
+                This panel is called a canvas and its whole job is to answer one
+                question: do these four garments work together? It was showing
+                them as four bordered rows carrying a 56x64 thumbnail each —
+                about the size of a postage stamp — so the question could not be
+                answered from it at all. The same four garments are now roughly
+                thirteen times the area, laid out in reading order so the column
+                still runs head to toe, each standing on a wash of its own dye
+                the way the catalogue shows it. */}
+            <div ref={outfitMotionRef} className="grid grid-cols-2 gap-px bg-[#DCDCDC] border border-[#DCDCDC]">
+              {[
+                { key: 'tops', item: selectedTop, Icon: Shirt, label: '1. Upper Body (30%)', sizes: ['S', 'M', 'L', 'XL', 'XXL'] },
+                { key: 'bottoms', item: selectedBottom, Icon: Shirt, label: '2. Lower Body (60% Base)', sizes: ['30', '32', '34', '36'] },
+                { key: 'footwear', item: selectedFootwear, Icon: Footprints, label: '3. Footwear Anchor (5%)', sizes: ['EU 38', 'EU 39', 'EU 40', 'EU 41'] },
+                { key: 'accessories', item: selectedAccessory, Icon: Briefcase, label: '4. Accent Accessory (5%)', sizes: ['OS'] },
+              ].map(({ key, item, Icon, label, sizes }) => {
+                const active = activeSlotTab === key;
+                const hex = item?.colorHex || '#DCDCDC';
+                return (
+                  <div
+                    key={key}
+                    onClick={() => setActiveSlotTab(key)}
+                    data-motion-slot={key}
+                    data-motion-item={item?.id}
+                    /* No second line system. The grid already draws one
+                       hairline between tiles; an inset ring on the active one
+                       landed right beside it, so that edge became a 3px grey
+                       and black stack while the shared edges read grey on one
+                       side and black on the other. It also cut across the top
+                       of the photograph. The active slot inverts its caption
+                       instead — the same solid black this site uses everywhere
+                       else to mean "this one". */
+                    className="bg-white cursor-pointer" 
+                  >
+                    {/* Every garment is shot on white, so `multiply` drops the
+                        studio backdrop into the dye wash behind it. */}
+                    <div className="relative aspect-square overflow-hidden" style={{ backgroundColor: wash(hex) }}>
+                      <img
+                        src={webpSrc(item?.image)} data-original-src={item?.image}
+                        alt={item?.name}
+                        onError={handleImageError}
+                        className="absolute inset-0 w-full h-full object-contain object-center mix-blend-multiply"
+                      />
+                      {item && !item.inStock && (
+                        <div className="absolute inset-0 bg-[#F1F1F1]/70 flex items-center justify-center">
+                          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#0A0A0A]">{t('mixMatch.soldOut')}</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className={`px-2.5 py-2 transition-colors ${active ? 'bg-[#0A0A0A]' : 'bg-white'}`}>
+                      <span className={`flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-wider ${active ? 'text-[#F1F1F1]/60' : 'text-[#C91D1D]'}`}>
+                        <Icon size={11} />
+                        <span className="truncate">{label}</span>
+                      </span>
+                      <h4 className={`text-[11px] font-bold truncate mt-0.5 ${active ? 'text-[#F1F1F1]' : 'text-[#0A0A0A]'}`}>{item?.name}</h4>
+                      <span className={`font-mono text-[10px] ${active ? 'text-[#F1F1F1]/70' : 'text-[#666666]'}`}>
+                        ${item?.price} · {item?.fit || item?.color || 'Regular'}
+                      </span>
+
+                      {/* Size stays on the slot: choosing it is part of building
+                          the bundle, not a separate step.
+
+                          It wraps rather than scrolls. Footwear carries seven
+                          sizes, EU 38 to EU 44, which need 281px in a 204px
+                          row — as a scroller with its bar hidden that clipped
+                          77px and simply swallowed EU 43 and EU 44, so anyone
+                          who takes a 44 would read the shoe as not made in
+                          their size. Two short rows show every size that
+                          exists. */}
+                      <div
+                        className="flex flex-wrap items-center gap-1 mt-1.5"
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        {sz}
-                      </button>
-                    ))}
+                        {(item?.sizes || sizes).map((sz) => (
+                          <button
+                            key={sz}
+                            type="button"
+                            onClick={() => setSelectedSizes(prev => ({ ...prev, [key]: sz }))}
+                            /* On the inverted caption the usual black chip
+                               would vanish, so the selected size flips to
+                               light on the dark strip. */
+                            className={`px-1.5 py-0.5 font-mono text-[9px] whitespace-nowrap transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#C91D1D] ${
+                              selectedSizes[key] === sz
+                                ? (active ? 'bg-[#F1F1F1] text-[#0A0A0A]' : 'bg-[#0A0A0A] text-[#F1F1F1]')
+                                : (active ? 'bg-[#F1F1F1]/15 text-[#F1F1F1]/70 hover:bg-[#F1F1F1]/25' : 'bg-[#F1F1F1] text-[#666666] hover:bg-[#DCDCDC]')
+                            }`}
+                          >
+                            {sz}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-
-              {/* Slot 2: Bottom / Lower Body */}
-              <div 
-                onClick={() => setActiveSlotTab('bottoms')}
-                data-motion-slot="bottoms" data-motion-item={selectedBottom?.id}
-                className={`p-2.5 bg-white rounded-xl border-2 transition-all cursor-pointer flex items-center gap-3 ${
-                  activeSlotTab === 'bottoms' ? 'border-[#042509] ring-2 ring-[#042509]/20 shadow-sm' : 'border-[#DCDCDC]'
-                }`}
-              >
-                <img 
-                  src={webpSrc(selectedBottom?.image)} data-original-src={selectedBottom?.image} 
-                  alt={selectedBottom?.name} 
-                  onError={handleImageError}
-                  className="w-14 h-16 object-contain bg-[#F1F1F1] rounded-lg p-1" 
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-[#042509]">
-                    <Scissors size={12} />
-                    <span>2. Lower Body (60% Base)</span>
-                  </div>
-                  <h4 className="font-bold text-xs text-[#000000] truncate">{selectedBottom?.name}</h4>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="w-2.5 h-2.5 rounded-full border border-black/10" style={{ backgroundColor: selectedBottom?.colorHex }} />
-                    <span className="text-[11px] font-mono text-[#666666]">${selectedBottom?.price}</span>
-                    {selectedBottom && !selectedBottom.inStock && (
-                      <span className="text-[9px] font-mono font-bold text-[#B42318] bg-[#FEE4E2] px-1.5 py-0.5 rounded">หมดสต็อก</span>
-                    )}
-                    <span className="text-[10px] font-mono text-[#8C7E74]">({selectedBottom?.fit || 'Regular'})</span>
-                  </div>
-
-                  {/* Size Selector */}
-                  <div className="flex items-center gap-1.5 mt-2 overflow-x-auto pt-1 border-t border-[#DCDCDC]/50" onClick={(e) => e.stopPropagation()}>
-                    <span className="text-[9px] font-mono font-bold text-[#666666] uppercase">ไซซ์:</span>
-                    {(selectedBottom?.sizes || ['30', '32', '34', '36']).map((sz) => (
-                      <button
-                        key={sz}
-                        type="button"
-                        onClick={() => setSelectedSizes(prev => ({ ...prev, bottoms: sz }))}
-                        className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold transition-all cursor-pointer ${
-                          selectedSizes.bottoms === sz
-                            ? 'bg-[#042509] text-white shadow-2xs'
-                            : 'bg-[#F1F1F1] text-[#666666] hover:bg-[#DCDCDC]'
-                        }`}
-                      >
-                        {sz}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Slot 3: Footwear Anchor */}
-              <div 
-                onClick={() => setActiveSlotTab('footwear')}
-                data-motion-slot="footwear" data-motion-item={selectedFootwear?.id}
-                className={`p-2.5 bg-white rounded-xl border-2 transition-all cursor-pointer flex items-center gap-3 ${
-                  activeSlotTab === 'footwear' ? 'border-[#042509] ring-2 ring-[#042509]/20 shadow-sm' : 'border-[#DCDCDC]'
-                }`}
-              >
-                <img 
-                  src={webpSrc(selectedFootwear?.image)} data-original-src={selectedFootwear?.image} 
-                  alt={selectedFootwear?.name} 
-                  onError={handleImageError}
-                  className="w-14 h-16 object-contain bg-[#F1F1F1] rounded-lg p-1" 
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-[#C91D1D]">
-                    <Footprints size={12} />
-                    <span>3. Footwear Anchor (5%)</span>
-                  </div>
-                  <h4 className="font-bold text-xs text-[#000000] truncate">{selectedFootwear?.name}</h4>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="w-2.5 h-2.5 rounded-full border border-black/10" style={{ backgroundColor: selectedFootwear?.colorHex }} />
-                    <span className="text-[11px] font-mono text-[#666666]">${selectedFootwear?.price}</span>
-                    {selectedFootwear && !selectedFootwear.inStock && (
-                      <span className="text-[9px] font-mono font-bold text-[#B42318] bg-[#FEE4E2] px-1.5 py-0.5 rounded">หมดสต็อก</span>
-                    )}
-                    <span className="text-[10px] font-mono text-[#8C7E74]">({selectedFootwear?.color})</span>
-                  </div>
-
-                  {/* Size Selector */}
-                  <div className="flex items-center gap-1.5 mt-2 overflow-x-auto pt-1 border-t border-[#DCDCDC]/50" onClick={(e) => e.stopPropagation()}>
-                    <span className="text-[9px] font-mono font-bold text-[#666666] uppercase">ไซซ์:</span>
-                    {(selectedFootwear?.sizes || ['EU 40', 'EU 41', 'EU 42', 'EU 43']).map((sz) => (
-                      <button
-                        key={sz}
-                        type="button"
-                        onClick={() => setSelectedSizes(prev => ({ ...prev, footwear: sz }))}
-                        className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold transition-all cursor-pointer ${
-                          selectedSizes.footwear === sz
-                            ? 'bg-[#042509] text-white shadow-2xs'
-                            : 'bg-[#F1F1F1] text-[#666666] hover:bg-[#DCDCDC]'
-                        }`}
-                      >
-                        {sz}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Slot 4: Accent Accessories */}
-              <div 
-                onClick={() => setActiveSlotTab('accessories')}
-                data-motion-slot="accessories" data-motion-item={selectedAccessory?.id}
-                className={`p-2.5 bg-white rounded-xl border-2 transition-all cursor-pointer flex items-center gap-3 ${
-                  activeSlotTab === 'accessories' ? 'border-[#042509] ring-2 ring-[#042509]/20 shadow-sm' : 'border-[#DCDCDC]'
-                }`}
-              >
-                <img 
-                  src={webpSrc(selectedAccessory?.image)} data-original-src={selectedAccessory?.image} 
-                  alt={selectedAccessory?.name} 
-                  onError={handleImageError}
-                  className="w-14 h-16 object-contain bg-[#F1F1F1] rounded-lg p-1" 
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold uppercase text-[#042509]">
-                    <Briefcase size={12} />
-                    <span>4. Accent Accessory (5%)</span>
-                  </div>
-                  <h4 className="font-bold text-xs text-[#000000] truncate">{selectedAccessory?.name}</h4>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="w-2.5 h-2.5 rounded-full border border-black/10" style={{ backgroundColor: selectedAccessory?.colorHex }} />
-                    <span className="text-[11px] font-mono text-[#666666]">${selectedAccessory?.price}</span>
-                    {selectedAccessory && !selectedAccessory.inStock && (
-                      <span className="text-[9px] font-mono font-bold text-[#B42318] bg-[#FEE4E2] px-1.5 py-0.5 rounded">หมดสต็อก</span>
-                    )}
-                    <span className="text-[10px] font-mono text-[#8C7E74]">({selectedAccessory?.color})</span>
-                  </div>
-
-                  {/* Size Selector */}
-                  <div className="flex items-center gap-1.5 mt-2 overflow-x-auto pt-1 border-t border-[#DCDCDC]/50" onClick={(e) => e.stopPropagation()}>
-                    <span className="text-[9px] font-mono font-bold text-[#666666] uppercase">ไซซ์:</span>
-                    {(selectedAccessory?.sizes || ['One Size']).map((sz) => (
-                      <button
-                        key={sz}
-                        type="button"
-                        onClick={() => setSelectedSizes(prev => ({ ...prev, accessories: sz }))}
-                        className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold transition-all cursor-pointer ${
-                          selectedSizes.accessories === sz
-                            ? 'bg-[#042509] text-white shadow-2xs'
-                            : 'bg-[#F1F1F1] text-[#666666] hover:bg-[#DCDCDC]'
-                        }`}
-                      >
-                        {sz}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
+                );
+              })}
             </div>
 
             {/* Color Harmony Score Metric (Computational Fashion Engine) */}
-            <div className="p-4 rounded-2xl bg-[#F1F1F1] border border-[#DCDCDC] space-y-3">
+            <div className="p-4  bg-[#F1F1F1] border border-[#DCDCDC] space-y-3">
               <div className="flex items-center justify-between text-xs font-mono font-bold">
-                <span className="uppercase text-[#666666]">Color Harmony Index:</span>
+                <span className="uppercase text-[#666666]">{t('mixMatch.harmony')}:</span>
                 <span className="text-[#042509] font-black text-sm">{harmonyScore}% Synergy</span>
               </div>
-              <div className="w-full h-2 rounded-full bg-white border border-[#DCDCDC] overflow-hidden">
+              <div className="w-full h-2  bg-white border border-[#DCDCDC] overflow-hidden">
                 <div 
                   className="h-full bg-linear-to-r from-[#8F9779] to-[#042509] transition-all duration-500" 
                   style={{ width: `${harmonyScore}%` }}
@@ -612,7 +511,7 @@ export default function MixMatchStudioPage() {
 
               {/* Harmony Type & Season Tag */}
               <div className="flex items-center justify-between text-[11px] font-mono">
-                <span className="px-2 py-0.5 rounded-md bg-[#042509]/10 text-[#042509] font-bold">
+                <span className="px-2 py-0.5  bg-[#042509]/10 text-[#042509] font-bold">
                   {synergy.harmonyType}
                 </span>
                 <span className="text-[#666666]">
@@ -620,36 +519,52 @@ export default function MixMatchStudioPage() {
                 </span>
               </div>
 
-              {/* 60-30-10 Color Proportion Rule (4-Piece Distribution) */}
+              {/* 60-30-10 Color Proportion Rule (4-Piece Distribution)
+
+                  This is the most informative thing on the page — it says, in
+                  the garments' own dyes, what the outfit will read as from
+                  across a room — and it was a 12px strip with 9px labels under
+                  it. The proportions were already correct; they are now large
+                  enough to read, with each colour named on itself using the
+                  same ink rule the catalogue's dye bars use. */}
               {synergy.proportion60_30_10 && (
-                <div className="pt-2 border-t border-[#DCDCDC]/60 space-y-1.5">
-                  <div className="flex items-center justify-between text-[10px] font-mono font-bold text-[#666666]">
-                    <span>RULE 60-30-10 PROPORTION</span>
-                    <span className="text-[#042509]">Base • Top • Shoes • Bag</span>
+                <div className="pt-3 border-t border-[#DCDCDC] space-y-2">
+                  <div className="flex items-baseline justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666]">
+                    <span>{t('mixMatch.proportion')}</span>
+                    <span>{t('mixMatch.slots')}</span>
                   </div>
-                  <div className="flex h-3 w-full rounded-md overflow-hidden border border-[#DCDCDC] shadow-xs">
-                    <div 
-                      style={{ width: '60%', backgroundColor: synergy.proportion60_30_10.base.hex }} 
-                      title={`60% Base (Lower Body): ${synergy.proportion60_30_10.base.name}`} 
-                    />
-                    <div 
-                      style={{ width: '30%', backgroundColor: synergy.proportion60_30_10.secondary.hex }} 
-                      title={`30% Secondary (Upper Body): ${synergy.proportion60_30_10.secondary.name}`} 
-                    />
-                    <div 
-                      style={{ width: '5%', backgroundColor: synergy.proportion60_30_10.footwear.hex }} 
-                      title={`5% Footwear Anchor: ${synergy.proportion60_30_10.footwear.name}`} 
-                    />
-                    <div 
-                      style={{ width: '5%', backgroundColor: synergy.proportion60_30_10.accent.hex }} 
-                      title={`5% Accessory: ${synergy.proportion60_30_10.accent.name}`} 
-                    />
+                  <div className="flex w-full">
+                    {[
+                      { part: synergy.proportion60_30_10.base, pct: 60 },
+                      { part: synergy.proportion60_30_10.secondary, pct: 30 },
+                      { part: synergy.proportion60_30_10.footwear, pct: 5 },
+                      { part: synergy.proportion60_30_10.accent, pct: 5 },
+                    ].map(({ part, pct }, i) => (
+                      <div
+                        key={i}
+                        title={`${pct}% ${part.name || part.color}`}
+                        className="h-14 sm:h-16 flex flex-col justify-end p-1.5 overflow-hidden"
+                        style={{
+                          width: `${pct}%`,
+                          backgroundColor: part.hex,
+                          color: inkOn(part.hex),
+                          boxShadow: needsEdge(part.hex) ? 'inset 0 0 0 1px #DCDCDC' : undefined,
+                        }}
+                      >
+                        <span className="font-mono text-[10px] tabular-nums leading-none">{pct}%</span>
+                        {/* The narrow 5% columns cannot carry a name, so only
+                            the two that have room print one. */}
+                        {pct >= 30 && (
+                          <span className="font-mono text-[9px] uppercase tracking-wider truncate leading-tight mt-0.5">
+                            {part.color}
+                          </span>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                  <div className="flex justify-between text-[9px] font-mono text-[#666666]">
-                    <span className="truncate max-w-[28%]">60% {synergy.proportion60_30_10.base.color}</span>
-                    <span className="truncate max-w-[28%] text-center">30% {synergy.proportion60_30_10.secondary.color}</span>
-                    <span className="truncate max-w-[22%] text-center">5% {synergy.proportion60_30_10.footwear.color}</span>
-                    <span className="truncate max-w-[22%] text-right">5% {synergy.proportion60_30_10.accent.color}</span>
+                  <div className="flex justify-end gap-4 font-mono text-[9px] uppercase tracking-wider text-[#666666]">
+                    <span>5% {synergy.proportion60_30_10.footwear.color}</span>
+                    <span>5% {synergy.proportion60_30_10.accent.color}</span>
                   </div>
                 </div>
               )}
@@ -663,21 +578,26 @@ export default function MixMatchStudioPage() {
                   {synergy.ittenContrasts && synergy.ittenContrasts.map((contrast) => (
                     <span 
                       key={contrast.id} 
-                      className="text-[9px] font-mono px-2 py-0.5 rounded-md bg-[#F1F1F1] text-[#042509] font-semibold"
+                      className="text-[9px] font-mono px-2 py-0.5  bg-[#F1F1F1] text-[#042509] font-semibold"
                       title={contrast.description}
                     >
                       {contrast.name}: {contrast.badge}
                     </span>
                   ))}
-                  <span className="text-[9px] font-mono px-2 py-0.5 rounded-md bg-white border border-[#DCDCDC] text-[#666666]" title="CIELAB Color Distance (ΔE)">
+                  <span className="text-[9px] font-mono px-2 py-0.5  bg-white border border-[#DCDCDC] text-[#666666]" title="CIELAB Color Distance (ΔE)">
                     ΔE: {synergy.deltaE}
                   </span>
                 </div>
               </div>
 
               {/* Styling Critique Advice */}
-              <p className="text-[11px] text-[#000000] leading-relaxed pt-1 font-medium bg-white/60 p-2 rounded-lg border border-[#DCDCDC]/50">
-                💡 {synergy.stylingAdvice}
+              <p className="text-[11px] text-[#000000] leading-relaxed pt-1 font-medium bg-white/60 p-2  border border-[#DCDCDC]/50">
+                {/* The season is a name the site already translates, so it
+                    reads as it does in the colour lab. The harmony type stays
+                    as written — it is a term of art, not a word to localise. */}
+                {t(synergy.advice.key, synergy.advice.vars?.season
+                  ? { ...synergy.advice.vars, season: t(`seasons.${synergy.advice.vars.season}.name`) }
+                  : synergy.advice.vars)}
               </p>
             </div>
 
@@ -696,7 +616,7 @@ export default function MixMatchStudioPage() {
               </div>
 
               {outOfStockItems.length > 0 && (
-                <p className="text-[10px] font-mono text-[#B42318] bg-[#FEE4E2] px-2.5 py-1.5 rounded-lg leading-relaxed">
+                <p className="text-[10px] font-mono text-[#B42318] bg-[#FEE4E2] px-2.5 py-1.5  leading-relaxed">
                   {outOfStockItems.map((i) => i.name).join(', ')} หมดสต็อก — ไม่ถูกนับในราคานี้
                   {` และส่วนลดเซ็ต ${BUNDLE_DISCOUNT_PERCENT}% ใช้ได้เมื่อครบ 4 ชิ้น`}
                 </p>
@@ -704,16 +624,16 @@ export default function MixMatchStudioPage() {
 
               <button
                 onClick={handleAddBundleToCart}
-                className={`w-full py-4 rounded-2xl font-mono font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer ${
+                className={`w-full py-4  font-mono font-bold text-xs sm:text-sm uppercase tracking-wider  flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer ${
                   justAddedBundle 
                     ? 'bg-emerald-600 text-white' 
-                    : 'bg-[#042509] hover:bg-[#1E3D1A] text-white shadow-[#042509]/25'
+                    : 'bg-[#042509] hover:bg-[#1E3D1A] text-white /25'
                 }`}
               >
                 {justAddedBundle ? (
                   <>
                     <CheckCircle2 size={16} />
-                    <span>Added Complete Outfit to Bag! ✓</span>
+                    <span>{t('mixMatch.addedToast')}</span>
                   </>
                 ) : (
                   <>
@@ -727,7 +647,7 @@ export default function MixMatchStudioPage() {
                 )}
               </button>
               <p className="text-[10px] font-mono text-center text-[#8C7E74] pt-1">
-                * ข้อมูลสเปกและไซซ์เป็นข้อมูลตัวอย่าง รอยืนยันจากร้าน (Sample Spec)
+                {t('mixMatch.sampleSpec')}
               </p>
             </div>
 
@@ -736,16 +656,16 @@ export default function MixMatchStudioPage() {
           {/* RIGHT COLUMN: Interactive Slot Item Pickers (7 Cols - Equal Height to Left Column) */}
           <div 
             style={isLgScreen && leftColHeight ? { height: `${leftColHeight}px` } : undefined}
-            className="lg:col-span-7 bg-white rounded-3xl border border-[#DCDCDC] p-6 sm:p-8 shadow-xl flex flex-col transition-[height] duration-150"
+            className="lg:col-span-7 bg-white  border border-[#DCDCDC] p-6 sm:p-8  flex flex-col transition-[height] duration-150"
           >
             
             {/* Slot Tab Switches (4 Tabs) */}
             <div className="flex items-center gap-1.5 sm:gap-2 border-b border-[#DCDCDC] pb-4 overflow-x-auto shrink-0 mb-6">
               <button
                 onClick={() => setActiveSlotTab('tops')}
-                className={`px-3 sm:px-4 py-2 rounded-xl font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3 sm:px-4 py-2  font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeSlotTab === 'tops' 
-                    ? 'bg-[#000000] text-white shadow-sm' 
+                    ? 'bg-[#000000] text-white ' 
                     : 'bg-[#F1F1F1] text-[#666666] hover:text-[#000000]'
                 }`}
               >
@@ -755,9 +675,9 @@ export default function MixMatchStudioPage() {
 
               <button
                 onClick={() => setActiveSlotTab('bottoms')}
-                className={`px-3 sm:px-4 py-2 rounded-xl font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3 sm:px-4 py-2  font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeSlotTab === 'bottoms' 
-                    ? 'bg-[#000000] text-white shadow-sm' 
+                    ? 'bg-[#000000] text-white ' 
                     : 'bg-[#F1F1F1] text-[#666666] hover:text-[#000000]'
                 }`}
               >
@@ -767,9 +687,9 @@ export default function MixMatchStudioPage() {
 
               <button
                 onClick={() => setActiveSlotTab('footwear')}
-                className={`px-3 sm:px-4 py-2 rounded-xl font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3 sm:px-4 py-2  font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeSlotTab === 'footwear' 
-                    ? 'bg-[#000000] text-white shadow-sm' 
+                    ? 'bg-[#000000] text-white ' 
                     : 'bg-[#F1F1F1] text-[#666666] hover:text-[#000000]'
                 }`}
               >
@@ -779,9 +699,9 @@ export default function MixMatchStudioPage() {
 
               <button
                 onClick={() => setActiveSlotTab('accessories')}
-                className={`px-3 sm:px-4 py-2 rounded-xl font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+                className={`px-3 sm:px-4 py-2  font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeSlotTab === 'accessories' 
-                    ? 'bg-[#000000] text-white shadow-sm' 
+                    ? 'bg-[#000000] text-white ' 
                     : 'bg-[#F1F1F1] text-[#666666] hover:text-[#000000]'
                 }`}
               >
@@ -806,8 +726,13 @@ export default function MixMatchStudioPage() {
                 );
 
                 return (
-                  <div
+                  /* A real button, not a div with a click handler: picking a
+                     garment is the only thing this grid does, and a div cannot
+                     be reached by keyboard or announced as choosable. */
+                  <button
                     key={item.id}
+                    type="button"
+                    aria-pressed={isSelected}
                     onClick={() => {
                       if (activeSlotTab === 'tops') setSelectedTop(item);
                       else if (activeSlotTab === 'bottoms') setSelectedBottom(item);
@@ -815,13 +740,13 @@ export default function MixMatchStudioPage() {
                       else if (activeSlotTab === 'accessories') setSelectedAccessory(item);
                       setActivePresetId(null);
                     }}
-                    className={`p-3.5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col justify-between group ${
+                    className={`p-3.5 border text-left transition-colors cursor-pointer flex flex-col justify-between group w-full outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-inset ${
                       isSelected 
-                        ? 'border-[#042509] bg-[#F1F1F1] ring-2 ring-[#042509]/20 shadow-md' 
-                        : 'border-[#DCDCDC] bg-white hover:border-[#666666]'
+                        ? 'border-[#0A0A0A] bg-[#F1F1F1]' 
+                        : 'border-[#DCDCDC] bg-white hover:border-[#0A0A0A]'
                     }`}
                   >
-                    <div className="relative aspect-4/5 w-full bg-[#F1F1F1] rounded-xl overflow-hidden mb-2.5 p-2 flex items-center justify-center">
+                    <div className="relative aspect-4/5 w-full bg-[#F1F1F1]  overflow-hidden mb-2.5 p-2 flex items-center justify-center">
                       <img 
                         src={webpSrc(item.image)} data-original-src={item.image} 
                         loading="lazy"
@@ -831,15 +756,15 @@ export default function MixMatchStudioPage() {
                         className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200" 
                       />
                       {isSelected && (
-                        <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[#042509] text-white flex items-center justify-center shadow-md">
+                        <div className="absolute top-2 right-2 w-6 h-6  bg-[#042509] text-white flex items-center justify-center ">
                           <Check size={14} />
                         </div>
                       )}
-                      <span className="absolute bottom-2 left-2 text-[9px] font-mono px-2 py-0.5 bg-white/90 rounded backdrop-blur-xs font-bold text-[#000000]">
+                      <span className="absolute bottom-2 left-2 text-[9px] font-mono px-2 py-0.5 bg-white/90  backdrop-blur-xs font-bold text-[#000000]">
                         {item.season}
                       </span>
                       {!item.inStock && (
-                        <span className="absolute top-2 left-2 text-[9px] font-mono px-2 py-0.5 bg-[#B42318] text-white rounded font-bold">
+                        <span className="absolute top-2 left-2 text-[9px] font-mono px-2 py-0.5 bg-[#B42318] text-white  font-bold">
                           หมดสต็อก
                         </span>
                       )}
@@ -852,13 +777,13 @@ export default function MixMatchStudioPage() {
                       <div className="flex items-center justify-between text-[11px] font-mono">
                         <span className="font-bold text-[#000000]">${Number(item.price).toFixed(2)}</span>
                         <div className="flex items-center gap-1">
-                          <span className="w-2 h-2 rounded-full border border-black/10" style={{ backgroundColor: item.colorHex }} />
+                          <span className="w-2 h-2  border border-black/10" style={{ backgroundColor: item.colorHex }} />
                           <span className="text-[10px] text-[#666666] truncate max-w-16">{item.color}</span>
                         </div>
                       </div>
                     </div>
 
-                  </div>
+                  </button>
                 );
               })}
             </div>

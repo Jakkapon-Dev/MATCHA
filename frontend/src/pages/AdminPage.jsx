@@ -1,11 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
-  ShieldAlert,
-  ShieldCheck,
   Package,
   ShoppingBag,
-  TrendingUp,
   DollarSign,
   Plus,
   BarChart3,
@@ -14,20 +11,13 @@ import {
   Search,
   Filter,
   Trash2,
-  Edit3,
-  RefreshCw,
   ExternalLink,
   ChevronRight,
-  Sparkles,
-  CheckCircle2,
-  Clock,
-  Truck,
   AlertTriangle,
   ArrowUpRight,
   Download,
   FileSpreadsheet,
   FileJson,
-  Check,
   ChevronDown,
   LayoutDashboard,
   Boxes,
@@ -35,10 +25,6 @@ import {
   UserCheck,
   HardDrive,
   LogOut,
-  SlidersHorizontal,
-  RotateCcw,
-  ArrowUpDown,
-  CircleDollarSign,
   Activity
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
@@ -350,8 +336,6 @@ export default function AdminPage() {
     localStorage.setItem('matcha_admin_members', JSON.stringify(members));
   }, [members]);
 
-  // Auth Guard
-  const isAdmin = currentUser?.role === 'Admin' || currentUser?.email === 'admin@matcha.com';
   const isDemo = Boolean(currentUser?.isDemoSession);
 
   // KPI Calculations
@@ -738,7 +722,6 @@ export default function AdminPage() {
         {isDemo && (
           <div className="bg-amber-100 border-b border-amber-300 text-amber-900 px-6 py-2.5 text-xs font-mono font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-inner">
             <div className="flex items-center gap-2">
-              <span className="text-base">🧪</span>
               <span>โหมดสาธิต (Demo Mode): จำลองข้อมูลบนเครื่องเท่านั้น — การแก้ไขหรือลบจะไม่กระทบฐานข้อมูลจริง</span>
             </div>
             <span className="text-[10px] uppercase tracking-wider bg-amber-200 text-amber-900 px-2 py-0.5 rounded border border-amber-400 font-extrabold w-fit">

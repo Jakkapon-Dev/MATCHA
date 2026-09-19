@@ -165,11 +165,22 @@ MatchA_Full_Store_Backup_*.json
 # 13. Local Auth User Store (contains password hashes — never commit)
 backend/data/users.json
 
-# Runtime media: back up this directory together with MongoDB.
+# Runtime media & storage dumps
 backend/storage/media/
+backend/storage/*.json
+backend/storage/products-backup-*.json
 
-# Reproducible public Lookbook bundle for the demo host.
+# Backend scripts tracking
 !backend/scripts/
 backend/scripts/*
 !backend/scripts/bundle-demo-media.js
+!backend/scripts/seed.js
+!backend/scripts/seedUsers.js
+# Migrations already applied to the live data. Without these the repository
+# cannot reproduce its own database: seeding from seed.js would lose the colour
+# repair and the English descriptions with nothing to redo them. Both are
+# idempotent and write a backup before touching anything.
+!backend/scripts/fixProductColors.mjs
+!backend/scripts/addEnglishDescriptions.mjs
+
 

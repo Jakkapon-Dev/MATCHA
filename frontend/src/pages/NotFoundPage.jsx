@@ -1,56 +1,55 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Sparkles, ArrowLeft, ShoppingBag, Compass } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext.jsx';
+
+/* A wrong address is a dead end, so the only job here is to be a short one.
+
+   The page used to lead with a tracked-out "Error 404 · Page Not Found"
+   above a 404 that said the same thing, inside a floating card, and offered
+   one way home. It now says what happened once and opens the four routes
+   that actually go somewhere. */
+
+const ROUTES = [
+  { to: '/', key: 'notFound.home' },
+  { to: '/catalog', key: 'notFound.catalog' },
+  { to: '/lookbook', key: 'notFound.lookbook' },
+  { to: '/personal-color', key: 'notFound.colorLab' },
+];
 
 export default function NotFoundPage() {
-  return (
-    <div className="min-h-[80vh] bg-[#F1F1F1] flex flex-col items-center justify-center px-4 py-16 text-center">
-      <div className="max-w-md w-full bg-white border border-[#DCDCDC] rounded-3xl p-8 sm:p-12 shadow-xl shadow-black/5 relative overflow-hidden">
-        
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#000000] text-[#518F5C] text-[10px] font-mono font-bold tracking-widest uppercase rounded-full mb-6">
-          <Sparkles size={11} className="text-[#C91D1D]" />
-          <span>Error 404 • Page Not Found</span>
-        </div>
+  const { t } = useLanguage();
 
-        <h1 className="text-6xl sm:text-7xl font-black text-[#000000] tracking-tighter mb-2 font-mono">
-          404
+  return (
+    <div className="min-h-[80vh] bg-[#F1F1F1] flex items-center px-5 sm:px-8 lg:px-12 py-16">
+      <div className="max-w-2xl w-full">
+
+        <p className="font-mono text-sm text-[#666666] tabular-nums">
+          {t('notFound.code')}
+        </p>
+
+        <h1 className="mt-2 text-4xl sm:text-5xl font-extrabold text-[#0A0A0A] tracking-tight uppercase leading-none">
+          {t('notFound.title')}
         </h1>
 
-        <p className="text-sm font-bold uppercase tracking-wide text-[#000000] mb-2">
-          หน้าเว็บที่คุณกำลังค้นหาไม่มีอยู่หรือถูกย้ายแล้ว
+        <p className="mt-4 max-w-[52ch] text-sm text-[#0A0A0A]/75 leading-relaxed">
+          {t('notFound.body')}
         </p>
 
-        <p className="text-xs font-mono text-[#666666] leading-relaxed mb-8">
-          The requested capsule, garment, or editorial piece could not be found. Let's get you back to the collection.
-        </p>
-
-        <div className="space-y-2.5">
-          <Link
-            to="/"
-            className="w-full py-3.5 px-4 bg-[#042509] hover:bg-[#021505] text-white text-xs font-mono font-bold uppercase tracking-widest rounded-xl transition-all shadow-md flex items-center justify-center gap-2"
-          >
-            <ArrowLeft size={14} />
-            <span>กลับสู่หน้าหลัก (Back to Home)</span>
-          </Link>
-
-          <div className="grid grid-cols-2 gap-2 pt-1">
-            <Link
-              to="/catalog"
-              className="py-2.5 px-3 bg-[#F1F1F1] hover:bg-[#DCDCDC] text-[#000000] text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1.5"
-            >
-              <ShoppingBag size={13} />
-              <span>ดูสินค้าทั้งหมด</span>
-            </Link>
-
-            <Link
-              to="/mix-match"
-              className="py-2.5 px-3 bg-[#F1F1F1] hover:bg-[#DCDCDC] text-[#000000] text-xs font-mono font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center gap-1.5"
-            >
-              <Compass size={13} />
-              <span>Mix & Match</span>
-            </Link>
-          </div>
-        </div>
+        <ul className="mt-8 border-t border-[#0A0A0A]">
+          {ROUTES.map(({ to, key }) => (
+            <li key={to}>
+              <Link
+                to={to}
+                className="group flex items-baseline justify-between gap-4 py-3.5 border-b border-[#DCDCDC] text-[#0A0A0A] outline-hidden focus-visible:bg-[#DCDCDC]"
+              >
+                <span className="text-base font-extrabold uppercase tracking-tight group-hover:underline underline-offset-4 decoration-2 decoration-[#C91D1D]">
+                  {t(key)}
+                </span>
+                <span className="font-mono text-xs text-[#666666] shrink-0">{to}</span>
+              </Link>
+            </li>
+          ))}
+        </ul>
 
       </div>
     </div>

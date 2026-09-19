@@ -63,3 +63,26 @@ test('GET /api/orders returns orders list without requiring authentication', asy
   assert.equal(data.success, true);
   assert.ok(Array.isArray(data.data));
 });
+
+test('POST /api/orders neutralizes NoSQL injection payload in idempotencyKey', async () => {
+  const payload = {
+    idempotencyKey: { $ne: 'random-key' },
+    customer: { email: 'nosql.test@matcha.test' },
+    items: [{ productId: 'AUT-ACC-001', quantity: 1, size: 'OS' }]
+  };
+
+  const res = await fetch(baseUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  });
+
+  // Should succeed as a new order rather than returning another existing order
+  assert.equal(res.status, 201);
+  const data = await res.json();
+  assert.equal(data.success, true);
+  // Ensure the effectiveKey was safely coerced to string
+  assert.ok(typeof data.data.idempotencyKey === 'string');
+  assert.ok(!data.data.idempotencyKey.includes('$ne'));
+});
+

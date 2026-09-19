@@ -7,8 +7,10 @@ import { api } from './services/api';
 const HomePage = React.lazy(() => import('./pages/HomePage.jsx'));
 const CatalogPage = React.lazy(() => import('./pages/CatalogPage.jsx'));
 const CartPage = React.lazy(() => import('./pages/CartPage.jsx'));
-const SignUpPage = React.lazy(() => import('./pages/SignUpPage.jsx'));
-const LoginPage = React.lazy(() => import('./pages/LoginPage.jsx'));
+/* One page serves both doors. The two routes stay because they are in the
+   navbar, in the hash router and in links people already hold; they differ
+   only in which mode opens. */
+const AccessPage = React.lazy(() => import('./pages/AccessPage.jsx'));
 const PaymentPage = React.lazy(() => import('./pages/PaymentPage.jsx'));
 const UserAccount = React.lazy(() => import('./pages/UserAccount.jsx'));
 const AdminPage = React.lazy(() => import('./pages/AdminPage.jsx'));
@@ -29,11 +31,12 @@ import { ToastProvider, useToast } from './context/ToastContext.jsx';
 import { AuthProvider, useAuth } from './context/AuthContext.jsx';
 import { CartProvider, useCart } from './context/CartContext.jsx';
 import { StoreModeProvider } from './context/StoreModeContext.jsx';
+import { LanguageProvider, useLanguage } from './context/LanguageContext.jsx';
 
 // ความสูงคงที่ระหว่างรอ chunk เพื่อไม่ให้หน้ากระตุกตอนหน้าใหม่มาถึง
 function PageSkeleton() {
   return (
-    <div className="w-full bg-[#F1F1F1] min-h-[70vh] px-4 sm:px-6 lg:px-8 py-16" aria-busy="true">
+    <div className="w-full bg-[#F1F1F1] min-h-[70vh] px-5 sm:px-6 lg:px-8 py-16" aria-busy="true">
       <div className="max-w-6xl mx-auto animate-pulse">
         <div className="h-3 w-32 rounded-full bg-[#DCDCDC]" />
         <div className="mt-5 h-10 w-2/3 max-w-md rounded-lg bg-[#DCDCDC]" />
@@ -48,31 +51,43 @@ function PageSkeleton() {
   );
 }
 
-// ชื่อหน้าแยกตาม route — เดิมทุกหน้าใช้ <title> เดียวกันจาก index.html
-const PAGE_TITLES = {
-  '/': 'MatchA • Modern Artisan Experience',
-  '/catalog': 'Catalog • MatchA',
-  '/personal-color': 'ค้นหาโทนสีผิว 4 ฤดูกาล • MatchA Personal Color Lab',
-  '/mix-match': 'Mix & Match Fashion Studio • MatchA',
-  '/lookbook': 'Editorial Lookbook • MatchA',
-  '/editorial': 'Editorial Lookbook • MatchA',
-  '/cart': 'ตะกร้าสินค้า • MatchA',
-  '/payment': 'ชำระเงิน • MatchA',
-  '/login': 'เข้าสู่ระบบ • MatchA',
-  '/signup': 'สมัครสมาชิก • MatchA',
-  '/account': 'บัญชีของฉัน • MatchA',
-  '/admin': 'Admin Console • MatchA',
-  '/legal': 'ข้อกำหนดและนโยบาย • MatchA Legal',
-};
+/* The tab title, per route and per language.
+
+   The old map was a literal with mixed Thai and English values, so the tab
+   never changed when the visitor switched language. It also keyed only on
+   '/legal', while the route that actually renders is '/legal/:topic' — so
+   every policy page fell back to the home title. Prefixes are matched longest
+   first, which covers sub-routes without listing each one. */
+const TITLE_KEYS = [
+  ['/personal-color', 'titles.personalColor'],
+  ['/mix-match', 'titles.mixMatch'],
+  ['/lookbook', 'titles.lookbook'],
+  ['/editorial', 'titles.lookbook'],
+  ['/catalog', 'titles.catalog'],
+  ['/payment', 'titles.payment'],
+  ['/signup', 'titles.signup'],
+  ['/account', 'titles.account'],
+  ['/admin', 'titles.admin'],
+  ['/login', 'titles.login'],
+  ['/legal', 'titles.legal'],
+  ['/cart', 'titles.cart'],
+];
+
+function titleKeyFor(pathname) {
+  if (pathname === '/') return 'titles.home';
+  const hit = TITLE_KEYS.find(([prefix]) => pathname === prefix || pathname.startsWith(prefix + '/'));
+  return hit ? hit[1] : 'titles.notFound';
+}
 
 function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
 
-  // อัปเดต <title> ตามหน้าที่เปิดอยู่
+  // อัปเดต <title> ตามหน้าและภาษาที่เปิดอยู่
   useEffect(() => {
-    document.title = PAGE_TITLES[location.pathname] || PAGE_TITLES['/'];
-  }, [location.pathname]);
+    document.title = t(titleKeyFor(location.pathname));
+  }, [location.pathname, t]);
 
   // Context Hooks
   const { cartItems, setCartItems, addToCart, updateQty, removeItem, cartCount } = useCart();
@@ -80,7 +95,6 @@ function AppContent() {
   const { showToast } = useToast();
 
   // Local UI States
-  const [healthStatus, setHealthStatus] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [catalogCategory, setCatalogCategory] = useState('ALL');
 
@@ -117,30 +131,27 @@ function AppContent() {
       infinite: false,
     });
 
+    let isRunning = true;
+    let rafId;
+
     function raf(time) {
+      if (!isRunning) return;
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
 
-    const rafId = requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
+      isRunning = false;
       cancelAnimationFrame(rafId);
       lenis.destroy();
     };
   }, []);
 
-  // Health check
+  // Health check & backend warmup
   useEffect(() => {
-    async function loadHealth() {
-      try {
-        const res = await api.checkHealth().catch(() => null);
-        if (res) setHealthStatus(res);
-      } catch (err) {
-        console.error('API Error:', err);
-      }
-    }
-    loadHealth();
+    api.checkHealth().catch(() => null);
   }, []);
 
   const handleProceedToPayment = () => {
@@ -213,16 +224,9 @@ function AppContent() {
   };
 
   const handleSelectFit = (fit) => {
-    const cat = fit.category || '';
-    if (cat.toLowerCase().includes('tank') || cat.toLowerCase().includes('tee') || cat.toLowerCase().includes('sweat')) {
-      setCatalogCategory('Tops');
-    } else if (cat.toLowerCase().includes('denim') || cat.toLowerCase().includes('bottom') || cat.toLowerCase().includes('suit')) {
-      setCatalogCategory('Bottoms');
-    } else if (cat.toLowerCase().includes('outerwear')) {
-      setCatalogCategory('Outerwear');
-    } else {
-      setCatalogCategory('ALL');
-    }
+    // Fit cards carry their catalog target as data. Matching on the label would break
+    // the moment the label is translated, so the label is never read here.
+    setCatalogCategory(fit.catalogCategory || 'ALL');
     navigate('/catalog');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -274,7 +278,14 @@ function AppContent() {
             element={
               <HomePage
                 onSelectFit={handleSelectFit}
-                onClaimPromo={() => showToast('คัดลอกโค้ด MATCHA15 แล้ว! ใช้เป็นส่วนลด 15% ในหน้าชำระเงิน 🎉', 'success')}
+                // `held` บอกว่าเก็บคูปองไว้ได้จริงไหม ถ้า storage ถูกปิด (โหมดส่วนตัว)
+                // ต้องบอกให้ผู้ใช้กรอกเอง ไม่ใช่สัญญาว่าจะใส่ให้แล้วไม่เกิดอะไรขึ้น
+                onClaimPromo={(held) => showToast(
+                  held
+                    ? 'รับส่วนลด 15% แล้ว — จะใส่ให้อัตโนมัติตอนชำระเงิน 🎉'
+                    : 'คัดลอกโค้ด MATCHA15 แล้ว! กรอกในหน้าชำระเงินเพื่อรับส่วนลด 15%',
+                  'success'
+                )}
                 onAddToCart={addToCart}
                 onQuickView={(prod) => setSelectedProduct(prod)}
                 onExploreCatalog={() => {
@@ -292,10 +303,8 @@ function AppContent() {
             element={
               <CatalogPage
                 initialCategory={catalogCategory}
-                onBackToHome={handleGoToHome}
                 onAddToCart={addToCart}
                 onQuickView={(prod) => setSelectedProduct(prod)}
-                onSelectFit={handleSelectFit}
               />
             }
           />
@@ -342,38 +351,16 @@ function AppContent() {
             element={<PaymentPage />} 
           />
 
-          {/* 5. Login Page */}
-          <Route 
-            path="/login" 
-            element={
-              <LoginPage 
-                onLoginSuccess={(user) => {
-                  login(user);
-                }} 
-              />
-            } 
-          />
-
-          {/* 6. Sign Up Page */}
-          <Route 
-            path="/signup" 
-            element={<SignUpPage onBackToStore={handleGoToHome} />} 
-          />
+          {/* 5 & 6. Sign in and register, one page */}
+          <Route path="/login" element={<AccessPage mode="signin" />} />
+          <Route path="/signup" element={<AccessPage mode="register" />} />
 
           {/* 7. User Account Page (Member VIP Lounge) */}
           <Route
             path="/account"
             element={
               <RequireAuth>
-                <UserAccount
-                  cartCount={cartCount}
-                  onOpenCart={handleOpenCart}
-                  onNavigate={handleNavigate}
-                  onGoToLanding={handleGoToHome}
-                  user={currentUser}
-                  onAddToCart={addToCart}
-                  onLogout={logout}
-                />
+                <UserAccount />
               </RequireAuth>
             }
           />
@@ -405,12 +392,14 @@ function AppContent() {
 
 export default function App() {
   return (
-    <ToastProvider>
-      <StoreModeProvider><AuthProvider>
-        <CartProvider>
-          <AppContent />
-        </CartProvider>
-      </AuthProvider></StoreModeProvider>
-    </ToastProvider>
+    <LanguageProvider>
+      <ToastProvider>
+        <StoreModeProvider><AuthProvider>
+          <CartProvider>
+            <AppContent />
+          </CartProvider>
+        </AuthProvider></StoreModeProvider>
+      </ToastProvider>
+    </LanguageProvider>
   );
 }

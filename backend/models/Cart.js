@@ -20,9 +20,14 @@ const cartItemSchema = new Schema(
 
 const cartSchema = new Schema(
   {
+    /* Accounts live in the JSON user store, not in Mongo, so their ids look
+       like `u_3f1c…` rather than a 24-character ObjectId. Declaring this field
+       as an ObjectId meant no signed-in visitor could ever own a cart: the
+       route's ObjectId check rejected every real id, fell through to the guest
+       branch without complaint, and the cart followed the browser instead of
+       the account. */
     userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
+      type: String,
       default: null
     },
     guestId: {
@@ -61,7 +66,14 @@ cartSchema.pre('save', function syncExpiry(next) {
   if (typeof next === 'function') next();
 });
 
-cartSchema.index({ userId: 1 }, { unique: true, partialFilterExpression: { userId: { $type: 'objectId' } } });
+/* A partial index cannot change its filter in place, and the old one selected
+   on $type: 'objectId' — which matched nothing, because nothing was ever
+   written. The replacement is given its own name so both can exist while the
+   stale index is dropped: db.carts.dropIndex('userId_1'). */
+cartSchema.index(
+  { userId: 1 },
+  { unique: true, name: 'userId_unique', partialFilterExpression: { userId: { $type: 'string' } } },
+);
 cartSchema.index({ guestId: 1 }, { unique: true, partialFilterExpression: { guestId: { $type: 'string' } } });
 cartSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 

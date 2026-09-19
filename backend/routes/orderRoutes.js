@@ -1,14 +1,32 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
+import rateLimit from 'express-rate-limit';
 
 import Order from '../models/Order.js';
+import Cart from '../models/Cart.js';
 import Product from '../models/Product.js';
 import productsData from '../data/products.js';
 import { getJwtSecret } from '../middleware/auth.js';
 import { isDemo } from '../config/storeMode.js';
+import { normaliseCode, discountFor, isFreeShippingCoupon } from '../config/coupons.js';
 
 const router = express.Router();
+
+/* Placing an order is the most expensive thing an anonymous caller can ask
+   this API to do: it writes a document, decrements stock and clears a cart.
+   Twenty in a quarter of an hour is far above anything a real shopper does and
+   well below what a script would want.
+
+   Reads are deliberately not limited — order history is polled by the account
+   page and throttling it would break the page rather than an attacker. */
+const orderLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { success: false, message: 'สั่งซื้อถี่เกินไป กรุณารอสักครู่แล้วลองใหม่' },
+});
 
 // หน้าชำระเงินฝั่งเว็บจะแสดงหน้ายืนยันก็ต่อเมื่อคำตอบบอกว่าร้านยังอยู่ในโหมดทดลอง
 // (features/demo/DemoCheckout.jsx) — ทุกทางที่คืนออเดอร์จึงต้องแนบค่านี้ไปด้วย
@@ -20,21 +38,16 @@ const withStoreMode = (order) => ({
 // Fallback store in memory if database is disconnected during local evaluation
 const memoryOrders = [];
 
-// Coupon definitions matching client & store policy
-const COUPONS = {
-  '01': { discount: 10, type: 'percent' },
-  '02': { discount: 20, type: 'percent' },
-  '03': { discount: 50, type: 'percent' },
-  'MATCHA15': { discount: 15, type: 'percent' },
-  'WELCOME10': { discount: 10, type: 'percent' },
-  'FREESHIP': { discount: 0, type: 'free_shipping' }
-};
+// Coupon rates live in config/coupons.js, shared with the checkout screen.
 
 const SHIPPING_RATES = {
   standard: 0,
   express: 12.0,
   premium: 25.0
 };
+
+const BUNDLE_DISCOUNT_RATE = 0.12;
+const FREE_SHIPPING_THRESHOLD = 100.0;
 
 // Safe helper to extract auth payload if provided
 const extractAuthUser = (req) => {
@@ -49,7 +62,7 @@ const extractAuthUser = (req) => {
 };
 
 // POST /api/orders — สร้างออเดอร์ใหม่ (คำนวณราคาฝั่งเซิร์ฟเวอร์ + รองรับทั้ง Member และ Guest)
-router.post('/', async (req, res) => {
+router.post('/', orderLimiter, async (req, res) => {
   try {
     const authUser = extractAuthUser(req);
     const {
@@ -61,7 +74,11 @@ router.post('/', async (req, res) => {
       shippingOption = 'standard'
     } = req.body;
 
-    const effectiveKey = idempotencyKey || req.headers['idempotency-key'] || req.headers['x-request-id'] || `req-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+    // Sanitize idempotency key as a strict string to prevent NoSQL query object injection
+    const rawKey = typeof idempotencyKey === 'string' ? idempotencyKey.trim() : null;
+    const headerKey = typeof req.headers['idempotency-key'] === 'string' ? req.headers['idempotency-key'].trim() : null;
+    const reqIdKey = typeof req.headers['x-request-id'] === 'string' ? req.headers['x-request-id'].trim() : null;
+    const effectiveKey = String(rawKey || headerKey || reqIdKey || `req-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`);
 
     // 1. Idempotency Check: คืนออเดอร์เดิมทันทีหากคีย์ซ้ำ
     if (mongoose.connection.readyState === 1) {
@@ -104,7 +121,7 @@ router.post('/', async (req, res) => {
 
       // Bundle Item Discount (12% per item marked as isBundleItem)
       if (item.isBundleItem) {
-        bundleDiscountAmount += (actualPrice * qty) * 0.12;
+        bundleDiscountAmount += (actualPrice * qty) * BUNDLE_DISCOUNT_RATE;
       }
 
       return {
@@ -122,15 +139,12 @@ router.post('/', async (req, res) => {
     bundleDiscountAmount = Math.round(bundleDiscountAmount * 100) / 100;
 
     // 3. Coupon and Shipping Calculation
-    const cleanCoupon = (couponCode || '').trim().toUpperCase();
-    const couponObj = COUPONS[cleanCoupon] || null;
-
-    let couponDiscount = 0;
-    if (couponObj && couponObj.type === 'percent') {
-      couponDiscount = Math.round(subtotal * (couponObj.discount / 100) * 100) / 100;
-    }
-
-    const isFreeShipping = (couponObj && couponObj.type === 'free_shipping') || subtotal >= 100;
+    // The discount is recomputed here from the server's own table and the
+    // server's own subtotal. Whatever the browser believed it had applied is
+    // only ever a code string.
+    const cleanCoupon = normaliseCode(couponCode);
+    const couponDiscount = discountFor(cleanCoupon, subtotal);
+    const isFreeShipping = isFreeShippingCoupon(cleanCoupon) || subtotal >= FREE_SHIPPING_THRESHOLD;
     const shippingBaseRate = SHIPPING_RATES[shippingOption] ?? 0;
     const shippingCost = isFreeShipping ? 0 : shippingBaseRate;
 
@@ -150,11 +164,13 @@ router.post('/', async (req, res) => {
       country: customer.country || 'Thailand'
     };
 
-    // 5. User ID assignment (Valid Mongo ObjectId or null for Guest)
+    // 5. Whose order this is. Any non-empty id the token carries identifies the
+    //    account; the ObjectId test that used to guard this rejected every id
+    //    the user store issues, so no order was ever attributed to anyone.
     let orderUserId = null;
     const candidateId = authUser?.id || authUser?.userId || authUser?._id;
-    if (candidateId && mongoose.Types.ObjectId.isValid(candidateId)) {
-      orderUserId = candidateId;
+    if (candidateId && String(candidateId).trim()) {
+      orderUserId = String(candidateId).trim();
     }
 
     const validPaymentMethods = ['visa', 'mastercard', 'cod', 'qr', 'demo'];
@@ -181,6 +197,23 @@ router.post('/', async (req, res) => {
     if (mongoose.connection.readyState === 1) {
       const orderDoc = new Order(orderPayload);
       savedOrder = await orderDoc.save();
+
+      /* The bag is emptied here rather than left to the browser. clearCart()
+         only ever reset local state, and no route existed to clear the server
+         copy, so everything a person had ever ordered stayed in their
+         server-side cart — invisible until carts began attaching to accounts,
+         and then showing up as a bag full of things already bought.
+
+         Doing it beside the write keeps the two consistent even if the client
+         dies mid-checkout, and a failure here must not fail an order that has
+         already been taken. */
+      try {
+        const guestId = String(req.headers['x-guest-id'] || '').trim();
+        const owner = orderUserId ? { userId: orderUserId } : (guestId ? { guestId } : null);
+        if (owner) await Cart.findOneAndUpdate(owner, { $set: { items: [] } });
+      } catch (cartErr) {
+        console.warn('Order saved but the server cart was not cleared:', cartErr.message);
+      }
     } else {
       const year = new Date().getFullYear();
       const stamp = Date.now().toString().slice(-6);
@@ -249,7 +282,7 @@ router.get('/', async (req, res) => {
   try {
     const authUser = extractAuthUser(req);
     const guestId = req.headers['x-guest-id'] || req.query.guestId;
-    const queryEmail = (req.query.email || '').toLowerCase().trim();
+    const queryEmail = typeof req.query.email === 'string' ? req.query.email.toLowerCase().trim() : '';
 
     const isAdmin = authUser?.role && String(authUser.role).toLowerCase() === 'admin';
 
@@ -260,9 +293,11 @@ router.get('/', async (req, res) => {
       filter = {};
     } else if (authUser) {
       const uId = authUser.id || authUser.userId || authUser._id;
+      /* The email match stays as the fallback for the orders already written
+         with a null userId; new orders carry the id and match on it directly. */
       const conditions = [{ 'customer.email': authUser.email?.toLowerCase() }];
-      if (uId && mongoose.Types.ObjectId.isValid(uId)) {
-        conditions.push({ userId: uId });
+      if (uId && String(uId).trim()) {
+        conditions.push({ userId: String(uId).trim() });
       }
       filter = { $or: conditions };
     } else if (queryEmail) {

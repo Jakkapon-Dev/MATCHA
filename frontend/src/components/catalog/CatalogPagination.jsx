@@ -1,60 +1,80 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
+/* Page navigation for the catalogue.
+
+   Set as quietly as the category nav above the grid, and for the same reason:
+   on a page whose whole job is to let garment colour carry, chrome that fills
+   itself in with brand colour competes with the thing being sold. The current
+   page is marked the way the current category is — a red rule under the
+   numeral — so the two navigations read as one system. */
+
 export default function CatalogPagination({
   currentPage,
   totalPages,
   onPageChange,
   totalItems,
   startIndex,
-  endIndex
+  endIndex,
 }) {
   // A single-page result set needs no navigation or range summary.
   if (totalPages <= 1) return null;
 
+  const step = (delta) => onPageChange(currentPage + delta);
+
+  const arrow = 'p-1 text-[#0A0A0A] disabled:opacity-30 disabled:pointer-events-none cursor-pointer hover:text-[#C91D1D] transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]';
+
   return (
-    <div className="mt-14 pt-8 border-t border-[#DCDCDC] flex flex-col sm:flex-row items-center justify-between gap-4 font-mono text-xs text-[#666666]">
-      <div>
-        Showing <span className="font-bold text-[#000000]">{startIndex}</span>–
-        <span className="font-bold text-[#000000]">{endIndex}</span> of{' '}
-        <span className="font-bold text-[#000000]">{totalItems}</span> items
-      </div>
+    <nav
+      aria-label="Catalogue pages"
+      className="mt-16 pt-6 border-t border-[#DCDCDC] flex flex-col sm:flex-row items-baseline justify-between gap-4 font-mono text-xs text-[#666666]"
+    >
+      <p>
+        Showing <span className="text-[#0A0A0A]">{startIndex}</span>–
+        <span className="text-[#0A0A0A]">{endIndex}</span> of{' '}
+        <span className="text-[#0A0A0A]">{totalItems}</span>
+      </p>
 
-      <div className="flex items-center gap-1.5">
-        {/* Prev */}
+      <div className="flex items-center gap-3">
         <button
-          onClick={() => onPageChange(currentPage - 1)}
+          type="button"
+          onClick={() => step(-1)}
           disabled={currentPage === 1}
-          className="p-2 rounded-xl border border-[#DCDCDC] bg-white hover:border-[#042509] text-[#000000] disabled:opacity-40 disabled:pointer-events-none transition-all cursor-pointer"
+          aria-label="Previous page"
+          className={arrow}
         >
-          <ChevronLeft size={16} />
+          <ChevronLeft size={15} />
         </button>
 
-        {/* Generate one controlled page button for every page in the filtered result. */}
-        {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-          <button
-            key={p}
-            onClick={() => onPageChange(p)}
-            className={`w-9 h-9 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
-              currentPage === p
-                ? 'bg-[#042509] text-white border-[#042509] shadow-xs'
-                : 'bg-white text-[#000000] border-[#DCDCDC] hover:border-[#042509]'
-            }`}
-          >
-            {p}
-          </button>
-        ))}
+        {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+          const active = currentPage === page;
+          return (
+            <button
+              key={page}
+              type="button"
+              onClick={() => onPageChange(page)}
+              aria-current={active ? 'page' : undefined}
+              className={`tabular-nums cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
+                active
+                  ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-[#C91D1D]'
+                  : 'text-[#666666] hover:text-[#0A0A0A]'
+              }`}
+            >
+              {page}
+            </button>
+          );
+        })}
 
-        {/* Next */}
-        {/* Boundary buttons are disabled so the parent never receives an invalid page. */}
         <button
-          onClick={() => onPageChange(currentPage + 1)}
+          type="button"
+          onClick={() => step(1)}
           disabled={currentPage === totalPages}
-          className="p-2 rounded-xl border border-[#DCDCDC] bg-white hover:border-[#042509] text-[#000000] disabled:opacity-40 disabled:pointer-events-none transition-all cursor-pointer"
+          aria-label="Next page"
+          className={arrow}
         >
-          <ChevronRight size={16} />
+          <ChevronRight size={15} />
         </button>
       </div>
-    </div>
+    </nav>
   );
 }

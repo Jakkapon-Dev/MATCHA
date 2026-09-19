@@ -7,6 +7,7 @@ export const productsData = [
     "id": "AUT-ACC-001",
     "name": "MatchA Autumn Bags",
     "description": "กระเป๋าสะพายสไตล์เอิร์ธโทน ดีไซน์มินิมอลผสานช่องใส่สัมภาระอเนกประสงค์ เหมาะสำหรับลุคสตรีทและวันเดินทางในฤดูใบไม้ร่วง",
+    "descriptionEn": "A shoulder bag in earth tones with compartments that separate. Made for a day of moving around.",
     "price": 43.99,
     "originalPrice": 51.5,
     "tag": "New Drop",
@@ -79,6 +80,7 @@ export const productsData = [
     "id": "AUT-ACC-002",
     "name": "MatchA Autumn Scarves",
     "description": "ผ้าพันคอเนื้อนุ่มสัมผัสสบาย ถักทอลวดลายเรียบหรู เสริมเลเยอร์ความอบอุ่นและสไตล์มินิมอลสำหรับฤดูใบไม้ร่วง",
+    "descriptionEn": "A soft woven scarf with a quiet pattern. A layer of warmth that does not shout.",
     "price": 57.99,
     "originalPrice": 66.99,
     "tag": "Limited 2026",
@@ -151,6 +153,7 @@ export const productsData = [
     "id": "AUT-BOT-003",
     "name": "MatchA Autumn Chinos",
     "description": "กางเกงชิโน่ขากระบอกตรง ทรง Relaxed สวมใส่สบาย คัตติ้งเนี้ยบในโทนสีธรรมชาติที่ผสมผสานความคลาสสิกกับความทันสมัย",
+    "descriptionEn": "Relaxed chinos in a natural tone, cut straight through the leg. The pair you reach for when nothing else is decided.",
     "price": 81.99,
     "originalPrice": 108.5,
     "tag": "Essentials",
@@ -270,6 +273,7 @@ export const productsData = [
     "id": "AUT-BOT-004",
     "name": "MatchA Autumn Jeans",
     "description": "ยีนส์เดนิมฟอกสีพิเศษ ทรงตรงสไตล์สตรีทวินเทจ สวมใส่สบายและคงทน เข้ากับเสื้อผ้าได้หลากหลายสไตล์",
+    "descriptionEn": "Straight-leg denim in a deep stonewash. Heavy enough to hold its shape, soft enough to wear all day.",
     "price": 70.99,
     "originalPrice": 95,
     "tag": "Trending",
@@ -389,6 +393,7 @@ export const productsData = [
     "id": "AUT-BOT-005",
     "name": "MatchA Autumn Pants",
     "description": "กางเกงขายาวผ้าทอพรีเมียม สไตล์ Tailored เรียบง่าย ให้ลุคภูมิฐานแต่ผ่อนคลาย เหมาะสำหรับการแมตช์เลเยอร์",
+    "descriptionEn": "Tailored trousers in a premium weave. Formal in line, easy in wear, and built for layering.",
     "price": 74.99,
     "originalPrice": 86.99,
     "tag": "Popular",
@@ -418,7 +423,7 @@ export const productsData = [
         "image": "/images/products/autumn/bottoms/pants/color_2_olive.jpeg"
       },
       {
-        "color": "Warm Brown",
+        "color": "Brown",
         "colorHex": "#5C4033",
         "image": "/images/products/autumn/bottoms/pants/color_3_warm_brown.jpeg"
       },
@@ -508,6 +513,7 @@ export const productsData = [
     "id": "AUT-BOT-006",
     "name": "MatchA Autumn Skirts",
     "description": "กระโปรงสไตล์โมเดิร์นมินิมอล ทรงพลิ้วไหวในโทนสีอบอุ่นของฤดูกาล เสริมความสง่างามอย่างเป็นธรรมชาติ",
+    "descriptionEn": "A softly falling skirt in the season's warm tones. Quiet cut, no ornament.",
     "price": 68.99,
     "originalPrice": 78.5,
     "tag": "Best Seller",
@@ -532,7 +538,7 @@ export const productsData = [
         "image": "/images/products/autumn/bottoms/skirts/color_1_brown.jpeg"
       },
       {
-        "color": "Dark Brown",
+        "color": "Brown",
         "colorHex": "#5C4033",
         "image": "/images/products/autumn/bottoms/skirts/color_2_dark_brown.jpeg"
       },
@@ -627,6 +633,7 @@ export const productsData = [
     "id": "AUT-ACC-007",
     "name": "MatchA Autumn Boots",
     "description": "รองเท้าบูทหุ้มข้อสไตล์ออทัมน์ ดีไซน์ร่วมสมัย ทรงหัวมน พื้นรองเท้าทนทานรับแรงกระแทกได้ดี เหมาะสำหรับการเดินในเมือง",
+    "descriptionEn": "An ankle boot with a round toe and a sole built for pavement. Contemporary, not rugged.",
     "price": 102.99,
     "originalPrice": 125.5,
     "tag": "New Drop",
@@ -756,6 +763,7 @@ export const productsData = [
     "id": "AUT-ACC-008",
     "name": "MatchA Autumn Loafers",
     "description": "รองเท้าโลฟเฟอร์หนังคลาสสิก ตกแต่งสไตล์มินิมอล พื้นนุ่มรองรับสรีระเท้า สวมใส่ง่ายเข้าได้กับทุกลุค",
+    "descriptionEn": "A classic leather loafer with a cushioned bed. Slips on, goes with everything.",
     "price": 61.99,
     "originalPrice": 73.99,
     "tag": "Limited 2026",
@@ -885,6 +893,7 @@ export const productsData = [
     "id": "AUT-TOP-009",
     "name": "MatchA Autumn Hoodies",
     "description": "เสื้อฮู้ดดี้ทรงโอเวอร์ไซส์ ดีไซน์สตรีทญี่ปุ่น ผ้านุ่มสบายพร้อมกระเป๋าจิงโจ้และเชือกปรับระดับ",
+    "descriptionEn": "An oversized hood in heavy brushed cotton, with a kangaroo pocket and drawcord. Japanese street cut.",
     "price": 65.99,
     "originalPrice": 87.5,
     "tag": "Essentials",
@@ -919,8 +928,8 @@ export const productsData = [
         "image": "/images/products/autumn/tops/hoodies/color_3_white.jpeg"
       },
       {
-        "color": "Yellow",
-        "colorHex": "#2D5A27",
+        "color": "Mustard",
+        "colorHex": "#D4A338",
         "image": "/images/products/autumn/tops/hoodies/color_4_yellow.jpeg"
       }
     ],
@@ -1000,6 +1009,7 @@ export const productsData = [
     "id": "AUT-OUT-010",
     "name": "MatchA Autumn Jackets",
     "description": "เสื้อแจ็กเก็ตทรงหลวม คัตติ้งคมชัด เสริมลุคเอาต์ดอร์ด้วยดีเทลกระเป๋าฟังก์ชันและซิปคู่",
+    "descriptionEn": "A loose jacket with a sharp shoulder, twin zips and pockets that hold what you carry.",
     "price": 139.99,
     "originalPrice": 159.99,
     "tag": "Trending",
@@ -1120,6 +1130,7 @@ export const productsData = [
     "id": "AUT-TOP-011",
     "name": "MatchA Autumn Shirts",
     "description": "เสื้อเชิ้ตแขนยาวผ้าเนื้อละเอียด ทรง Relaxed สวมใส่เดี่ยวหรือเป็นเลเยอร์ตัวนอกได้ตลอดวัน",
+    "descriptionEn": "A long-sleeved shirt in a fine weave, cut relaxed. Wears alone or open over a tee.",
     "price": 63.99,
     "originalPrice": 78,
     "tag": "Popular",
@@ -1144,7 +1155,7 @@ export const productsData = [
         "image": "/images/products/autumn/tops/shirts/color_1_brown.jpeg"
       },
       {
-        "color": "Dark Brown",
+        "color": "Brown",
         "colorHex": "#5C4033",
         "image": "/images/products/autumn/tops/shirts/color_2_dark_brown.jpeg"
       },
@@ -1240,6 +1251,7 @@ export const productsData = [
     "id": "AUT-TOP-012",
     "name": "MatchA Autumn Sweaters",
     "description": "สเวตเตอร์ผ้าถักเนื้อนุ่ม คอกลมทรงโมเดิร์น ให้ความอบอุ่นและมีมิติของเนื้อผ้าที่โดดเด่น",
+    "descriptionEn": "A soft knit crew with visible texture in the yarn. Warm without weight.",
     "price": 92.99,
     "originalPrice": 109.5,
     "tag": "Best Seller",
@@ -1360,6 +1372,7 @@ export const productsData = [
     "id": "SPR-ACC-013",
     "name": "MatchA Spring Bags",
     "description": "กระเป๋าสะพายผ้าแคนวาสและหนัง ผสมผสานโทนสีพาสเทลสดใส พกพาง่าย จุของได้จุใจ",
+    "descriptionEn": "A canvas and leather shoulder bag in pastel tones. Light to carry, holds more than it looks.",
     "price": 46.99,
     "originalPrice": 63.5,
     "tag": "New Drop",
@@ -1368,7 +1381,7 @@ export const productsData = [
     "subCategory": "Bags",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Relaxed",
     "sizes": [
       "OS"
@@ -1376,7 +1389,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/accessories/bags/color_1_peach.jpeg"
       },
       {
@@ -1432,6 +1445,7 @@ export const productsData = [
     "id": "SPR-ACC-014",
     "name": "MatchA Spring Scarves",
     "description": "ผ้าพันคอบางเบา สีสันอ่อนโยน เหมาะสำหรับวันสบาย ๆ ในฤดูใบไม้ผลิ เสริมลุคละมุนตา",
+    "descriptionEn": "A light scarf in soft colours, for the days that are warm but not yet hot.",
     "price": 60.99,
     "originalPrice": 70,
     "tag": "Limited 2026",
@@ -1440,7 +1454,7 @@ export const productsData = [
     "subCategory": "Scarves",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Relaxed",
     "sizes": [
       "OS"
@@ -1448,7 +1462,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/accessories/scarves/color_1_peach.jpeg"
       },
       {
@@ -1504,6 +1518,7 @@ export const productsData = [
     "id": "SPR-BOT-015",
     "name": "MatchA Spring Jeans",
     "description": "ยีนส์เดนิมฟอกสีสว่าง ลุคสดใสต้อนรับฤดูใบไม้ผลิ สวมใส่สบายด้วยเนื้อผ้ายืดหยุ่นปานกลาง",
+    "descriptionEn": "Light-wash denim with a little give. Bright enough for the first warm week.",
     "price": 69.99,
     "originalPrice": 82.5,
     "tag": "Essentials",
@@ -1512,7 +1527,7 @@ export const productsData = [
     "subCategory": "Jeans",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Wide Leg",
     "sizes": [
       "S",
@@ -1524,7 +1539,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/bottoms/jeans/color_1_peach.jpeg"
       },
       {
@@ -1618,6 +1633,7 @@ export const productsData = [
     "id": "SPR-BOT-016",
     "name": "MatchA Spring Pants",
     "description": "กางเกงผ้าเนื้อเบาระบายอากาศ ทรงกระบอกตรง ใส่สบายคล่องตัวในทุกกิจกรรมประจำวัน",
+    "descriptionEn": "Light woven trousers cut straight, breathable enough for a full day on your feet.",
     "price": 73.99,
     "originalPrice": 84.99,
     "tag": "Trending",
@@ -1626,7 +1642,7 @@ export const productsData = [
     "subCategory": "Pants",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Wide Leg",
     "sizes": [
       "S",
@@ -1638,7 +1654,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/bottoms/pants/color_1_peach.jpeg"
       },
       {
@@ -1732,6 +1748,7 @@ export const productsData = [
     "id": "SPR-BOT-017",
     "name": "MatchA Spring Shorts",
     "description": "กางเกงขาสั้นลำลอง ทรงพอดีตัว โทนสีพาสเทลสดใส เหมาะกับกิจกรรมกลางแจ้งและวันพักผ่อน",
+    "descriptionEn": "Casual shorts in a pastel tone, cut close but not tight. For outdoors and days off.",
     "price": 57.99,
     "originalPrice": 66,
     "tag": "Popular",
@@ -1740,7 +1757,7 @@ export const productsData = [
     "subCategory": "Shorts",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Relaxed",
     "sizes": [
       "S",
@@ -1752,7 +1769,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/bottoms/shorts/color_1_peach.jpeg"
       },
       {
@@ -1846,6 +1863,7 @@ export const productsData = [
     "id": "SPR-BOT-018",
     "name": "MatchA Spring Skirts",
     "description": "กระโปรงทรงเอโทนสว่าง ดีไซน์พลิ้วไหวสดใส ตัดเย็บประณีตขับเน้นความอ่อนหวาน",
+    "descriptionEn": "An A-line skirt in a bright tone, cut to move. Finished with care at the seams.",
     "price": 71.99,
     "originalPrice": 97.5,
     "tag": "Best Seller",
@@ -1854,7 +1872,7 @@ export const productsData = [
     "subCategory": "Skirts",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Relaxed",
     "sizes": [
       "S",
@@ -1866,7 +1884,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/bottoms/skirts/color_1_peach.jpeg"
       },
       {
@@ -1960,6 +1978,7 @@ export const productsData = [
     "id": "SPR-ACC-019",
     "name": "MatchA Spring Loafers",
     "description": "รองเท้าโลฟเฟอร์สไตล์ลำลอง โทนสีอ่อนสบายตา สวมใส่ง่าย น้ำหนักเบา ระบายอากาศดี",
+    "descriptionEn": "A casual loafer in a pale tone. Light, breathable, easy to put on.",
     "price": 60.99,
     "originalPrice": 80.5,
     "tag": "New Drop",
@@ -1987,7 +2006,7 @@ export const productsData = [
       },
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/shoes/loafers/color_2_peach.jpeg"
       },
       {
@@ -2089,6 +2108,7 @@ export const productsData = [
     "id": "SPR-ACC-020",
     "name": "MatchA Spring Sneakers",
     "description": "สนีกเกอร์ข้อสั้นโทนสีสดใส พื้นยางยึดเกาะดีเยี่ยม นุ่มเบาทุกย่างก้าวสำหรับไลฟ์สไตล์คนเมือง",
+    "descriptionEn": "A low-top sneaker in a bright tone, on a rubber sole with real grip. Built for city walking.",
     "price": 64.99,
     "originalPrice": 87,
     "tag": "Limited 2026",
@@ -2116,7 +2136,7 @@ export const productsData = [
       },
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/shoes/sneakers/color_2_peach.jpeg"
       },
       {
@@ -2218,6 +2238,7 @@ export const productsData = [
     "id": "SPR-TOP-021",
     "name": "MatchA Spring Band Collar Shirts",
     "description": "เสื้อเชิ้ตคอจีนมินิมอล ดีไซน์เรียบเท่ สะอาดตา เข้ากับสภาพอากาศฤดูใบไม้ผลิได้สมบูรณ์แบบ",
+    "descriptionEn": "A band-collar shirt with nothing on it. Clean lines, right for spring air.",
     "price": 58.99,
     "originalPrice": 71.5,
     "tag": "Essentials",
@@ -2252,7 +2273,7 @@ export const productsData = [
         "image": "/images/products/spring/tops/band-collar-shirts/color_3_cream.jpeg"
       },
       {
-        "color": "Warm Cream",
+        "color": "Cream",
         "colorHex": "#FFFDD0",
         "image": "/images/products/spring/tops/band-collar-shirts/color_4_warm_cream.jpeg"
       }
@@ -2333,6 +2354,7 @@ export const productsData = [
     "id": "SPR-TOP-022",
     "name": "MatchA Spring Cardigans",
     "description": "คาร์ดิแกนผ้าถักบางเบา กระดุมหน้าลายไม้ เสริมความอบอุ่นกำลังดีและลุคน่ารักสดใส",
+    "descriptionEn": "A fine-knit cardigan with wooden buttons. Just enough warmth for a cool morning.",
     "price": 62.99,
     "originalPrice": 80,
     "tag": "Trending",
@@ -2363,7 +2385,7 @@ export const productsData = [
       },
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/tops/cardigans/color_3_peach.jpeg"
       },
       {
@@ -2448,6 +2470,7 @@ export const productsData = [
     "id": "SPR-TOP-023",
     "name": "MatchA Spring Polo Shirts",
     "description": "เสื้อโปโลผ้าปีเก้สัมผัสนุ่ม คอปกเนี้ยบ ทรงสมาร์ทแคชชวลที่ใส่ได้ทั้งวันทำงานและวันพักผ่อน",
+    "descriptionEn": "A soft piqué polo with a crisp collar. Smart enough for work, easy enough for after.",
     "price": 51.99,
     "originalPrice": 68.99,
     "tag": "Popular",
@@ -2472,8 +2495,8 @@ export const productsData = [
         "image": "/images/products/spring/tops/polo-shirts/color_1_coral.jpeg"
       },
       {
-        "color": "Soft",
-        "colorHex": "#2D5A27",
+        "color": "Peach",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/tops/polo-shirts/color_2_soft.jpeg"
       },
       {
@@ -2563,6 +2586,7 @@ export const productsData = [
     "id": "SPR-TOP-024",
     "name": "MatchA Spring Shirts",
     "description": "เสื้อเชิ้ตผ้าคอตตอนเบาสบาย ระบายอากาศได้ดีเยี่ยม ลายเส้นและสีสันโปร่งโล่งสบายตา",
+    "descriptionEn": "A light cotton shirt that breathes, in colours that stay easy on the eye.",
     "price": 55.99,
     "originalPrice": 75.5,
     "tag": "Best Seller",
@@ -2593,7 +2617,7 @@ export const productsData = [
       },
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/tops/shirts/color_3_peach.jpeg"
       },
       {
@@ -2678,6 +2702,7 @@ export const productsData = [
     "id": "ART-OUT-025",
     "name": "MatchA Artisan Cobalt Coat",
     "description": "โค้ตยาวสีน้ำเงินโคบอลต์ คัตติ้งเชิงสถาปัตยกรรมระดับงานฝีมือ สวยเด่นสง่างามทุกมุมมอง",
+    "descriptionEn": "A long cobalt coat cut with an architect's eye. It holds its line from every angle.",
     "price": 139.99,
     "originalPrice": 170.99,
     "tag": "New Drop",
@@ -2685,7 +2710,7 @@ export const productsData = [
     "category": "Outerwear",
     "subCategory": "Cobalt Coat",
     "season": "Artisan",
-    "color": "Cobalt Coat",
+    "color": "Cobalt",
     "colorHex": "#1A365D",
     "fit": "Tailored",
     "sizes": [
@@ -2697,7 +2722,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Cobalt Coat",
+        "color": "Cobalt",
         "colorHex": "#1A365D",
         "image": "/images/products/standalone/cobalt_coat.jpg"
       }
@@ -2778,6 +2803,7 @@ export const productsData = [
     "id": "ART-TOP-026",
     "name": "MatchA Artisan Cognac Boots",
     "description": "บูทหนังแท้สีคอนญัก งานเย็บมือประณีต ทรงคลาสสิกเหนือกาลเวลา ยิ่งใส่ยิ่งนุ่มกระชับเท้า",
+    "descriptionEn": "A hand-stitched boot in cognac leather. A classic shape that softens to your foot.",
     "price": 103.99,
     "originalPrice": 137,
     "tag": "Limited 2026",
@@ -2785,8 +2811,8 @@ export const productsData = [
     "category": "Shoes",
     "subCategory": "Boots",
     "season": "Artisan",
-    "color": "Cognac Boots",
-    "colorHex": "#2D5A27",
+    "color": "Caramel",
+    "colorHex": "#A0522D",
     "fit": "Relaxed",
     "sizes": [
       "EU 38",
@@ -2799,8 +2825,8 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Cognac Boots",
-        "colorHex": "#2D5A27",
+        "color": "Caramel",
+        "colorHex": "#A0522D",
         "image": "/images/products/standalone/cognac_boots.jpg"
       }
     ],
@@ -2892,6 +2918,7 @@ export const productsData = [
     "id": "ART-TOP-027",
     "name": "MatchA Artisan Coral Bag",
     "description": "กระเป๋าถือทรงมินิมอลสีคอรัล ดีไซน์งานฝีมือโดดเด่นสะดุดตา สายสะพายปรับระดับได้",
+    "descriptionEn": "A minimal coral handbag with a visible hand in the making. Adjustable strap.",
     "price": 42.99,
     "originalPrice": 55.5,
     "tag": "Essentials",
@@ -2899,7 +2926,7 @@ export const productsData = [
     "category": "Accessories",
     "subCategory": "Bags",
     "season": "Artisan",
-    "color": "Coral Bag",
+    "color": "Coral",
     "colorHex": "#FF6F61",
     "fit": "Relaxed",
     "sizes": [
@@ -2907,7 +2934,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Coral Bag",
+        "color": "Coral",
         "colorHex": "#FF6F61",
         "image": "/images/products/standalone/coral_bag.jpg"
       }
@@ -2949,6 +2976,7 @@ export const productsData = [
     "id": "ART-TOP-028",
     "name": "MatchA Artisan Coral Blouse",
     "description": "เสื้อเบลาส์สีคอรัลผ้าทอมือ คอปกเอกลักษณ์ พลิ้วไหวหรูหราสะท้อนเสน่ห์ของงานคราฟต์",
+    "descriptionEn": "A hand-woven blouse in coral, with a collar of its own shape. Drapes rather than hangs.",
     "price": 56.99,
     "originalPrice": 69.99,
     "tag": "Trending",
@@ -2956,7 +2984,7 @@ export const productsData = [
     "category": "Tops",
     "subCategory": "Coral Blouse",
     "season": "Artisan",
-    "color": "Coral Blouse",
+    "color": "Coral",
     "colorHex": "#FF6F61",
     "fit": "Relaxed",
     "sizes": [
@@ -2968,7 +2996,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Coral Blouse",
+        "color": "Coral",
         "colorHex": "#FF6F61",
         "image": "/images/products/standalone/coral_blouse.jpg"
       }
@@ -3049,6 +3077,7 @@ export const productsData = [
     "id": "ART-TOP-029",
     "name": "MatchA Artisan Coral Sneakers",
     "description": "สนีกเกอร์งานคราฟต์สีคอรัล ดีเทลตัดเย็บละเอียดพิเศษ พื้นรองเท้าซัพพอร์ตสรีระอย่างดีเยี่ยม",
+    "descriptionEn": "A coral sneaker made by hand, stitched close, on a sole that supports the arch.",
     "price": 70.99,
     "originalPrice": 83,
     "tag": "Popular",
@@ -3056,7 +3085,7 @@ export const productsData = [
     "category": "Shoes",
     "subCategory": "Sneakers",
     "season": "Artisan",
-    "color": "Coral Sneakers",
+    "color": "Coral",
     "colorHex": "#FF6F61",
     "fit": "Relaxed",
     "sizes": [
@@ -3070,7 +3099,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Coral Sneakers",
+        "color": "Coral",
         "colorHex": "#FF6F61",
         "image": "/images/products/standalone/coral_sneakers.jpg"
       }
@@ -3163,6 +3192,7 @@ export const productsData = [
     "id": "ART-TOP-030",
     "name": "MatchA Artisan Cream Bag",
     "description": "กระเป๋าสะพายโทนสีครีม มินิมอลเรียบหรู แมตช์ได้กับทุกลุค พร้อมช่องใส่ของแบบแบ่งสัดส่วน",
+    "descriptionEn": "A cream shoulder bag, plainly cut, with compartments inside. Goes with everything.",
     "price": 39.99,
     "originalPrice": 45.5,
     "tag": "Best Seller",
@@ -3170,7 +3200,7 @@ export const productsData = [
     "category": "Accessories",
     "subCategory": "Bags",
     "season": "Artisan",
-    "color": "Cream Bag",
+    "color": "Cream",
     "colorHex": "#FFFDD0",
     "fit": "Relaxed",
     "sizes": [
@@ -3178,7 +3208,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Cream Bag",
+        "color": "Cream",
         "colorHex": "#FFFDD0",
         "image": "/images/products/standalone/cream_bag.jpg"
       }
@@ -3220,6 +3250,7 @@ export const productsData = [
     "id": "ART-TOP-031",
     "name": "MatchA Artisan Gold Necklace",
     "description": "สร้อยคอทองเหลืองชุบทองคำแท้สไตล์อาร์ติซาน เส้นเรียบเก๋ มีเสน่ห์ความหรูหราแบบพอดี",
+    "descriptionEn": "A brass necklace plated in gold. One clean line, nothing added.",
     "price": 53.99,
     "originalPrice": 62.99,
     "tag": "New Drop",
@@ -3227,7 +3258,7 @@ export const productsData = [
     "category": "Accessories",
     "subCategory": "Jewelry",
     "season": "Artisan",
-    "color": "Gold Necklace",
+    "color": "Gold",
     "colorHex": "#D4AF37",
     "fit": "Relaxed",
     "sizes": [
@@ -3235,7 +3266,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Gold Necklace",
+        "color": "Gold",
         "colorHex": "#D4AF37",
         "image": "/images/products/standalone/gold_necklace.jpg"
       }
@@ -3277,6 +3308,7 @@ export const productsData = [
     "id": "ART-TOP-032",
     "name": "MatchA Artisan Mustard Sweater",
     "description": "สเวตเตอร์ผ้าทอเนื้อหนาสีมัสตาร์ด โทนสีอบอุ่นเป็นเอกลักษณ์ สร้างความโดดเด่นในทุกโอกาส",
+    "descriptionEn": "A thick hand-woven sweater in mustard. The warm tone carries the piece.",
     "price": 97.99,
     "originalPrice": 132,
     "tag": "Limited 2026",
@@ -3284,7 +3316,7 @@ export const productsData = [
     "category": "Tops",
     "subCategory": "Mustard Sweater",
     "season": "Artisan",
-    "color": "Mustard Sweater",
+    "color": "Mustard",
     "colorHex": "#D4A338",
     "fit": "Oversized",
     "sizes": [
@@ -3296,7 +3328,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Mustard Sweater",
+        "color": "Mustard",
         "colorHex": "#D4A338",
         "image": "/images/products/standalone/mustard_sweater.jpg"
       }
@@ -3377,6 +3409,7 @@ export const productsData = [
     "id": "ART-TOP-033",
     "name": "MatchA Artisan Peach Skirt",
     "description": "กระโปรงผ้าทอมือสีพีช คัตติ้งละเอียดอ่อน ละมุนทุกการเคลื่อนไหว ดีไซน์เอวสูงเสริมทรวดทรง",
+    "descriptionEn": "A hand-woven skirt in peach with a high waist. Moves softly.",
     "price": 71.99,
     "originalPrice": 95.5,
     "tag": "Essentials",
@@ -3384,8 +3417,8 @@ export const productsData = [
     "category": "Bottoms",
     "subCategory": "Peach Skirt",
     "season": "Artisan",
-    "color": "Peach Skirt",
-    "colorHex": "#2D5A27",
+    "color": "Peach",
+    "colorHex": "#EDBCA4",
     "fit": "Relaxed",
     "sizes": [
       "S",
@@ -3396,8 +3429,8 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Peach Skirt",
-        "colorHex": "#2D5A27",
+        "color": "Peach",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/standalone/peach_skirt.jpg"
       }
     ],
@@ -3476,6 +3509,7 @@ export const productsData = [
     "id": "ART-TOP-034",
     "name": "MatchA Artisan Silk Scarf",
     "description": "ผ้าพันคอผ้าไหมธรรมชาติพิมพ์ลายสไตล์ญี่ปุ่น ผิวสัมผัสเนียนลื่น อ่อนโยนต่อผิวพรรณ",
+    "descriptionEn": "A natural silk scarf with a Japanese print. Smooth against the skin.",
     "price": 29.99,
     "originalPrice": 38.99,
     "tag": "Trending",
@@ -3483,16 +3517,16 @@ export const productsData = [
     "category": "Accessories",
     "subCategory": "Scarves",
     "season": "Artisan",
-    "color": "Silk Scarf",
-    "colorHex": "#2D5A27",
+    "color": "Apricot",
+    "colorHex": "#E38953",
     "fit": "Relaxed",
     "sizes": [
       "OS"
     ],
     "variants": [
       {
-        "color": "Silk Scarf",
-        "colorHex": "#2D5A27",
+        "color": "Apricot",
+        "colorHex": "#E38953",
         "image": "/images/products/standalone/silk_scarf.jpg"
       }
     ],
@@ -3533,6 +3567,7 @@ export const productsData = [
     "id": "ART-TOP-035",
     "name": "MatchA Artisan Silver Earrings",
     "description": "ต่างหูเงินแท้ดีไซน์เรขาคณิต เรียบหรูน้ำหนักเบา สวมใส่สบายไม่ถ่วงหู ไม่ระคายเคือง",
+    "descriptionEn": "Sterling silver earrings in a geometric cut. Light enough to forget you have them on.",
     "price": 54.99,
     "originalPrice": 67,
     "tag": "Popular",
@@ -3540,7 +3575,7 @@ export const productsData = [
     "category": "Accessories",
     "subCategory": "Jewelry",
     "season": "Artisan",
-    "color": "Silver Earrings",
+    "color": "Silver",
     "colorHex": "#C0C0C0",
     "fit": "Relaxed",
     "sizes": [
@@ -3548,7 +3583,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Silver Earrings",
+        "color": "Silver",
         "colorHex": "#C0C0C0",
         "image": "/images/products/standalone/silver_earrings.jpg"
       }
@@ -3590,6 +3625,7 @@ export const productsData = [
     "id": "ART-TOP-036",
     "name": "MatchA Artisan Teal Pants",
     "description": "กางเกงเทเลอร์สีเขียวทีล คัตติ้งเนี้ยบ ทรงสวยสง่างาม เพิ่มความมั่นใจในสไตล์ของคุณ",
+    "descriptionEn": "Tailored trousers in teal, cleanly cut and confidently shaped.",
     "price": 78.99,
     "originalPrice": 93.5,
     "tag": "Best Seller",
@@ -3597,7 +3633,7 @@ export const productsData = [
     "category": "Bottoms",
     "subCategory": "Teal Pants",
     "season": "Artisan",
-    "color": "Teal Pants",
+    "color": "Teal",
     "colorHex": "#00796B",
     "fit": "Wide Leg",
     "sizes": [
@@ -3609,7 +3645,7 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Teal Pants",
+        "color": "Teal",
         "colorHex": "#00796B",
         "image": "/images/products/standalone/teal_pants.jpg"
       }
@@ -3689,6 +3725,7 @@ export const productsData = [
     "id": "SUM-ACC-037",
     "name": "MatchA Summer Hats",
     "description": "หมวกสานปีกกว้างกันแดด ดีไซน์ธรรมชาติ ช่วยปกป้องรังสียูวี เหมาะสำหรับทริปทะเลและวันแดดจัด",
+    "descriptionEn": "A wide-brimmed woven hat that keeps the sun off. Natural fibre, no logo.",
     "price": 52.99,
     "originalPrice": 60.5,
     "tag": "New Drop",
@@ -3761,6 +3798,7 @@ export const productsData = [
     "id": "SUM-ACC-038",
     "name": "MatchA Summer Sunglasses",
     "description": "แว่นตากันแดดทรงคลาสสิก เลนส์กรองแสง UV400 กรอบน้ำหนักเบา สวมใส่สบายตลอดวัน",
+    "descriptionEn": "Classic sunglasses with UV400 lenses in a light frame. Wearable all day.",
     "price": 41.99,
     "originalPrice": 47,
     "tag": "Limited 2026",
@@ -3833,6 +3871,7 @@ export const productsData = [
     "id": "SUM-BOT-039",
     "name": "MatchA Summer Jeans",
     "description": "กางเกงยีนส์เดนิมฟอกบาง สวมใส่สบายไม่อึดอัดในหน้าร้อน ระบายเหงื่อได้ดีเยี่ยม",
+    "descriptionEn": "Lightly washed denim, thin enough for heat and still denim.",
     "price": 75.99,
     "originalPrice": 100.99,
     "tag": "Essentials",
@@ -3947,6 +3986,7 @@ export const productsData = [
     "id": "SUM-BOT-040",
     "name": "MatchA Summer Linen Pants",
     "description": "กางเกงผ้าลินินแท้ 100% ระบายอากาศยอดเยี่ยม แห้งไว เบาสบาย ทรงหลวมสไตล์รีสอร์ต",
+    "descriptionEn": "Trousers in 100% linen, cut loose. Breathes, dries fast, creases honestly.",
     "price": 79.99,
     "originalPrice": 107.5,
     "tag": "Trending",
@@ -4061,6 +4101,7 @@ export const productsData = [
     "id": "SUM-BOT-041",
     "name": "MatchA Summer Shorts",
     "description": "กางเกงขาสั้นผ้าเบา คล่องตัวในทุกกิจกรรมริมหาดและในเมือง มาพร้อมขอบเอวยางยืดปรับได้",
+    "descriptionEn": "Light shorts with an adjustable elastic waist. Beach and city both.",
     "price": 63.99,
     "originalPrice": 73,
     "tag": "Popular",
@@ -4175,6 +4216,7 @@ export const productsData = [
     "id": "SUM-BOT-042",
     "name": "MatchA Summer Skirts",
     "description": "กระโปรงผ้าเบาพลิ้วไหวรับลมทะเล ดีไซน์สดใสให้ความรู้สึกสดชื่นตลอดฤดูร้อน",
+    "descriptionEn": "A light skirt that catches the sea breeze. Made to feel cool.",
     "price": 62.99,
     "originalPrice": 71.99,
     "tag": "Best Seller",
@@ -4289,6 +4331,7 @@ export const productsData = [
     "id": "SUM-ACC-043",
     "name": "MatchA Summer Sandals",
     "description": "รองเท้าแตะแซนดัลสไตล์สตรีท สายรัดปรับระดับได้ พื้นนุ่มกันลื่น สบายเท้าในทุกก้าว",
+    "descriptionEn": "A street sandal with adjustable straps on a soft, non-slip sole.",
     "price": 43.99,
     "originalPrice": 59.5,
     "tag": "New Drop",
@@ -4418,6 +4461,7 @@ export const productsData = [
     "id": "SUM-ACC-044",
     "name": "MatchA Summer Sneakers",
     "description": "สนีกเกอร์ผ้าตาข่ายระบายอากาศ เบาพิเศษ ป้องกันกลิ่นอับ เหมาะกับสภาพอากาศร้อน",
+    "descriptionEn": "A mesh sneaker that breathes and stays light. Made for hot weather.",
     "price": 70.99,
     "originalPrice": 81,
     "tag": "Limited 2026",
@@ -4547,6 +4591,7 @@ export const productsData = [
     "id": "SUM-TOP-045",
     "name": "MatchA Summer Crop Tops",
     "description": "เสื้อครอปท็อปผ้าคอตตอนสัมผัสนุ่ม สดใส มิกซ์แอนด์แมตช์กับกางเกงเอวสูงได้อย่างลงตัว",
+    "descriptionEn": "A soft cotton crop in a bright tone. Sits well with a high waist.",
     "price": 36.99,
     "originalPrice": 47.5,
     "tag": "Essentials",
@@ -4662,6 +4707,7 @@ export const productsData = [
     "id": "SUM-TOP-046",
     "name": "MatchA Summer Shirts",
     "description": "เสื้อเชิ้ตเปิดคอรับลมร้อน สไตล์รีสอร์ต ลายพิมพ์และสีสันโปร่งโล่งสบายตา",
+    "descriptionEn": "An open-collar shirt for hot air, in a resort print that stays calm.",
     "price": 53.99,
     "originalPrice": 71,
     "tag": "Trending",
@@ -4777,6 +4823,7 @@ export const productsData = [
     "id": "SUM-TOP-047",
     "name": "MatchA Summer T Shirts",
     "description": "เสื้อยืดคอกลมผ้าฝ้ายระบายอากาศดี เบาสบายตลอดวัน ดีไซน์มินิมอลใส่ง่ายได้ทุกวัน",
+    "descriptionEn": "A cotton crew tee that breathes. Nothing on it but the cut.",
     "price": 57.99,
     "originalPrice": 78.99,
     "tag": "Popular",
@@ -4892,6 +4939,7 @@ export const productsData = [
     "id": "SUM-TOP-048",
     "name": "MatchA Summer Tank Tops",
     "description": "เสื้อกล้ามทรงสวย คอกลมกว้าง ระบายเหงื่อได้ดีเยี่ยม เหมาะกับกิจกรรมกลางแจ้ง",
+    "descriptionEn": "A wide-neck tank that moves sweat. For heat and for moving in it.",
     "price": 48.99,
     "originalPrice": 56.5,
     "tag": "Best Seller",
@@ -5007,6 +5055,7 @@ export const productsData = [
     "id": "WIN-ACC-049",
     "name": "MatchA Winter Beanies",
     "description": "หมวกบีนนี่ไหมพรมหนานุ่ม กระชับศีรษะ กักเก็บความอบอุ่นและกันลมหนาวได้ดีเยี่ยม",
+    "descriptionEn": "A thick knit beanie that sits close and keeps the wind out.",
     "price": 29.99,
     "originalPrice": 34,
     "tag": "New Drop",
@@ -5079,6 +5128,7 @@ export const productsData = [
     "id": "WIN-ACC-050",
     "name": "MatchA Winter Gloves",
     "description": "ถุงมือไหมพรมถักทอแน่นหนา พร้อมปลายนิ้วสัมผัสหน้าจอสมาร์ตโฟน ใช้งานสะดวก",
+    "descriptionEn": "Tightly knitted gloves with touchscreen fingertips, so you can keep them on.",
     "price": 33.99,
     "originalPrice": 39.5,
     "tag": "Limited 2026",
@@ -5151,6 +5201,7 @@ export const productsData = [
     "id": "WIN-BOT-051",
     "name": "MatchA Winter Jeans",
     "description": "กางเกงยีนส์ผ้าเดนิมหนาพิเศษ ทนทาน กักเก็บความอบอุ่นในวันที่อากาศเย็นยะเยือก",
+    "descriptionEn": "Heavy denim that holds warmth and takes wear. For the coldest weeks.",
     "price": 78.99,
     "originalPrice": 96.99,
     "tag": "Essentials",
@@ -5265,6 +5316,7 @@ export const productsData = [
     "id": "WIN-BOT-052",
     "name": "MatchA Winter Joggers",
     "description": "กางเกงจ็อกเกอร์บุผ้าฟลีซด้านใน อบอุ่น นุ่มสบาย คล่องตัว เหมาะกับวันพักผ่อนฤดูหนาว",
+    "descriptionEn": "Fleece-lined joggers. Warm, soft, and easy to move in on a slow day.",
     "price": 82.99,
     "originalPrice": 97,
     "tag": "Trending",
@@ -5379,6 +5431,7 @@ export const productsData = [
     "id": "WIN-BOT-053",
     "name": "MatchA Winter Pants",
     "description": "กางเกงสแล็คผ้าทอเนื้อหนากันลม ทรงสมาร์ทเนี้ยบสำหรับฤดูหนาวทั้งทางการและลำลอง",
+    "descriptionEn": "Slacks in a thick wind-resistant weave. Smart enough for the office, easy enough for after.",
     "price": 71.99,
     "originalPrice": 82.5,
     "tag": "Popular",
@@ -5493,6 +5546,7 @@ export const productsData = [
     "id": "WIN-BOT-054",
     "name": "MatchA Winter Skirts",
     "description": "กระโปรงผ้าวูลผสมทรงตรง ลุคอบอุ่นภูมิฐานในฤดูหนาว ตัดเย็บสวยงามเข้ารูปพอดีตัว",
+    "descriptionEn": "A straight wool-blend skirt, cut to fit. Warm and composed.",
     "price": 65.99,
     "originalPrice": 75.99,
     "tag": "Best Seller",
@@ -5607,6 +5661,7 @@ export const productsData = [
     "id": "WIN-ACC-055",
     "name": "MatchA Winter Boots",
     "description": "รองเท้าบูทกันหนาวบุซับในนุ่ม พื้นดอกยางลึกกันลื่นบนพื้นเปียก ทนทานต่อทุกสภาพอากาศ",
+    "descriptionEn": "A lined winter boot on a deep-tread sole that grips wet ground.",
     "price": 99.99,
     "originalPrice": 117,
     "tag": "New Drop",
@@ -5736,6 +5791,7 @@ export const productsData = [
     "id": "WIN-ACC-056",
     "name": "MatchA Winter Sneakers",
     "description": "สนีกเกอร์หุ้มข้อผ้ากันละอองน้ำ ดีไซน์ไฮสตรีทรับลมหนาว ซัพพอร์ตข้อเท้าได้มั่นคง",
+    "descriptionEn": "A water-resistant high-top that supports the ankle. High-street cut, winter build.",
     "price": 73.99,
     "originalPrice": 84.5,
     "tag": "Limited 2026",
@@ -5865,6 +5921,7 @@ export const productsData = [
     "id": "WIN-OUT-057",
     "name": "MatchA Winter Coats",
     "description": "โค้ตผ้าวูลตัวยาว คัตติ้งเนี้ยบ ปกคอสูงกันลมหนาวได้อย่างสมบูรณ์แบบ เพิ่มความภูมิฐาน",
+    "descriptionEn": "A long wool coat with a high collar against the wind. Sharply cut.",
     "price": 132.99,
     "originalPrice": 151,
     "tag": "Essentials",
@@ -5980,6 +6037,7 @@ export const productsData = [
     "id": "WIN-TOP-058",
     "name": "MatchA Winter Hoodies",
     "description": "เสื้อฮู้ดผ้าหนานุ่มพิเศษ ทรงโอเวอร์ไซส์ บุซับในกันหนาว อบอุ่นมั่นใจในทุกทริป",
+    "descriptionEn": "An oversized hood in heavy brushed cotton with a warm lining. Made for travelling in.",
     "price": 66.99,
     "originalPrice": 81.5,
     "tag": "Trending",
@@ -6095,6 +6153,7 @@ export const productsData = [
     "id": "WIN-OUT-059",
     "name": "MatchA Winter Jackets",
     "description": "แจ็กเก็ตดาวน์น้ำหนักเบา เก็บกักอุณหภูมิร่างกายได้ดีเยี่ยม พกพาสะดวกพร้อมลุยทุกความหนาว",
+    "descriptionEn": "A light down jacket that holds heat and packs down small.",
     "price": 140.99,
     "originalPrice": 190.99,
     "tag": "Popular",
@@ -6210,6 +6269,7 @@ export const productsData = [
     "id": "WIN-TOP-060",
     "name": "MatchA Winter Sweaters",
     "description": "สเวตเตอร์คอกลมไหมพรมเนื้อหนา สัมผัสนุ่มละมุน ลายถักคลาสสิกสร้างลุคฤดูหนาวที่อบอุ่น",
+    "descriptionEn": "A thick crew knit with a classic cable. Soft against the skin.",
     "price": 89.99,
     "originalPrice": 102,
     "tag": "Best Seller",

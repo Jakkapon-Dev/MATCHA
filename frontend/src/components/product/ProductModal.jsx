@@ -1,10 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   X, 
   Heart, 
-  Star, 
   ShoppingBag, 
-  Check, 
   Sparkles, 
   ShieldCheck, 
   Truck, 
@@ -14,23 +12,28 @@ import {
   AlertCircle 
 } from 'lucide-react';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
+import { wash, inkOn, needsEdge } from '../../utils/dye';
+import { describeProduct } from '../../utils/productCopy';
 import { useCart } from '../../context/CartContext.jsx';
 import { useToast } from '../../context/ToastContext.jsx';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, FREE_SHIPPING_THRESHOLD } from '../../config/shipping';
 
 export default function ProductModal({ product, onClose, onAddToCart, onToggleWishlist, isWishlisted = false }) {
   const { addToCart: contextAddToCart } = useCart();
   const { showToast } = useToast();
+  const { t, lang } = useLanguage();
 
   // Normalize products without explicit variants so all image/color controls can use
   // one consistent list shape.
   const variants = product?.variants && product.variants.length > 0
     ? product.variants
     : [
-        { 
-          color: product?.color || 'MatchA Sage', 
-          colorHex: product?.colorHex || '#8F9779', 
-          image: product?.image || '/images/products/standalone/mustard_sweater.jpg' 
+        {
+          color: product?.initialVariant?.color || product?.color || null,
+          colorHex: product?.initialVariant?.colorHex || product?.colorHex || null,
+          image: product?.initialVariant?.image || product?.image
+            || '/images/products/standalone/mustard_sweater.jpg'
         }
       ];
 
@@ -67,11 +70,11 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
       if (exists) {
         updated = saved.filter(item => item.id !== product?.id);
         setWishlistActive(false);
-        showToast(`นำ "${product?.name}" ออกจากรายการโปรดแล้ว`, 'info');
+        showToast(t('product.removedToast', { name: product?.name }), 'info');
       } else {
         updated = [...saved, { id: product?.id, name: product?.name, price: product?.price, image: activeVariant.image }];
         setWishlistActive(true);
-        showToast(`บันทึก "${product?.name}" ในรายการโปรดแล้ว! ❤️`, 'success');
+        showToast(t('product.savedToast', { name: product?.name }), 'success');
       }
       localStorage.setItem('matcha_wishlist', JSON.stringify(updated));
     } catch (err) {
@@ -88,6 +91,10 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
   // Changing product or color returns the main frame to its primary variant image.
   useEffect(() => { setGalleryImage(null); }, [product?.id, activeVariant.image, activeVariant.color]);
   const [showFitGuide, setShowFitGuide] = useState(false);
+  // Raised only when someone asks to buy without having chosen a size, so the
+  // message is an answer to an action rather than a standing warning.
+  const [needsSize, setNeedsSize] = useState(false);
+  const sizeRef = useRef(null);
   const [activeAccordion, setActiveAccordion] = useState(null); // 'materials' | 'care' | 'status'
 
   // Store confirmation panel. A field the catalogue has not filled in still reads
@@ -98,12 +105,12 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
   const specs = product?.specs || {};
   const isSampleSpec = specs.isSampleData === true;
   const specRows = [
-    { label: 'ส่วนประกอบวัสดุ', value: specs.fabricComposition },
-    { label: 'ขนาดตัวนายแบบ', value: specs.modelMeasurements },
-    { label: 'ประเทศผู้ผลิต', value: specs.countryOfOrigin },
+    { label: t('product.specs.fabric'), value: specs.fabricComposition },
+    { label: t('product.specs.model'), value: specs.modelMeasurements },
+    { label: t('product.specs.origin'), value: specs.countryOfOrigin },
     {
-      label: 'มาตรฐานรับรอง',
-      value: Array.isArray(specs.certifications) ? specs.certifications.join(' · ') : specs.certifications,
+      label: t('product.specs.certs'),
+      value: Array.isArray(specs.certifications) ? specs.certifications.join(', ') : specs.certifications,
     },
   ];
 
@@ -113,13 +120,14 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
     if (product) {
       const initialVariant = product.initialVariant || (product.variants && product.variants.length > 0
         ? product.variants[0]
-        : { color: product.color || 'Signature', colorHex: product.colorHex || '#042509', image: product.image });
+        : { color: product.color || null, colorHex: product.colorHex || null, image: product.image });
       setActiveVariant(initialVariant);
       const list = Array.isArray(product.sizes) ? product.sizes.filter(Boolean) : [];
       setSelectedSize(list.length === 1 ? list[0] : null);
       setQuantity(1);
       setShowFitGuide(false);
       setActiveAccordion(null);
+      setNeedsSize(false);
     }
   }, [product]);
 
@@ -158,9 +166,17 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
   };
 
   const handleAdd = () => {
-    // Enforce explicit sizing in the handler as well as through the disabled button.
-    if (!selectedSize) return;
+    // The button is live whether or not a size is chosen. Asking to buy without
+    // one is not an error to be prevented, it is a question to be answered — so
+    // the answer is put where the choice is, and the page moves there.
+    if (!selectedSize) {
+      setNeedsSize(true);
+      sizeRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      sizeRef.current?.querySelector('[data-size-option]')?.focus();
+      return;
+    }
 
+    setNeedsSize(false);
     setAddedAnimation(true);
     setTimeout(() => setAddedAnimation(false), 600);
 
@@ -188,6 +204,10 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
     if (onToggleWishlist) onToggleWishlist(product);
   };
 
+  // The dye of the variant on screen. Null when the record carries no colour,
+  // which the colour UI then leaves out rather than filling in.
+  const dyeHex = activeVariant?.colorHex || null;
+
   const itemPrice = typeof product.price === 'number' ? product.price : 59.99;
   const currentTotal = itemPrice * quantity;
   // Shipping messaging uses the same shared threshold/rate configuration as checkout.
@@ -197,20 +217,23 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
   // The backdrop closes the modal; the inner panel stops click and wheel propagation.
   return (
     <div 
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 md:p-6 bg-black/80 backdrop-blur-md animate-fade-in select-none"
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 md:p-6 bg-[#0A0A0A]/85 animate-fade-in select-none"
       onClick={onClose}
     >
       <div 
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="product-modal-title"
         data-lenis-prevent="true"
         onWheel={(e) => e.stopPropagation()}
-        className="bg-[#F1F1F1] text-[#000000] rounded-3xl max-w-4xl w-full max-h-[92vh] overflow-y-auto overscroll-contain shadow-2xl border border-[#DCDCDC] relative animate-modal-pop flex flex-col md:flex-row overflow-hidden"
+        className="bg-[#F1F1F1] text-[#0A0A0A] max-w-4xl w-full max-h-[92vh] overflow-y-auto overscroll-contain border border-[#0A0A0A] relative animate-modal-pop flex flex-col md:flex-row overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button 
           onClick={onClose}
-          aria-label="Close modal"
-          className="absolute top-4 right-4 z-30 w-10 h-10 rounded-full bg-white/90 hover:bg-[#000000] hover:text-white border border-[#DCDCDC] flex items-center justify-center text-sm font-bold text-[#000000] transition-all cursor-pointer shadow-md"
+          aria-label={t('product.close')}
+          className="absolute top-3 right-3 z-30 w-9 h-9 bg-[#0A0A0A] text-[#F1F1F1] hover:bg-[#C91D1D] flex items-center justify-center transition-colors cursor-pointer"
         >
           <X size={18} />
         </button>
@@ -218,55 +241,60 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
         {/* LEFT COLUMN: Clean Framed Product Card */}
         <div className="md:w-1/2 bg-[#F1F1F1] p-3 sm:p-4 flex flex-col justify-between items-center relative border-b md:border-b-0 md:border-r border-[#DCDCDC]">
           
-          {/* Top Bar inside Left Column: Tag & Wishlist */}
-          <div className="w-full flex items-center justify-between z-10 mb-2.5 px-1">
-            <span className="px-3 py-1 bg-[#000000] text-[#518F5C] text-[10px] font-mono font-bold tracking-widest uppercase rounded-lg shadow-2xs">
-              {product.tag || `${product.season} COLLECTION`}
-            </span>
-            <button
-              onClick={handleWishlist}
-              className={`w-9 h-9 rounded-full border flex items-center justify-center transition-all cursor-pointer shadow-xs ${
-                wishlistActive 
-                  ? 'bg-rose-50 border-rose-300 text-rose-600' 
-                  : 'bg-white border-[#DCDCDC] text-[#666666] hover:text-rose-500 hover:border-rose-300'
-              }`}
-            >
-              <Heart size={16} className={wishlistActive ? 'fill-rose-500 text-rose-500' : ''} />
-            </button>
+          {/* One favourite control, not two: the heart that used to sit here
+              carried the same action and the same state as the one beside Add
+              to bag. */}
+          <div className="w-full flex items-center justify-between z-10 mb-2.5">
+            {(product.tag || product.season) && (
+              <span className="px-2.5 py-1 bg-[#0A0A0A] text-[#F1F1F1] text-[10px] font-mono font-bold tracking-widest uppercase">
+                {product.tag || `${product.season} COLLECTION`}
+              </span>
+            )}
           </div>
 
           {/* MAIN PRODUCT PHOTO FRAME */}
-          <div className="w-full flex-1 aspect-4/5 min-h-75 sm:min-h-90 md:min-h-100 rounded-2xl overflow-hidden bg-white border border-[#DCDCDC] shadow-sm flex items-center justify-center relative group p-4 sm:p-6">
-            <img 
+          <div
+            className="w-full flex-1 aspect-4/5 min-h-75 sm:min-h-90 md:min-h-100 overflow-hidden flex items-center justify-center relative p-4 sm:p-6"
+            style={{ backgroundColor: dyeHex ? wash(dyeHex) : '#F1F1F1' }}
+          >
+            <img
               src={webpSrc(galleryImage?.url || activeVariant.image)} data-original-src={galleryImage?.url || activeVariant.image}
-              alt={galleryImage?.alt || `${product.name} - ${activeVariant.color}`}
+              alt={galleryImage?.alt || (activeVariant.color ? `${product.name} in ${activeVariant.color}` : product.name)}
               onError={handleImageError}
-              className={`w-full h-full object-contain object-center transition-all duration-300 group-hover:scale-102 ${
-                imageFade ? 'opacity-30 scale-95' : 'opacity-100 scale-100'
+              className={`w-full h-full object-contain object-center mix-blend-multiply transition-opacity duration-300 ${
+                imageFade ? 'opacity-30' : 'opacity-100'
               }`}
             />
-            
-            {/* Color Overlay Badge on Image */}
-            <div className="absolute bottom-3 left-3 px-2.5 py-1 bg-[#000000]/85 backdrop-blur-xs text-white text-[10px] font-mono rounded-lg flex items-center gap-1.5 shadow-sm">
-              <span 
-                className="w-2.5 h-2.5 rounded-full border border-white/50"
-                style={{ backgroundColor: activeVariant.colorHex }}
-              />
-              <span>{activeVariant.color}</span>
-            </div>
 
-            {/* Sold Out Overlay */}
             {!product.inStock && (
-              <div className="absolute inset-0 bg-[#000000]/60 backdrop-blur-[1px] flex items-center justify-center z-25">
-                <span className="px-4 py-2 bg-white text-[#000000] text-xs font-mono font-bold uppercase tracking-wider rounded-xl shadow-lg">
-                  Sold Out • สินค้าหมดชั่วคราว
+              <div className="absolute inset-0 bg-[#0A0A0A]/65 flex items-center justify-center z-25">
+                <span className="px-4 py-2 bg-[#F1F1F1] text-[#0A0A0A] text-xs font-mono font-bold uppercase tracking-wider">
+                  {t('product.soldOut')}
                 </span>
               </div>
             )}
           </div>
 
+          {/* The dye at full strength with its name on it. This replaces the
+              badge that floated over the photograph as a 10px dot — the one
+              place the true colour is shown without a wash over it. */}
+          {dyeHex && (
+            <div
+              className="w-full px-3 py-1.5"
+              style={{
+                backgroundColor: dyeHex,
+                color: inkOn(dyeHex),
+                boxShadow: needsEdge(dyeHex) ? 'inset 0 0 0 1px #DCDCDC' : undefined,
+              }}
+            >
+              <span className="font-mono text-[11px] uppercase tracking-wider truncate">
+                {activeVariant.color}
+              </span>
+            </div>
+          )}
+
           {/* COLOR VARIANT THUMBNAILS */}
-          {gallery.length > 0 && <div className="flex flex-wrap gap-2 mt-3" aria-label="รูปเพิ่มเติมของสินค้า">{gallery.map((g, i) => <button key={g.url} type="button" aria-label={`ดูรูป ${i + 1}: ${g.alt || product.name}`} aria-pressed={galleryImage?.url === g.url} onClick={() => setGalleryImage(g)} className="w-14 h-16 border border-[#DCDCDC] rounded-lg overflow-hidden hover:border-[#042509] focus-visible:ring-2 focus-visible:ring-[#042509]"><img src={webpSrc(g.url)} alt={g.alt || product.name} className="w-full h-full object-contain" /></button>)}</div>}
+          {gallery.length > 0 && <div className="flex flex-wrap gap-2 mt-3" aria-label={t('product.moreImages')}>{gallery.map((g, i) => <button key={g.url} type="button" aria-label={`${t('product.moreImages')} ${i + 1}`} aria-pressed={galleryImage?.url === g.url} onClick={() => setGalleryImage(g)} className="w-14 h-16 border border-[#DCDCDC] overflow-hidden hover:border-[#0A0A0A] focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"><img src={webpSrc(g.url)} alt={g.alt || product.name} className="w-full h-full object-contain" /></button>)}</div>}
           {variants.length > 1 && (
             <div className="w-full flex items-center justify-center gap-2 pt-2.5 overflow-x-auto pb-0.5">
               {variants.map((v, i) => {
@@ -275,27 +303,22 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   <button
                     key={i}
                     onClick={() => handleVariantChange(v)}
-                    title={v.color}
-                    className={`w-11 h-13 rounded-lg overflow-hidden border-2 transition-all cursor-pointer relative shrink-0 ${
-                      isActive 
-                        ? 'border-[#042509] scale-105 shadow-md ring-2 ring-[#042509]/30' 
-                        : 'border-[#DCDCDC] opacity-70 hover:opacity-100 hover:scale-105'
+                    aria-label={v.color || 'This colourway'}
+                    aria-pressed={isActive}
+                    className={`w-11 shrink-0 cursor-pointer transition-opacity outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
+                      isActive ? 'opacity-100' : 'opacity-60 hover:opacity-100'
                     }`}
                   >
-                    <img src={webpSrc(v.image)} data-original-src={v.image} alt={v.color} className="w-full h-full object-cover" />
+                    <img src={webpSrc(v.image)} data-original-src={v.image} alt="" className="w-full h-13 object-cover" />
+                    <span
+                      className="block h-1.5"
+                      style={{ backgroundColor: isActive ? (v.colorHex || '#0A0A0A') : 'transparent' }}
+                    />
                   </button>
                 );
               })}
             </div>
           )}
-
-          {/* Sample Data Notice Under Photo */}
-          <div className="w-full mt-2 text-center">
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-amber-50 border border-amber-200/80 text-[10px] font-mono text-amber-900">
-              <AlertCircle size={11} className="text-amber-600" />
-              <span>ข้อมูลตัวอย่าง รอยืนยันจากร้าน (Sample Spec)</span>
-            </span>
-          </div>
 
         </div>
 
@@ -305,21 +328,18 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             
             {/* Header: Title, Category, Rating, Price */}
             <div>
-              <div className="flex items-center gap-2 text-xs font-mono text-[#666666] mb-1.5 flex-wrap">
-                <span className="text-[#042509] font-bold uppercase">{product.season} Drop</span>
-                <span>•</span>
-                <span className="uppercase">{product.category}</span>
-                <span>•</span>
-                <span>{product.id}</span>
+              <div className="flex items-baseline justify-between gap-3 text-xs font-mono text-[#666666] mb-1.5 pr-10">
+                <span className="uppercase">{[product.season, product.category].filter(Boolean).join(' ')}</span>
+                <span className="tabular-nums shrink-0">{product.id}</span>
               </div>
 
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#000000] uppercase tracking-tight leading-tight">
+              <h2 id="product-modal-title" className="text-2xl sm:text-3xl font-extrabold text-[#0A0A0A] uppercase tracking-tight leading-tight">
                 {product.name}
               </h2>
 
               <div className="flex items-center gap-4 mt-2 flex-wrap">
                 <div className="flex items-baseline gap-2 font-mono">
-                  <span className="text-2xl sm:text-3xl font-black text-[#000000]">
+                  <span className="text-2xl sm:text-3xl font-black text-[#0A0A0A]">
                     ${itemPrice.toFixed(2)}
                   </span>
                   {product.originalPrice && (
@@ -330,49 +350,42 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                 </div>
 
                 {/* Rating - Only display when verified data exists, no fake defaults */}
-                {product.rating && product.reviewsCount ? (
-                  <div className="flex items-center gap-1 text-xs font-mono text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-lg font-bold">
-                    <Star size={13} className="fill-amber-500 text-amber-500" />
-                    <span>{product.rating} ({product.reviewsCount} reviews)</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-1 text-[10px] font-mono text-[#8C7E74] bg-[#F1F1F1] border border-[#DCDCDC] px-2 py-0.5 rounded-lg">
-                    <span>ยังไม่มีคะแนนรีวิว</span>
-                  </div>
-                )}
               </div>
             </div>
 
             {/* Description */}
             <p className="text-xs sm:text-sm text-[#666666] leading-relaxed">
-              {product.description}
+              {describeProduct(product, lang)}
             </p>
 
             {/* 1. Interactive Color Swatches */}
             <div>
               <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-2">
-                <span>Color: <strong className="text-[#042509]">{activeVariant.color}</strong></span>
-                <span className="text-[10px] font-mono text-[#666666]">{variants.length} Tones Available</span>
+                <span>{t('product.colour')}: <strong className="text-[#0A0A0A]">{activeVariant.color || t('product.notRecorded')}</strong></span>
+                <span className="text-[10px] font-mono text-[#666666]">
+                  {variants.length === 1 ? t('product.oneTone') : t('product.tones', { n: variants.length })}
+                </span>
               </div>
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-stretch gap-1.5 flex-wrap">
                 {variants.map((v, idx) => {
                   const isSelected = activeVariant.color === v.color;
+                  const hex = v.colorHex;
                   return (
                     <button
                       key={idx}
                       onClick={() => handleVariantChange(v)}
-                      title={v.color}
-                      className={`flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-mono transition-all cursor-pointer ${
-                        isSelected
-                          ? 'border-[#042509] bg-[#042509]/10 text-[#042509] font-bold shadow-2xs ring-1 ring-[#042509]'
-                          : 'border-[#DCDCDC] bg-white text-[#000000] hover:border-[#666666]'
+                      aria-label={v.color || 'This colourway'}
+                      aria-pressed={isSelected}
+                      className={`px-2.5 py-1.5 font-mono text-[11px] uppercase tracking-wider cursor-pointer outline-hidden transition-shadow focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
+                        isSelected ? 'ring-2 ring-[#0A0A0A]' : ''
                       }`}
+                      style={{
+                        backgroundColor: hex || '#F1F1F1',
+                        color: hex ? inkOn(hex) : '#666666',
+                        boxShadow: !isSelected && (!hex || needsEdge(hex)) ? 'inset 0 0 0 1px #DCDCDC' : undefined,
+                      }}
                     >
-                      <span 
-                        className="w-3 h-3 rounded-full border border-black/15 shrink-0" 
-                        style={{ backgroundColor: v.colorHex }}
-                      />
-                      <span>{v.color}</span>
+                      {v.color || '—'}
                     </button>
                   );
                 })}
@@ -380,9 +393,9 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             </div>
 
             {/* 2. Interactive Size Selector with Functional Fit Guide Button */}
-            <div>
+            <div ref={sizeRef} className="scroll-mt-6">
               <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-2">
-                <span>Size: <strong className="text-[#042509]">{selectedSize}</strong></span>
+                <span>{t('product.size')}: <strong className="text-[#0A0A0A]">{selectedSize || '—'}</strong></span>
                 <button
                   type="button"
                   onClick={() => setShowFitGuide(prev => !prev)}
@@ -390,19 +403,26 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   className="text-[11px] font-mono font-bold text-[#C91D1D] hover:text-[#A81515] underline cursor-pointer flex items-center gap-1 transition-colors"
                 >
                   <Ruler size={13} />
-                  <span>{showFitGuide ? 'ซ่อนคำแนะนำไซซ์ (Hide Fit Guide)' : 'Fit Guide (คำแนะนำไซซ์)'}</span>
+                  <span>{showFitGuide ? t('product.hideFitGuide') : t('product.fitGuide')}</span>
                 </button>
               </div>
+
+              {needsSize && (
+                <p role="status" className="mb-2 text-xs font-mono text-[#C91D1D]">
+                  {sizeList.length ? t('product.pickSize') : t('product.noSizes')}
+                </p>
+              )}
 
               <div className="flex items-center gap-2 flex-wrap">
                 {sizeList.map((sz) => (
                   <button
                     key={sz}
-                    onClick={() => setSelectedSize(sz)}
-                    className={`min-w-10 h-10 px-2 rounded-xl text-xs font-mono font-bold uppercase transition-all cursor-pointer ${
+                    data-size-option
+                    onClick={() => { setSelectedSize(sz); setNeedsSize(false); }}
+                    className={`min-w-10 h-10 px-2 text-xs font-mono font-bold uppercase transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
                       selectedSize === sz
-                        ? 'bg-[#000000] text-white shadow-sm scale-105'
-                        : 'bg-white border border-[#DCDCDC] text-[#000000] hover:border-[#042509]'
+                        ? 'bg-[#0A0A0A] text-[#F1F1F1]'
+                        : 'bg-[#F1F1F1] border border-[#DCDCDC] text-[#0A0A0A] hover:border-[#0A0A0A]'
                     }`}
                   >
                     {sz}
@@ -412,20 +432,20 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
 
               {/* Functional Interactive Fit Guide View (Requirement 3) */}
               {showFitGuide && (
-                <div className="mt-3 p-3.5 sm:p-4 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm space-y-3 animate-fade-in text-xs">
+                <div className="mt-3 p-3.5 sm:p-4 bg-[#F1F1F1] border border-[#DCDCDC] space-y-3 animate-fade-in text-xs">
                   {/* Mandatory Sample Sizing Badge Attached to Table */}
-                  <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[11px] font-mono flex items-start gap-2">
-                    <AlertCircle size={14} className="shrink-0 text-amber-600 mt-0.5" />
+                  <div className="p-2.5 bg-[#F1F1F1] border-l-2 border-[#C91D1D] text-[#0A0A0A] text-[11px] font-mono flex items-start gap-2">
+                    <AlertCircle size={14} className="shrink-0 text-[#C91D1D] mt-0.5" />
                     <div>
-                      <span className="font-bold">[ป้ายกำกับ: ข้อมูลตัวอย่าง รอยืนยันจากร้าน]</span>: ตารางวัดขนาดนี้เป็นข้อมูลมาตรฐานสากลจำลอง อยู่ระหว่างรอยืนยันสเปกจริงจากแบรนด์ MatchA
+                      <span className="font-bold">{t('product.sampleBadge')}</span> {t('product.sampleNote')}
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between font-mono">
                     <span className="font-bold text-[#000000] uppercase">
-                      {product.specs?.sizeGuide?.system || 'Size & Fit Specification'}
+                      {product.specs?.sizeGuide?.system || t('product.fitGuide')}
                     </span>
-                    <span className="text-[10px] text-[#666666]">หน่วยวัด: เซนติเมตร (cm)</span>
+                    <span className="text-[10px] text-[#666666]">{t('product.unitCm')}</span>
                   </div>
 
                   {/* Shoes Size Guide */}
@@ -434,10 +454,10 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                       <table className="w-full text-left font-mono text-[10px] sm:text-xs border-collapse">
                         <thead>
                           <tr className="border-b border-[#DCDCDC] text-[#666666] bg-[#F1F1F1]">
-                            <th className="py-1.5 px-2">EU Size</th>
-                            <th className="py-1.5 px-2">US Men</th>
-                            <th className="py-1.5 px-2">US Women</th>
-                            <th className="py-1.5 px-2">ความยาวเท้า (cm)</th>
+                            <th className="py-1.5 px-2">{t('product.shoe.eu')}</th>
+                            <th className="py-1.5 px-2">{t('product.shoe.usMen')}</th>
+                            <th className="py-1.5 px-2">{t('product.shoe.usWomen')}</th>
+                            <th className="py-1.5 px-2">{t('product.shoe.footLength')}</th>
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-[#DCDCDC]/50">
@@ -453,12 +473,12 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                       </table>
                     </div>
                   ) : product.category === 'Accessories' ? (
-                    <div className="p-3 bg-[#F1F1F1] rounded-xl border border-[#DCDCDC]/70 space-y-1.5">
+                    <div className="p-3 bg-[#F1F1F1] border border-[#DCDCDC] space-y-1.5">
                       <div className="font-bold text-[#000000] text-xs">
-                        ขนาดและสัดส่วน: <span className="text-[#042509]">{product.specs?.sizeGuide?.dimensionText || 'One Size (OS)'}</span>
+                        {t('product.dimensions')}: <span className="text-[#0A0A0A]">{product.specs?.sizeGuide?.dimensionText || 'One Size (OS)'}</span>
                       </div>
                       <p className="text-[11px] text-[#666666] leading-relaxed">
-                        {product.specs?.sizeGuide?.note || 'สินค้าหมวดเครื่องประดับและกระเป๋าออกแบบขนาด One Size เหมาะสำหรับสรีระทั่วไป'}
+                        {product.specs?.sizeGuide?.note || t('product.oneSizeNote')}
                       </p>
                     </div>
                   ) : (
@@ -490,7 +510,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   {/* Measurement Instruction */}
                   {product.specs?.sizeGuide?.measureInstruction && (
                     <div className="pt-2 border-t border-[#DCDCDC]/60 text-[10px] text-[#666666] leading-relaxed">
-                      <strong className="text-[#000000]">วิธีวัดสัดส่วน:</strong> {product.specs.sizeGuide.measureInstruction}
+                      <strong className="text-[#0A0A0A]">{t('product.measure')}:</strong> {product.specs.sizeGuide.measureInstruction}
                     </div>
                   )}
                 </div>
@@ -498,7 +518,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             </div>
 
             {/* 3. Collapsible Accordion: Materials, Care & Store Status (Requirement 3) */}
-            <div className="border border-[#DCDCDC] rounded-2xl overflow-hidden bg-white divide-y divide-[#DCDCDC]/70 text-xs">
+            <div className="border border-[#DCDCDC] overflow-hidden bg-[#F1F1F1] divide-y divide-[#DCDCDC] text-xs">
               
               {/* Accordion 1: วัสดุและรูปทรง */}
               <div>
@@ -510,23 +530,23 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                 >
                   <span className="flex items-center gap-2">
                     <Sparkles size={14} className="text-[#042509]" />
-                    <span>วัสดุและคุณลักษณะทรง (Materials & Silhouette)</span>
+                    <span>{t('product.materials')}</span>
                   </span>
                   <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'materials' ? 'rotate-180 text-[#042509]' : 'text-[#666666]'}`} />
                 </button>
                 {activeAccordion === 'materials' && (
                   <div className="px-4 pb-3.5 pt-1 space-y-2 text-[#666666] font-mono text-[11px] bg-[#F1F1F1]/40 animate-fade-in">
                     <div>
-                      <span className="font-bold text-[#000000]">ลักษณะทรง (Silhouette):</span> {product.specs?.silhouette || product.fit || 'Relaxed Fit'}
+                      <span className="font-bold text-[#0A0A0A]">{t('product.silhouette')}:</span> {product.specs?.silhouette || product.fit || 'Relaxed Fit'}
                     </div>
                     <div>
-                      <span className="font-bold text-[#000000]">รายละเอียดความพอดี:</span> {product.specs?.fitDetails || 'สวมใส่สบาย คัตติ้งสไตล์มินิมอล'}
+                      <span className="font-bold text-[#0A0A0A]">{t('product.fitDetails')}:</span> {product.specs?.fitDetails || '—'}
                     </div>
                     <div>
-                      <span className="font-bold text-[#000000]">วัตถุดิบแนะนำ:</span> {product.specs?.materialHint || 'ผ้าทอคอลเลกชันคุณภาพดี (ข้อมูลตัวอย่าง)'}
+                      <span className="font-bold text-[#0A0A0A]">{t('product.materialHint')}:</span> {product.specs?.materialHint || '—'}
                     </div>
-                    <div className="p-2 rounded-lg bg-amber-50/70 border border-amber-200/60 text-amber-900 text-[10px]">
-                      ⚠️ <strong>สัดส่วนเส้นใยผ้า:</strong> รอข้อมูลยืนยันจากร้านค้า (ไม่ระบุเป็นข้อเท็จจริงจนกว่าจะมีสเปกทางการ)
+                    <div className="p-2 bg-[#F1F1F1] border-l-2 border-[#C91D1D] text-[#0A0A0A] text-[10px]">
+                      <strong>{t('product.fibreLabel')}:</strong> {t('product.fibrePending')}
                     </div>
                   </div>
                 )}
@@ -542,17 +562,13 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                 >
                   <span className="flex items-center gap-2">
                     <RefreshCw size={14} className="text-[#042509]" />
-                    <span>วิธีดูแลรักษา (Garment Care)</span>
+                    <span>{t('product.care')}</span>
                   </span>
                   <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'care' ? 'rotate-180 text-[#042509]' : 'text-[#666666]'}`} />
                 </button>
                 {activeAccordion === 'care' && (
                   <div className="px-4 pb-3.5 pt-1 space-y-1.5 text-[#666666] font-mono text-[11px] bg-[#F1F1F1]/40 animate-fade-in">
-                    {(product.specs?.careInstructions || [
-                      'ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า',
-                      'หลีกเลี่ยงการใช้น้ำยาฟอกขาว',
-                      'ตากในที่ร่ม หลีกเลี่ยงแดดจัด'
-                    ]).map((item, idx) => (
+                    {(product.specs?.careInstructions || t('product.careDefaults')).map((item, idx) => (
                       <div key={idx} className="flex items-start gap-1.5">
                         <span className="text-[#042509] font-bold">✓</span>
                         <span>{item}</span>
@@ -572,16 +588,16 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                 >
                   <span className="flex items-center gap-2">
                     <ShieldCheck size={14} className="text-[#042509]" />
-                    <span>สถานะข้อมูลสินค้า (Store Confirmation Status)</span>
+                    <span>{t('product.status')}</span>
                   </span>
                   <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'status' ? 'rotate-180 text-[#042509]' : 'text-[#666666]'}`} />
                 </button>
                 {activeAccordion === 'status' && (
                   <div className="px-4 pb-3.5 pt-1 space-y-2 text-[#666666] font-mono text-[11px] bg-[#F1F1F1]/40 animate-fade-in">
                     <div className="flex items-center justify-between py-1 border-b border-[#DCDCDC]/40">
-                      <span className="font-bold text-[#000000]">สถานะสเปก:</span>
-                      <span className="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold text-[10px]">
-                        {product.specs?.statusLabel || 'ข้อมูลตัวอย่าง รอยืนยันจากร้าน'}
+                      <span className="font-bold text-[#0A0A0A]">{t('product.specStatus')}:</span>
+                      <span className="px-2 py-0.5 bg-[#0A0A0A] text-[#F1F1F1] font-bold text-[10px]">
+                        {product.specs?.statusLabel || t('product.sampleBadge')}
                       </span>
                     </div>
                     {specRows.map(({ label, value }, i) => (
@@ -589,18 +605,18 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                         key={label}
                         className={`flex items-start justify-between gap-4 py-1 ${i < specRows.length - 1 ? 'border-b border-[#DCDCDC]/40' : ''}`}
                       >
-                        <span className="font-bold text-[#000000] shrink-0">{label}:</span>
+                        <span className="font-bold text-[#0A0A0A] shrink-0">{label}:</span>
                         {value ? (
                           <span className="text-right text-[#666666] flex items-baseline justify-end gap-1.5 flex-wrap">
                             <span>{value}</span>
                             {isSampleSpec && (
-                              <span className="px-1 rounded bg-amber-100 text-amber-800 text-[9px] font-bold shrink-0">
-                                ตัวอย่าง
+                              <span className="px-1 bg-[#0A0A0A] text-[#F1F1F1] text-[9px] font-bold shrink-0">
+                                {t('product.sampleTag')}
                               </span>
                             )}
                           </span>
                         ) : (
-                          <span className="text-[#8C7E74] text-right">รอข้อมูลยืนยันจากร้านค้า</span>
+                          <span className="text-[#666666] text-right">{t('product.pendingStore')}</span>
                         )}
                       </div>
                     ))}
@@ -612,8 +628,8 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
 
             {/* 4. Quantity Selector */}
             <div className="flex items-center gap-3">
-              <span className="text-xs font-bold uppercase tracking-wider">Quantity:</span>
-              <div className="flex items-center border border-[#DCDCDC] bg-white rounded-xl overflow-hidden font-mono text-xs shadow-2xs">
+              <span className="text-xs font-bold uppercase tracking-wider">{t('product.quantity')}</span>
+              <div className="flex items-center border border-[#DCDCDC] bg-[#F1F1F1] overflow-hidden font-mono text-xs">
                 <button 
                   onClick={() => setQuantity(q => Math.max(1, q - 1))}
                   className="px-3 py-1.5 hover:bg-[#F1F1F1] text-[#000000] font-bold cursor-pointer transition-colors"
@@ -634,45 +650,39 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
 
           {/* Bottom Actions: Add to Bag Button & Verified Shipping Rules (Requirement 5) */}
           <div className="mt-6 pt-5 border-t border-[#DCDCDC] space-y-3">
-            {selectedSize === null && (
-              <p className="text-xs text-[#C91D1D] font-mono text-center">
-                {sizeList.length > 1 ? 'กรุณาเลือกไซซ์ก่อน' : 'สินค้านี้ยังไม่มีข้อมูลไซซ์'}
-              </p>
-            )}
-
             <div className="flex items-center gap-2.5">
               <button
                 onClick={handleAdd}
-                disabled={!product.inStock || selectedSize === null}
-                className={`flex-1 py-4 rounded-2xl font-mono font-bold text-xs sm:text-sm uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer ${
-                  product.inStock && selectedSize !== null
-                    ? addedAnimation 
-                      ? 'bg-emerald-600 text-white' 
-                      : 'bg-[#042509] hover:bg-[#021505] text-white shadow-[#042509]/25'
-                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                disabled={!product.inStock}
+                className={`flex-1 py-4 font-mono font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A] ${
+                  product.inStock
+                    ? addedAnimation
+                      ? 'bg-[#042509] text-[#F1F1F1]'
+                      : 'bg-[#0A0A0A] hover:bg-[#C91D1D] text-[#F1F1F1]'
+                    : 'bg-[#DCDCDC] text-[#666666] cursor-not-allowed'
                 }`}
               >
                 <ShoppingBag size={16} />
                 <span>
-                  {!product.inStock 
-                    ? 'Sold Out • สินค้าหมดชั่วคราว'
-                    : addedAnimation 
-                      ? 'Added to Bag! ✓' 
-                      : `Add to Bag • $${currentTotal.toFixed(2)}`}
+                  {!product.inStock
+                    ? t('product.soldOut')
+                    : addedAnimation
+                      ? t('product.added')
+                      : `${t('product.addToBag')} — $${currentTotal.toFixed(2)}`}
                 </span>
               </button>
 
               <button
                 type="button"
                 onClick={handleWishlistToggle}
-                aria-label={wishlistActive ? 'Remove from wishlist' : 'Add to wishlist'}
-                className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-center active:scale-95 shadow-sm ${
+                aria-label={wishlistActive ? t('product.wishlistRemove') : t('product.wishlistAdd')}
+                className={`p-4 border transition-colors cursor-pointer flex items-center justify-center outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
                   wishlistActive
-                    ? 'bg-[#C91D1D]/10 border-[#C91D1D] text-[#C91D1D]'
-                    : 'bg-white border-[#DCDCDC] text-[#666666] hover:text-[#C91D1D] hover:border-[#C91D1D]'
+                    ? 'bg-[#C91D1D] border-[#C91D1D] text-[#F1F1F1]'
+                    : 'bg-[#F1F1F1] border-[#DCDCDC] text-[#666666] hover:text-[#C91D1D] hover:border-[#C91D1D]'
                 }`}
               >
-                <Heart size={18} fill={wishlistActive ? '#C91D1D' : 'none'} />
+                <Heart size={18} fill={wishlistActive ? '#F1F1F1' : 'none'} />
               </button>
             </div>
 
@@ -681,14 +691,14 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
               <div className="flex items-center gap-1.5">
                 <Truck size={13} className={isFreeShippingEligible ? 'text-[#042509]' : 'text-[#C91D1D]'} />
                 <span>
-                  {isFreeShippingEligible 
-                    ? `ส่งฟรีทุกแบบ (ยอดถึงเกณฑ์ $${FREE_SHIPPING_THRESHOLD}+)` 
-                    : `ส่งมาตรฐานฟรี · ส่งด่วน $${SHIPPING_RATES.express} (ฟรีเมื่อครบ $${FREE_SHIPPING_THRESHOLD} - ขาดอีก $${remainingForFreeShipping.toFixed(2)})`}
+                  {isFreeShippingEligible
+                    ? t('product.shippingFree', { threshold: FREE_SHIPPING_THRESHOLD })
+                    : t('product.shippingStd', {
+                        express: SHIPPING_RATES.express,
+                        threshold: FREE_SHIPPING_THRESHOLD,
+                        remaining: remainingForFreeShipping.toFixed(2),
+                      })}
                 </span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <ShieldCheck size={13} className="text-[#042509]" />
-                <span>MatchA Archive Prototype (ข้อมูลตัวอย่าง)</span>
               </div>
             </div>
           </div>
