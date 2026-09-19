@@ -55,8 +55,29 @@ const allowedOrigins = (process.env.CORS_ORIGINS || process.env.FRONTEND_URL || 
   .map((value) => value.trim())
   .filter(Boolean);
 
+/* An empty allowlist means nobody configured one, not that nobody is allowed.
+
+   Refusing every browser origin in that case does not harden the deployment,
+   it switches the product off: this shipped to production with neither
+   CORS_ORIGINS nor FRONTEND_URL set on the host, and every request from the
+   live storefront came back 403 with no Access-Control-Allow-Origin. The site
+   rendered and could not load a single thing.
+
+   So the allowlist applies when there is one, and when there is not the server
+   says so loudly at boot and keeps serving. Configure CORS_ORIGINS to turn the
+   restriction on. */
+const originsConfigured = allowedOrigins.length > 0;
+
+if (!originsConfigured && process.env.NODE_ENV === 'production') {
+  console.warn(
+    '[cors] No CORS_ORIGINS or FRONTEND_URL set. Every origin is being allowed. ' +
+    'Set CORS_ORIGINS to a comma-separated list of storefront URLs to restrict it.'
+  );
+}
+
 const isAllowedOrigin = (origin) => {
   if (!origin) return true;
+  if (!originsConfigured) return true;
   if (allowedOrigins.includes(origin)) return true;
   return process.env.NODE_ENV !== 'production' && LOCALHOST.test(origin);
 };
