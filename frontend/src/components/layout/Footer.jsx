@@ -52,6 +52,11 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-white text-sm uppercase tracking-wider mb-3">{t('footer.legal')}</h3>
             <ul className="space-y-1.5 font-mono text-[11px] text-[#999999]">
+              {/* Order history belongs somewhere a customer can come back to,
+                  not only in the modal that shows once after checkout. It is
+                  here rather than in the header because the header keeps one
+                  button for a signed-out visitor on purpose. */}
+              <li><Link to="/orders" className="hover:text-white transition-colors">{t('account.viewOrders')}</Link></li>
               <li><Link to="/legal/privacy" className="hover:text-white transition-colors">{t('footer.privacy')}</Link></li>
               <li><Link to="/legal/terms" className="hover:text-white transition-colors">{t('footer.terms')}</Link></li>
               <li><Link to="/legal/refund" className="hover:text-white transition-colors">{t('footer.refund')}</Link></li>

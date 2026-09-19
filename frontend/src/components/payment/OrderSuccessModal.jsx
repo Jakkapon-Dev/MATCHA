@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLanguage } from '../../context/LanguageContext.jsx';
-import { CheckCircle2, ArrowRight, Printer } from 'lucide-react';
+import { CheckCircle2, ArrowRight, Printer, Package } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function OrderSuccessModal({
@@ -90,6 +90,21 @@ export default function OrderSuccessModal({
           >
             <span>{t('checkout.backToCatalog')}</span>
             <ArrowRight size={14} />
+          </button>
+
+          {/* Where the order can be read again. Without this the page exists
+              and nobody arrives at it — and this is the one moment a customer
+              is certain to want it. */}
+          <button
+            type="button"
+            onClick={() => {
+              if (onDone) onDone();
+              navigate('/orders');
+            }}
+            className="w-full py-2.5 border border-[#042509] text-[#042509] hover:bg-[#042509] hover:text-white text-xs font-mono font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2 cursor-pointer"
+          >
+            <Package size={13} />
+            <span>{t('account.viewOrders')}</span>
           </button>
 
           <button

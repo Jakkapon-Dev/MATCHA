@@ -47,8 +47,10 @@ export default function OrdersTab({ orders = [], isLoaded = true }) {
       <div className="flex items-center justify-between pb-4 border-b border-[#DCDCDC]">
         <div className="flex items-center gap-2">
           <Package size={18} className="text-[#042509]" />
+          {/* Written in English in the markup, so it stayed English on the
+              Thai page, above a Thai empty state. */}
           <h2 className="text-base font-extrabold uppercase tracking-tight text-[#0A0A0A]">
-            Order History ({orders.length})
+            {t('account.orderHistoryHeading')} ({orders.length})
           </h2>
         </div>
       </div>
