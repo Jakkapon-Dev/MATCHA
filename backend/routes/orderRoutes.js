@@ -177,9 +177,17 @@ router.post('/', orderLimiter, async (req, res) => {
     const safePaymentMethod = validPaymentMethods.includes(paymentMethod) ? paymentMethod : 'demo';
     const paymentStatus = safePaymentMethod === 'cod' ? 'unpaid' : 'paid';
 
+    /* A guest's own id is recorded so the order can be shown back to them
+       later. A signed-in customer does not need it: their orders are found by
+       account id or email, and storing it as well would leave a second way in
+       that outlives the session. */
+    const headerGuestId = String(req.headers['x-guest-id'] || '').trim();
+    const orderGuestId = !orderUserId && headerGuestId ? headerGuestId : null;
+
     const orderPayload = {
       idempotencyKey: effectiveKey,
       userId: orderUserId,
+      guestId: orderGuestId,
       customer: customerPayload,
       items: validatedItems,
       couponCode: cleanCoupon || null,
@@ -278,6 +286,20 @@ router.post('/', orderLimiter, async (req, res) => {
 });
 
 // GET /api/orders — รายการออเดอร์ (Admin เห็นทั้งหมด, Member เห็นเฉพาะของตน, Guest กรองตามอีเมลหรือดูออเดอร์ล่าสุด)
+/* A small stand-in for the query, used only on the no-database path. It
+   understands the two shapes this route builds: `{ $or: [...] }` for a
+   signed-in customer, and a flat equality match for a guest. An empty filter
+   means an administrator, who sees everything. */
+function matchesFilter(list, filter) {
+  const clauses = Object.keys(filter).length === 0 ? null : (filter.$or || [filter]);
+  if (!clauses) return list;
+  const matchesOne = (order, clause) => Object.entries(clause).every(([path, want]) => {
+    const value = path.split('.').reduce((node, key) => (node == null ? node : node[key]), order);
+    return value !== undefined && value !== null && String(value).toLowerCase() === String(want).toLowerCase();
+  });
+  return list.filter(order => clauses.some(clause => matchesOne(order, clause)));
+}
+
 router.get('/', async (req, res) => {
   try {
     const authUser = extractAuthUser(req);
@@ -321,14 +343,30 @@ router.get('/', async (req, res) => {
       }
       filter = { $or: conditions };
     } else {
-      return res.json({ success: true, count: 0, data: [] });
+      /* A guest sees the orders placed from this browser, matched on the id it
+         sends with every request — the same one the cart is keyed on. Orders
+         written before that id was recorded carry none, so they match nobody
+         and stay hidden, which is the right way round.
+
+         An empty or missing header means an empty list, never `{}`; that is
+         the branch that used to return the whole shop. */
+      const guestId = String(req.headers['x-guest-id'] || '').trim();
+      if (!guestId) {
+        return res.json({ success: true, count: 0, data: [] });
+      }
+      filter = { guestId };
     }
 
     let orders = [];
     if (mongoose.connection.readyState === 1) {
       orders = await Order.find(filter).sort({ createdAt: -1 }).limit(50).lean();
     } else {
-      orders = memoryOrders.slice(0, 50);
+      /* The same rules apply with no database. This used to hand back
+         memoryOrders in full, ignoring the filter that had just been worked
+         out, so every restriction above was undone the moment the connection
+         dropped — a caller who should see nothing would see everything, and
+         only while something was already wrong. */
+      orders = matchesFilter(memoryOrders, filter).slice(0, 50);
     }
 
     res.json({
@@ -382,12 +420,13 @@ router.get('/:id', async (req, res) => {
        would confirm the number is real, which is the first half of the thing
        being protected against. */
     const viewer = extractAuthUser(req);
-    const isOwner = viewer && (
+    const callerGuestId = String(req.headers['x-guest-id'] || '').trim();
+    const isOwner = (viewer && (
       String(viewer.role || '').toLowerCase() === 'admin' ||
       (viewer.email && order.customer?.email &&
         String(viewer.email).toLowerCase() === String(order.customer.email).toLowerCase()) ||
       (order.userId && String(order.userId) === String(viewer.id || viewer.userId || viewer._id || ''))
-    );
+    )) || Boolean(order.guestId && callerGuestId && order.guestId === callerGuestId);
 
     if (!isOwner) {
       return res.status(404).json({

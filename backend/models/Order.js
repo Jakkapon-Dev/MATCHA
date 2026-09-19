@@ -56,6 +56,23 @@ const orderSchema = new Schema(
       type: String,
       default: null
     },
+    /* Who placed this when nobody was signed in.
+
+       It holds the same `guest-<32 hex>` value the cart uses, taken from the
+       X-Guest-Id header the browser already sends on every request. Without it
+       an order placed by a guest belonged to no one that could be asked about
+       later, so the only way to show a guest their own order was to show
+       everybody every order — which is exactly what the list endpoint used to
+       do.
+
+       It is a bearer value, not an identity: whoever holds the id sees those
+       orders. That is the same trust the cart already places in it, and it is
+       generated with crypto.randomUUID, so it is not guessable. It is scoped
+       to one browser, so clearing site data loses the history with it. */
+    guestId: {
+      type: String,
+      default: null
+    },
     customer: {
       type: customerSchema,
       required: true
@@ -119,6 +136,7 @@ orderSchema.pre('validate', function recomputeTotal(next) {
 });
 
 orderSchema.index({ userId: 1, createdAt: -1 });
+orderSchema.index({ guestId: 1, createdAt: -1 });
 orderSchema.index({ status: 1 });
 
 const Order = mongoose.models.Order || model('Order', orderSchema);
