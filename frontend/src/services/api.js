@@ -127,6 +127,8 @@ async function fetchWithFallback(endpoint, options = {}) {
 }
 
 export const api = {
+  getAdminProducts: () => fetchWithFallback('/admin/products', { signal: AbortSignal.timeout(15000) }),
+  getAdminOrders: () => fetchWithFallback('/admin/orders', { signal: AbortSignal.timeout(15000) }),
   getStoreConfig: () => fetchWithFallback('/store-config'),
   // Check backend server health status
   checkHealth: async () => {
@@ -229,11 +231,7 @@ export const api = {
   // Users CRUD
   getUsers: async (params = {}) => {
     const query = new URLSearchParams(params).toString();
-    return fetchWithFallback(`/users${query ? `?${query}` : ''}`);
-  },
-
-  getUserById: async (id) => {
-    return fetchWithFallback(`/users/${id}`);
+    return fetchWithFallback(`/users${query ? `?${query}` : ''}`, { signal: AbortSignal.timeout(15000) });
   },
 
   login: async (email, password) => {
@@ -261,23 +259,10 @@ export const api = {
     return fetchWithFallback('/auth/me');
   },
 
-  createUser: async (userData) => {
-    return fetchWithFallback('/users', {
-      method: 'POST',
-      body: JSON.stringify(userData)
-    });
-  },
-
   updateUser: async (id, updateData) => {
     return fetchWithFallback(`/users/${id}`, {
       method: 'PUT',
       body: JSON.stringify(updateData)
-    });
-  },
-
-  deleteUser: async (id) => {
-    return fetchWithFallback(`/users/${id}`, {
-      method: 'DELETE'
     });
   },
 

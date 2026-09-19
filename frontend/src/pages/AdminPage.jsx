@@ -1,32 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import BackupTab from '../components/admin/BackupTab';
+import MembersTab from '../components/admin/MembersTab';
+import AnalyticsTab from '../components/admin/AnalyticsTab';
+import OrdersTab from '../components/admin/OrdersTab';
+import InventoryTab from '../components/admin/InventoryTab';
+import DashboardTab from '../components/admin/DashboardTab';
+import React, { useState, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  Package,
-  ShoppingBag,
-  DollarSign,
-  Plus,
-  BarChart3,
-  Layers,
-  Users,
-  Search,
-  Filter,
-  Trash2,
-  ExternalLink,
-  ChevronRight,
-  AlertTriangle,
-  ArrowUpRight,
-  Download,
-  FileSpreadsheet,
-  FileJson,
-  ChevronDown,
-  LayoutDashboard,
-  Boxes,
-  ClipboardList,
-  UserCheck,
-  HardDrive,
-  LogOut,
-  Activity
-} from 'lucide-react';
+import { Plus, BarChart3, Layers, Search, ExternalLink, ChevronRight, Download, FileSpreadsheet, FileJson, ChevronDown, LayoutDashboard, Boxes, ClipboardList, UserCheck, HardDrive, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import AddProductModal from '../components/admin/AddProductModal';
@@ -34,144 +14,10 @@ import OrderTrackingModal from '../components/admin/OrderTrackingModal';
 import MediaManager from '../features/media/MediaManager';
 import { api } from '../services/api';
 import useChangeMotion from '../hooks/useChangeMotion';
-import { webpSrc } from '../utils/imageFallback';
 
-const INITIAL_INVENTORY = [
-  {
-    id: 'SKU-001',
-    name: 'MatchA Heavyweight Boxy Shirt',
-    category: 'Tops',
-    price: 48,
-    stock: 45,
-    status: 'In Stock',
-    color: 'Warm Brown',
-    fit: 'Boxy Oversized',
-    season: 'Autumn',
-    image: '/images/products/autumn/tops/shirts/color_1_brown.jpeg',
-    createdAt: '2026-01-15'
-  },
-  {
-    id: 'SKU-002',
-    name: 'MatchA Pleated Relaxed Chinos',
-    category: 'Bottoms',
-    price: 88,
-    stock: 12,
-    status: 'Low Stock',
-    color: 'Olive Green',
-    fit: 'Relaxed Tailored',
-    season: 'Autumn',
-    image: '/images/products/autumn/bottoms/chinos/color_1_olive.jpeg',
-    createdAt: '2026-02-10'
-  },
-  {
-    id: 'SKU-003',
-    name: 'MatchA Mineral Fleece Hoodie',
-    category: 'Outerwear',
-    price: 110,
-    stock: 24,
-    status: 'In Stock',
-    color: 'Burnt Orange',
-    fit: 'Boxy Oversized',
-    season: 'Autumn',
-    image: '/images/products/autumn/tops/hoodies/color_1_burnt_orange.jpeg',
-    createdAt: '2026-03-01'
-  },
-  {
-    id: 'SKU-004',
-    name: 'MatchA Autumn Leather Utility Bag',
-    category: 'Accessories',
-    price: 44,
-    stock: 6,
-    status: 'Low Stock',
-    color: 'Burnt Orange',
-    fit: 'Standard Fit',
-    season: 'Autumn',
-    image: '/images/products/autumn/accessories/bags/color_1_burnt_orange.jpeg',
-    createdAt: '2026-03-20'
-  },
-  {
-    id: 'SKU-005',
-    name: 'MatchA Artisan Silk Scarf',
-    category: 'Accessories',
-    price: 38,
-    stock: 0,
-    status: 'Out of Stock',
-    color: 'Burnt Orange',
-    fit: 'Standard Fit',
-    season: 'Autumn',
-    image: '/images/products/autumn/accessories/scarves/color_1_burnt_orange.jpeg',
-    createdAt: '2026-04-05'
-  },
-  {
-    id: 'SKU-006',
-    name: 'MatchA Heritage Work Jacket',
-    category: 'Outerwear',
-    price: 125,
-    stock: 19,
-    status: 'In Stock',
-    color: 'Earth Brown',
-    fit: 'Relaxed Tailored',
-    season: 'Autumn',
-    image: '/images/products/autumn/tops/jackets/color_1_brown.jpeg',
-    createdAt: '2026-04-18'
-  },
-  {
-    id: 'SKU-007',
-    name: 'MatchA Textured Knit Sweater',
-    category: 'Tops',
-    price: 74,
-    stock: 31,
-    status: 'In Stock',
-    color: 'Burnt Orange',
-    fit: 'Relaxed Tailored',
-    season: 'Autumn',
-    image: '/images/products/autumn/tops/sweaters/color_1_burnt_orange.jpeg',
-    createdAt: '2026-05-12'
-  },
-  {
-    id: 'SKU-008',
-    name: 'MatchA Relaxed Classic Jeans',
-    category: 'Bottoms',
-    price: 92,
-    stock: 4,
-    status: 'Low Stock',
-    color: 'Earth Brown',
-    fit: 'Wide Leg',
-    season: 'Autumn',
-    image: '/images/products/autumn/bottoms/jeans/color_1_brown.jpeg',
-    createdAt: '2026-06-04'
-  }
-];
+import useAdminData from '../components/admin/useAdminData';
 
-const INITIAL_ORDERS = [
-  { id: 'ORD-8921', customer: 'Sarah Jenkins', email: 'sarah.j@gmail.com', phone: '+66 89 998-7122', address: '306 North Plaza, South Motera, Sukhumvit Soi 21, Bangkok - 10110', items: 2, total: 136.00, status: 'Processing', paymentStatus: 'Paid', date: '2026-08-25' },
-  { id: 'ORD-8920', customer: 'Kenji Takahashi', email: 'kenji.t@outlook.com', phone: '+66 81 445-9821', address: '88/4 Thonglor Soi 10, Khlong Tan Nuea, Watthana, Bangkok - 10110', items: 1, total: 88.00, status: 'Shipped', paymentStatus: 'Paid', date: '2026-08-24' },
-  { id: 'ORD-8919', customer: 'Elena Rostova', email: 'elena.r@yahoo.com', phone: '+66 92 334-1189', address: '45/12 Nimmanhaemin Rd, Suthep, Mueang Chiang Mai, Chiang Mai - 50200', items: 3, total: 242.00, status: 'Delivered', paymentStatus: 'Paid', date: '2026-08-22' },
-  { id: 'ORD-8918', customer: 'Marcus Vance', email: 'marcus.v@proton.me', phone: '+66 86 771-0023', address: '124 Wireless Road, Lumphini, Pathum Wan, Bangkok - 10330', items: 1, total: 48.00, status: 'Delivered', paymentStatus: 'Paid', date: '2026-08-20' },
-  { id: 'ORD-8917', customer: 'Chloe Bennett', email: 'chloe.b@gmail.com', phone: '+66 95 662-8810', address: '502 Sathorn Square Tower, North Sathorn Rd, Silom, Bang Rak, Bangkok - 10500', items: 4, total: 310.00, status: 'Processing', paymentStatus: 'Paid', date: '2026-08-19' },
-  { id: 'ORD-8916', customer: 'Nattapong Somchai', email: 'nat.somchai@matcha.vip', phone: '+66 81 889-4455', address: '18 Ari Samphan Soi 5, Phahon Yothin Rd, Phaya Thai, Bangkok - 10400', items: 2, total: 176.00, status: 'Pending', paymentStatus: 'Unpaid', date: '2026-08-18' },
-  { id: 'ORD-8915', customer: 'David Miller', email: 'd.miller@techcorp.io', phone: '+66 83 221-9900', address: '77/1 Asoke-Dindaeng Rd, Makkasan, Ratchathewi, Bangkok - 10400', items: 1, total: 110.00, status: 'Delivered', paymentStatus: 'Paid', date: '2026-08-15' }
-];
-
-const INITIAL_MEMBERS = [
-  { id: 'MEM-001', name: 'Nattapong Somchai', email: 'nat.somchai@matcha.vip', tier: 'VIP Connoisseur', totalSpent: 420.00, orders: 4, joined: '2026-01-10' },
-  { id: 'MEM-002', name: 'Sarah Jenkins', email: 'sarah.j@gmail.com', tier: 'Regular Member', totalSpent: 136.00, orders: 1, joined: '2026-03-14' },
-  { id: 'MEM-003', name: 'Elena Rostova', email: 'elena.r@yahoo.com', tier: 'VIP Connoisseur', totalSpent: 680.00, orders: 6, joined: '2026-02-01' },
-  { id: 'MEM-004', name: 'Kenji Takahashi', email: 'kenji.t@outlook.com', tier: 'Regular Member', totalSpent: 88.00, orders: 1, joined: '2026-04-20' },
-  { id: 'MEM-005', name: 'Marcus Vance', email: 'marcus.v@proton.me', tier: 'Regular Member', totalSpent: 96.00, orders: 2, joined: '2026-05-11' },
-  { id: 'MEM-006', name: 'Chloe Bennett', email: 'chloe.b@gmail.com', tier: 'VIP Connoisseur', totalSpent: 512.00, orders: 5, joined: '2026-01-28' }
-];
-
-const MONTHLY_REVENUE_DATA = [
-  { month: 'Jan', revenue: 3200, orders: 42, target: 3000 },
-  { month: 'Feb', revenue: 4100, orders: 55, target: 3500 },
-  { month: 'Mar', revenue: 3800, orders: 49, target: 4000 },
-  { month: 'Apr', revenue: 5200, orders: 68, target: 4500 },
-  { month: 'May', revenue: 6400, orders: 81, target: 5000 },
-  { month: 'Jun', revenue: 7100, orders: 92, target: 6000 },
-  { month: 'Jul', revenue: 8450, orders: 110, target: 7000 },
-  { month: 'Aug', revenue: 9820, orders: 128, target: 8000 }
-];
+import { normalizeProduct, monthlyRevenue } from '../components/admin/adminData';
 
 export default function AdminPage() {
   const navigate = useNavigate();
@@ -186,51 +32,20 @@ export default function AdminPage() {
   const [restockAmounts, setRestockAmounts] = useState({});
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
 
-  // Core Data States with localStorage persistence & automatic sanitization of legacy images
-  const [inventory, setInventory] = useState(() => {
-    const saved = localStorage.getItem('matcha_admin_inventory');
-    const validImages = [
-      '/images/products/autumn/tops/shirts/color_1_brown.jpeg',
-      '/images/products/autumn/bottoms/chinos/color_1_olive.jpeg',
-      '/images/products/autumn/tops/hoodies/color_1_burnt_orange.jpeg',
-      '/images/products/autumn/accessories/bags/color_1_burnt_orange.jpeg',
-      '/images/products/autumn/accessories/scarves/color_1_burnt_orange.jpeg',
-      '/images/products/autumn/tops/jackets/color_1_brown.jpeg',
-      '/images/products/autumn/tops/sweaters/color_1_burnt_orange.jpeg',
-      '/images/products/autumn/bottoms/jeans/color_1_brown.jpeg'
-    ];
-
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        return parsed.map((item, idx) => {
-          if (
-            !item.image ||
-            item.image.includes('unsplash.com') ||
-            item.image.includes('knit-sweaters') ||
-            item.image.includes('spring/')
-          ) {
-            return { ...item, image: validImages[idx % validImages.length] };
-          }
-          return item;
-        });
-      } catch (err) {
-        return INITIAL_INVENTORY;
-      }
-    }
-    return INITIAL_INVENTORY;
-  });
-
-  const [orders, setOrders] = useState(() => {
-    const saved = localStorage.getItem('matcha_admin_orders');
-    return saved ? JSON.parse(saved) : INITIAL_ORDERS;
-  });
-
-  const [members, setMembers] = useState(() => {
-    const saved = localStorage.getItem('matcha_admin_members');
-    return saved ? JSON.parse(saved) : INITIAL_MEMBERS;
-  });
-
+  const { inventory, setInventory, orders, setOrders, members, setMembers, status, errors, refresh } = useAdminData(currentUser?.id || currentUser?._id);
+  const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
+  const [mutationNotice, setMutationNotice] = useState(null);
+  const runMutation = async (action) => {
+    if (savingRef.current || Object.values(status).includes('loading')) return false;
+    savingRef.current = true;
+    setSaving(true);
+    setMutationNotice(null);
+    try { await action(); setMutationNotice({ error: false, text: 'บันทึกสำเร็จ / Changes saved' }); return true; }
+    catch (error) { setMutationNotice({ error: true, text: error.message || 'Could not save changes' }); return false; }
+    finally { savingRef.current = false; setSaving(false); }
+  };
+  const monthlyData = useMemo(() => monthlyRevenue(orders), [orders]);
   // Global & Tab Filter States
   const [globalSearch, setGlobalSearch] = useState('');
   const [inventoryCategoryFilter, setInventoryCategoryFilter] = useState('ALL');
@@ -238,129 +53,11 @@ export default function AdminPage() {
   const [orderStatusFilter, setOrderStatusFilter] = useState('ALL');
   const [memberTierFilter, setMemberTierFilter] = useState('ALL');
 
-  // Sanitize on mount in case localStorage already has broken image paths
-  useEffect(() => {
-    const validImages = [
-      '/images/products/autumn/tops/shirts/color_1_brown.jpeg',
-      '/images/products/autumn/bottoms/chinos/color_1_olive.jpeg',
-      '/images/products/autumn/tops/hoodies/color_1_burnt_orange.jpeg',
-      '/images/products/autumn/accessories/bags/color_1_burnt_orange.jpeg',
-      '/images/products/autumn/accessories/scarves/color_1_burnt_orange.jpeg',
-      '/images/products/autumn/tops/jackets/color_1_brown.jpeg',
-      '/images/products/autumn/tops/sweaters/color_1_burnt_orange.jpeg',
-      '/images/products/autumn/bottoms/jeans/color_1_brown.jpeg'
-    ];
-    setInventory((prev) =>
-      prev.map((item, idx) => {
-        if (
-          !item.image ||
-          item.image.includes('unsplash.com') ||
-          item.image.includes('knit-sweaters') ||
-          item.image.includes('spring/')
-        ) {
-          return { ...item, image: validImages[idx % validImages.length] };
-        }
-        return item;
-      })
-    );
-
-    // Fetch real inventory and orders from MongoDB Atlas Backend
-    let isMounted = true;
-    async function loadBackendData() {
-      try {
-        const prodRes = await api.getProducts({ limit: 100 });
-        if (isMounted && prodRes && prodRes.data && prodRes.data.length > 0) {
-          const normalized = prodRes.data.map(p => ({
-            ...p,
-            id: p.id || p._id,
-            stock: typeof p.quantity === 'number' ? p.quantity : (typeof p.stock === 'number' ? p.stock : 20),
-            status: (p.quantity > 0 || p.stock > 0) ? ((p.quantity || p.stock) <= 10 ? 'Low Stock' : 'In Stock') : 'Out of Stock'
-          }));
-          setInventory(normalized);
-        }
-      } catch (err) {
-        console.warn('Backend inventory fetch fallback:', err.message);
-      }
-
-      try {
-        const orderRes = await api.getOrders();
-        if (isMounted && orderRes && orderRes.data && orderRes.data.length > 0) {
-          const normalizedOrders = orderRes.data.map(o => ({
-            id: o.orderId || o._id,
-            customer: `${o.customer?.firstName || 'Guest'} ${o.customer?.lastName || ''}`.trim(),
-            email: o.customer?.email || 'N/A',
-            /* The order tracking modal shows these. They are required on the
-               backend, so a real order always carries them; leaving them off
-               the mapping is what made the modal fall back to a seed customer's
-               phone and address and present them as this customer's. */
-            phone: o.customer?.phone || null,
-            address: [o.customer?.address, o.customer?.city, o.customer?.zipCode, o.customer?.country]
-              .filter(Boolean).join(', ') || null,
-            items: o.items?.length || 0,
-            total: o.total || 0,
-            status: o.status ? o.status.charAt(0).toUpperCase() + o.status.slice(1) : 'Pending',
-            paymentStatus: o.paymentStatus ? o.paymentStatus.charAt(0).toUpperCase() + o.paymentStatus.slice(1) : 'Unpaid',
-            date: o.createdAt ? o.createdAt.split('T')[0] : new Date().toISOString().split('T')[0]
-          }));
-          setOrders(normalizedOrders);
-        }
-      } catch (err) {
-        console.warn('Backend orders fetch fallback:', err.message);
-      }
-
-      try {
-        const userRes = await api.getUsers();
-        if (isMounted && userRes && userRes.data && userRes.data.length > 0) {
-          const normalizedMembers = userRes.data.map((u, idx) => ({
-            id: u.userId || `MEM-${String(idx + 1).padStart(3, '0')}`,
-            name: u.name || 'Member',
-            email: u.email || 'N/A',
-            tier: u.tier || 'VIP Connoisseur',
-            totalSpent: u.totalSpent || 0,
-            orders: u.ordersCount || 0,
-            joined: u.createdAt ? u.createdAt.split('T')[0] : '2026-01-10'
-          }));
-          setMembers(normalizedMembers);
-        }
-      } catch (err) {
-        console.warn('Backend members fetch fallback:', err.message);
-      }
-    }
-
-    loadBackendData();
-    return () => { isMounted = false; };
-  }, []);
-
-  /* These three caches are a convenience for the next visit, never a condition
-     of this one. Unguarded, a full quota or blocked site data threw out of the
-     effect and into the error boundary: the admin looking at a crash screen
-     over a copy of data they already had on screen. The tables are loaded from
-     the backend above; a failed cache costs the next reload a spinner. */
-  const cacheLocally = (key, value) => {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch (err) {
-      console.warn(`Admin cache skipped for ${key}; storage is unavailable:`, err.message);
-    }
-  };
-
-  useEffect(() => {
-    cacheLocally('matcha_admin_inventory', inventory);
-  }, [inventory]);
-
-  useEffect(() => {
-    cacheLocally('matcha_admin_orders', orders);
-  }, [orders]);
-
-  useEffect(() => {
-    cacheLocally('matcha_admin_members', members);
-  }, [members]);
-
   const isDemo = Boolean(currentUser?.isDemoSession);
 
   // KPI Calculations
   const totalRevenue = useMemo(() => {
-    return orders.reduce((sum, ord) => sum + (ord.status !== 'Cancelled' ? ord.total : 0), 0);
+    return orders.reduce((sum, ord) => sum + (ord.status !== 'Cancelled' && ord.paymentStatus === 'Paid' ? ord.total : 0), 0);
   }, [orders]);
 
   const totalStockUnits = useMemo(() => {
@@ -461,66 +158,25 @@ export default function AdminPage() {
     });
   }, [members, globalSearch, memberTierFilter]);
 
-  // Inventory Actions
-  const handleAddProduct = async (newProduct) => {
-    if (isDemo) {
-      const normalizedItem = {
-        ...newProduct,
-        id: newProduct.id || `DEMO-${Date.now().toString().slice(-4)}`,
-        stock: Number(newProduct.stock) || 20,
-        status: Number(newProduct.stock) > 0 ? (Number(newProduct.stock) <= 10 ? 'Low Stock' : 'In Stock') : 'Out of Stock'
-      };
-      setInventory(prev => [normalizedItem, ...prev]);
-      showToast('โหมดสาธิต: เพิ่มสินค้าจำลองชั่วคราวสำเร็จ (ไม่บันทึกสู่ฐานข้อมูลจริง)', 'info');
-      return;
-    }
+  // Change the screen only after persistence succeeds.
+  const handleAddProduct = newProduct => runMutation(async () => {
+    if (isDemo) throw new Error('Demo session: changes are disabled');
+    const result = await api.createProduct({ ...newProduct, quantity: Number(newProduct.stock), price: Number(newProduct.price) });
+    if (!result?.success || !result.data) throw new Error('Product was not saved');
+    setInventory(previous => [normalizeProduct(result.data), ...previous]);
+    showToast('Product saved', 'success');
+  });
 
-    try {
-      const res = await api.createProduct({
-        ...newProduct,
-        quantity: Number(newProduct.stock) || 20,
-        price: Number(newProduct.price) || 0
-      });
-      const savedItem = res?.data || newProduct;
-      const normalizedItem = {
-        ...savedItem,
-        id: savedItem.id || savedItem._id || newProduct.id,
-        stock: typeof savedItem.quantity === 'number' ? savedItem.quantity : Number(newProduct.stock),
-        status: Number(newProduct.stock) > 0 ? (Number(newProduct.stock) <= 10 ? 'Low Stock' : 'In Stock') : 'Out of Stock'
-      };
-      setInventory(prev => [normalizedItem, ...prev]);
-      showToast(`Garment "${newProduct.name}" created and saved to MongoDB!`, 'success');
-    } catch (err) {
-      console.error('Failed to create product via API:', err);
-      setInventory(prev => [newProduct, ...prev]);
-      showToast(`Saved locally: ${err.message}`, 'warning');
-    }
-  };
-
-  const handleRestock = async (id, amount) => {
-    const item = inventory.find(i => i.id === id);
+  const handleRestock = (id, amount) => runMutation(async () => {
+    if (isDemo) throw new Error('Demo session: changes are disabled');
+    const item = inventory.find(product => product.id === id);
     if (!item) return;
-
-    const newStock = Math.max(0, item.stock + amount);
-    let newStatus = 'In Stock';
-    if (newStock === 0) newStatus = 'Out of Stock';
-    else if (newStock <= 10) newStatus = 'Low Stock';
-
-    setInventory(prev => prev.map(i => i.id === id ? { ...i, stock: newStock, status: newStatus } : i));
-
-    if (isDemo) {
-      showToast(`โหมดสาธิต: อัปเดตสต็อกจำลอง (${amount > 0 ? `+${amount}` : amount})`, 'info');
-      return;
-    }
-
-    try {
-      await api.updateProduct(id, { quantity: newStock, stock: newStock });
-      showToast(`Stock updated in MongoDB (${amount > 0 ? `+${amount}` : amount})`, 'success');
-    } catch (err) {
-      console.warn('Failed to update stock via API, kept optimistic update:', err.message);
-      showToast(`Stock updated locally (${amount > 0 ? `+${amount}` : amount})`, 'info');
-    }
-  };
+    const quantity = Math.max(0, item.stock + amount);
+    const result = await api.updateProduct(id, { quantity });
+    if (!result?.success || !result.data) throw new Error('Stock was not saved');
+    setInventory(previous => previous.map(product => product.id === id ? normalizeProduct(result.data) : product));
+    showToast('Stock saved', 'success');
+  });
 
   /* A leading minus survives, so stock can still be taken away. The buttons
      this box replaced were +10 and -5; stripping every non-digit kept the
@@ -532,61 +188,42 @@ export default function AdminPage() {
     setRestockAmounts(prev => ({ ...prev, [id]: digits ? sign + digits : sign }));
   };
 
-  const handleRestockSubmit = (id) => {
+  const handleRestockSubmit = async (id) => {
     const amount = parseInt(restockAmounts[id], 10);
     if (!Number.isFinite(amount) || amount === 0) return;
-    handleRestock(id, amount);
-    setRestockAmounts(prev => ({ ...prev, [id]: '' }));
+    if (await handleRestock(id, amount)) setRestockAmounts(prev => ({ ...prev, [id]: '' }));
   };
 
-  const handleDeleteProduct = async (id) => {
-    if (isDemo) {
-      showToast('โหมดสาธิต: อ่านอย่างเดียว ไม่สามารถลบข้อมูลจริงได้', 'warning');
-      return;
-    }
+  const handleDeleteProduct = id => runMutation(async () => {
+    if (isDemo) throw new Error('Demo session: changes are disabled');
+    const result = await api.deleteProduct(id);
+    if (!result?.success) throw new Error('Product was not deleted');
+    setInventory(previous => previous.filter(product => product.id !== id));
+    showToast('Product deleted', 'success');
+  });
 
-    const item = inventory.find(i => i.id === id);
-    setInventory(prev => prev.filter(i => i.id !== id));
+  const handleUpdateOrderStatus = (orderId, newStatus) => runMutation(async () => {
+    if (isDemo) throw new Error('Demo session: changes are disabled');
+    const result = await api.updateOrderStatus(orderId, { status: newStatus.toLowerCase() });
+    if (!result?.success) throw new Error('Order status was not saved');
+    setOrders(previous => previous.map(order => order.id === orderId ? { ...order, status: newStatus } : order));
+    setSelectedOrderForModal(previous => previous?.id === orderId ? { ...previous, status: newStatus } : previous);
+    showToast('Order status saved', 'success');
+  });
 
-    try {
-      await api.deleteProduct(id);
-      showToast(`Deleted "${item?.name || id}" from MongoDB`, 'info');
-    } catch (err) {
-      console.warn('Failed to delete product via API:', err.message);
-      showToast(`Deleted "${item?.name || id}" locally`, 'info');
-    }
-  };
-
-  // Order Actions
-  const handleUpdateOrderStatus = async (orderId, newStatus) => {
-    setOrders(prev => prev.map(ord => ord.id === orderId ? { ...ord, status: newStatus } : ord));
-    setSelectedOrderForModal(prev => (prev && prev.id === orderId ? { ...prev, status: newStatus } : prev));
-    try {
-      // The `if (api.updateOrderStatus)` guard that stood here was dead: the
-      // method is defined in services/api.js. All it could do was hide a typo.
-      await api.updateOrderStatus(orderId, { status: newStatus });
-      showToast(`Order ${orderId} updated to ${newStatus}`, 'success');
-    } catch (err) {
-      console.warn('Failed to update order status on server:', err.message);
-      showToast(`Order ${orderId} updated locally`, 'info');
-    }
-  };
-
-  // Member Actions
-  const handleToggleVIPTier = (memberId) => {
-    setMembers(prev => prev.map(mem => {
-      if (mem.id === memberId) {
-        const isCurrentlyVIP = mem.tier.includes('VIP');
-        const newTier = isCurrentlyVIP ? 'Regular Member' : 'VIP Connoisseur';
-        return { ...mem, tier: newTier };
-      }
-      return mem;
-    }));
-    showToast(`Member tier updated!`, 'success');
-  };
+  const handleToggleVIPTier = memberId => runMutation(async () => {
+    if (isDemo) throw new Error('Demo session: changes are disabled');
+    const member = members.find(item => item.id === memberId);
+    const tier = member.tier.includes('VIP') ? 'Regular Member' : 'VIP Connoisseur';
+    const result = await api.updateUser(memberId, { tier });
+    if (!result?.success || !result.data) throw new Error('Membership tier was not saved');
+    setMembers(previous => previous.map(item => item.id === memberId ? { ...item, tier: result.data.tier } : item));
+    showToast('Membership tier saved', 'success');
+  });
 
   // Export File Helper
   const downloadFile = (content, filename, type = 'text/csv;charset=utf-8;') => {
+    if (saving || Object.values(status).some(value => value !== 'ready')) { showToast('Load all data before exporting', 'warning'); return; }
     const bom = type.includes('csv') ? '\uFEFF' : '';
     const blob = new Blob([bom + content], { type });
     const url = URL.createObjectURL(blob);
@@ -625,7 +262,7 @@ export default function AdminPage() {
       inventory,
       orders,
       members,
-      monthlyRevenue: MONTHLY_REVENUE_DATA
+      monthlyRevenue: monthlyData
     };
     downloadFile(JSON.stringify(backupData, null, 2), `MatchA_Full_Store_Backup_${new Date().toISOString().split('T')[0]}.json`, 'application/json');
   };
@@ -663,7 +300,7 @@ export default function AdminPage() {
                 </span>
               </div>
             </div>
-            <div className="w-2.5 h-2.5 rounded-full bg-[#85E369] animate-pulse" title="System Live" />
+            <div className="w-2.5 h-2.5 rounded-full bg-[#85E369] animate-pulse" title={Object.values(status).every(value => value === 'ready') ? 'Data loaded' : 'Data unavailable or loading'} />
           </div>
         </div>
 
@@ -795,7 +432,7 @@ export default function AdminPage() {
 
             {/* Quick Add Product Button */}
             <button
-              onClick={() => setIsAddModalOpen(true)}
+              onClick={() => { setMutationNotice(null); setIsAddModalOpen(true); }} disabled={saving || isDemo || status.inventory !== 'ready'}
               className="px-3.5 py-1.5 bg-[#042509] hover:bg-[#021505] text-white rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-98"
             >
               <Plus size={14} />
@@ -839,7 +476,7 @@ export default function AdminPage() {
                         className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-[#C91D1D]/10 text-[#C91D1D] font-bold text-left transition-colors cursor-pointer"
                       >
                         <FileJson size={14} />
-                        <span>Full Store Backup (JSON)</span>
+                        <span>Admin Data Export (JSON)</span>
                       </button>
                     </div>
                   </div>
@@ -856,651 +493,50 @@ export default function AdminPage() {
           {/* ========================================================================= */}
           {/* TAB 1: OVERVIEW & KPIS (EXECUTIVE DASHBOARD)                              */}
           {/* ========================================================================= */}
+          <div className="flex flex-wrap items-center gap-3">
+            <button type="button" disabled={saving || Object.values(status).includes('loading')} onClick={() => { setSelectedOrderForModal(null); setMutationNotice(null); refresh(); }} className="px-4 py-2 rounded-lg bg-[#042509] text-white disabled:opacity-50">Refresh data</button>
+            {saving && <span role="status">Saving changes…</span>}
+            {mutationNotice && <p role={mutationNotice.error ? 'alert' : 'status'} className={mutationNotice.error ? 'text-red-800' : 'text-green-900'}>{mutationNotice.error && 'บันทึกไม่สำเร็จ / Save failed: '}{mutationNotice.text}</p>}
+            {isDemo && <span>Demo session — changes disabled</span>}
+          </div>
           {activeTab === 'media' && <MediaManager />}
           {activeTab === 'dashboard' && (
-            <div className="space-y-8 animate-fade-in">
-              
-              {/* 4 Top Metric KPI Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                
-                {/* KPI 1: Gross Revenue */}
-                <div className="p-5 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-xs font-mono text-[#666666]">
-                    <span>Total Gross Revenue</span>
-                    <div className="w-8 h-8 rounded-xl bg-[#518F5C]/50 text-[#042509] flex items-center justify-center font-bold">
-                      <DollarSign size={16} />
-                    </div>
-                  </div>
-                  <div className="mt-3">
-                    <div className="text-2xl sm:text-3xl font-black text-[#042509] font-mono">
-                      ${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-                    </div>
-                    <div className="flex items-center gap-1.5 text-[11px] font-mono text-[#042509] font-bold mt-1">
-                      <ArrowUpRight size={13} />
-                      <span>+24.8% vs last month</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* KPI 2: Total Orders */}
-                <div className="p-5 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-xs font-mono text-[#666666]">
-                    <span>Customer Orders</span>
-                    <div className="w-8 h-8 rounded-xl bg-orange-50 text-[#C91D1D] flex items-center justify-center font-bold">
-                      <ShoppingBag size={16} />
-                    </div>
-                  </div>
-                  <div className="mt-3">
-                    <div className="text-2xl sm:text-3xl font-black text-[#000000] font-mono">
-                      {orders.length} <span className="text-xs font-normal text-[#666666]">orders</span>
-                    </div>
-                    <div className="text-[11px] font-mono text-[#666666] mt-1">
-                      Avg. Value: ${(totalRevenue / (orders.length || 1)).toFixed(2)}
-                    </div>
-                  </div>
-                </div>
-
-                {/* KPI 3: Stock Units */}
-                <div className="p-5 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-xs font-mono text-[#666666]">
-                    <span>Active Stock Units</span>
-                    <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-800 flex items-center justify-center font-bold">
-                      <Package size={16} />
-                    </div>
-                  </div>
-                  <div className="mt-3">
-                    <div className="text-2xl sm:text-3xl font-black text-[#000000] font-mono">
-                      {totalStockUnits} <span className="text-xs font-normal text-[#666666]">units</span>
-                    </div>
-                    <div className="text-[11px] font-mono text-[#666666] mt-1">
-                      Across {inventory.length} garment lines
-                    </div>
-                  </div>
-                </div>
-
-                {/* KPI 4: VIP Customers & Alerts */}
-                <div className="p-5 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm flex flex-col justify-between">
-                  <div className="flex items-center justify-between text-xs font-mono text-[#666666]">
-                    <span>VIP Member Vault</span>
-                    <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-700 flex items-center justify-center font-bold">
-                      <Users size={16} />
-                    </div>
-                  </div>
-                  <div className="mt-3">
-                    <div className="text-2xl sm:text-3xl font-black text-amber-700 font-mono">
-                      {vipMembersCount} <span className="text-xs font-normal text-[#666666]">VIPs</span>
-                    </div>
-                    <div className="flex items-center gap-1 text-[11px] font-mono text-[#C91D1D] font-bold mt-1">
-                      <AlertTriangle size={12} />
-                      <span>{lowStockCount} Low stock alerts</span>
-                    </div>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Monthly Revenue Bar Chart & Category Share Widgets */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                {/* Left Chart: Monthly Revenue Histogram */}
-                <div className="lg:col-span-8 p-6 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm">
-                  <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#DCDCDC]">
-                    <div>
-                      <h3 className="font-bold text-base uppercase font-sans">Monthly Revenue Performance</h3>
-                      <p className="text-xs font-mono text-[#666666]">2026 Fiscal Year Trajectory ($USD)</p>
-                    </div>
-                    <span className="px-3 py-1 bg-[#518F5C]/50 text-[#042509] font-mono text-xs font-bold rounded-lg">
-                      YTD: $48,170
-                    </span>
-                  </div>
-
-                  {/* Histogram Bars */}
-                  <div className="h-64 flex items-end justify-between gap-3 pt-6 px-2">
-                    {MONTHLY_REVENUE_DATA.map((item) => {
-                      const maxRevenue = 10000;
-                      const heightPercent = Math.min(100, Math.round((item.revenue / maxRevenue) * 100));
-                      const isCurrentMonth = item.month === 'Aug';
-
-                      return (
-                        <div key={item.month} className="flex-1 flex flex-col items-center gap-2 group h-full justify-end">
-                          {/* Hover Tooltip Value */}
-                          <span className="text-[10px] font-mono font-bold text-[#666666] opacity-0 group-hover:opacity-100 transition-opacity">
-                            ${(item.revenue / 1000).toFixed(1)}k
-                          </span>
-                          
-                          {/* Bar Container */}
-                          <div className="w-full max-w-10.5 bg-[#F1F1F1] rounded-t-xl h-full flex items-end p-1 relative overflow-hidden">
-                            <div
-                              style={{ height: `${heightPercent}%` }}
-                              className={`w-full rounded-t-lg transition-all duration-500 group-hover:brightness-110 ${
-                                isCurrentMonth ? 'bg-[#C91D1D]' : 'bg-[#042509]'
-                              }`}
-                            />
-                          </div>
-
-                          <span className="text-xs font-mono font-bold text-[#000000]">
-                            {item.month}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Right Chart: Category Distribution */}
-                <div className="lg:col-span-4 p-6 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#DCDCDC]">
-                      <h3 className="font-bold text-sm uppercase font-sans">Category Share</h3>
-                      <span className="text-[10px] font-mono text-[#666666]">Volume</span>
-                    </div>
-
-                    <div className="space-y-4">
-                      {categoryDistribution.map(cat => (
-                        <div key={cat.label} className="space-y-1.5">
-                          <div className="flex justify-between text-xs font-mono">
-                            <span className="text-[#000000] font-medium">{cat.label}</span>
-                            <span className="font-bold text-[#666666]">{cat.count} items ({cat.percent}%)</span>
-                          </div>
-                          <div className="w-full h-2 rounded-full bg-[#F1F1F1] overflow-hidden border border-[#DCDCDC]/40">
-                            <div
-                              style={{ width: `${cat.percent}%`, backgroundColor: cat.color }}
-                              className="h-full rounded-full transition-all duration-500"
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="p-3 rounded-xl bg-[#F1F1F1] border border-[#DCDCDC] mt-6 text-xs font-mono flex items-center justify-between">
-                    <span className="text-[#666666]">Total Catalog</span>
-                    <strong className="text-[#042509]">{inventory.length} Models</strong>
-                  </div>
-                </div>
-
-              </div>
-
-              {/* Recent Orders Live Activity Table */}
-              <div className="p-6 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm">
-                <div className="flex items-center justify-between mb-4 pb-3 border-b border-[#DCDCDC]">
-                  <div className="flex items-center gap-2">
-                    <Activity size={16} className="text-[#042509]" />
-                    <h3 className="font-bold text-base uppercase font-sans">Recent Customer Orders</h3>
-                  </div>
-                  <button
-                    onClick={() => setActiveTab('orders')}
-                    className="text-xs font-mono font-bold text-[#042509] hover:underline flex items-center gap-1 cursor-pointer"
-                  >
-                    <span>View All Pipeline</span>
-                    <ChevronRight size={12} />
-                  </button>
-                </div>
-
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left font-mono text-xs">
-                    <thead>
-                      <tr className="border-b border-[#DCDCDC] text-[#666666]">
-                        <th className="pb-3 font-bold">Order ID</th>
-                        <th className="pb-3 font-bold">Customer</th>
-                        <th className="pb-3 font-bold">Date</th>
-                        <th className="pb-3 font-bold">Total ($)</th>
-                        <th className="pb-3 font-bold">Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#DCDCDC]/40">
-                      {orders.slice(0, 4).map(ord => (
-                        <tr key={ord.id} className="hover:bg-[#F1F1F1]/80">
-                          <td className="py-3 font-bold text-[#042509]">{ord.id}</td>
-                          <td className="py-3 text-[#000000]">{ord.customer}</td>
-                          <td className="py-3 text-[#666666]">{ord.date}</td>
-                          <td className="py-3 font-bold text-[#000000]">${ord.total.toFixed(2)}</td>
-                          <td className="py-3">
-                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                              ord.status === 'Delivered'
-                                ? 'bg-green-100 text-green-800'
-                                : ord.status === 'Shipped'
-                                ? 'bg-blue-100 text-blue-800'
-                                : 'bg-orange-100 text-[#C91D1D]'
-                            }`}>
-                              {ord.status}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-            </div>
+            <DashboardTab status={status} errors={errors} totalRevenue={totalRevenue} orders={orders} totalStockUnits={totalStockUnits} inventory={inventory} vipMembersCount={vipMembersCount} lowStockCount={lowStockCount} monthlyData={monthlyData} categoryDistribution={categoryDistribution} setActiveTab={setActiveTab} />
           )}
 
           {/* ========================================================================= */}
           {/* TAB 2: INVENTORY & STOCK MANAGEMENT                                       */}
           {/* ========================================================================= */}
           {activeTab === 'inventory' && (
-            <div className="space-y-6 animate-fade-in">
-              
-              {/* Category Filter Pills & Status Filter */}
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm">
-                
-                {/* Category Pills */}
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
-                  {['ALL', 'Tops', 'Bottoms', 'Outerwear', 'Shoes', 'Accessories'].map(cat => (
-                    <button
-                      key={cat}
-                      onClick={() => setInventoryCategoryFilter(cat)}
-                      className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer ${
-                        inventoryCategoryFilter === cat
-                          ? 'bg-[#042509] text-white shadow-xs'
-                          : 'bg-[#F1F1F1] text-[#666666] hover:text-[#000000]'
-                      }`}
-                    >
-                      {cat === 'ALL' ? 'All Categories' : cat}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Status Filter */}
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-xs font-mono text-[#666666]">Stock:</span>
-                  <select
-                    value={inventoryStatusFilter}
-                    onChange={(e) => setInventoryStatusFilter(e.target.value)}
-                    className="px-3 py-1 rounded-xl border border-[#DCDCDC] bg-[#F1F1F1] text-xs font-mono font-bold text-[#000000] outline-none cursor-pointer"
-                  >
-                    <option value="ALL">All Statuses</option>
-                    <option value="In Stock">In Stock</option>
-                    <option value="Low Stock">Low Stock</option>
-                    <option value="Out of Stock">Out of Stock</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Inventory Table */}
-              <div className="rounded-2xl bg-white border border-[#DCDCDC] shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left font-mono text-xs">
-                    <thead className="bg-[#F1F1F1] border-b border-[#DCDCDC] text-[#666666]">
-                      <tr>
-                        <th className="p-4 font-bold">Garment / SKU</th>
-                        <th className="p-4 font-bold">Category</th>
-                        <th className="p-4 font-bold">Price</th>
-                        <th className="p-4 font-bold">Stock</th>
-                        <th className="p-4 font-bold">Status</th>
-                        <th className="p-4 font-bold text-right">Quick Restock & Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#DCDCDC]/40">
-                      {filteredInventory.map(item => (
-                        <tr key={item.id} className="hover:bg-[#F1F1F1]/80 transition-colors">
-                          <td className="p-4">
-                            <div className="flex items-center gap-3">
-                              <img
-                                src={webpSrc(item.image)} data-original-src={item.image}
-                                loading="lazy"
-                                decoding="async"
-                                alt={item.name}
-                                onError={(e) => {
-                                  e.currentTarget.onerror = null;
-                                  e.currentTarget.src = '/images/products/autumn/tops/shirts/color_1_brown.jpeg';
-                                }}
-                                className="w-10 h-10 rounded-xl object-cover border border-[#DCDCDC]"
-                              />
-                              <div>
-                                <div className="font-bold text-[#000000] text-sm">{item.name}</div>
-                                <div className="text-[10px] text-[#666666]">{item.id} • {item.color} • {item.fit}</div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="p-4 text-[#000000]">{item.category}</td>
-                          <td className="p-4 font-bold text-[#042509]">${item.price}</td>
-                          <td className="p-4 font-bold">{item.stock}</td>
-                          <td className="p-4">
-                            <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold ${
-                              item.status === 'In Stock'
-                                ? 'bg-green-100 text-green-800'
-                                : item.status === 'Low Stock'
-                                ? 'bg-amber-100 text-amber-800'
-                                : 'bg-red-100 text-red-800'
-                            }`}>
-                              {item.status}
-                            </span>
-                          </td>
-                          <td className="p-4 text-right">
-                            <div className="flex items-center justify-end gap-2">
-                              <div className="flex items-center gap-1.5 bg-[#F1F1F1] p-1 rounded-xl border border-[#DCDCDC]">
-                                <input
-                                  type="text"
-                                  inputMode="numeric"
-                                  pattern="[0-9]*"
-                                  value={restockAmounts[item.id] || ''}
-                                  onChange={(e) => handleRestockInputChange(item.id, e.target.value)}
-                                  onKeyDown={(e) => {
-                                    if (e.key === 'Enter') handleRestockSubmit(item.id);
-                                  }}
-                                  placeholder="+/-"
-                                  className="w-14 px-2 py-1 text-center font-mono text-xs font-bold border border-[#DCDCDC] rounded-lg bg-white text-[#000000] outline-none focus:border-[#042509] focus:ring-1 focus:ring-[#042509]"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() => handleRestockSubmit(item.id)}
-                                  disabled={!Number.isFinite(parseInt(restockAmounts[item.id], 10)) || parseInt(restockAmounts[item.id], 10) === 0}
-                                  className="px-3 py-1 rounded-lg border border-[#042509] bg-white hover:bg-[#042509] hover:text-white text-[#042509] font-mono text-xs font-bold transition-all cursor-pointer shadow-2xs active:scale-95 disabled:opacity-40 disabled:border-[#DCDCDC] disabled:text-[#888888] disabled:cursor-not-allowed"
-                                >
-                                  Add
-                                </button>
-                              </div>
-                              <button
-                                type="button"
-                                onClick={() => handleDeleteProduct(item.id)}
-                                className="p-2 rounded-xl text-[#C91D1D] hover:bg-red-50 border border-transparent hover:border-red-200 transition-colors cursor-pointer"
-                                title="Delete Product"
-                              >
-                                <Trash2 size={14} />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {filteredInventory.length === 0 && (
-                  <div className="p-8 text-center font-mono text-xs text-[#666666]">
-                    No garments matching the selected filters.
-                  </div>
-                )}
-              </div>
-
-            </div>
+            <InventoryTab status={status} errors={errors} setInventoryCategoryFilter={setInventoryCategoryFilter} inventoryCategoryFilter={inventoryCategoryFilter} inventoryStatusFilter={inventoryStatusFilter} setInventoryStatusFilter={setInventoryStatusFilter} filteredInventory={filteredInventory} restockAmounts={restockAmounts} handleRestockInputChange={handleRestockInputChange} handleRestockSubmit={handleRestockSubmit} saving={saving} isDemo={isDemo} handleDeleteProduct={handleDeleteProduct} />
           )}
 
           {/* ========================================================================= */}
           {/* TAB 3: ORDERS PIPELINE                                                    */}
           {/* ========================================================================= */}
           {activeTab === 'orders' && (
-            <div className="space-y-6 animate-fade-in">
-              
-              {/* Order Status Filters */}
-              <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-                {['ALL', 'Processing', 'Shipped', 'Delivered', 'Pending'].map(st => (
-                  <button
-                    key={st}
-                    onClick={() => setOrderStatusFilter(st)}
-                    className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border ${
-                      orderStatusFilter === st
-                        ? 'bg-[#042509] text-white border-[#042509] shadow-xs'
-                        : 'bg-white text-[#666666] border-[#DCDCDC] hover:border-[#042509]'
-                    }`}
-                  >
-                    {st === 'ALL' ? 'All Orders' : st}
-                  </button>
-                ))}
-              </div>
-
-              {/* Orders Table */}
-              <div className="rounded-2xl bg-white border border-[#DCDCDC] shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left font-mono text-xs">
-                    <thead className="bg-[#F1F1F1] border-b border-[#DCDCDC] text-[#666666]">
-                      <tr>
-                        <th className="p-4 font-bold">Order ID</th>
-                        <th className="p-4 font-bold">Customer</th>
-                        <th className="p-4 font-bold">Items</th>
-                        <th className="p-4 font-bold">Amount</th>
-                        <th className="p-4 font-bold">Payment</th>
-                        <th className="p-4 font-bold">Date</th>
-                        <th className="p-4 font-bold">Fulfillment Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#DCDCDC]/40">
-                      {filteredOrders.map(ord => (
-                        <tr key={ord.id} className="hover:bg-[#F1F1F1]/80 transition-colors">
-                          <td className="p-4 font-bold text-[#042509]">{ord.id}</td>
-                          <td className="p-4">
-                            <button
-                              type="button"
-                              onClick={() => setSelectedOrderForModal(ord)}
-                              className="text-left group cursor-pointer"
-                              title="Click to view full Order Tracking & Fulfillment status"
-                            >
-                              <div className="font-bold text-[#000000] group-hover:text-[#042509] group-hover:underline flex items-center gap-1.5">
-                                <span>{ord.customer}</span>
-                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#042509]/10 text-[#042509] font-semibold group-hover:bg-[#042509] group-hover:text-white transition-colors">
-                                  Track ↗
-                                </span>
-                              </div>
-                              <div className="text-[10px] text-[#666666]">{ord.email}</div>
-                            </button>
-                          </td>
-                          <td className="p-4 text-[#000000]">{ord.items} pcs</td>
-                          <td className="p-4 font-bold text-[#042509]">${Number(ord.total).toFixed(2)}</td>
-                          <td className="p-4">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                              String(ord.paymentStatus || (ord.status === 'Pending' ? 'Unpaid' : 'Paid')).toLowerCase() === 'paid'
-                                ? 'bg-emerald-100 text-emerald-800'
-                                : 'bg-amber-100 text-amber-800'
-                            }`}>
-                              {ord.paymentStatus || (ord.status === 'Pending' ? 'Unpaid' : 'Paid')}
-                            </span>
-                          </td>
-                          <td className="p-4 text-[#666666]">{ord.date}</td>
-                          <td className="p-4">
-                            <select
-                              value={ord.status}
-                              onChange={(e) => handleUpdateOrderStatus(ord.id, e.target.value)}
-                              className="px-2.5 py-1 rounded-lg border border-[#DCDCDC] bg-white font-mono text-xs font-bold text-[#000000] outline-none cursor-pointer"
-                            >
-                              <option value="Pending">Pending</option>
-                              <option value="Processing">Processing</option>
-                              <option value="Shipped">Shipped</option>
-                              <option value="Delivered">Delivered</option>
-                              <option value="Cancelled">Cancelled</option>
-                            </select>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-            </div>
+            <OrdersTab status={status} errors={errors} setOrderStatusFilter={setOrderStatusFilter} orderStatusFilter={orderStatusFilter} filteredOrders={filteredOrders} setSelectedOrderForModal={order => { setMutationNotice(null); setSelectedOrderForModal(order); }} saving={saving} isDemo={isDemo} handleUpdateOrderStatus={handleUpdateOrderStatus} />
           )}
 
           {/* ========================================================================= */}
           {/* TAB 4: REVENUE ANALYTICS                                                  */}
           {/* ========================================================================= */}
           {activeTab === 'analytics' && (
-            <div className="space-y-6 animate-fade-in">
-              
-              <div className="p-6 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm">
-                <h3 className="font-bold text-base uppercase font-sans mb-4">Financial Performance Breakdown</h3>
-                
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-                  <div className="p-4 rounded-xl bg-[#F1F1F1] border border-[#DCDCDC]">
-                    <div className="text-xs font-mono text-[#666666]">YTD Gross Sales</div>
-                    <div className="text-2xl font-black text-[#042509] font-mono mt-1">$48,170.00</div>
-                  </div>
-                  <div className="p-4 rounded-xl bg-[#F1F1F1] border border-[#DCDCDC]">
-                    <div className="text-xs font-mono text-[#666666]">Estimated Profit Margin</div>
-                    <div className="text-2xl font-black text-[#000000] font-mono mt-1">68.4%</div>
-                  </div>
-                  <div className="p-4 rounded-xl bg-[#F1F1F1] border border-[#DCDCDC]">
-                    <div className="text-xs font-mono text-[#666666]">Cart Conversion Rate</div>
-                    <div className="text-2xl font-black text-[#C91D1D] font-mono mt-1">4.2%</div>
-                  </div>
-                </div>
-
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left font-mono text-xs">
-                    <thead>
-                      <tr className="border-b border-[#DCDCDC] text-[#666666]">
-                        <th className="pb-3 font-bold">Month</th>
-                        <th className="pb-3 font-bold">Revenue ($)</th>
-                        <th className="pb-3 font-bold">Orders</th>
-                        <th className="pb-3 font-bold">Target ($)</th>
-                        <th className="pb-3 font-bold">Target Status</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#DCDCDC]/40">
-                      {MONTHLY_REVENUE_DATA.map(m => (
-                        <tr key={m.month} className="hover:bg-[#F1F1F1]/80">
-                          <td className="py-3 font-bold text-[#000000]">{m.month} 2026</td>
-                          <td className="py-3 font-bold text-[#042509]">${m.revenue.toLocaleString()}</td>
-                          <td className="py-3">{m.orders}</td>
-                          <td className="py-3 text-[#666666]">${m.target.toLocaleString()}</td>
-                          <td className="py-3">
-                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                              m.revenue >= m.target ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-[#C91D1D]'
-                            }`}>
-                              {m.revenue >= m.target ? 'Target Met ✦' : 'In Progress'}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-            </div>
+            <AnalyticsTab status={status} errors={errors} totalRevenue={totalRevenue} monthlyData={monthlyData} />
           )}
 
           {/* ========================================================================= */}
           {/* TAB 5: VIP CUSTOMER REGISTRY                                              */}
           {/* ========================================================================= */}
           {activeTab === 'members' && (
-            <div className="space-y-6 animate-fade-in">
-              
-              <div className="flex items-center gap-2">
-                {['ALL', 'VIP', 'Regular'].map(t => (
-                  <button
-                    key={t}
-                    onClick={() => setMemberTierFilter(t)}
-                    className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border ${
-                      memberTierFilter === t
-                        ? 'bg-[#042509] text-white border-[#042509]'
-                        : 'bg-white text-[#666666] border-[#DCDCDC] hover:border-[#042509]'
-                    }`}
-                  >
-                    {t === 'ALL' ? 'All Customers' : `${t} Tier`}
-                  </button>
-                ))}
-              </div>
-
-              <div className="rounded-2xl bg-white border border-[#DCDCDC] shadow-sm overflow-hidden">
-                <div className="overflow-x-auto">
-                  <table className="w-full text-left font-mono text-xs">
-                    <thead className="bg-[#F1F1F1] border-b border-[#DCDCDC] text-[#666666]">
-                      <tr>
-                        <th className="p-4 font-bold">Member ID</th>
-                        <th className="p-4 font-bold">Customer Name</th>
-                        <th className="p-4 font-bold">Email</th>
-                        <th className="p-4 font-bold">Total Spent</th>
-                        <th className="p-4 font-bold">Tier Level</th>
-                        <th className="p-4 font-bold text-right">VIP Tier Management</th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-[#DCDCDC]/40">
-                      {filteredMembers.map(mem => (
-                        <tr key={mem.id} className="hover:bg-[#F1F1F1]/80 transition-colors">
-                          <td className="p-4 font-bold text-[#042509]">{mem.id}</td>
-                          <td className="p-4 font-bold text-[#000000]">{mem.name}</td>
-                          <td className="p-4 text-[#666666]">{mem.email}</td>
-                          <td className="p-4 font-bold text-[#042509]">${mem.totalSpent.toFixed(2)}</td>
-                          <td className="p-4">
-                            <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold ${
-                              mem.tier.includes('VIP')
-                                ? 'bg-amber-100 text-amber-900 border border-amber-300'
-                                : 'bg-gray-100 text-gray-700'
-                            }`}>
-                              {mem.tier}
-                            </span>
-                          </td>
-                          <td className="p-4 text-right">
-                            <button
-                              onClick={() => handleToggleVIPTier(mem.id)}
-                              className="px-3 py-1 rounded-lg border border-[#DCDCDC] hover:border-[#042509] text-xs font-mono font-bold text-[#000000] transition-all cursor-pointer"
-                            >
-                              {mem.tier.includes('VIP') ? 'Demote to Regular' : 'Promote to VIP 👑'}
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-            </div>
+            <MembersTab status={status} errors={errors} setMemberTierFilter={setMemberTierFilter} memberTierFilter={memberTierFilter} filteredMembers={filteredMembers} handleToggleVIPTier={handleToggleVIPTier} saving={saving} isDemo={isDemo} />
           )}
 
           {/* ========================================================================= */}
           {/* TAB 6: REPORTS & SYSTEM BACKUPS                                           */}
           {/* ========================================================================= */}
           {activeTab === 'backup' && (
-            <div className="space-y-6 animate-fade-in">
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                
-                {/* Full Store JSON Backup Card */}
-                <div className="p-6 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm flex flex-col justify-between">
-                  <div>
-                    <div className="w-10 h-10 rounded-xl bg-orange-50 text-[#C91D1D] flex items-center justify-center font-bold mb-4">
-                      <FileJson size={20} />
-                    </div>
-                    <h3 className="font-bold text-lg text-[#000000] uppercase font-sans">Full System JSON Snapshot</h3>
-                    <p className="text-xs font-mono text-[#666666] mt-2 leading-relaxed">
-                      Download complete MatchA database snapshot including all active garments, SKU specs, customer orders, and VIP member records.
-                    </p>
-                  </div>
-                  <div className="mt-6 pt-4 border-t border-[#DCDCDC]">
-                    <button
-                      onClick={handleExportFullJSON}
-                      className="w-full py-2.5 bg-[#C91D1D] hover:bg-[#A81515] text-white rounded-xl font-mono text-xs font-bold transition-all shadow-sm cursor-pointer flex items-center justify-center gap-2"
-                    >
-                      <Download size={14} />
-                      <span>Download JSON Backup Snapshot</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* CSV Spreadsheets Suite */}
-                <div className="p-6 rounded-2xl bg-white border border-[#DCDCDC] shadow-sm flex flex-col justify-between">
-                  <div>
-                    <div className="w-10 h-10 rounded-xl bg-[#518F5C]/50 text-[#042509] flex items-center justify-center font-bold mb-4">
-                      <FileSpreadsheet size={20} />
-                    </div>
-                    <h3 className="font-bold text-lg text-[#000000] uppercase font-sans">Spreadsheet Datasets (CSV)</h3>
-                    <p className="text-xs font-mono text-[#666666] mt-2 leading-relaxed">
-                      Export structured CSV files with UTF-8 BOM encoding ready for Excel, Google Sheets, or external ERP data imports.
-                    </p>
-                  </div>
-                  <div className="mt-6 pt-4 border-t border-[#DCDCDC] space-y-2 font-mono text-xs">
-                    <button
-                      onClick={handleExportInventory}
-                      className="w-full py-2 bg-[#042509] hover:bg-[#021505] text-white rounded-xl font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
-                    >
-                      <FileSpreadsheet size={13} />
-                      <span>Export Garment Inventory (CSV)</span>
-                    </button>
-                    <button
-                      onClick={handleExportOrders}
-                      className="w-full py-2 bg-[#F1F1F1] border border-[#DCDCDC] hover:border-[#042509] text-[#000000] rounded-xl font-bold transition-all cursor-pointer flex items-center justify-center gap-2"
-                    >
-                      <FileSpreadsheet size={13} />
-                      <span>Export Orders Pipeline (CSV)</span>
-                    </button>
-                  </div>
-                </div>
-
-              </div>
-
-            </div>
+            <BackupTab status={status} errors={errors} handleExportFullJSON={handleExportFullJSON} handleExportInventory={handleExportInventory} handleExportOrders={handleExportOrders} />
           )}
 
         </div>
@@ -1509,6 +545,8 @@ export default function AdminPage() {
 
       {/* Add Product Modal */}
       <AddProductModal
+        saveError={mutationNotice?.error ? mutationNotice.text : null}
+        saving={saving}
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
         onAddProduct={handleAddProduct}
@@ -1516,6 +554,7 @@ export default function AdminPage() {
 
       {/* Order Tracking & Fulfillment Details Modal */}
       <OrderTrackingModal
+        saveError={mutationNotice?.error ? mutationNotice.text : null}
         isOpen={Boolean(selectedOrderForModal)}
         onClose={() => setSelectedOrderForModal(null)}
         order={selectedOrderForModal}

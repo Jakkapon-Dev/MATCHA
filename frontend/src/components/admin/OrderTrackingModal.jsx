@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, Clock, RotateCcw, ArrowRightLeft, Check } from 'lucide-react';
 import { useToast } from '../../context/ToastContext.jsx';
 
-export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateStatus }) {
+export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateStatus, saveError }) {
   const [currentStatus, setCurrentStatus] = useState(order?.status || 'Processing');
   const [isApplying, setIsApplying] = useState(false);
   const { showToast } = useToast();
@@ -89,11 +89,11 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
   const timelineSteps = getTimelineSteps();
 
   // No pretend delay. The 250ms timer here only made a fast save look slow.
-  const handleApply = () => {
+  const handleApply = async () => {
     setIsApplying(true);
-    if (onUpdateStatus) onUpdateStatus(order.id, currentStatus);
-    setIsApplying(false);
-    onClose();
+    try {
+      if (await onUpdateStatus(order.id, currentStatus)) onClose();
+    } finally { setIsApplying(false); }
   };
 
   /* No invented stand-ins. These read `order.phone || '+66 89 998-7122'` and
@@ -374,6 +374,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
             <span>Order ID: <strong className="text-[#000000]">{order.id}</strong></span>
           </div>
 
+          {saveError && <p role="alert" className="text-red-800">บันทึกไม่สำเร็จ / Save failed: {saveError}</p>}
           {/* Bottom Right Fulfillment Status Selector & Apply Button */}
           <div className="flex items-center justify-end gap-3 flex-wrap">
             <div className="flex items-center gap-2">
