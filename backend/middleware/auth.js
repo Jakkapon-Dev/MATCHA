@@ -1,9 +1,7 @@
 // Auth middleware: verify the JWT and attach the matching user to the request.
 // Authorization: Bearer <token>  →  jwt.verify  →  req.user
 import jwt from 'jsonwebtoken';
-import mongoose from 'mongoose';
 import { findById } from '../services/userStore.js';
-import User from '../models/User.js';
 
 import { isDemo } from '../config/storeMode.js';
 
@@ -41,21 +39,14 @@ export async function requireAuth(req, res, next) {
     
     // ดักให้รองรับทั้ง id, userId, _id
     const userId = payload.id || payload.userId || payload._id;
-    let user = null;
 
-    // 1.1 ลองค้นหาจาก Mongoose User model ก่อน (ถ้ามี)
-    try {
-      const UserModel = mongoose.models.User || User;
-      if (UserModel?.findById) {
-        const doc = await UserModel.findById(userId);
-        if (doc) user = typeof doc.select === 'function' ? await doc.select('+role') : doc;
-      }
-    } catch {}
-
-    // 1.2 ถ้าไม่พบ ลองค้นหาจาก JSON userStore
-    if (!user) {
-      user = await findById(userId);
-    }
+    /* One lookup, one store. This used to try models/User.js first and fall
+       back to the JSON store, with the Mongo attempt wrapped in an empty catch
+       — and the ids in these tokens are `u_…` strings, which findById could
+       only reject, silently, on every single request. The two stores disagreed
+       on what a user id was, and that disagreement is what detached carts,
+       orders and uploaded media from their owners. There is one store now. */
+    let user = await findById(userId);
 
     // 1.3 ถ้ายังไม่พบแต่ Token ผ่านการยืนยันลายเซ็นแล้ว ให้ใช้ identity จาก Payload
     if (!user && (payload.role || payload.email)) {

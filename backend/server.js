@@ -7,7 +7,6 @@ dns.setServers(['8.8.8.8', '1.1.1.1']);
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
-import bcrypt from 'bcryptjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -178,8 +177,6 @@ app.get('/api/store-config', (req, res) => {
   });
 });
 
-// Auth system: JSON-file user store (seeds admin@matcha.com on first start)
-initUserStore({ bcrypt, adminPassword: process.env.ADMIN_SEED_PASSWORD });
 
 // Modular Routes Registration
 app.use('/api/auth', authRoutes);
@@ -213,7 +210,17 @@ const isMain = process.argv[1] && path.resolve(fileURLToPath(import.meta.url)).t
 // MongoDB Non-blocking Connection
 if (isMain && process.env.MONGODB_URI) {
   mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('🍃 [MongoDB] Connected successfully!'))
+    .then(async () => {
+      console.log('🍃 [MongoDB] Connected successfully!');
+      /* Seeding moved here from above the route registration. Accounts live in
+         Mongo now, so seeding before the connection opened would have had
+         nothing to write to. */
+      try {
+        await initUserStore({ adminPassword: process.env.ADMIN_SEED_PASSWORD });
+      } catch (err) {
+        console.error('[auth] Admin seed skipped:', err.message);
+      }
+    })
     .catch(err => console.error('❌ [MongoDB] Connection error:', err.message));
 }
 
