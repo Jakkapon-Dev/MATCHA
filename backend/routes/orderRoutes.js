@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
+import rateLimit from 'express-rate-limit';
 
 import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
@@ -11,6 +12,21 @@ import { isDemo } from '../config/storeMode.js';
 import { normaliseCode, discountFor, isFreeShippingCoupon } from '../config/coupons.js';
 
 const router = express.Router();
+
+/* Placing an order is the most expensive thing an anonymous caller can ask
+   this API to do: it writes a document, decrements stock and clears a cart.
+   Twenty in a quarter of an hour is far above anything a real shopper does and
+   well below what a script would want.
+
+   Reads are deliberately not limited — order history is polled by the account
+   page and throttling it would break the page rather than an attacker. */
+const orderLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 20,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { success: false, message: 'สั่งซื้อถี่เกินไป กรุณารอสักครู่แล้วลองใหม่' },
+});
 
 // หน้าชำระเงินฝั่งเว็บจะแสดงหน้ายืนยันก็ต่อเมื่อคำตอบบอกว่าร้านยังอยู่ในโหมดทดลอง
 // (features/demo/DemoCheckout.jsx) — ทุกทางที่คืนออเดอร์จึงต้องแนบค่านี้ไปด้วย
@@ -46,7 +62,7 @@ const extractAuthUser = (req) => {
 };
 
 // POST /api/orders — สร้างออเดอร์ใหม่ (คำนวณราคาฝั่งเซิร์ฟเวอร์ + รองรับทั้ง Member และ Guest)
-router.post('/', async (req, res) => {
+router.post('/', orderLimiter, async (req, res) => {
   try {
     const authUser = extractAuthUser(req);
     const {
