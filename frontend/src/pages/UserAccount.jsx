@@ -69,15 +69,14 @@ export default function UserAccount() {
       .then((res) => {
         if (!isMounted) return;
         if (res && res.data) {
-          const userEmail = currentUser?.email?.toLowerCase();
-          const userId = currentUser?._id || currentUser?.userId;
-          const filtered = (userEmail || userId)
-            ? res.data.filter(o => 
-                (userEmail && o.customer?.email?.toLowerCase() === userEmail) ||
-                (userId && String(o.userId) === String(userId))
-              )
-            : res.data;
-          const displayList = filtered;
+          /* The server returns this account's orders and nothing else, so the
+             filter that used to sit here is gone. It was never a safeguard:
+             the endpoint sent every order in the shop and this ran in the
+             browser, which meant the customer's own machine received other
+             people's names, emails, phone numbers and addresses in order to
+             discard them. Filtering where the data lives is the fix; this was
+             only hiding it. */
+          const displayList = res.data;
           const formatted = displayList.map((o) => ({
             id: o.orderId || o._id,
             date: o.createdAt

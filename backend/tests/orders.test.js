@@ -86,3 +86,55 @@ test('POST /api/orders neutralizes NoSQL injection payload in idempotencyKey', a
   assert.ok(!data.data.idempotencyKey.includes('$ne'));
 });
 
+
+/* These guard an access-control fix, not a feature.
+
+   GET /api/orders answered an anonymous caller with every order in the shop,
+   and honoured ?email= without asking whether the caller owned that address.
+   GET /api/orders/:id handed over a whole order — customer name, email, phone
+   and street address — to anyone holding an order number, and those numbers
+   read like MTA-2026-439417-924, which is worth guessing at.
+
+   The tests run with no database, so the route reads its in-memory list. That
+   is enough: what is asserted is who the endpoint answers, which is decided
+   before any store is consulted. */
+
+test('GET /api/orders tells an anonymous caller nothing', async () => {
+  const res = await fetch(baseUrl);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.success, true);
+  assert.deepEqual(body.data, [], 'an anonymous list must be empty, never the shop\'s orders');
+});
+
+test('GET /api/orders does not honour an email it cannot verify', async () => {
+  const res = await fetch(`${baseUrl}?email=somebody@example.com`);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.deepEqual(body.data, [], 'an unverified email filter must not select anyone\'s orders');
+});
+
+test('GET /api/orders/:id refuses a caller who does not own the order', async () => {
+  const created = await fetch(baseUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      items: [{ productId: 'p1', name: 'Item', price: 20, quantity: 1 }],
+      customer: {
+        firstName: 'Owner', lastName: 'Person', email: 'owner@example.com',
+        phone: '081-000-0000', address: '1 Road', city: 'Bangkok',
+        zipCode: '10110', country: 'Thailand'
+      },
+      paymentMethod: 'visa', subtotal: 20, shipping: 0, total: 20
+    })
+  }).then((r) => r.json());
+
+  const id = created.data?.orderNumber || created.data?._id;
+  assert.ok(id, 'the order was created');
+
+  const res = await fetch(`${baseUrl}/${id}`);
+  assert.equal(res.status, 404, 'a stranger gets the same answer as for an order that does not exist');
+  const body = await res.json();
+  assert.equal(body.success, false);
+  assert.ok(!JSON.stringify(body).includes('owner@example.com'), 'the refusal must not leak the customer');
+});

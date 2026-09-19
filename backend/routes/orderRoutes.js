@@ -281,30 +281,47 @@ router.post('/', orderLimiter, async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const authUser = extractAuthUser(req);
-    const guestId = req.headers['x-guest-id'] || req.query.guestId;
-    const queryEmail = typeof req.query.email === 'string' ? req.query.email.toLowerCase().trim() : '';
-
     const isAdmin = authUser?.role && String(authUser.role).toLowerCase() === 'admin';
 
     let filter = {};
 
+    /* Who is asking decides what comes back, and a caller who is nobody gets
+       nothing.
+
+       This used to end with two branches that gave a stranger the shop's
+       customer list. `?email=` was honoured without any proof the caller owned
+       that address, so anyone could read a named person's orders; and a
+       request with no filter at all fell through to `filter = {}`, which
+       returned every order there was. Both carried the full customer record —
+       name, email, phone and street address. Checked against the running
+       server before this change: an anonymous GET returned 13 orders, the
+       first of them a real name with a real phone number and a real address.
+
+       Nothing needed that. The checkout success screen reads the order out of
+       the POST response it already has, and the only caller of this endpoint
+       is the account page, which then filtered the list again in the browser
+       — so the customer's own machine was being handed everyone else's
+       details in order to throw them away.
+
+       Guests get an empty list rather than an error: they have no orders here
+       to see. Giving a guest their own history back needs an owner recorded on
+       the order, which the schema does not have; see the note in the README of
+       this change. */
     if (isAdmin) {
-      // Admin sees all orders
       filter = {};
     } else if (authUser) {
       const uId = authUser.id || authUser.userId || authUser._id;
       /* The email match stays as the fallback for the orders already written
          with a null userId; new orders carry the id and match on it directly. */
-      const conditions = [{ 'customer.email': authUser.email?.toLowerCase() }];
-      if (uId && String(uId).trim()) {
-        conditions.push({ userId: String(uId).trim() });
+      const conditions = [];
+      if (authUser.email) conditions.push({ 'customer.email': String(authUser.email).toLowerCase() });
+      if (uId && String(uId).trim()) conditions.push({ userId: String(uId).trim() });
+      if (!conditions.length) {
+        return res.json({ success: true, count: 0, data: [] });
       }
       filter = { $or: conditions };
-    } else if (queryEmail) {
-      filter = { 'customer.email': queryEmail };
     } else {
-      // Guest with no specific email filter: return recent orders so demo checkout flow displays immediately
-      filter = {};
+      return res.json({ success: true, count: 0, data: [] });
     }
 
     let orders = [];
@@ -348,6 +365,31 @@ router.get('/:id', async (req, res) => {
     }
 
     if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'ไม่พบคำสั่งซื้อที่ต้องการ'
+      });
+    }
+
+    /* An order number was enough to read the whole order, customer address
+       included, and these numbers carry a readable shape — MTA-2026-439417-924
+       — so they are worth guessing at. Verified against the running server:
+       an anonymous fetch by order number returned the customer's email and
+       phone number.
+
+       The answer for someone who does not own the order is the same 404 the
+       caller gets for an order that does not exist. A different reply here
+       would confirm the number is real, which is the first half of the thing
+       being protected against. */
+    const viewer = extractAuthUser(req);
+    const isOwner = viewer && (
+      String(viewer.role || '').toLowerCase() === 'admin' ||
+      (viewer.email && order.customer?.email &&
+        String(viewer.email).toLowerCase() === String(order.customer.email).toLowerCase()) ||
+      (order.userId && String(order.userId) === String(viewer.id || viewer.userId || viewer._id || ''))
+    );
+
+    if (!isOwner) {
       return res.status(404).json({
         success: false,
         message: 'ไม่พบคำสั่งซื้อที่ต้องการ'
