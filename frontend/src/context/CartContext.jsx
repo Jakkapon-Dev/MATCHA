@@ -142,7 +142,15 @@ export function CartProvider({ children }) {
   }, []);
 
   const clearCart = useCallback(() => {
+    // The ref is reset with the state: updateQty reads it synchronously, so
+    // leaving it holding the old items would let the next press compute a
+    // quantity from a bag that no longer exists.
+    cartItemsRef.current = [];
     setCartItems([]);
+
+    api.clearCart().catch((err) => {
+      console.warn('Backend cart clear note:', err.message);
+    });
   }, []);
 
   // Computed summary values

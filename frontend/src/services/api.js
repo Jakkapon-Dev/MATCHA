@@ -213,6 +213,13 @@ export const api = {
     });
   },
 
+  // Empty the whole cart. Paired with DELETE /api/cart on the server, which
+  // the order handler also calls so the two stay consistent when a checkout
+  // completes without the browser getting a chance to ask.
+  clearCart: async () => {
+    return fetchWithFallback('/cart', { method: 'DELETE' });
+  },
+
   deleteCartItem: async (itemId) => {
     return fetchWithFallback(`/cart/${encodeURIComponent(itemId)}`, {
       method: 'DELETE'
