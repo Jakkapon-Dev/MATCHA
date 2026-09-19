@@ -78,7 +78,11 @@ router.post('/register', authLimiter, async (req, res) => {
 
     res.status(201).json({ success: true, data: safeUser(user), token: signToken(user) });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    /* The driver's own message can carry index names, collection names or
+       connection detail, and these are the two endpoints most worth probing.
+       It is logged where it is useful and not returned. */
+    console.error('[auth]', err);
+    res.status(500).json({ success: false, message: 'การยืนยันตัวตนขัดข้อง กรุณาลองใหม่อีกครั้ง' });
   }
 });
 
@@ -104,7 +108,11 @@ router.post('/login', authLimiter, async (req, res) => {
 
     res.json({ success: true, data: safeUser(user), token: signToken(user) });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    /* The driver's own message can carry index names, collection names or
+       connection detail, and these are the two endpoints most worth probing.
+       It is logged where it is useful and not returned. */
+    console.error('[auth]', err);
+    res.status(500).json({ success: false, message: 'การยืนยันตัวตนขัดข้อง กรุณาลองใหม่อีกครั้ง' });
   }
 });
 
