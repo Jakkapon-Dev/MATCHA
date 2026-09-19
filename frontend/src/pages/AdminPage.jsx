@@ -32,8 +32,8 @@ import { useToast } from '../context/ToastContext.jsx';
 import AddProductModal from '../components/admin/AddProductModal';
 import MediaManager from '../features/media/MediaManager';
 import { api } from '../services/api';
-import { webpSrc } from '../utils/imageFallback';
 import useChangeMotion from '../hooks/useChangeMotion';
+import { webpSrc } from '../utils/imageFallback';
 
 const INITIAL_INVENTORY = [
   {
