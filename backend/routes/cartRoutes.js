@@ -142,6 +142,21 @@ router.delete('/:itemId', requireOwner, async (req, res) => {
   }
 });
 
+// DELETE /api/cart — ล้างตะกร้าทั้งใบของเจ้าของคำขอ
+// ใช้ตอนสั่งซื้อสำเร็จ หรือตอนผู้ใช้กดล้างตะกร้าเอง
+router.delete('/', requireOwner, async (req, res) => {
+  if (!dbReady()) return emptyCart(res);
+  try {
+    const cart = await findOrCreateCart(req.cartOwner);
+    cart.items = [];
+    await cart.save();
+    res.json({ success: true, data: { items: [] } });
+  } catch (err) {
+    console.error('Error clearing cart:', err);
+    res.status(500).json({ success: false, message: 'ล้างตะกร้าไม่สำเร็จ กรุณาลองใหม่' });
+  }
+});
+
 // POST /api/cart/merge — ย้ายตะกร้าของผู้เยี่ยมชมเข้าบัญชีหลังล็อกอิน
 // ของที่ซ้ำกันให้บวกจำนวนรวมกัน แล้วทิ้งตะกร้าของ guest
 router.post('/merge', requireOwner, async (req, res) => {

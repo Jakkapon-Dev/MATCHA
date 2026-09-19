@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 
 import Order from '../models/Order.js';
+import Cart from '../models/Cart.js';
 import Product from '../models/Product.js';
 import productsData from '../data/products.js';
 import { getJwtSecret } from '../middleware/auth.js';
@@ -180,6 +181,23 @@ router.post('/', async (req, res) => {
     if (mongoose.connection.readyState === 1) {
       const orderDoc = new Order(orderPayload);
       savedOrder = await orderDoc.save();
+
+      /* The bag is emptied here rather than left to the browser. clearCart()
+         only ever reset local state, and no route existed to clear the server
+         copy, so everything a person had ever ordered stayed in their
+         server-side cart — invisible until carts began attaching to accounts,
+         and then showing up as a bag full of things already bought.
+
+         Doing it beside the write keeps the two consistent even if the client
+         dies mid-checkout, and a failure here must not fail an order that has
+         already been taken. */
+      try {
+        const guestId = String(req.headers['x-guest-id'] || '').trim();
+        const owner = orderUserId ? { userId: orderUserId } : (guestId ? { guestId } : null);
+        if (owner) await Cart.findOneAndUpdate(owner, { $set: { items: [] } });
+      } catch (cartErr) {
+        console.warn('Order saved but the server cart was not cleared:', cartErr.message);
+      }
     } else {
       const year = new Date().getFullYear();
       const stamp = Date.now().toString().slice(-6);
