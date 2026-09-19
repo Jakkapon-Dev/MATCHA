@@ -324,16 +324,29 @@ export default function AdminPage() {
     return () => { isMounted = false; };
   }, []);
 
+  /* These three caches are a convenience for the next visit, never a condition
+     of this one. Unguarded, a full quota or blocked site data threw out of the
+     effect and into the error boundary: the admin looking at a crash screen
+     over a copy of data they already had on screen. The tables are loaded from
+     the backend above; a failed cache costs the next reload a spinner. */
+  const cacheLocally = (key, value) => {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (err) {
+      console.warn(`Admin cache skipped for ${key}; storage is unavailable:`, err.message);
+    }
+  };
+
   useEffect(() => {
-    localStorage.setItem('matcha_admin_inventory', JSON.stringify(inventory));
+    cacheLocally('matcha_admin_inventory', inventory);
   }, [inventory]);
 
   useEffect(() => {
-    localStorage.setItem('matcha_admin_orders', JSON.stringify(orders));
+    cacheLocally('matcha_admin_orders', orders);
   }, [orders]);
 
   useEffect(() => {
-    localStorage.setItem('matcha_admin_members', JSON.stringify(members));
+    cacheLocally('matcha_admin_members', members);
   }, [members]);
 
   const isDemo = Boolean(currentUser?.isDemoSession);

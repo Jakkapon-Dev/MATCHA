@@ -9,7 +9,7 @@ const CartContext = globalThis[CART_CONTEXT_KEY] || (globalThis[CART_CONTEXT_KEY
 
 export const getCartKey = (item) => `${item.id || item.productId}-${item.size || 'default'}-${item.color || 'default'}`;
 
-const parsePrice = (price) => {
+export const parsePrice = (price) => {
   if (typeof price === 'number') return price;
   if (typeof price === 'string') {
     const parsed = parseFloat(price.replace(/[^0-9.]/g, ''));
@@ -142,7 +142,15 @@ export function CartProvider({ children }) {
   }, []);
 
   const clearCart = useCallback(() => {
+    // The ref is reset with the state: updateQty reads it synchronously, so
+    // leaving it holding the old items would let the next press compute a
+    // quantity from a bag that no longer exists.
+    cartItemsRef.current = [];
     setCartItems([]);
+
+    api.clearCart().catch((err) => {
+      console.warn('Backend cart clear note:', err.message);
+    });
   }, []);
 
   // Computed summary values

@@ -5,9 +5,12 @@ import { webpSrc } from '../utils/imageFallback';
 import { wash, inkOn, needsEdge } from '../utils/dye';
 import { shippingCostFor, FREE_SHIPPING_THRESHOLD } from '../config/shipping';
 import { useLanguage } from '../context/LanguageContext.jsx';
-
-const parsePrice = (price) => parseFloat(String(price).replace(/[^0-9.]/g, '')) || 0;
-const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color || 'default'}`;
+/* These used to be declared again here, and the copy had drifted: it keyed on
+   item.id alone, while the cart keys on item.id || item.productId. An item
+   carrying only a productId got a key of "undefined-M-Red" from this page and
+   a real one from the cart, so updateQty found nothing to change and the row's
+   + and - did nothing at all, silently. One definition, imported. */
+import { getCartKey, parsePrice } from '../context/CartContext.jsx';
 
 export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBackToStore, onCheckout }) {
   const { t } = useLanguage();
