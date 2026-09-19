@@ -6,7 +6,7 @@ export default function Footer() {
   const { t } = useLanguage();
 
   return (
-    <footer className="w-full bg-[#000000] text-[#FFFFFF] py-16 px-6 md:px-12 border-t border-white/10">
+    <footer className="w-full bg-matcha-text text-[#FFFFFF] py-16 px-6 md:px-12 border-t border-white/10">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
         
         {/* Frame 10 Header: Brand Name (Official Brand Asset) */}
@@ -24,7 +24,7 @@ export default function Footer() {
           <p className="font-mono">{t('footer.studio')}</p>
           <p className="font-mono">{t('footer.address')}</p>
           <p className="font-mono pt-2">+66 (0) 2 712 8899</p>
-          <p className="font-mono text-[#F1F1F1] font-semibold">contact@matcha-archive.com</p>
+          <p className="font-mono text-matcha-bg font-semibold">contact@matcha-archive.com</p>
         </div>
 
         {/* Center Tagline Quote (Frame 10) */}
@@ -70,7 +70,7 @@ export default function Footer() {
         <div className="md:col-span-12 pt-8 mt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#888888] font-mono">
           <p>{t('footer.copyright')}</p>
           {import.meta.env.DEV && (
-            <p className="text-[#518F5C] font-semibold mt-2 sm:mt-0">{t('footer.designSystem')}</p>
+            <p className="text-matcha-secondary font-semibold mt-2 sm:mt-0">{t('footer.designSystem')}</p>
           )}
         </div>
 

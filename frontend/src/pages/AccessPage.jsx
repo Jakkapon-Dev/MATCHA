@@ -150,8 +150,8 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
     }
   };
 
-  const field = 'w-full px-3.5 py-2.5 bg-[#F1F1F1] border border-[#DCDCDC] text-sm text-[#0A0A0A] outline-hidden focus:border-[#0A0A0A] transition-colors';
-  const label = 'block text-xs font-mono text-[#666666] mb-1.5';
+  const field = 'w-full px-3.5 py-2.5 bg-matcha-bg border border-matcha-border text-sm text-[#0A0A0A] outline-hidden focus:border-[#0A0A0A] transition-colors';
+  const label = 'block text-xs font-mono text-matcha-muted mb-1.5';
 
   /* The three extra fields arrive one after another rather than together: at
      40ms apart it reads as the form making room, not as the page replacing
@@ -162,13 +162,13 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
         transition: { duration: 0.28, delay: index * 0.04, ease: EASE } });
 
   return (
-    <div className="w-full bg-[#F1F1F1] min-h-[80vh] px-5 sm:px-8 lg:px-12 py-10 sm:py-14">
+    <div className="w-full bg-matcha-bg min-h-[80vh] px-5 sm:px-8 lg:px-12 py-10 sm:py-14">
       <div className="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 border border-[#0A0A0A]">
 
         {/* The form comes first in the source, so a phone opens on the thing
             it came to do. On a wide screen the panel takes the left column
             again through order. */}
-        <div className="lg:col-span-7 lg:order-2 bg-[#F1F1F1] p-6 sm:p-10">
+        <div className="lg:col-span-7 lg:order-2 bg-matcha-bg p-6 sm:p-10">
           <h1 className="text-2xl sm:text-3xl font-extrabold uppercase tracking-tight text-[#0A0A0A]">
             {registering ? t('access.registerTitle') : t('access.signInTitle')}
           </h1>
@@ -204,7 +204,7 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
                 <label htmlFor="access-password" className={label}>{t('access.password')}</label>
                 {!registering && (
                   <button type="button" onClick={() => showToast(t('auth.resetDesc'), 'info')}
-                    className="text-xs font-mono text-[#0A0A0A] underline underline-offset-4 decoration-[#C91D1D] decoration-2 cursor-pointer">
+                    className="text-xs font-mono text-[#0A0A0A] underline underline-offset-4 decoration-matcha-accent decoration-2 cursor-pointer">
                     {t('access.forgot')}
                   </button>
                 )}
@@ -217,7 +217,7 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
                   autoComplete={registering ? 'new-password' : 'current-password'} />
                 <button type="button" onClick={() => setShowPassword((v) => !v)}
                   aria-label={showPassword ? t('access.hidePassword') : t('access.showPassword')}
-                  className="absolute right-0 top-0 h-full px-3 text-[#666666] hover:text-[#0A0A0A] cursor-pointer outline-hidden focus-visible:text-[#0A0A0A]">
+                  className="absolute right-0 top-0 h-full px-3 text-matcha-muted hover:text-[#0A0A0A] cursor-pointer outline-hidden focus-visible:text-[#0A0A0A]">
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
@@ -228,12 +228,12 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
                 {/* The meter reports; the eight-character floor is what the
                     form actually enforces. */}
                 <div className="flex items-baseline justify-between gap-3 mb-1.5">
-                  <span className="text-[11px] font-mono text-[#666666]">{t('access.strength.label')}</span>
+                  <span className="text-[11px] font-mono text-matcha-muted">{t('access.strength.label')}</span>
                   <span className="text-[11px] font-mono" style={{ color: STRENGTH_COLOUR[strength.band] }}>
                     {t(`access.strength.${strength.band}`)}
                   </span>
                 </div>
-                <div className="h-1 bg-[#DCDCDC]">
+                <div className="h-1 bg-matcha-border">
                   <div className="h-full transition-all duration-300"
                     style={{ width: STRENGTH_WIDTH[strength.band], backgroundColor: STRENGTH_COLOUR[strength.band] }} />
                 </div>
@@ -255,7 +255,7 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
                   className="mt-0.5 accent-[#0A0A0A] w-4 h-4 shrink-0" />
                 <span>
                   {t('access.terms')}{' '}
-                  <Link to="/legal/terms" className="underline underline-offset-4 decoration-[#C91D1D] decoration-2">
+                  <Link to="/legal/terms" className="underline underline-offset-4 decoration-matcha-accent decoration-2">
                     {t('access.termsLink')}
                   </Link>
                 </span>
@@ -269,14 +269,14 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
             )}
 
             {error && (
-              <p role="alert" className="flex items-start gap-2 mb-4 text-xs font-mono text-[#C91D1D]">
+              <p role="alert" className="flex items-start gap-2 mb-4 text-xs font-mono text-matcha-accent">
                 <AlertCircle size={14} className="shrink-0 mt-px" aria-hidden="true" />
                 <span>{error}</span>
               </p>
             )}
 
             <button type="submit" disabled={busy}
-              className="w-full py-3.5 bg-[#0A0A0A] hover:bg-[#C91D1D] disabled:bg-[#DCDCDC] disabled:text-[#666666] text-[#F1F1F1] font-mono font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer disabled:cursor-not-allowed outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]">
+              className="w-full py-3.5 bg-[#0A0A0A] hover:bg-matcha-accent disabled:bg-matcha-border disabled:text-matcha-muted text-matcha-bg font-mono font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer disabled:cursor-not-allowed outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]">
               {busy ? t('access.working') : registering ? t('access.submitRegister') : t('access.submitSignIn')}
             </button>
           </form>
@@ -284,10 +284,10 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
           {/* The only button on this page is the one that submits. Switching
               side is a sentence with a link in it, so the eye is not asked to
               choose between two things of equal weight. */}
-          <p className="mt-4 text-xs text-[#666666]">
+          <p className="mt-4 text-xs text-matcha-muted">
             {registering ? t('access.haveAccount') : t('access.noAccount')}{' '}
             <button type="button" onClick={toggleMode}
-              className="text-[#0A0A0A] underline underline-offset-4 decoration-[#C91D1D] decoration-2 cursor-pointer outline-hidden focus-visible:bg-[#DCDCDC]">
+              className="text-[#0A0A0A] underline underline-offset-4 decoration-matcha-accent decoration-2 cursor-pointer outline-hidden focus-visible:bg-matcha-border">
               {registering ? t('access.toSignIn') : t('access.toRegister')}
             </button>
           </p>
@@ -297,8 +297,8 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
               production — but it is genuinely useful while presenting, and
               dropping it silently would have taken a tool away. */}
           {import.meta.env.DEV && (
-            <div className="mt-8 pt-6 border-t border-dashed border-[#DCDCDC]">
-              <p className="text-[11px] font-mono uppercase tracking-wider text-[#666666] mb-3">
+            <div className="mt-8 pt-6 border-t border-dashed border-matcha-border">
+              <p className="text-[11px] font-mono uppercase tracking-wider text-matcha-muted mb-3">
                 {t('auth.demoModeTitle')}
               </p>
               <div className="grid grid-cols-2 gap-2">
@@ -307,7 +307,7 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
                   ([role, id, name, email, tier]) => (
                     <button key={role} type="button"
                       onClick={() => finish({ id, name, email, role, tier, isDemoSession: true }, 'demo-offline-token')}
-                      className="py-2.5 px-3 border border-[#DCDCDC] text-xs font-mono text-[#0A0A0A] hover:border-[#0A0A0A] transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]">
+                      className="py-2.5 px-3 border border-matcha-border text-xs font-mono text-[#0A0A0A] hover:border-[#0A0A0A] transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]">
                       {role}
                     </button>
                   ),
@@ -319,12 +319,12 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
           {/* Kept, and kept honest: these are not wired to anything yet, so
               they say so rather than looking like live buttons that swallow
               the click. */}
-          <div className="mt-8 pt-6 border-t border-[#DCDCDC]">
+          <div className="mt-8 pt-6 border-t border-matcha-border">
             <div className="flex items-baseline justify-between gap-3 mb-3">
-              <span className="text-[11px] font-mono uppercase tracking-wider text-[#666666]">
+              <span className="text-[11px] font-mono uppercase tracking-wider text-matcha-muted">
                 {t('access.socialTitle')}
               </span>
-              <span className="text-[10px] font-mono uppercase tracking-wider text-[#666666] border border-[#DCDCDC] px-1.5 py-0.5">
+              <span className="text-[10px] font-mono uppercase tracking-wider text-matcha-muted border border-matcha-border px-1.5 py-0.5">
                 {t('access.socialSoon')}
               </span>
             </div>
@@ -332,7 +332,7 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
               {['Google', 'GitHub'].map((provider) => (
                 <button key={provider} type="button" aria-disabled="true"
                   onClick={() => showToast(t('access.socialSoonToast', { provider }), 'info')}
-                  className="py-2.5 px-3 border border-dashed border-[#DCDCDC] text-xs font-mono text-[#666666] hover:border-[#666666] transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]">
+                  className="py-2.5 px-3 border border-dashed border-matcha-border text-xs font-mono text-matcha-muted hover:border-matcha-muted transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]">
                   {provider}
                 </button>
               ))}

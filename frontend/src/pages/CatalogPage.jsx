@@ -209,7 +209,7 @@ export default function CatalogPage({
   );
 
   return (
-    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-14 px-5 sm:px-6 lg:px-8">
+    <div className="w-full bg-matcha-bg min-h-screen py-10 sm:py-14 px-5 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
 
         <header className="mb-8">
@@ -221,7 +221,7 @@ export default function CatalogPage({
               the sentence describes the result rather than the archive: the dye
               count is taken before the dye filter, so pairing it with a
               narrowed total would be two different numbers in one breath. */}
-          <p className="mt-3 font-mono text-xs text-[#666666]">
+          <p className="mt-3 font-mono text-xs text-matcha-muted">
             {loading
               ? 'Opening the archive'
               : hasFilters
@@ -232,7 +232,7 @@ export default function CatalogPage({
 
         {/* Category is the one axis that is genuinely orthogonal to colour, so
             it stays — as reading matter, not as a row of filled pills. */}
-        <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2 pb-4 border-b border-[#DCDCDC]">
+        <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2 pb-4 border-b border-matcha-border">
           {categories.map((name) => {
             const active = selectedCategory === name;
             return (
@@ -242,8 +242,8 @@ export default function CatalogPage({
                 onClick={() => setSelectedCategory(name)}
                 className={`font-mono text-xs uppercase tracking-wider cursor-pointer transition-colors ${
                   active
-                    ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-[#C91D1D]'
-                    : 'text-[#666666] hover:text-[#0A0A0A]'
+                    ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-matcha-accent'
+                    : 'text-matcha-muted hover:text-[#0A0A0A]'
                 }`}
               >
                 {name === 'ALL' ? 'Everything' : name}
@@ -252,7 +252,7 @@ export default function CatalogPage({
           })}
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-4 py-4 border-b border-[#DCDCDC] mb-8">
+        <div className="flex flex-wrap items-center justify-between gap-4 py-4 border-b border-matcha-border mb-8">
           <label className="flex-1 min-w-[12rem] max-w-sm">
             <span className="sr-only">Search the archive</span>
             <input
@@ -260,7 +260,7 @@ export default function CatalogPage({
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
               placeholder="Search the archive"
-              className="w-full bg-transparent border-b border-[#DCDCDC] focus:border-[#0A0A0A] outline-hidden py-1.5 text-sm text-[#0A0A0A] placeholder:text-[#999999] transition-colors"
+              className="w-full bg-transparent border-b border-matcha-border focus:border-[#0A0A0A] outline-hidden py-1.5 text-sm text-[#0A0A0A] placeholder:text-[#999999] transition-colors"
             />
           </label>
 
@@ -271,9 +271,9 @@ export default function CatalogPage({
               <summary className="font-mono text-xs uppercase tracking-wider text-[#0A0A0A] cursor-pointer list-none marker:hidden outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]">
                 Refine{refineCount > 0 ? ` (${refineCount})` : ''}
               </summary>
-              <div className="absolute right-0 z-30 mt-2 w-72 bg-white border border-[#DCDCDC] p-4 space-y-4 shadow-lg">
+              <div className="absolute right-0 z-30 mt-2 w-72 bg-white border border-matcha-border p-4 space-y-4 shadow-lg">
                 <fieldset>
-                  <legend className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">Season</legend>
+                  <legend className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">Season</legend>
                   <div className="flex flex-wrap gap-x-4 gap-y-1">
                     {SEASONS.map((season) => (
                       <label key={season} className="flex items-center gap-1.5 text-xs cursor-pointer">
@@ -282,7 +282,7 @@ export default function CatalogPage({
                           name="season"
                           checked={selectedSeason === season}
                           onChange={() => setSelectedSeason(season)}
-                          className="accent-[#C91D1D]"
+                          className="accent-matcha-accent"
                         />
                         <span>{season === 'ALL' ? 'Any' : season}</span>
                       </label>
@@ -291,11 +291,11 @@ export default function CatalogPage({
                 </fieldset>
 
                 <fieldset>
-                  <legend className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">Fit</legend>
+                  <legend className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">Fit</legend>
                   <select
                     value={selectedFit}
                     onChange={(event) => setSelectedFit(event.target.value)}
-                    className="w-full border border-[#DCDCDC] px-2 py-1.5 text-xs bg-white cursor-pointer"
+                    className="w-full border border-matcha-border px-2 py-1.5 text-xs bg-white cursor-pointer"
                   >
                     {FITS.map((fit) => (
                       <option key={fit} value={fit}>{fit === 'ALL' ? 'Any fit' : fit}</option>
@@ -304,7 +304,7 @@ export default function CatalogPage({
                 </fieldset>
 
                 <label className="block">
-                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666]">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted">
                     Up to ${priceRange}
                   </span>
                   <input
@@ -314,7 +314,7 @@ export default function CatalogPage({
                     step="5"
                     value={priceRange}
                     onChange={(event) => setPriceRange(Number(event.target.value))}
-                    className="w-full mt-1.5 accent-[#C91D1D] cursor-pointer"
+                    className="w-full mt-1.5 accent-matcha-accent cursor-pointer"
                   />
                 </label>
 
@@ -323,7 +323,7 @@ export default function CatalogPage({
                     type="checkbox"
                     checked={inStockOnly}
                     onChange={() => setInStockOnly(!inStockOnly)}
-                    className="accent-[#C91D1D]"
+                    className="accent-matcha-accent"
                   />
                   <span>In stock only</span>
                 </label>
@@ -347,7 +347,7 @@ export default function CatalogPage({
               <button
                 type="button"
                 onClick={resetAll}
-                className="font-mono text-xs uppercase tracking-wider text-[#C91D1D] hover:underline cursor-pointer flex items-center gap-1.5"
+                className="font-mono text-xs uppercase tracking-wider text-matcha-accent hover:underline cursor-pointer flex items-center gap-1.5"
               >
                 <RotateCcw size={12} />
                 <span>Clear</span>
@@ -386,7 +386,7 @@ export default function CatalogPage({
                 {Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)}
               </div>
             ) : error ? (
-              <p role="alert" className="py-16 text-sm text-[#C91D1D]">{error}</p>
+              <p role="alert" className="py-16 text-sm text-matcha-accent">{error}</p>
             ) : pageItems.length === 0 ? (
               <EmptyState
                 title="Nothing in the archive matches yet"

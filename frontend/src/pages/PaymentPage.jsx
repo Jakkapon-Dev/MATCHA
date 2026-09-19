@@ -156,11 +156,11 @@ export default function PaymentPage() {
   };
 
   return (
-    <div className="w-full bg-[#F1F1F1] text-[#0A0A0A] min-h-screen py-10 sm:py-14 px-5 sm:px-6 lg:px-8">
+    <div className="w-full bg-matcha-bg text-[#0A0A0A] min-h-screen py-10 sm:py-14 px-5 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
         
         {/* Confident, Quiet Header */}
-        <div className="mb-8 pb-5 border-b border-[#DCDCDC] flex flex-col md:flex-row md:items-baseline justify-between gap-4">
+        <div className="mb-8 pb-5 border-b border-matcha-border flex flex-col md:flex-row md:items-baseline justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-bold text-[#0A0A0A] tracking-tight">
               {step === 'shipping' ? t('checkout.pageShipping') : t('checkout.pagePayment')}
@@ -171,33 +171,33 @@ export default function PaymentPage() {
           <div className="flex items-center gap-2 font-mono text-xs">
             <button
               onClick={() => navigate('/cart')}
-              className="flex items-center gap-1 text-[#666666] hover:text-[#042509] cursor-pointer"
+              className="flex items-center gap-1 text-matcha-muted hover:text-matcha-primary cursor-pointer"
             >
-              <Check size={12} className="text-[#042509]" />
+              <Check size={12} className="text-matcha-primary" />
               <span>{t('checkout.stepBag')}</span>
             </button>
 
-            <span className="text-[#DCDCDC]">/</span>
+            <span className="text-matcha-border">/</span>
 
             <button
               onClick={() => setStep('shipping')}
               className={`flex items-center gap-1 px-2.5 py-1 transition-colors cursor-pointer ${
                 step === 'shipping'
-                  ? 'bg-[#042509] text-white font-bold'
-                  : 'text-[#666666] hover:text-[#042509]'
+                  ? 'bg-matcha-primary text-white font-bold'
+                  : 'text-matcha-muted hover:text-matcha-primary'
               }`}
             >
               {step === 'payment' ? <Check size={12} /> : null}
               <span>{t('checkout.stepAddress')}</span>
             </button>
 
-            <span className="text-[#DCDCDC]">/</span>
+            <span className="text-matcha-border">/</span>
 
             <div
               className={`px-2.5 py-1 ${
                 step === 'payment'
-                  ? 'bg-[#042509] text-white font-bold'
-                  : 'text-[#666666]'
+                  ? 'bg-matcha-primary text-white font-bold'
+                  : 'text-matcha-muted'
               }`}
             >
               <span>{t('checkout.stepPayment')}</span>
@@ -250,15 +250,15 @@ export default function PaymentPage() {
             {step === 'payment' && orderError && (
               <div
                 role="alert"
-                className="mt-6 p-5 border border-[#C91D1D]/30 bg-[#FBEAEA] space-y-3"
+                className="mt-6 p-5 border border-matcha-accent/30 bg-[#FBEAEA] space-y-3"
               >
                 <div className="flex items-start gap-3">
-                  <AlertTriangle size={18} className="text-[#C91D1D] shrink-0 mt-0.5" />
+                  <AlertTriangle size={18} className="text-matcha-accent shrink-0 mt-0.5" />
                   <div>
                     <h3 className="font-bold text-sm text-[#0A0A0A]">
                       Unable to place order
                     </h3>
-                    <p className="text-xs font-mono text-[#666666] mt-1 leading-relaxed">
+                    <p className="text-xs font-mono text-matcha-muted mt-1 leading-relaxed">
                       {orderError}. Your items and shipping details remain saved.
                     </p>
                   </div>
@@ -269,7 +269,7 @@ export default function PaymentPage() {
                     type="button"
                     onClick={handlePlaceOrder}
                     disabled={isProcessing}
-                    className="px-5 py-2.5 bg-[#042509] hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-wider transition-all disabled:opacity-40 cursor-pointer flex items-center gap-2"
+                    className="px-5 py-2.5 bg-matcha-primary hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-wider transition-all disabled:opacity-40 cursor-pointer flex items-center gap-2"
                   >
                     <RotateCcw size={13} className={isProcessing ? 'animate-spin' : ''} />
                     <span>{isProcessing ? 'Processing...' : 'Try again'}</span>
@@ -277,7 +277,7 @@ export default function PaymentPage() {
                   <button
                     type="button"
                     onClick={() => setStep('shipping')}
-                    className="px-4 py-2.5 bg-white border border-[#DCDCDC] text-[#0A0A0A] hover:border-[#042509] text-xs font-mono transition-colors cursor-pointer"
+                    className="px-4 py-2.5 bg-white border border-matcha-border text-[#0A0A0A] hover:border-matcha-primary text-xs font-mono transition-colors cursor-pointer"
                   >
                     Edit destination
                   </button>

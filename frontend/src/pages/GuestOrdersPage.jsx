@@ -47,10 +47,10 @@ export default function GuestOrdersPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-[#F1F1F1] px-4 sm:px-6 lg:px-10 py-10 sm:py-14">
+    <main className="min-h-screen bg-matcha-bg px-4 sm:px-6 lg:px-10 py-10 sm:py-14">
       <div className="max-w-4xl mx-auto space-y-6">
         <header className="space-y-2">
-          <div className="flex items-center gap-2 text-[#042509]">
+          <div className="flex items-center gap-2 text-matcha-primary">
             <Package size={20} />
             <h1 className="text-xl sm:text-2xl font-extrabold uppercase tracking-tight text-[#0A0A0A]">
               {t('account.guestOrdersTitle')}
@@ -62,7 +62,7 @@ export default function GuestOrdersPage() {
         </header>
 
         {!isLoaded && (
-          <p className="text-xs font-mono uppercase tracking-wider text-[#666666]">
+          <p className="text-xs font-mono uppercase tracking-wider text-matcha-muted">
             {t('account.guestOrdersLoading')}…
           </p>
         )}
@@ -72,13 +72,13 @@ export default function GuestOrdersPage() {
         {/* Said once the list has settled, so it reads as a caveat on what is
             shown rather than a warning about something that failed to load. */}
         {isLoaded && !isAuthenticated && (
-          <aside className="border border-dashed border-[#DCDCDC] bg-white p-4 sm:p-5 space-y-3">
-            <p className="text-xs text-[#666666] leading-relaxed max-w-2xl">
+          <aside className="border border-dashed border-matcha-border bg-white p-4 sm:p-5 space-y-3">
+            <p className="text-xs text-matcha-muted leading-relaxed max-w-2xl">
               {t('account.guestOrdersNote')}
             </p>
             <Link
               to="/signup"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-[#042509] hover:bg-[#021505] text-white text-xs font-mono font-bold uppercase tracking-wider transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-matcha-primary hover:bg-matcha-primary-dark text-white text-xs font-mono font-bold uppercase tracking-wider transition-colors"
             >
               {t('account.guestOrdersCreateAccount')}
             </Link>

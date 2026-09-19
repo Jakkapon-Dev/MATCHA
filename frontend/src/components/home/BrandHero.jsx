@@ -111,7 +111,7 @@ export default function BrandHero({ onShopNow }) {
 
   return (
     <section
-      className="relative w-full bg-[#F1F1F1] text-[#000000] min-h-svh pt-2 pb-8 sm:pb-10 px-5 sm:px-8 lg:px-12 flex flex-col justify-center gap-2 sm:gap-4 select-none border-b border-[#DCDCDC]"
+      className="relative w-full bg-matcha-bg text-matcha-text min-h-svh pt-2 pb-8 sm:pb-10 px-5 sm:px-8 lg:px-12 flex flex-col justify-center gap-2 sm:gap-4 select-none border-b border-matcha-border"
     >
       
       {/* The masthead wipes up from its own baseline the way a magazine title
@@ -128,8 +128,8 @@ export default function BrandHero({ onShopNow }) {
           transition={{ duration: 0.9, ease: EASE }}
           className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10.5rem] font-black tracking-tight uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm font-sans"
         >
-          <span className="text-[#042509]">MATCH</span>
-          <span className="text-[#C91D1D]">A</span>
+          <span className="text-matcha-primary">MATCH</span>
+          <span className="text-matcha-accent">A</span>
         </motion.h1>
       </Parallax>
 
@@ -147,7 +147,7 @@ export default function BrandHero({ onShopNow }) {
           {badgeLines.map((text, i) => (
             <Reveal key={i} x={-28} y={0} delay={0.25 + i * 0.07} duration={0.6}>
               <span
-                className="bg-[#0A0A0A] text-[#F1F1F1] px-3.5 py-1 text-xs sm:text-sm font-bold font-mono uppercase tracking-wider inline-block select-none"
+                className="bg-[#0A0A0A] text-matcha-bg px-3.5 py-1 text-xs sm:text-sm font-bold font-mono uppercase tracking-wider inline-block select-none"
               >
                 {text}
               </span>
@@ -180,7 +180,7 @@ export default function BrandHero({ onShopNow }) {
             {/* Slice 1: Head & Face (Top 25%) */}
             <div 
               onClick={() => cycleSingleSlice(0)}
-              className="relative w-full h-[25%] overflow-hidden border-b border-[#000000]/15 bg-neutral-100 cursor-pointer group"
+              className="relative w-full h-[25%] overflow-hidden border-b border-matcha-text/15 bg-neutral-100 cursor-pointer group"
               title={t('hero.sliceHead')}
             >
               <img 
@@ -193,7 +193,7 @@ export default function BrandHero({ onShopNow }) {
             {/* Slice 2: Torso & Apparel (25% - 50%) */}
             <div 
               onClick={() => cycleSingleSlice(1)}
-              className="relative w-full h-[25%] overflow-hidden border-b border-[#000000]/15 bg-neutral-100 cursor-pointer group"
+              className="relative w-full h-[25%] overflow-hidden border-b border-matcha-text/15 bg-neutral-100 cursor-pointer group"
               title={t('hero.sliceTorso')}
             >
               <img 
@@ -206,7 +206,7 @@ export default function BrandHero({ onShopNow }) {
             {/* Slice 3: Lower Body & Pants/Skirt (50% - 75%) */}
             <div 
               onClick={() => cycleSingleSlice(2)}
-              className="relative w-full h-[25%] overflow-hidden border-b border-[#000000]/15 bg-neutral-100 cursor-pointer group"
+              className="relative w-full h-[25%] overflow-hidden border-b border-matcha-text/15 bg-neutral-100 cursor-pointer group"
               title={t('hero.sliceLower')}
             >
               <img 
@@ -234,7 +234,7 @@ export default function BrandHero({ onShopNow }) {
           {/* Said out loud, because the `title` attributes on each slice need a
               mouse held still to read and say nothing at all on a phone. */}
           <Reveal y={12} delay={0.5} duration={0.5}>
-            <p className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-[#666666] text-center">
+            <p className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-matcha-muted text-center">
               {t('hero.sliceHint')}
             </p>
           </Reveal>
@@ -256,10 +256,10 @@ export default function BrandHero({ onShopNow }) {
             duration={0.6}
             className="text-center md:text-left font-mono"
           >
-            <p className="text-[11px] font-bold tracking-wider text-[#666666]">
+            <p className="text-[11px] font-bold tracking-wider text-matcha-muted">
               {t('hero.dropCode')}
             </p>
-            <p className="text-[11px] font-bold tracking-wider text-[#666666] mt-0.5">
+            <p className="text-[11px] font-bold tracking-wider text-matcha-muted mt-0.5">
               {t('hero.runCode')}
             </p>
           </Reveal>
@@ -268,7 +268,7 @@ export default function BrandHero({ onShopNow }) {
           <Reveal x={28} y={0} delay={0.38} duration={0.6} className="w-full sm:w-auto">
             <button
               onClick={handleAction}
-              className="w-full sm:w-auto max-w-full px-8 py-4 bg-[#C91D1D] hover:bg-[#A81515] text-white font-mono text-sm uppercase tracking-[0.15em] transition-colors active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
+              className="w-full sm:w-auto max-w-full px-8 py-4 bg-matcha-accent hover:bg-matcha-accent-hover text-white font-mono text-sm uppercase tracking-[0.15em] transition-colors active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
             >
               <span>{t('hero.shopNow')}</span>
               <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
@@ -281,7 +281,7 @@ export default function BrandHero({ onShopNow }) {
             <button
               type="button"
               onClick={() => navigate('/personal-color')}
-              className="font-mono text-xs uppercase tracking-wider text-[#0A0A0A] hover:text-[#C91D1D] cursor-pointer transition-colors underline underline-offset-4 decoration-[#DCDCDC] hover:decoration-[#C91D1D] outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+              className="font-mono text-xs uppercase tracking-wider text-[#0A0A0A] hover:text-matcha-accent cursor-pointer transition-colors underline underline-offset-4 decoration-matcha-border hover:decoration-matcha-accent outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
             >
               {t('hero.findYourColour')}
             </button>
@@ -292,7 +292,7 @@ export default function BrandHero({ onShopNow }) {
               the element it owns, which would otherwise overwrite the class. */}
           <Reveal x={28} y={0} delay={0.46} duration={0.6} className="w-full max-w-[11rem] py-1">
             <div className="opacity-45">
-            <svg viewBox="0 0 200 40" className="w-full h-8 text-[#000000] fill-current">
+            <svg viewBox="0 0 200 40" className="w-full h-8 text-matcha-text fill-current">
               <rect x="0" y="0" width="3" height="40" />
               <rect x="5" y="0" width="2" height="40" />
               <rect x="9" y="0" width="4" height="40" />
@@ -327,7 +327,7 @@ export default function BrandHero({ onShopNow }) {
               <rect x="188" y="0" width="6" height="40" />
               <rect x="197" y="0" width="3" height="40" />
             </svg>
-            <p className="text-[10px] font-mono text-[#666666] tracking-widest text-center mt-1">
+            <p className="text-[10px] font-mono text-matcha-muted tracking-widest text-center mt-1">
               8 859012 345678
             </p>
             </div>

@@ -42,9 +42,9 @@ export default function RequireRole({ role, children }) {
 
   if (verdict === 'checking') {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-3 bg-[#F1F1F1]">
-        <div className="w-8 h-8 rounded-full border-2 border-[#DCDCDC] border-t-[#042509] animate-spin" />
-        <p className="text-[10px] font-mono uppercase tracking-widest text-[#666666]">Verifying access</p>
+      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-3 bg-matcha-bg">
+        <div className="w-8 h-8 rounded-full border-2 border-matcha-border border-t-matcha-primary animate-spin" />
+        <p className="text-[10px] font-mono uppercase tracking-widest text-matcha-muted">Verifying access</p>
       </div>
     );
   }
@@ -56,18 +56,18 @@ export default function RequireRole({ role, children }) {
 
   if (verdict === 'wrong-role') {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center p-4 bg-[#F1F1F1]">
-        <div className="bg-white border border-[#DCDCDC] rounded-3xl p-8 sm:p-12 max-w-md w-full text-center space-y-4 shadow-xl">
-          <div className="w-14 h-14 rounded-2xl bg-[#C91D1D]/10 text-[#C91D1D] flex items-center justify-center mx-auto">
+      <div className="min-h-[70vh] flex items-center justify-center p-4 bg-matcha-bg">
+        <div className="bg-white border border-matcha-border rounded-3xl p-8 sm:p-12 max-w-md w-full text-center space-y-4 shadow-xl">
+          <div className="w-14 h-14 rounded-2xl bg-matcha-accent/10 text-matcha-accent flex items-center justify-center mx-auto">
             <ShieldAlert size={26} />
           </div>
-          <h1 className="text-xl font-black uppercase text-[#000000] tracking-tight">Administrators only</h1>
-          <p className="text-xs font-mono text-[#666666] leading-relaxed">
+          <h1 className="text-xl font-black uppercase text-matcha-text tracking-tight">Administrators only</h1>
+          <p className="text-xs font-mono text-matcha-muted leading-relaxed">
             This area is limited to store administrators. Your account does not have that access.
           </p>
           <a
             href="/"
-            className="inline-block mt-2 px-5 py-3 bg-[#042509] hover:bg-[#021505] text-white text-xs font-bold font-mono uppercase tracking-widest rounded-xl shadow-md transition-all"
+            className="inline-block mt-2 px-5 py-3 bg-matcha-primary hover:bg-matcha-primary-dark text-white text-xs font-bold font-mono uppercase tracking-widest rounded-xl shadow-md transition-all"
           >
             Back to the store
           </a>

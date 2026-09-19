@@ -67,12 +67,12 @@ export default function PulsePerks() {
   };
 
   return (
-    <section className="w-full bg-[#F1F1F1] text-[#000000] py-16 sm:py-24 px-5 sm:px-8 lg:px-12 border-b border-[#DCDCDC] select-none overflow-hidden">
+    <section className="w-full bg-matcha-bg text-matcha-text py-16 sm:py-24 px-5 sm:px-8 lg:px-12 border-b border-matcha-border select-none overflow-hidden">
       <div className="max-w-7xl mx-auto">
         
         {/* 1. Header Title */}
         <Reveal y={30} className="mb-10">
-          <h2 className="text-4xl sm:text-6xl font-black text-[#C91D1D] tracking-tight font-sans">
+          <h2 className="text-4xl sm:text-6xl font-black text-matcha-accent tracking-tight font-sans">
             {t('perks.title')}
           </h2>
         </Reveal>
@@ -91,11 +91,11 @@ export default function PulsePerks() {
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
-            className="lg:col-span-7 p-8 sm:p-12 lg:p-16 flex items-center justify-center border-b lg:border-b-0 lg:border-r border-[#DCDCDC] bg-linear-to-b from-[#F1F1F1] to-white relative cursor-grab perspective-1000 touch-pan-y"
+            className="lg:col-span-7 p-8 sm:p-12 lg:p-16 flex items-center justify-center border-b lg:border-b-0 lg:border-r border-matcha-border bg-linear-to-b from-matcha-bg to-white relative cursor-grab perspective-1000 touch-pan-y"
             style={{ perspective: '1200px' }}
           >
             {/* Subtle background glow effect */}
-            <div className="absolute w-72 h-72 bg-[#C91D1D]/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute w-72 h-72 bg-matcha-accent/10 rounded-full blur-3xl pointer-events-none" />
 
             {/* 3D Rotating Showcase Card */}
             <div
@@ -124,16 +124,16 @@ export default function PulsePerks() {
 
               {/* 3D Floating Badge */}
               <div
-                className="absolute top-4 left-4 px-3 py-1 bg-[#C91D1D] text-white text-[10px] font-mono font-bold tracking-widest uppercase shadow-lg flex items-center gap-1.5"
+                className="absolute top-4 left-4 px-3 py-1 bg-matcha-accent text-white text-[10px] font-mono font-bold tracking-widest uppercase shadow-lg flex items-center gap-1.5"
                 style={{ transform: 'translateZ(35px)' }}
               >
-                <Sparkles size={12} className="text-[#518F5C]" />
+                <Sparkles size={12} className="text-matcha-secondary" />
                 <span>{t('perks.badge')}</span>
               </div>
 
               {/* Interactive Rotate Hint */}
               <div
-                className="absolute bottom-4 right-4 px-3 py-1 bg-black/80 text-[#F1F1F1] text-[9px] font-mono tracking-wider uppercase backdrop-blur-md shadow-lg"
+                className="absolute bottom-4 right-4 px-3 py-1 bg-black/80 text-matcha-bg text-[9px] font-mono tracking-wider uppercase backdrop-blur-md shadow-lg"
                 style={{ transform: 'translateZ(30px)' }}
               >
                 {/* การ์ดหมุนได้ทั้งด้วยเมาส์และการลากนิ้ว ข้อความจึงต้องไม่สั่งให้ใช้เมาส์
@@ -144,7 +144,7 @@ export default function PulsePerks() {
           </div>
 
           {/* Right Column (Col 8-12): 3 Perk Sections with Orange Dividing Borders */}
-          <div className="lg:col-span-5 flex flex-col justify-between divide-y divide-[#DCDCDC] bg-white">
+          <div className="lg:col-span-5 flex flex-col justify-between divide-y divide-matcha-border bg-white">
             {perks.map((perk, i) => {
               const Icon = perk.icon;
 
@@ -156,20 +156,20 @@ export default function PulsePerks() {
                   delay={0.25 + i * 0.12}
                   duration={0.6}
                   amount={0.3}
-                  className="p-8 sm:p-10 flex flex-col justify-center flex-1 hover:bg-[#F1F1F1] transition-colors duration-300 group"
+                  className="p-8 sm:p-10 flex flex-col justify-center flex-1 hover:bg-matcha-bg transition-colors duration-300 group"
                 >
                   {/* Perk Number */}
-                  <span className="text-sm font-mono font-bold text-[#C91D1D] block mb-2 tracking-wider">
+                  <span className="text-sm font-mono font-bold text-matcha-accent block mb-2 tracking-wider">
                     {perk.num}
                   </span>
 
                   {/* Perk Title */}
-                  <h3 className="text-lg sm:text-xl font-extrabold text-[#C91D1D] uppercase tracking-tight group-hover:text-[#000000] transition-colors duration-200 flex items-center gap-2">
+                  <h3 className="text-lg sm:text-xl font-extrabold text-matcha-accent uppercase tracking-tight group-hover:text-matcha-text transition-colors duration-200 flex items-center gap-2">
                     <span>{perk.title}</span>
                   </h3>
 
                   {/* Perk Description */}
-                  <p className="text-xs sm:text-sm text-[#666666] mt-2 leading-relaxed font-sans font-medium">
+                  <p className="text-xs sm:text-sm text-matcha-muted mt-2 leading-relaxed font-sans font-medium">
                     {perk.desc}
                   </p>
                 </Reveal>

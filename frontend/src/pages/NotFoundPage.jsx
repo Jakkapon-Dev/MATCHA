@@ -20,10 +20,10 @@ export default function NotFoundPage() {
   const { t } = useLanguage();
 
   return (
-    <div className="min-h-[80vh] bg-[#F1F1F1] flex items-center px-5 sm:px-8 lg:px-12 py-16">
+    <div className="min-h-[80vh] bg-matcha-bg flex items-center px-5 sm:px-8 lg:px-12 py-16">
       <div className="max-w-2xl w-full">
 
-        <p className="font-mono text-sm text-[#666666] tabular-nums">
+        <p className="font-mono text-sm text-matcha-muted tabular-nums">
           {t('notFound.code')}
         </p>
 
@@ -40,12 +40,12 @@ export default function NotFoundPage() {
             <li key={to}>
               <Link
                 to={to}
-                className="group flex items-baseline justify-between gap-4 py-3.5 border-b border-[#DCDCDC] text-[#0A0A0A] outline-hidden focus-visible:bg-[#DCDCDC]"
+                className="group flex items-baseline justify-between gap-4 py-3.5 border-b border-matcha-border text-[#0A0A0A] outline-hidden focus-visible:bg-matcha-border"
               >
-                <span className="text-base font-extrabold uppercase tracking-tight group-hover:underline underline-offset-4 decoration-2 decoration-[#C91D1D]">
+                <span className="text-base font-extrabold uppercase tracking-tight group-hover:underline underline-offset-4 decoration-2 decoration-matcha-accent">
                   {t(key)}
                 </span>
-                <span className="font-mono text-xs text-[#666666] shrink-0">{to}</span>
+                <span className="font-mono text-xs text-matcha-muted shrink-0">{to}</span>
               </Link>
             </li>
           ))}

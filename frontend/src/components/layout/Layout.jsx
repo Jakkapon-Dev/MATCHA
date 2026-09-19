@@ -26,7 +26,7 @@ export default function Layout({
     revealRef.current = node;
   };
   return (
-    <div className="min-h-screen bg-[#F1F1F1] text-[#000000] flex flex-col font-sans selection:bg-[#000000] selection:text-white relative">
+    <div className="min-h-screen bg-matcha-bg text-matcha-text flex flex-col font-sans selection:bg-matcha-text selection:text-white relative">
       
       {/* Global Scroll Progress & Frame Tracker */}
       <ScrollProgressTracker />

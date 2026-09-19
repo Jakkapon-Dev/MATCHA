@@ -16,18 +16,18 @@ export default function EmptyState({
   onAction,
 }) {
   return (
-    <div className="w-full py-20 border-t border-[#DCDCDC]">
+    <div className="w-full py-20 border-t border-matcha-border">
       <h3 className="text-2xl sm:text-3xl font-black uppercase text-[#0A0A0A] tracking-tight leading-none">
         {title}
       </h3>
-      <p className="mt-3 text-sm text-[#666666] max-w-md leading-relaxed">
+      <p className="mt-3 text-sm text-matcha-muted max-w-md leading-relaxed">
         {description}
       </p>
       {onAction && (
         <button
           type="button"
           onClick={onAction}
-          className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-[#C91D1D] hover:underline underline-offset-4 cursor-pointer"
+          className="mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wider text-matcha-accent hover:underline underline-offset-4 cursor-pointer"
         >
           <RotateCcw size={13} />
           <span>{actionLabel}</span>
