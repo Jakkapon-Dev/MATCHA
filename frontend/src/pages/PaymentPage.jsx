@@ -10,7 +10,7 @@ import OrderSummarySidebar from '../components/payment/OrderSummarySidebar';
 import OrderSuccessModal from '../components/payment/OrderSuccessModal';
 import { api } from '../services/api';
 import { useStoreMode } from '../context/StoreModeContext.jsx';
-import { SHIPPING_OPTIONS as SHIPPING_RATES, shippingCostFor } from '../config/shipping';
+import { SHIPPING_OPTIONS, shippingCostFor } from '../config/shipping';
 import { couponFor, discountFor, normaliseCode, FEATURED_CODES, takePendingCoupon } from '../config/coupons';
 import PreviewNote from '../components/ui/PreviewNote';
 import { QrCode, AlertTriangle, RotateCcw, Check } from 'lucide-react';
@@ -22,10 +22,10 @@ const PAYMENT_METHODS = [
   { id: 'qr', name: 'PromptPay QR', icon: <QrCode size={20} /> },
 ];
 
-const SHIPPING_OPTIONS = [
-  { id: 'standard', name: 'Standard Delivery', price: SHIPPING_RATES.standard, days: '3-5 business days' },
-  { id: 'express', name: 'Priority Express Courier', price: SHIPPING_RATES.express, days: '1-2 business days' },
-  { id: 'premium', name: 'Same-Day Dispatch', price: SHIPPING_RATES.premium, days: 'Guaranteed 24 hours' },
+const SHIPPING_METHOD_ITEMS = [
+  { id: 'standard', name: 'Standard Delivery', price: SHIPPING_OPTIONS.standard, days: '3-5 business days' },
+  { id: 'express', name: 'Priority Express Courier', price: SHIPPING_OPTIONS.express, days: '1-2 business days' },
+  { id: 'premium', name: 'Same-Day Dispatch', price: SHIPPING_OPTIONS.premium, days: 'Guaranteed 24 hours' },
 ];
 
 const initialFormData = {
@@ -220,7 +220,7 @@ export default function PaymentPage() {
               <ShippingStep
                 formData={formData}
                 onFormChange={setFormData}
-                shippingOptions={SHIPPING_OPTIONS}
+                shippingOptions={SHIPPING_METHOD_ITEMS}
                 selectedShipping={selectedShipping}
                 onSelectShipping={setSelectedShipping}
                 onNext={() => {
