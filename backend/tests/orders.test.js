@@ -138,3 +138,71 @@ test('GET /api/orders/:id refuses a caller who does not own the order', async ()
   assert.equal(body.success, false);
   assert.ok(!JSON.stringify(body).includes('owner@example.com'), 'the refusal must not leak the customer');
 });
+
+/* A guest can see what they ordered, and only that.
+
+   Before this, an order placed without signing in belonged to nobody the
+   server could ask about later, so the only way to show a guest their own
+   order was to show everyone every order — which is what the list endpoint
+   did. Orders now carry the same guest id the cart is keyed on, taken from
+   the X-Guest-Id header the browser already sends.
+
+   It is a bearer value, not proof of identity: whoever holds the id sees
+   those orders. The cart already trusts it the same way, and it is generated
+   with crypto.randomUUID, so it cannot be guessed. */
+
+const placeGuestOrder = async (guestId, email) => {
+  const headers = { 'Content-Type': 'application/json' };
+  if (guestId) headers['x-guest-id'] = guestId;
+  return fetch(baseUrl, {
+    method: 'POST',
+    headers,
+    body: JSON.stringify({
+      items: [{ productId: 'p1', name: 'Item', price: 20, quantity: 1 }],
+      customer: {
+        firstName: 'Guest', lastName: 'Tester', email,
+        phone: '081-000-0000', address: '1 Road', city: 'Bangkok',
+        zipCode: '10110', country: 'Thailand'
+      },
+      paymentMethod: 'visa', subtotal: 20, shipping: 0, total: 20
+    })
+  }).then((r) => r.json());
+};
+
+test('a guest sees the orders placed from their own browser, and no others', async () => {
+  const guestA = `guest-test-${Date.now()}-a`;
+  const guestB = `guest-test-${Date.now()}-b`;
+
+  const placed = await placeGuestOrder(guestA, 'guest-a@example.com');
+  assert.equal(placed.data.guestId, guestA, 'the order records who placed it');
+
+  await placeGuestOrder(guestB, 'guest-b@example.com');
+
+  const mine = await fetch(baseUrl, { headers: { 'x-guest-id': guestA } }).then((r) => r.json());
+  assert.equal(mine.data.length, 1, 'one order, not the shop');
+  assert.equal(mine.data[0].guestId, guestA, 'and it is this browser\'s');
+
+  const theirs = await fetch(baseUrl, { headers: { 'x-guest-id': guestB } }).then((r) => r.json());
+  assert.equal(theirs.data.length, 1);
+  assert.equal(theirs.data[0].guestId, guestB, 'the other guest sees only their own');
+
+  const noHeader = await fetch(baseUrl).then((r) => r.json());
+  assert.deepEqual(noHeader.data, [], 'no guest id still means no orders');
+});
+
+test('a guest cannot open an order placed from another browser', async () => {
+  const owner = `guest-test-${Date.now()}-owner`;
+  const stranger = `guest-test-${Date.now()}-stranger`;
+
+  const placed = await placeGuestOrder(owner, 'guest-owner@example.com');
+  const id = placed.data.orderNumber || placed.data._id;
+
+  const asOwner = await fetch(`${baseUrl}/${id}`, { headers: { 'x-guest-id': owner } });
+  assert.equal(asOwner.status, 200, 'the guest who placed it can open it');
+
+  const asStranger = await fetch(`${baseUrl}/${id}`, { headers: { 'x-guest-id': stranger } });
+  assert.equal(asStranger.status, 404, 'another browser gets the not-found answer');
+
+  const asNobody = await fetch(`${baseUrl}/${id}`);
+  assert.equal(asNobody.status, 404, 'and so does a caller with no id at all');
+});
