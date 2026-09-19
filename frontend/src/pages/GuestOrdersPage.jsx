@@ -61,12 +61,8 @@ export default function GuestOrdersPage() {
           </p>
         </header>
 
-        {!isLoaded && (
-          <p className="text-xs font-mono uppercase tracking-wider text-matcha-muted">
-            {t('account.guestOrdersLoading')}…
-          </p>
-        )}
-
+        {/* OrdersTab shows the waiting state itself now, so the page no longer
+            says the same thing above it. */}
         <OrdersTab orders={orders} isLoaded={isLoaded} />
 
         {/* Said once the list has settled, so it reads as a caveat on what is

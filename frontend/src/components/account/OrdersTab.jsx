@@ -55,8 +55,24 @@ export default function OrdersTab({ orders = [], isLoaded = true }) {
         </div>
       </div>
 
+      {/* `isLoaded` was accepted as a prop and never read, so an empty list and
+          a list that had not arrived yet looked the same: "No orders yet"
+          appeared the instant the page opened and was replaced once the
+          request came back. On a cold backend that is several seconds of
+          telling a customer with orders that they have none. */}
+      {!isLoaded && (
+        <div className="py-12 px-4 text-center border border-dashed border-matcha-border bg-matcha-bg/60">
+          <div className="w-12 h-12 mx-auto bg-matcha-bg border border-matcha-border flex items-center justify-center text-matcha-muted animate-pulse">
+            <Package size={24} />
+          </div>
+          <p className="mt-3 text-xs font-mono uppercase tracking-wider text-matcha-muted">
+            {t('account.ordersLoading')}…
+          </p>
+        </div>
+      )}
+
       {/* Empty State: displayed when the parent has no orders to provide. */}
-      {orders.length === 0 && (
+      {isLoaded && orders.length === 0 && (
         <div className="py-12 px-4 text-center border border-dashed border-matcha-border bg-matcha-bg/60 space-y-3">
           <div className="w-12 h-12 mx-auto bg-matcha-bg border border-matcha-border flex items-center justify-center text-matcha-muted">
             <Package size={24} />
