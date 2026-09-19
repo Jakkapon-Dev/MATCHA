@@ -50,10 +50,44 @@ const PORT = process.env.PORT || 5001;
    is not a browser cross-origin request and is left alone. */
 const LOCALHOST = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
 
-const allowedOrigins = (process.env.CORS_ORIGINS || process.env.FRONTEND_URL || '')
+const originEntries = (process.env.CORS_ORIGINS || process.env.FRONTEND_URL || '')
   .split(',')
   .map((value) => value.trim())
   .filter(Boolean);
+
+/* An entry may carry a `*`, which stands for one label of the hostname and
+   never crosses a dot. Vercel gives every preview deployment a fresh hostname
+   — matcha-<hash>-<account>.vercel.app — so a preview can never be listed in
+   advance, and without this the whole preview flow loses the API.
+
+   `*` deliberately does not match a dot. `https://*-acme.vercel.app` admits
+   matcha-abc123-acme.vercel.app and refuses evil.com-acme.vercel.app, which a
+   looser pattern would wave through. Scope each entry to the account or
+   project that owns the deployments; a bare `https://*.vercel.app` would hand
+   the API to anyone who can deploy on Vercel, which is everyone. */
+/* Matched without a regular expression, so there is no escaping to get wrong
+   and the rule can be read off the code: the origin must begin with the part
+   before the `*`, end with the part after it, and whatever the `*` stands for
+   must not contain a dot.
+
+   That last condition is the load-bearing one. Without it
+   `https://*-acme.vercel.app` would also admit
+   https://evil.com-acme.vercel.app. */
+const wildcardMatcher = (entry) => {
+  const [prefix, suffix] = entry.split('*');
+  return (origin) => {
+    if (origin.length < prefix.length + suffix.length) return false;
+    if (!origin.startsWith(prefix) || !origin.endsWith(suffix)) return false;
+    const middle = origin.slice(prefix.length, origin.length - suffix.length);
+    return !middle.includes('.');
+  };
+};
+
+const originMatchers = originEntries.map((entry) => (
+  entry.includes('*') ? wildcardMatcher(entry) : (origin) => origin === entry
+));
+
+const allowedOrigins = originEntries;
 
 /* An empty allowlist means nobody configured one, not that nobody is allowed.
 
@@ -78,7 +112,7 @@ if (!originsConfigured && process.env.NODE_ENV === 'production') {
 const isAllowedOrigin = (origin) => {
   if (!origin) return true;
   if (!originsConfigured) return true;
-  if (allowedOrigins.includes(origin)) return true;
+  if (originMatchers.some((matches) => matches(origin))) return true;
   return process.env.NODE_ENV !== 'production' && LOCALHOST.test(origin);
 };
 
