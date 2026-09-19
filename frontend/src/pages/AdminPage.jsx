@@ -289,6 +289,13 @@ export default function AdminPage() {
             id: o.orderId || o._id,
             customer: `${o.customer?.firstName || 'Guest'} ${o.customer?.lastName || ''}`.trim(),
             email: o.customer?.email || 'N/A',
+            /* The order tracking modal shows these. They are required on the
+               backend, so a real order always carries them; leaving them off
+               the mapping is what made the modal fall back to a seed customer's
+               phone and address and present them as this customer's. */
+            phone: o.customer?.phone || null,
+            address: [o.customer?.address, o.customer?.city, o.customer?.zipCode, o.customer?.country]
+              .filter(Boolean).join(', ') || null,
             items: o.items?.length || 0,
             total: o.total || 0,
             status: o.status ? o.status.charAt(0).toUpperCase() + o.status.slice(1) : 'Pending',
@@ -515,14 +522,19 @@ export default function AdminPage() {
     }
   };
 
+  /* A leading minus survives, so stock can still be taken away. The buttons
+     this box replaced were +10 and -5; stripping every non-digit kept the
+     adding and quietly lost the removing, with handleRestock still able to do
+     it and nothing left that could ask. */
   const handleRestockInputChange = (id, val) => {
-    const numericVal = val.replace(/\D/g, '');
-    setRestockAmounts(prev => ({ ...prev, [id]: numericVal }));
+    const sign = val.trim().startsWith('-') ? '-' : '';
+    const digits = val.replace(/\D/g, '');
+    setRestockAmounts(prev => ({ ...prev, [id]: digits ? sign + digits : sign }));
   };
 
   const handleRestockSubmit = (id) => {
     const amount = parseInt(restockAmounts[id], 10);
-    if (!amount || amount <= 0) return;
+    if (!Number.isFinite(amount) || amount === 0) return;
     handleRestock(id, amount);
     setRestockAmounts(prev => ({ ...prev, [id]: '' }));
   };
@@ -550,9 +562,9 @@ export default function AdminPage() {
     setOrders(prev => prev.map(ord => ord.id === orderId ? { ...ord, status: newStatus } : ord));
     setSelectedOrderForModal(prev => (prev && prev.id === orderId ? { ...prev, status: newStatus } : prev));
     try {
-      if (api.updateOrderStatus) {
-        await api.updateOrderStatus(orderId, { status: newStatus });
-      }
+      // The `if (api.updateOrderStatus)` guard that stood here was dead: the
+      // method is defined in services/api.js. All it could do was hide a typo.
+      await api.updateOrderStatus(orderId, { status: newStatus });
       showToast(`Order ${orderId} updated to ${newStatus}`, 'success');
     } catch (err) {
       console.warn('Failed to update order status on server:', err.message);
@@ -1168,13 +1180,13 @@ export default function AdminPage() {
                                   onKeyDown={(e) => {
                                     if (e.key === 'Enter') handleRestockSubmit(item.id);
                                   }}
-                                  placeholder="Qty"
+                                  placeholder="+/-"
                                   className="w-14 px-2 py-1 text-center font-mono text-xs font-bold border border-[#DCDCDC] rounded-lg bg-white text-[#000000] outline-none focus:border-[#042509] focus:ring-1 focus:ring-[#042509]"
                                 />
                                 <button
                                   type="button"
                                   onClick={() => handleRestockSubmit(item.id)}
-                                  disabled={!restockAmounts[item.id] || parseInt(restockAmounts[item.id], 10) <= 0}
+                                  disabled={!Number.isFinite(parseInt(restockAmounts[item.id], 10)) || parseInt(restockAmounts[item.id], 10) === 0}
                                   className="px-3 py-1 rounded-lg border border-[#042509] bg-white hover:bg-[#042509] hover:text-white text-[#042509] font-mono text-xs font-bold transition-all cursor-pointer shadow-2xs active:scale-95 disabled:opacity-40 disabled:border-[#DCDCDC] disabled:text-[#888888] disabled:cursor-not-allowed"
                                 >
                                   Add

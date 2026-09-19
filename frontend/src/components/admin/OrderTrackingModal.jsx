@@ -1,26 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import {
-  X,
-  Package,
-  Truck,
-  CheckCircle2,
-  Clock,
-  RotateCcw,
-  ArrowRightLeft,
-  Building2,
-  Phone,
-  Mail,
-  MapPin,
-  Check,
-  AlertCircle,
-  ExternalLink,
-  ShieldCheck,
-  Sparkles
-} from 'lucide-react';
+import { X, Clock, RotateCcw, ArrowRightLeft, Check } from 'lucide-react';
+import { useToast } from '../../context/ToastContext.jsx';
 
 export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateStatus }) {
   const [currentStatus, setCurrentStatus] = useState(order?.status || 'Processing');
   const [isApplying, setIsApplying] = useState(false);
+  const { showToast } = useToast();
+
+  // Escape closes this the way it closes the product modal.
+  useEffect(() => {
+    if (!isOpen) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, onClose]);
 
   // Sync internal status with selected order when modal opens or order changes
   useEffect(() => {
@@ -31,12 +24,20 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
 
   if (!isOpen || !order) return null;
 
-  // Derive timeline status details based on current order status
+  /* The stages come from the order's own status, which is real. The dates are
+     worked out from the order date, which makes them a projection, not a record
+     — so they are labelled as one.
+
+     They used to read as a courier's tracking history: exact times of day, named
+     sorting facilities, a tracking number built by splicing digits onto the order
+     id. None of that is recorded anywhere; an admin reading "Delivered, Sukhumvit
+     Distribution Center, 2:30 PM" was reading something this component made up. */
   const getTimelineSteps = () => {
-    const orderDate = order.date || '2026-08-25';
-    const baseDate = new Date(orderDate);
-    
+    const orderDate = order.date || null;
+    const baseDate = orderDate ? new Date(orderDate) : null;
+
     const formatDate = (daysOffset) => {
+      if (!baseDate || Number.isNaN(baseDate.getTime())) return null;
       const d = new Date(baseDate);
       d.setDate(d.getDate() + daysOffset);
       return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
@@ -49,41 +50,36 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
     return [
       {
         title: 'Delivered',
-        location: 'Sukhumvit Distribution Center, Bangkok',
-        date: `${formatDate(4)} at 2:30 PM`,
-        stepIndex: 3,
+        location: 'With the customer',
+        date: formatDate(4),
         isCompleted: effectiveIdx >= 3,
         isCurrent: order.status === 'Delivered'
       },
       {
-        title: 'Out For Delivery',
-        location: 'Bangkok Central Hub (Courier in Transit)',
-        date: `${formatDate(3)} at 11:30 AM`,
-        stepIndex: 2,
+        title: 'Out for delivery',
+        location: 'With the courier',
+        date: formatDate(3),
         isCompleted: effectiveIdx >= 2,
         isCurrent: order.status === 'Shipped'
       },
       {
         title: 'In transit',
-        location: 'From Chiang Mai Workshop to Bangkok Sorting Center',
-        date: `${formatDate(2)} at 05:30 PM`,
-        stepIndex: 1,
+        location: 'On its way from the workshop',
+        date: formatDate(2),
         isCompleted: effectiveIdx >= 1,
         isCurrent: false
       },
       {
-        title: 'Order Picked up',
-        location: 'MatchA Artisan Workshop, Chiang Mai',
-        date: `${formatDate(1)} at 07:26 AM`,
-        stepIndex: 1,
+        title: 'Picked up',
+        location: 'Packed and collected',
+        date: formatDate(1),
         isCompleted: effectiveIdx >= 1,
         isCurrent: order.status === 'Processing'
       },
       {
-        title: 'Order Received',
-        location: 'MatchA E-Commerce Digital Gateway',
-        date: `${formatDate(0)} at 12:46 PM`,
-        stepIndex: 0,
+        title: 'Order received',
+        location: 'Paid for and queued',
+        date: formatDate(0),
         isCompleted: true,
         isCurrent: order.status === 'Pending'
       }
@@ -92,21 +88,22 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
 
   const timelineSteps = getTimelineSteps();
 
+  // No pretend delay. The 250ms timer here only made a fast save look slow.
   const handleApply = () => {
     setIsApplying(true);
-    setTimeout(() => {
-      if (onUpdateStatus) {
-        onUpdateStatus(order.id, currentStatus);
-      }
-      setIsApplying(false);
-      onClose();
-    }, 250);
+    if (onUpdateStatus) onUpdateStatus(order.id, currentStatus);
+    setIsApplying(false);
+    onClose();
   };
 
-  // Realistic mock or real address/phone
-  const customerPhone = order.phone || '+66 89 998-7122';
-  const deliveryAddress = order.address || '306 North Plaza, South Motera, Nr 4D Square Mall, Bangkok - 10110';
-  const trackingNumber = `#${order.id.replace('ORD-', '3419187')}`;
+  /* No invented stand-ins. These read `order.phone || '+66 89 998-7122'` and
+     `order.address || '306 North Plaza...'` — the phone and address of Sarah
+     Jenkins, the first row of the seed data. Every real order arrived here
+     without them mapped, so every real customer was shown her contact details
+     as their own, with nothing to say they were not. An admin could have called
+     the wrong person or shipped to the wrong address off this screen. */
+  const customerPhone = order.phone || null;
+  const deliveryAddress = order.address || null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-xs animate-fade-in select-none">
@@ -114,7 +111,12 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
       <div className="fixed inset-0" onClick={onClose} />
 
       {/* Modal Container */}
-      <div className="relative bg-white border border-[#DCDCDC] rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden z-10">
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={`Order ${order.id}`}
+        className="relative bg-white border border-[#DCDCDC] rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden z-10"
+      >
         
         {/* Modal Top Floating Close Button */}
         <button
@@ -146,10 +148,6 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                     Artisan Color Archive
                   </span>
                 </div>
-                <div className="text-[10px] font-mono text-[#666666] uppercase tracking-wider mt-2 flex items-center gap-1.5">
-                  <ShieldCheck size={12} className="text-[#042509]" />
-                  <span>Verified Artisan Dispatch</span>
-                </div>
               </div>
 
               {/* Customer Name */}
@@ -167,8 +165,8 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                 <span className="text-[11px] font-mono uppercase text-[#666666] font-medium tracking-wide">
                   Customer Contact
                 </span>
-                <p className="text-xs sm:text-sm font-mono text-[#222222] font-semibold">
-                  {customerPhone}
+                <p className={`text-xs sm:text-sm font-mono font-semibold ${customerPhone ? 'text-[#222222]' : 'text-[#888888]'}`}>
+                  {customerPhone || 'Not on this order'}
                 </p>
                 {order.email && (
                   <p className="text-xs font-mono text-[#666666]">
@@ -182,8 +180,8 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                 <span className="text-[11px] font-mono uppercase text-[#666666] font-medium tracking-wide">
                   Delivery Address
                 </span>
-                <p className="text-xs text-[#333333] leading-relaxed font-sans">
-                  {deliveryAddress}
+                <p className={`text-xs leading-relaxed font-sans ${deliveryAddress ? 'text-[#333333]' : 'text-[#888888]'}`}>
+                  {deliveryAddress || 'Not on this order'}
                 </p>
               </div>
 
@@ -195,12 +193,17 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                 </div>
                 <div className="flex items-center justify-between text-[#666666]">
                   <span>Payment Status</span>
+                  {/* An order with no payment status is unknown, not paid. Guessing
+                      "Paid" from the order status put a green PAID badge on money
+                      nobody had confirmed arriving. */}
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
-                    String(order.paymentStatus || (order.status === 'Pending' ? 'Unpaid' : 'Paid')).toLowerCase() === 'paid'
+                    !order.paymentStatus
+                      ? 'bg-[#EEEEEE] text-[#666666]'
+                      : String(order.paymentStatus).toLowerCase() === 'paid'
                       ? 'bg-emerald-100 text-emerald-800'
                       : 'bg-amber-100 text-amber-800'
                   }`}>
-                    {order.paymentStatus || (order.status === 'Pending' ? 'Unpaid' : 'Paid')}
+                    {order.paymentStatus || 'Unknown'}
                   </span>
                 </div>
                 <div className="pt-2 border-t border-[#E5E5E5] flex items-center justify-between font-bold text-sm">
@@ -215,10 +218,12 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                   <span className="text-[11px] font-mono uppercase text-[#666666]">Seller Name</span>
                   <p className="font-semibold text-[#000000]">MatchA Apparel Private Limited</p>
                 </div>
+                {/* The support number and mailbox that sat here were invented, and
+                    "(See Number)" was styled as a link with nothing behind it.
+                    There is no support desk to point at yet, so this says that. */}
                 <div className="space-y-0.5">
                   <span className="text-[11px] font-mono uppercase text-[#666666]">Seller Support</span>
-                  <p className="font-mono text-[#333333] font-medium">+66 2 899-8800 <span className="text-[10px] text-[#042509] cursor-pointer hover:underline">(See Number)</span></p>
-                  <p className="font-mono text-[11px] text-[#666666]">support@matcha-apparel.com</p>
+                  <p className="font-mono text-[11px] text-[#888888]">No support contact configured</p>
                 </div>
               </div>
 
@@ -232,18 +237,21 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
               <div className="space-y-6">
                 
                 {/* Tracking Number & Carrier Header */}
+                {/* The tracking number was the order id with "ORD-" swapped for
+                    "3419187", and the carrier badge named a courier that does not
+                    exist. Nothing here is dispatched through a carrier yet, so the
+                    order id — which is real and searchable — stands on its own. */}
                 <div className="flex items-center justify-between pb-4 border-b border-[#E5E5E5] gap-4">
                   <div>
                     <span className="text-[10px] font-mono uppercase text-[#666666] tracking-wider block">
-                      Tracking No.
+                      Order No.
                     </span>
                     <span className="text-sm sm:text-base font-black font-mono text-[#000000] tracking-tight">
-                      {trackingNumber}
+                      {order.id}
                     </span>
                   </div>
-                  <div className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#042509]/5 border border-[#042509]/20 text-[#042509] font-black font-mono text-xs tracking-wider">
-                    <Truck size={14} />
-                    <span>MATCHA EXPRESS</span>
+                  <div className="px-3 py-1 rounded-lg bg-[#F1F1F1] border border-[#DCDCDC] text-[#666666] font-mono text-[10px] tracking-wider uppercase">
+                    No carrier assigned
                   </div>
                 </div>
 
@@ -269,16 +277,14 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                     <p className="text-xs text-[#666666] font-sans mt-1">
                       as on {new Date(order.date || '2026-08-25').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', weekday: 'long' })}
                     </p>
-                    <p className="text-[11px] text-[#888888] font-mono mt-0.5">
-                      Last updated on {new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', weekday: 'long' })}
-                    </p>
+
                   </div>
 
                   {/* Return / Exchange Quick Links */}
                   <div className="flex flex-col items-start sm:items-end gap-1.5 text-xs font-mono">
                     <button
                       type="button"
-                      onClick={() => alert('Order return request process is active.')}
+                      onClick={() => showToast('Returns are not connected yet', 'info')}
                       className="flex items-center gap-1.5 text-[#000000] hover:text-[#042509] font-bold underline transition-colors cursor-pointer"
                     >
                       <RotateCcw size={13} />
@@ -286,23 +292,29 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                     </button>
                     <button
                       type="button"
-                      onClick={() => alert('Order item exchange process is active.')}
+                      onClick={() => showToast('Exchanges are not connected yet', 'info')}
                       className="flex items-center gap-1.5 text-[#000000] hover:text-[#042509] font-bold underline transition-colors cursor-pointer"
                     >
                       <ArrowRightLeft size={13} />
                       <span>Exchange Item</span>
                     </button>
                     <div className="text-[10px] text-[#666666] mt-1 sm:text-right">
-                      For Delivery Queries: <span className="text-[#042509] font-bold underline cursor-pointer">Contact us</span>
+                      For delivery queries, contact the customer directly.
                     </div>
                   </div>
                 </div>
 
                 {/* Tracking History Timeline */}
                 <div className="space-y-4 pt-2">
-                  <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-[#000000]">
-                    Tracking History
-                  </h4>
+                  <div>
+                    <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-[#000000]">
+                      Expected schedule
+                    </h4>
+                    <p className="text-[10px] text-[#888888] font-sans mt-0.5">
+                      Stages follow the order's status. Dates are worked out from the
+                      order date, not reported by a carrier.
+                    </p>
+                  </div>
 
                   <div className="space-y-6 pl-2 relative border-l-2 border-[#E5E5E5] ml-2.5">
                     {timelineSteps.map((step, idx) => {
@@ -330,12 +342,14 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                                 {step.title}
                               </p>
                               <p className="text-[11px] text-[#666666] font-sans">
-                                at location {step.location}
+                                {step.location}
                               </p>
                             </div>
-                            <span className="text-[10px] font-mono text-[#888888] shrink-0">
-                              {step.date}
-                            </span>
+                            {step.date && (
+                              <span className="text-[10px] font-mono text-[#888888] shrink-0">
+                                est. {step.date}
+                              </span>
+                            )}
                           </div>
                         </div>
                       );
