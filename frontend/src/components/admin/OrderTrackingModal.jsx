@@ -115,13 +115,13 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
         role="dialog"
         aria-modal="true"
         aria-label={`Order ${order.id}`}
-        className="relative bg-white border border-[#DCDCDC] rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden z-10"
+        className="relative bg-white border border-matcha-border rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden z-10"
       >
         
         {/* Modal Top Floating Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white/80 hover:bg-[#F1F1F1] text-[#666666] hover:text-[#000000] border border-[#DCDCDC] shadow-xs transition-colors cursor-pointer"
+          className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white/80 hover:bg-matcha-bg text-matcha-muted hover:text-matcha-text border border-matcha-border shadow-xs transition-colors cursor-pointer"
           title="Close Dialog"
         >
           <X size={18} />
@@ -144,7 +144,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                     alt="MatchA"
                     className="h-8 sm:h-9 w-auto object-contain object-left"
                   />
-                  <span className="text-[9px] font-mono tracking-[0.2em] text-[#666666] uppercase mt-0.5">
+                  <span className="text-[9px] font-mono tracking-[0.2em] text-matcha-muted uppercase mt-0.5">
                     Artisan Color Archive
                   </span>
                 </div>
@@ -152,24 +152,24 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
 
               {/* Customer Name */}
               <div className="space-y-1">
-                <span className="text-[11px] font-mono uppercase text-[#666666] font-medium tracking-wide">
+                <span className="text-[11px] font-mono uppercase text-matcha-muted font-medium tracking-wide">
                   Customer Name
                 </span>
-                <p className="text-sm sm:text-base font-bold text-[#000000] tracking-tight">
+                <p className="text-sm sm:text-base font-bold text-matcha-text tracking-tight">
                   {order.customer}
                 </p>
               </div>
 
               {/* Customer Contact */}
               <div className="space-y-1">
-                <span className="text-[11px] font-mono uppercase text-[#666666] font-medium tracking-wide">
+                <span className="text-[11px] font-mono uppercase text-matcha-muted font-medium tracking-wide">
                   Customer Contact
                 </span>
                 <p className={`text-xs sm:text-sm font-mono font-semibold ${customerPhone ? 'text-[#222222]' : 'text-[#888888]'}`}>
                   {customerPhone || 'Not on this order'}
                 </p>
                 {order.email && (
-                  <p className="text-xs font-mono text-[#666666]">
+                  <p className="text-xs font-mono text-matcha-muted">
                     {order.email}
                   </p>
                 )}
@@ -177,7 +177,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
 
               {/* Delivery Address */}
               <div className="space-y-1">
-                <span className="text-[11px] font-mono uppercase text-[#666666] font-medium tracking-wide">
+                <span className="text-[11px] font-mono uppercase text-matcha-muted font-medium tracking-wide">
                   Delivery Address
                 </span>
                 <p className={`text-xs leading-relaxed font-sans ${deliveryAddress ? 'text-[#333333]' : 'text-[#888888]'}`}>
@@ -187,18 +187,18 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
 
               {/* Order Package & Amount Breakdown */}
               <div className="p-3.5 rounded-2xl bg-white border border-[#E5E5E5] shadow-2xs space-y-2 font-mono text-xs">
-                <div className="flex items-center justify-between text-[#666666]">
+                <div className="flex items-center justify-between text-matcha-muted">
                   <span>Items Ordered</span>
-                  <span className="font-bold text-[#000000]">{order.items} {order.items > 1 ? 'items' : 'item'}</span>
+                  <span className="font-bold text-matcha-text">{order.items} {order.items > 1 ? 'items' : 'item'}</span>
                 </div>
-                <div className="flex items-center justify-between text-[#666666]">
+                <div className="flex items-center justify-between text-matcha-muted">
                   <span>Payment Status</span>
                   {/* An order with no payment status is unknown, not paid. Guessing
                       "Paid" from the order status put a green PAID badge on money
                       nobody had confirmed arriving. */}
                   <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
                     !order.paymentStatus
-                      ? 'bg-[#EEEEEE] text-[#666666]'
+                      ? 'bg-[#EEEEEE] text-matcha-muted'
                       : String(order.paymentStatus).toLowerCase() === 'paid'
                       ? 'bg-emerald-100 text-emerald-800'
                       : 'bg-amber-100 text-amber-800'
@@ -207,22 +207,22 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                   </span>
                 </div>
                 <div className="pt-2 border-t border-[#E5E5E5] flex items-center justify-between font-bold text-sm">
-                  <span className="text-[#000000]">Total Amount:</span>
-                  <span className="text-[#042509]">${Number(order.total || 0).toFixed(2)}</span>
+                  <span className="text-matcha-text">Total Amount:</span>
+                  <span className="text-matcha-primary">${Number(order.total || 0).toFixed(2)}</span>
                 </div>
               </div>
 
               {/* Seller Name & Support */}
               <div className="pt-2 space-y-3 border-t border-[#E5E5E5] text-xs">
                 <div className="space-y-0.5">
-                  <span className="text-[11px] font-mono uppercase text-[#666666]">Seller Name</span>
-                  <p className="font-semibold text-[#000000]">MatchA Apparel Private Limited</p>
+                  <span className="text-[11px] font-mono uppercase text-matcha-muted">Seller Name</span>
+                  <p className="font-semibold text-matcha-text">MatchA Apparel Private Limited</p>
                 </div>
                 {/* The support number and mailbox that sat here were invented, and
                     "(See Number)" was styled as a link with nothing behind it.
                     There is no support desk to point at yet, so this says that. */}
                 <div className="space-y-0.5">
-                  <span className="text-[11px] font-mono uppercase text-[#666666]">Seller Support</span>
+                  <span className="text-[11px] font-mono uppercase text-matcha-muted">Seller Support</span>
                   <p className="font-mono text-[11px] text-[#888888]">No support contact configured</p>
                 </div>
               </div>
@@ -243,14 +243,14 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                     order id — which is real and searchable — stands on its own. */}
                 <div className="flex items-center justify-between pb-4 border-b border-[#E5E5E5] gap-4">
                   <div>
-                    <span className="text-[10px] font-mono uppercase text-[#666666] tracking-wider block">
+                    <span className="text-[10px] font-mono uppercase text-matcha-muted tracking-wider block">
                       Order No.
                     </span>
-                    <span className="text-sm sm:text-base font-black font-mono text-[#000000] tracking-tight">
+                    <span className="text-sm sm:text-base font-black font-mono text-matcha-text tracking-tight">
                       {order.id}
                     </span>
                   </div>
-                  <div className="px-3 py-1 rounded-lg bg-[#F1F1F1] border border-[#DCDCDC] text-[#666666] font-mono text-[10px] tracking-wider uppercase">
+                  <div className="px-3 py-1 rounded-lg bg-matcha-bg border border-matcha-border text-matcha-muted font-mono text-[10px] tracking-wider uppercase">
                     No carrier assigned
                   </div>
                 </div>
@@ -258,23 +258,23 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                 {/* Big Order Status Announcement */}
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                   <div>
-                    <span className="text-xs text-[#666666] font-medium font-sans">
+                    <span className="text-xs text-matcha-muted font-medium font-sans">
                       your order is
                     </span>
                     <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight capitalize mt-0.5 ${
                       order.status === 'Delivered'
-                        ? 'text-[#042509]'
+                        ? 'text-matcha-primary'
                         : order.status === 'Shipped'
                         ? 'text-blue-700'
                         : order.status === 'Processing'
-                        ? 'text-[#C91D1D]'
+                        ? 'text-matcha-accent'
                         : order.status === 'Cancelled'
                         ? 'text-red-700'
                         : 'text-amber-700'
                     }`}>
                       {order.status}
                     </h2>
-                    <p className="text-xs text-[#666666] font-sans mt-1">
+                    <p className="text-xs text-matcha-muted font-sans mt-1">
                       as on {new Date(order.date || '2026-08-25').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', weekday: 'long' })}
                     </p>
 
@@ -285,7 +285,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                     <button
                       type="button"
                       onClick={() => showToast('Returns are not connected yet', 'info')}
-                      className="flex items-center gap-1.5 text-[#000000] hover:text-[#042509] font-bold underline transition-colors cursor-pointer"
+                      className="flex items-center gap-1.5 text-matcha-text hover:text-matcha-primary font-bold underline transition-colors cursor-pointer"
                     >
                       <RotateCcw size={13} />
                       <span>Return Order</span>
@@ -293,12 +293,12 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                     <button
                       type="button"
                       onClick={() => showToast('Exchanges are not connected yet', 'info')}
-                      className="flex items-center gap-1.5 text-[#000000] hover:text-[#042509] font-bold underline transition-colors cursor-pointer"
+                      className="flex items-center gap-1.5 text-matcha-text hover:text-matcha-primary font-bold underline transition-colors cursor-pointer"
                     >
                       <ArrowRightLeft size={13} />
                       <span>Exchange Item</span>
                     </button>
-                    <div className="text-[10px] text-[#666666] mt-1 sm:text-right">
+                    <div className="text-[10px] text-matcha-muted mt-1 sm:text-right">
                       For delivery queries, contact the customer directly.
                     </div>
                   </div>
@@ -307,7 +307,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                 {/* Tracking History Timeline */}
                 <div className="space-y-4 pt-2">
                   <div>
-                    <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-[#000000]">
+                    <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-matcha-text">
                       Expected schedule
                     </h4>
                     <p className="text-[10px] text-[#888888] font-sans mt-0.5">
@@ -325,11 +325,11 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                           {/* Dot indicator */}
                           <div className={`absolute -left-[19px] top-0.5 w-3.5 h-3.5 rounded-full border-2 transition-all ${
                             step.isCompleted
-                              ? 'bg-[#85E369] border-[#042509] shadow-xs'
+                              ? 'bg-[#85E369] border-matcha-primary shadow-xs'
                               : 'bg-white border-[#BBBBBB]'
                           }`}>
                             {isActive && (
-                              <div className="w-1.5 h-1.5 rounded-full bg-[#042509] absolute inset-0 m-auto animate-ping" />
+                              <div className="w-1.5 h-1.5 rounded-full bg-matcha-primary absolute inset-0 m-auto animate-ping" />
                             )}
                           </div>
 
@@ -337,11 +337,11 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                           <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1">
                             <div>
                               <p className={`text-xs font-bold font-sans ${
-                                step.isCompleted ? 'text-[#000000]' : 'text-[#888888]'
+                                step.isCompleted ? 'text-matcha-text' : 'text-[#888888]'
                               }`}>
                                 {step.title}
                               </p>
-                              <p className="text-[11px] text-[#666666] font-sans">
+                              <p className="text-[11px] text-matcha-muted font-sans">
                                 {step.location}
                               </p>
                             </div>
@@ -367,24 +367,24 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
         {/* ========================================================================= */}
         {/* MODAL FOOTER: STATUS CHANGER & APPLY BUTTON (BOTTOM RIGHT)                */}
         {/* ========================================================================= */}
-        <div className="p-4 sm:p-5 bg-[#F1F1F1] border-t border-[#DCDCDC] flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
+        <div className="p-4 sm:p-5 bg-matcha-bg border-t border-matcha-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none">
           
-          <div className="flex items-center gap-2 text-xs font-mono text-[#666666]">
-            <Clock size={14} className="text-[#042509]" />
-            <span>Order ID: <strong className="text-[#000000]">{order.id}</strong></span>
+          <div className="flex items-center gap-2 text-xs font-mono text-matcha-muted">
+            <Clock size={14} className="text-matcha-primary" />
+            <span>Order ID: <strong className="text-matcha-text">{order.id}</strong></span>
           </div>
 
           {saveError && <p role="alert" className="text-red-800">บันทึกไม่สำเร็จ / Save failed: {saveError}</p>}
           {/* Bottom Right Fulfillment Status Selector & Apply Button */}
           <div className="flex items-center justify-end gap-3 flex-wrap">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-mono font-bold text-[#000000] shrink-0">
+              <span className="text-xs font-mono font-bold text-matcha-text shrink-0">
                 Change Status:
               </span>
               <select
                 value={currentStatus}
                 onChange={(e) => setCurrentStatus(e.target.value)}
-                className="px-3 py-1.5 rounded-xl border border-[#DCDCDC] bg-white font-mono text-xs font-bold text-[#000000] outline-none cursor-pointer focus:border-[#042509] shadow-2xs"
+                className="px-3 py-1.5 rounded-xl border border-matcha-border bg-white font-mono text-xs font-bold text-matcha-text outline-none cursor-pointer focus:border-matcha-primary shadow-2xs"
               >
                 <option value="Pending">Pending</option>
                 <option value="Processing">Processing</option>
@@ -398,7 +398,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
               type="button"
               onClick={handleApply}
               disabled={isApplying}
-              className="px-5 py-2 rounded-xl bg-[#042509] hover:bg-[#021505] text-white font-mono text-xs font-bold flex items-center gap-2 transition-all shadow-md cursor-pointer active:scale-98 disabled:opacity-50"
+              className="px-5 py-2 rounded-xl bg-matcha-primary hover:bg-matcha-primary-dark text-white font-mono text-xs font-bold flex items-center gap-2 transition-all shadow-md cursor-pointer active:scale-98 disabled:opacity-50"
             >
               <Check size={14} className={isApplying ? 'animate-spin' : ''} />
               <span>{isApplying ? 'Saving...' : 'Apply Status'}</span>
