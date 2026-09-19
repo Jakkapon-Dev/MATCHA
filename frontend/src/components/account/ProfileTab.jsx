@@ -19,16 +19,16 @@ export default function ProfileTab({
   };
 
   return (
-    <div className="bg-white border border-[#DCDCDC] p-6 sm:p-8 space-y-6">
-      <div className="flex items-center justify-between pb-4 border-b border-[#DCDCDC]">
+    <div className="bg-white border border-matcha-border p-6 sm:p-8 space-y-6">
+      <div className="flex items-center justify-between pb-4 border-b border-matcha-border">
         <div className="flex items-center gap-2">
-          <User size={18} className="text-[#042509]" />
+          <User size={18} className="text-matcha-primary" />
           <h2 className="text-base font-extrabold uppercase tracking-tight text-[#0A0A0A]">
             Personal Details & Membership
           </h2>
         </div>
         {saveSuccess && (
-          <span className="text-xs font-mono text-[#042509] font-bold flex items-center gap-1">
+          <span className="text-xs font-mono text-matcha-primary font-bold flex items-center gap-1">
             <CheckCircle2 size={14} />
             <span>{t('account.saved')}</span>
           </span>
@@ -39,7 +39,7 @@ export default function ProfileTab({
       <form onSubmit={onSave} className="space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-[11px] font-mono font-bold uppercase text-[#666666] mb-1">
+            <label className="block text-[11px] font-mono font-bold uppercase text-matcha-muted mb-1">
               First Name
             </label>
             <input
@@ -53,7 +53,7 @@ export default function ProfileTab({
           </div>
 
           <div>
-            <label className="block text-[11px] font-mono font-bold uppercase text-[#666666] mb-1">
+            <label className="block text-[11px] font-mono font-bold uppercase text-matcha-muted mb-1">
               Last Name
             </label>
             <input
@@ -67,7 +67,7 @@ export default function ProfileTab({
           </div>
 
           <div>
-            <label className="block text-[11px] font-mono font-bold uppercase text-[#666666] mb-1">
+            <label className="block text-[11px] font-mono font-bold uppercase text-matcha-muted mb-1">
               Email Address
             </label>
             <input
@@ -81,7 +81,7 @@ export default function ProfileTab({
           </div>
 
           <div>
-            <label className="block text-[11px] font-mono font-bold uppercase text-[#666666] mb-1">
+            <label className="block text-[11px] font-mono font-bold uppercase text-matcha-muted mb-1">
               Phone Number
             </label>
             <input
@@ -98,7 +98,7 @@ export default function ProfileTab({
         <div className="pt-4 flex justify-end">
           <button
             type="submit"
-            className="px-6 py-3 bg-[#042509] hover:bg-[#021505] text-white text-xs font-bold uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2"
+            className="px-6 py-3 bg-matcha-primary hover:bg-matcha-primary-dark text-white text-xs font-bold uppercase tracking-widest transition-all cursor-pointer flex items-center gap-2"
           >
             <Save size={14} />
             <span>{t('account.saveProfile')}</span>

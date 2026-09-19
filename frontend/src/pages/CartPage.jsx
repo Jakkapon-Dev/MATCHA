@@ -33,7 +33,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
 
   if (cartItems.length === 0) {
     return (
-      <div className="w-full min-h-[75vh] bg-[#F1F1F1] flex items-center justify-center px-6 py-20">
+      <div className="w-full min-h-[75vh] bg-matcha-bg flex items-center justify-center px-6 py-20">
         <div className="max-w-md w-full space-y-5">
           <ShoppingBag size={28} strokeWidth={1.5} className="text-[#0A0A0A]" aria-hidden="true" />
           <h1 className="text-3xl font-extrabold text-[#0A0A0A] tracking-tight uppercase">
@@ -44,7 +44,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
           </p>
           <button
             onClick={onBackToStore}
-            className="inline-block px-6 py-3 bg-[#0A0A0A] hover:bg-[#C91D1D] text-[#F1F1F1] text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]"
+            className="inline-block px-6 py-3 bg-[#0A0A0A] hover:bg-matcha-accent text-matcha-bg text-xs font-mono uppercase tracking-wider transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]"
           >
             {t('cart.emptyAction')}
           </button>
@@ -54,7 +54,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
   }
 
   return (
-    <div className="w-full bg-[#F1F1F1] text-[#0A0A0A] min-h-screen">
+    <div className="w-full bg-matcha-bg text-[#0A0A0A] min-h-screen">
       <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8 py-10 sm:py-14">
 
         <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-5 mb-6 border-b border-[#0A0A0A]">
@@ -62,13 +62,13 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
             <h1 className="text-3xl sm:text-4xl font-extrabold text-[#0A0A0A] tracking-tight uppercase">
               {t('cart.title')}
             </h1>
-            <span className="text-sm font-mono text-[#666666] tabular-nums">
+            <span className="text-sm font-mono text-matcha-muted tabular-nums">
               {t(cartItems.length === 1 ? 'cart.count' : 'cart.countPlural', { n: cartItems.length })}
             </span>
           </div>
           <button
             onClick={onBackToStore}
-            className="text-xs font-mono text-[#0A0A0A] underline underline-offset-4 decoration-[#C91D1D] decoration-2 self-start sm:self-auto cursor-pointer"
+            className="text-xs font-mono text-[#0A0A0A] underline underline-offset-4 decoration-matcha-accent decoration-2 self-start sm:self-auto cursor-pointer"
           >
             {t('cart.continue')}
           </button>
@@ -82,11 +82,11 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                 ? t('cart.freeUnlocked')
                 : t('cart.freeRemaining', { amount: awayFromFreeShipping.toFixed(2) })}
             </span>
-            <span className="text-[#666666] tabular-nums">
+            <span className="text-matcha-muted tabular-nums">
               {t('cart.progress', { percent: freeShippingProgress })}
             </span>
           </div>
-          <div className="w-full h-1.5 bg-[#DCDCDC] overflow-hidden">
+          <div className="w-full h-1.5 bg-matcha-border overflow-hidden">
             <div
               className="h-full transition-all duration-500 ease-out bg-[#0A0A0A]"
               style={{ width: `${freeShippingProgress}%` }}
@@ -96,7 +96,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
 
-          <div ref={cartMotionRef} className="lg:col-span-7 border-t border-[#DCDCDC] -mx-3 sm:-mx-4">
+          <div ref={cartMotionRef} className="lg:col-span-7 border-t border-matcha-border -mx-3 sm:-mx-4">
             {cartItems.map((item) => {
               const key = getCartKey(item);
               const qty = item.quantity || 1;
@@ -109,7 +109,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                   key={key}
                   data-motion-slot={key}
                   data-motion-item={`${key}:${item.quantity}`}
-                  className="flex gap-4 sm:gap-5 px-3 sm:px-4 py-5 border-b border-[#DCDCDC]"
+                  className="flex gap-4 sm:gap-5 px-3 sm:px-4 py-5 border-b border-matcha-border"
                 >
                   {/* The garment on its own dye, as everywhere else. */}
                   <div
@@ -127,7 +127,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                       />
                     ) : (
                       <div className="w-full aspect-3/4 flex items-center justify-center">
-                        <span className="text-[9px] font-mono tracking-widest text-[#666666] uppercase">
+                        <span className="text-[9px] font-mono tracking-widest text-matcha-muted uppercase">
                           {item.id}
                         </span>
                       </div>
@@ -160,17 +160,17 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                         <button
                           onClick={() => onRemove(key)}
                           aria-label={t('cart.remove', { name: item.name })}
-                          className="p-1.5 text-[#666666] hover:text-[#C91D1D] transition-colors cursor-pointer shrink-0 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+                          className="p-1.5 text-matcha-muted hover:text-matcha-accent transition-colors cursor-pointer shrink-0 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                         >
                           <Trash2 size={16} />
                         </button>
                       </div>
 
-                      <div className="mt-1.5 flex items-center gap-3 text-xs font-mono text-[#666666]">
+                      <div className="mt-1.5 flex items-center gap-3 text-xs font-mono text-matcha-muted">
                         <span>{t('cart.size', { size: item.size || 'M' })}</span>
                         <span className="tabular-nums">${unitPrice.toFixed(2)}</span>
                         {item.isBundleItem && (
-                          <span className="px-1.5 py-0.5 bg-[#0A0A0A] text-[#F1F1F1] text-[9px] font-bold uppercase">
+                          <span className="px-1.5 py-0.5 bg-[#0A0A0A] text-matcha-bg text-[9px] font-bold uppercase">
                             {t('cart.bundle')}
                           </span>
                         )}
@@ -178,11 +178,11 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                     </div>
 
                     <div className="flex items-center justify-between mt-4">
-                      <div className="inline-flex items-center border border-[#DCDCDC]">
+                      <div className="inline-flex items-center border border-matcha-border">
                         <button
                           onClick={() => onUpdateQty(key, -1)}
                           aria-label={t('cart.decrease')}
-                          className="w-8 h-8 flex items-center justify-center text-sm font-bold text-[#0A0A0A] hover:bg-[#DCDCDC] cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+                          className="w-8 h-8 flex items-center justify-center text-sm font-bold text-[#0A0A0A] hover:bg-matcha-border cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                         >
                           −
                         </button>
@@ -190,7 +190,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                         <button
                           onClick={() => onUpdateQty(key, 1)}
                           aria-label={t('cart.increase')}
-                          className="w-8 h-8 flex items-center justify-center text-sm font-bold text-[#0A0A0A] hover:bg-[#DCDCDC] cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+                          className="w-8 h-8 flex items-center justify-center text-sm font-bold text-[#0A0A0A] hover:bg-matcha-border cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                         >
                           +
                         </button>
@@ -207,19 +207,19 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
           </div>
 
           <div className="lg:col-span-5">
-            <div className="lg:sticky lg:top-28 p-6 bg-[#F1F1F1] border border-[#0A0A0A] space-y-5">
-              <h2 className="text-lg font-extrabold text-[#0A0A0A] tracking-tight uppercase pb-3 border-b border-[#DCDCDC]">
+            <div className="lg:sticky lg:top-28 p-6 bg-matcha-bg border border-[#0A0A0A] space-y-5">
+              <h2 className="text-lg font-extrabold text-[#0A0A0A] tracking-tight uppercase pb-3 border-b border-matcha-border">
                 {t('cart.summary')}
               </h2>
 
               <div className="flex flex-col gap-2.5 text-xs font-mono">
-                <div className="flex justify-between text-[#666666]">
+                <div className="flex justify-between text-matcha-muted">
                   <span>{t('cart.subtotal')}</span>
                   <span className="font-bold text-[#0A0A0A] tabular-nums">${subtotal.toFixed(2)}</span>
                 </div>
 
                 {bundleSavings > 0 && (
-                  <div className="flex justify-between text-[#C91D1D] font-bold">
+                  <div className="flex justify-between text-matcha-accent font-bold">
                     <span>{t('cart.bundleSavings')}</span>
                     <span className="tabular-nums">−${bundleSavings.toFixed(2)}</span>
                   </div>
@@ -229,33 +229,33 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                     on this page could select and that the total did not
                     include, so it read as a charge that had gone missing. The
                     choice lives at the next step, and now says so. */}
-                <div className="flex justify-between text-[#666666]">
+                <div className="flex justify-between text-matcha-muted">
                   <span>{t('cart.delivery')}</span>
                   <span className="font-bold text-[#0A0A0A] tabular-nums">
                     {shipping === 0 ? t('cart.deliveryFree') : `$${shipping.toFixed(2)}`}
                   </span>
                 </div>
-                <p className="text-[11px] text-[#666666] leading-relaxed">
+                <p className="text-[11px] text-matcha-muted leading-relaxed">
                   {t('cart.deliveryNote')}
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-[#DCDCDC] flex justify-between items-baseline">
+              <div className="pt-4 border-t border-matcha-border flex justify-between items-baseline">
                 <div>
-                  <span className="text-xs font-mono text-[#666666] block">{t('cart.total')}</span>
-                  <span className="text-[10px] font-mono text-[#666666]">{t('cart.taxes')}</span>
+                  <span className="text-xs font-mono text-matcha-muted block">{t('cart.total')}</span>
+                  <span className="text-[10px] font-mono text-matcha-muted">{t('cart.taxes')}</span>
                 </div>
                 <span className="text-2xl font-bold font-mono text-[#0A0A0A] tabular-nums">${total.toFixed(2)}</span>
               </div>
 
               <button
                 onClick={onCheckout}
-                className="w-full py-3.5 px-6 bg-[#0A0A0A] hover:bg-[#C91D1D] text-[#F1F1F1] font-mono font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]"
+                className="w-full py-3.5 px-6 bg-[#0A0A0A] hover:bg-matcha-accent text-matcha-bg font-mono font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]"
               >
                 {t('cart.checkout')}
               </button>
 
-              <div className="flex items-center gap-4 text-[11px] font-mono text-[#666666]">
+              <div className="flex items-center gap-4 text-[11px] font-mono text-matcha-muted">
                 <span className="inline-flex items-center gap-1.5">
                   <Lock size={12} aria-hidden="true" />
                   <span>{t('cart.secure')}</span>

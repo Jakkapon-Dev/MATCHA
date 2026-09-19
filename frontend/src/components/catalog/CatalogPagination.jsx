@@ -22,12 +22,12 @@ export default function CatalogPagination({
 
   const step = (delta) => onPageChange(currentPage + delta);
 
-  const arrow = 'p-1 text-[#0A0A0A] disabled:opacity-30 disabled:pointer-events-none cursor-pointer hover:text-[#C91D1D] transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]';
+  const arrow = 'p-1 text-[#0A0A0A] disabled:opacity-30 disabled:pointer-events-none cursor-pointer hover:text-matcha-accent transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]';
 
   return (
     <nav
       aria-label="Catalogue pages"
-      className="mt-16 pt-6 border-t border-[#DCDCDC] flex flex-col sm:flex-row items-baseline justify-between gap-4 font-mono text-xs text-[#666666]"
+      className="mt-16 pt-6 border-t border-matcha-border flex flex-col sm:flex-row items-baseline justify-between gap-4 font-mono text-xs text-matcha-muted"
     >
       <p>
         Showing <span className="text-[#0A0A0A]">{startIndex}</span>–
@@ -56,8 +56,8 @@ export default function CatalogPagination({
               aria-current={active ? 'page' : undefined}
               className={`tabular-nums cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
                 active
-                  ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-[#C91D1D]'
-                  : 'text-[#666666] hover:text-[#0A0A0A]'
+                  ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-matcha-accent'
+                  : 'text-matcha-muted hover:text-[#0A0A0A]'
               }`}
             >
               {page}

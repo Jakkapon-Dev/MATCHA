@@ -226,27 +226,27 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
         aria-labelledby="product-modal-title"
         data-lenis-prevent="true"
         onWheel={(e) => e.stopPropagation()}
-        className="bg-[#F1F1F1] text-[#0A0A0A] max-w-4xl w-full max-h-[92vh] overflow-y-auto overscroll-contain border border-[#0A0A0A] relative animate-modal-pop flex flex-col md:flex-row overflow-hidden"
+        className="bg-matcha-bg text-[#0A0A0A] max-w-4xl w-full max-h-[92vh] overflow-y-auto overscroll-contain border border-[#0A0A0A] relative animate-modal-pop flex flex-col md:flex-row overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close Button */}
         <button 
           onClick={onClose}
           aria-label={t('product.close')}
-          className="absolute top-3 right-3 z-30 w-9 h-9 bg-[#0A0A0A] text-[#F1F1F1] hover:bg-[#C91D1D] flex items-center justify-center transition-colors cursor-pointer"
+          className="absolute top-3 right-3 z-30 w-9 h-9 bg-[#0A0A0A] text-matcha-bg hover:bg-matcha-accent flex items-center justify-center transition-colors cursor-pointer"
         >
           <X size={18} />
         </button>
 
         {/* LEFT COLUMN: Clean Framed Product Card */}
-        <div className="md:w-1/2 bg-[#F1F1F1] p-3 sm:p-4 flex flex-col justify-between items-center relative border-b md:border-b-0 md:border-r border-[#DCDCDC]">
+        <div className="md:w-1/2 bg-matcha-bg p-3 sm:p-4 flex flex-col justify-between items-center relative border-b md:border-b-0 md:border-r border-matcha-border">
           
           {/* One favourite control, not two: the heart that used to sit here
               carried the same action and the same state as the one beside Add
               to bag. */}
           <div className="w-full flex items-center justify-between z-10 mb-2.5">
             {(product.tag || product.season) && (
-              <span className="px-2.5 py-1 bg-[#0A0A0A] text-[#F1F1F1] text-[10px] font-mono font-bold tracking-widest uppercase">
+              <span className="px-2.5 py-1 bg-[#0A0A0A] text-matcha-bg text-[10px] font-mono font-bold tracking-widest uppercase">
                 {product.tag || `${product.season} COLLECTION`}
               </span>
             )}
@@ -268,7 +268,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
 
             {!product.inStock && (
               <div className="absolute inset-0 bg-[#0A0A0A]/65 flex items-center justify-center z-25">
-                <span className="px-4 py-2 bg-[#F1F1F1] text-[#0A0A0A] text-xs font-mono font-bold uppercase tracking-wider">
+                <span className="px-4 py-2 bg-matcha-bg text-[#0A0A0A] text-xs font-mono font-bold uppercase tracking-wider">
                   {t('product.soldOut')}
                 </span>
               </div>
@@ -294,7 +294,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
           )}
 
           {/* COLOR VARIANT THUMBNAILS */}
-          {gallery.length > 0 && <div className="flex flex-wrap gap-2 mt-3" aria-label={t('product.moreImages')}>{gallery.map((g, i) => <button key={g.url} type="button" aria-label={`${t('product.moreImages')} ${i + 1}`} aria-pressed={galleryImage?.url === g.url} onClick={() => setGalleryImage(g)} className="w-14 h-16 border border-[#DCDCDC] overflow-hidden hover:border-[#0A0A0A] focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"><img src={webpSrc(g.url)} alt={g.alt || product.name} className="w-full h-full object-contain" /></button>)}</div>}
+          {gallery.length > 0 && <div className="flex flex-wrap gap-2 mt-3" aria-label={t('product.moreImages')}>{gallery.map((g, i) => <button key={g.url} type="button" aria-label={`${t('product.moreImages')} ${i + 1}`} aria-pressed={galleryImage?.url === g.url} onClick={() => setGalleryImage(g)} className="w-14 h-16 border border-matcha-border overflow-hidden hover:border-[#0A0A0A] focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"><img src={webpSrc(g.url)} alt={g.alt || product.name} className="w-full h-full object-contain" /></button>)}</div>}
           {variants.length > 1 && (
             <div className="w-full flex items-center justify-center gap-2 pt-2.5 overflow-x-auto pb-0.5">
               {variants.map((v, i) => {
@@ -328,7 +328,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             
             {/* Header: Title, Category, Rating, Price */}
             <div>
-              <div className="flex items-baseline justify-between gap-3 text-xs font-mono text-[#666666] mb-1.5 pr-10">
+              <div className="flex items-baseline justify-between gap-3 text-xs font-mono text-matcha-muted mb-1.5 pr-10">
                 <span className="uppercase">{[product.season, product.category].filter(Boolean).join(' ')}</span>
                 <span className="tabular-nums shrink-0">{product.id}</span>
               </div>
@@ -343,7 +343,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                     ${itemPrice.toFixed(2)}
                   </span>
                   {product.originalPrice && (
-                    <span className="text-sm line-through text-[#666666]">
+                    <span className="text-sm line-through text-matcha-muted">
                       ${(typeof product.originalPrice === 'number' ? product.originalPrice : Number(product.originalPrice)).toFixed(2)}
                     </span>
                   )}
@@ -354,7 +354,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             </div>
 
             {/* Description */}
-            <p className="text-xs sm:text-sm text-[#666666] leading-relaxed">
+            <p className="text-xs sm:text-sm text-matcha-muted leading-relaxed">
               {describeProduct(product, lang)}
             </p>
 
@@ -362,7 +362,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             <div>
               <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider mb-2">
                 <span>{t('product.colour')}: <strong className="text-[#0A0A0A]">{activeVariant.color || t('product.notRecorded')}</strong></span>
-                <span className="text-[10px] font-mono text-[#666666]">
+                <span className="text-[10px] font-mono text-matcha-muted">
                   {variants.length === 1 ? t('product.oneTone') : t('product.tones', { n: variants.length })}
                 </span>
               </div>
@@ -400,7 +400,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   type="button"
                   onClick={() => setShowFitGuide(prev => !prev)}
                   aria-expanded={showFitGuide}
-                  className="text-[11px] font-mono font-bold text-[#C91D1D] hover:text-[#A81515] underline cursor-pointer flex items-center gap-1 transition-colors"
+                  className="text-[11px] font-mono font-bold text-matcha-accent hover:text-matcha-accent-hover underline cursor-pointer flex items-center gap-1 transition-colors"
                 >
                   <Ruler size={13} />
                   <span>{showFitGuide ? t('product.hideFitGuide') : t('product.fitGuide')}</span>
@@ -408,7 +408,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
               </div>
 
               {needsSize && (
-                <p role="status" className="mb-2 text-xs font-mono text-[#C91D1D]">
+                <p role="status" className="mb-2 text-xs font-mono text-matcha-accent">
                   {sizeList.length ? t('product.pickSize') : t('product.noSizes')}
                 </p>
               )}
@@ -421,8 +421,8 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                     onClick={() => { setSelectedSize(sz); setNeedsSize(false); }}
                     className={`min-w-10 h-10 px-2 text-xs font-mono font-bold uppercase transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
                       selectedSize === sz
-                        ? 'bg-[#0A0A0A] text-[#F1F1F1]'
-                        : 'bg-[#F1F1F1] border border-[#DCDCDC] text-[#0A0A0A] hover:border-[#0A0A0A]'
+                        ? 'bg-[#0A0A0A] text-matcha-bg'
+                        : 'bg-matcha-bg border border-matcha-border text-[#0A0A0A] hover:border-[#0A0A0A]'
                     }`}
                   >
                     {sz}
@@ -432,20 +432,20 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
 
               {/* Functional Interactive Fit Guide View (Requirement 3) */}
               {showFitGuide && (
-                <div className="mt-3 p-3.5 sm:p-4 bg-[#F1F1F1] border border-[#DCDCDC] space-y-3 animate-fade-in text-xs">
+                <div className="mt-3 p-3.5 sm:p-4 bg-matcha-bg border border-matcha-border space-y-3 animate-fade-in text-xs">
                   {/* Mandatory Sample Sizing Badge Attached to Table */}
-                  <div className="p-2.5 bg-[#F1F1F1] border-l-2 border-[#C91D1D] text-[#0A0A0A] text-[11px] font-mono flex items-start gap-2">
-                    <AlertCircle size={14} className="shrink-0 text-[#C91D1D] mt-0.5" />
+                  <div className="p-2.5 bg-matcha-bg border-l-2 border-matcha-accent text-[#0A0A0A] text-[11px] font-mono flex items-start gap-2">
+                    <AlertCircle size={14} className="shrink-0 text-matcha-accent mt-0.5" />
                     <div>
                       <span className="font-bold">{t('product.sampleBadge')}</span> {t('product.sampleNote')}
                     </div>
                   </div>
 
                   <div className="flex items-center justify-between font-mono">
-                    <span className="font-bold text-[#000000] uppercase">
+                    <span className="font-bold text-matcha-text uppercase">
                       {product.specs?.sizeGuide?.system || t('product.fitGuide')}
                     </span>
-                    <span className="text-[10px] text-[#666666]">{t('product.unitCm')}</span>
+                    <span className="text-[10px] text-matcha-muted">{t('product.unitCm')}</span>
                   </div>
 
                   {/* Shoes Size Guide */}
@@ -453,16 +453,16 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                     <div className="overflow-x-auto">
                       <table className="w-full text-left font-mono text-[10px] sm:text-xs border-collapse">
                         <thead>
-                          <tr className="border-b border-[#DCDCDC] text-[#666666] bg-[#F1F1F1]">
+                          <tr className="border-b border-matcha-border text-matcha-muted bg-matcha-bg">
                             <th className="py-1.5 px-2">{t('product.shoe.eu')}</th>
                             <th className="py-1.5 px-2">{t('product.shoe.usMen')}</th>
                             <th className="py-1.5 px-2">{t('product.shoe.usWomen')}</th>
                             <th className="py-1.5 px-2">{t('product.shoe.footLength')}</th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-[#DCDCDC]/50">
+                        <tbody className="divide-y divide-matcha-border/50">
                           {product.specs?.sizeGuide?.rows?.map((r, i) => (
-                            <tr key={i} className={selectedSize === r.size ? 'bg-[#042509]/10 font-bold text-[#042509]' : 'text-[#000000]'}>
+                            <tr key={i} className={selectedSize === r.size ? 'bg-matcha-primary/10 font-bold text-matcha-primary' : 'text-matcha-text'}>
                               <td className="py-1.5 px-2">{r.size}</td>
                               <td className="py-1.5 px-2">{r.usMen}</td>
                               <td className="py-1.5 px-2">{r.usWomen}</td>
@@ -473,11 +473,11 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                       </table>
                     </div>
                   ) : product.category === 'Accessories' ? (
-                    <div className="p-3 bg-[#F1F1F1] border border-[#DCDCDC] space-y-1.5">
-                      <div className="font-bold text-[#000000] text-xs">
+                    <div className="p-3 bg-matcha-bg border border-matcha-border space-y-1.5">
+                      <div className="font-bold text-matcha-text text-xs">
                         {t('product.dimensions')}: <span className="text-[#0A0A0A]">{product.specs?.sizeGuide?.dimensionText || 'One Size (OS)'}</span>
                       </div>
-                      <p className="text-[11px] text-[#666666] leading-relaxed">
+                      <p className="text-[11px] text-matcha-muted leading-relaxed">
                         {product.specs?.sizeGuide?.note || t('product.oneSizeNote')}
                       </p>
                     </div>
@@ -485,15 +485,15 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                     <div className="overflow-x-auto">
                       <table className="w-full text-left font-mono text-[10px] sm:text-xs border-collapse">
                         <thead>
-                          <tr className="border-b border-[#DCDCDC] text-[#666666] bg-[#F1F1F1]">
+                          <tr className="border-b border-matcha-border text-matcha-muted bg-matcha-bg">
                             {product.specs?.sizeGuide?.headers?.map((h, i) => (
                               <th key={i} className="py-1.5 px-2">{h}</th>
                             ))}
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-[#DCDCDC]/50">
+                        <tbody className="divide-y divide-matcha-border/50">
                           {product.specs?.sizeGuide?.rows?.map((r, i) => (
-                            <tr key={i} className={selectedSize === r.size ? 'bg-[#042509]/10 font-bold text-[#042509]' : 'text-[#000000]'}>
+                            <tr key={i} className={selectedSize === r.size ? 'bg-matcha-primary/10 font-bold text-matcha-primary' : 'text-matcha-text'}>
                               <td className="py-1.5 px-2">{r.size}</td>
                               {r.chest && <td className="py-1.5 px-2">{r.chest}</td>}
                               {r.waist && <td className="py-1.5 px-2">{r.waist}</td>}
@@ -509,7 +509,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
 
                   {/* Measurement Instruction */}
                   {product.specs?.sizeGuide?.measureInstruction && (
-                    <div className="pt-2 border-t border-[#DCDCDC]/60 text-[10px] text-[#666666] leading-relaxed">
+                    <div className="pt-2 border-t border-matcha-border/60 text-[10px] text-matcha-muted leading-relaxed">
                       <strong className="text-[#0A0A0A]">{t('product.measure')}:</strong> {product.specs.sizeGuide.measureInstruction}
                     </div>
                   )}
@@ -518,7 +518,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             </div>
 
             {/* 3. Collapsible Accordion: Materials, Care & Store Status (Requirement 3) */}
-            <div className="border border-[#DCDCDC] overflow-hidden bg-[#F1F1F1] divide-y divide-[#DCDCDC] text-xs">
+            <div className="border border-matcha-border overflow-hidden bg-matcha-bg divide-y divide-matcha-border text-xs">
               
               {/* Accordion 1: วัสดุและรูปทรง */}
               <div>
@@ -526,16 +526,16 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   type="button"
                   onClick={() => setActiveAccordion(activeAccordion === 'materials' ? null : 'materials')}
                   aria-expanded={activeAccordion === 'materials'}
-                  className="w-full px-4 py-3 text-left font-mono font-bold text-[#000000] flex items-center justify-between hover:bg-[#F1F1F1] transition-colors cursor-pointer"
+                  className="w-full px-4 py-3 text-left font-mono font-bold text-matcha-text flex items-center justify-between hover:bg-matcha-bg transition-colors cursor-pointer"
                 >
                   <span className="flex items-center gap-2">
-                    <Sparkles size={14} className="text-[#042509]" />
+                    <Sparkles size={14} className="text-matcha-primary" />
                     <span>{t('product.materials')}</span>
                   </span>
-                  <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'materials' ? 'rotate-180 text-[#042509]' : 'text-[#666666]'}`} />
+                  <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'materials' ? 'rotate-180 text-matcha-primary' : 'text-matcha-muted'}`} />
                 </button>
                 {activeAccordion === 'materials' && (
-                  <div className="px-4 pb-3.5 pt-1 space-y-2 text-[#666666] font-mono text-[11px] bg-[#F1F1F1]/40 animate-fade-in">
+                  <div className="px-4 pb-3.5 pt-1 space-y-2 text-matcha-muted font-mono text-[11px] bg-matcha-bg/40 animate-fade-in">
                     <div>
                       <span className="font-bold text-[#0A0A0A]">{t('product.silhouette')}:</span> {product.specs?.silhouette || product.fit || 'Relaxed Fit'}
                     </div>
@@ -545,7 +545,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                     <div>
                       <span className="font-bold text-[#0A0A0A]">{t('product.materialHint')}:</span> {product.specs?.materialHint || '—'}
                     </div>
-                    <div className="p-2 bg-[#F1F1F1] border-l-2 border-[#C91D1D] text-[#0A0A0A] text-[10px]">
+                    <div className="p-2 bg-matcha-bg border-l-2 border-matcha-accent text-[#0A0A0A] text-[10px]">
                       <strong>{t('product.fibreLabel')}:</strong> {t('product.fibrePending')}
                     </div>
                   </div>
@@ -558,19 +558,19 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   type="button"
                   onClick={() => setActiveAccordion(activeAccordion === 'care' ? null : 'care')}
                   aria-expanded={activeAccordion === 'care'}
-                  className="w-full px-4 py-3 text-left font-mono font-bold text-[#000000] flex items-center justify-between hover:bg-[#F1F1F1] transition-colors cursor-pointer"
+                  className="w-full px-4 py-3 text-left font-mono font-bold text-matcha-text flex items-center justify-between hover:bg-matcha-bg transition-colors cursor-pointer"
                 >
                   <span className="flex items-center gap-2">
-                    <RefreshCw size={14} className="text-[#042509]" />
+                    <RefreshCw size={14} className="text-matcha-primary" />
                     <span>{t('product.care')}</span>
                   </span>
-                  <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'care' ? 'rotate-180 text-[#042509]' : 'text-[#666666]'}`} />
+                  <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'care' ? 'rotate-180 text-matcha-primary' : 'text-matcha-muted'}`} />
                 </button>
                 {activeAccordion === 'care' && (
-                  <div className="px-4 pb-3.5 pt-1 space-y-1.5 text-[#666666] font-mono text-[11px] bg-[#F1F1F1]/40 animate-fade-in">
+                  <div className="px-4 pb-3.5 pt-1 space-y-1.5 text-matcha-muted font-mono text-[11px] bg-matcha-bg/40 animate-fade-in">
                     {(product.specs?.careInstructions || t('product.careDefaults')).map((item, idx) => (
                       <div key={idx} className="flex items-start gap-1.5">
-                        <span className="text-[#042509] font-bold">✓</span>
+                        <span className="text-matcha-primary font-bold">✓</span>
                         <span>{item}</span>
                       </div>
                     ))}
@@ -584,39 +584,39 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   type="button"
                   onClick={() => setActiveAccordion(activeAccordion === 'status' ? null : 'status')}
                   aria-expanded={activeAccordion === 'status'}
-                  className="w-full px-4 py-3 text-left font-mono font-bold text-[#000000] flex items-center justify-between hover:bg-[#F1F1F1] transition-colors cursor-pointer"
+                  className="w-full px-4 py-3 text-left font-mono font-bold text-matcha-text flex items-center justify-between hover:bg-matcha-bg transition-colors cursor-pointer"
                 >
                   <span className="flex items-center gap-2">
-                    <ShieldCheck size={14} className="text-[#042509]" />
+                    <ShieldCheck size={14} className="text-matcha-primary" />
                     <span>{t('product.status')}</span>
                   </span>
-                  <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'status' ? 'rotate-180 text-[#042509]' : 'text-[#666666]'}`} />
+                  <ChevronDown size={15} className={`transition-transform duration-200 ${activeAccordion === 'status' ? 'rotate-180 text-matcha-primary' : 'text-matcha-muted'}`} />
                 </button>
                 {activeAccordion === 'status' && (
-                  <div className="px-4 pb-3.5 pt-1 space-y-2 text-[#666666] font-mono text-[11px] bg-[#F1F1F1]/40 animate-fade-in">
-                    <div className="flex items-center justify-between py-1 border-b border-[#DCDCDC]/40">
+                  <div className="px-4 pb-3.5 pt-1 space-y-2 text-matcha-muted font-mono text-[11px] bg-matcha-bg/40 animate-fade-in">
+                    <div className="flex items-center justify-between py-1 border-b border-matcha-border/40">
                       <span className="font-bold text-[#0A0A0A]">{t('product.specStatus')}:</span>
-                      <span className="px-2 py-0.5 bg-[#0A0A0A] text-[#F1F1F1] font-bold text-[10px]">
+                      <span className="px-2 py-0.5 bg-[#0A0A0A] text-matcha-bg font-bold text-[10px]">
                         {product.specs?.statusLabel || t('product.sampleBadge')}
                       </span>
                     </div>
                     {specRows.map(({ label, value }, i) => (
                       <div
                         key={label}
-                        className={`flex items-start justify-between gap-4 py-1 ${i < specRows.length - 1 ? 'border-b border-[#DCDCDC]/40' : ''}`}
+                        className={`flex items-start justify-between gap-4 py-1 ${i < specRows.length - 1 ? 'border-b border-matcha-border/40' : ''}`}
                       >
                         <span className="font-bold text-[#0A0A0A] shrink-0">{label}:</span>
                         {value ? (
-                          <span className="text-right text-[#666666] flex items-baseline justify-end gap-1.5 flex-wrap">
+                          <span className="text-right text-matcha-muted flex items-baseline justify-end gap-1.5 flex-wrap">
                             <span>{value}</span>
                             {isSampleSpec && (
-                              <span className="px-1 bg-[#0A0A0A] text-[#F1F1F1] text-[9px] font-bold shrink-0">
+                              <span className="px-1 bg-[#0A0A0A] text-matcha-bg text-[9px] font-bold shrink-0">
                                 {t('product.sampleTag')}
                               </span>
                             )}
                           </span>
                         ) : (
-                          <span className="text-[#666666] text-right">{t('product.pendingStore')}</span>
+                          <span className="text-matcha-muted text-right">{t('product.pendingStore')}</span>
                         )}
                       </div>
                     ))}
@@ -629,17 +629,17 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             {/* 4. Quantity Selector */}
             <div className="flex items-center gap-3">
               <span className="text-xs font-bold uppercase tracking-wider">{t('product.quantity')}</span>
-              <div className="flex items-center border border-[#DCDCDC] bg-[#F1F1F1] overflow-hidden font-mono text-xs">
+              <div className="flex items-center border border-matcha-border bg-matcha-bg overflow-hidden font-mono text-xs">
                 <button 
                   onClick={() => setQuantity(q => Math.max(1, q - 1))}
-                  className="px-3 py-1.5 hover:bg-[#F1F1F1] text-[#000000] font-bold cursor-pointer transition-colors"
+                  className="px-3 py-1.5 hover:bg-matcha-bg text-matcha-text font-bold cursor-pointer transition-colors"
                 >
                   -
                 </button>
                 <span className="px-3.5 py-1.5 font-bold min-w-8 text-center">{quantity}</span>
                 <button 
                   onClick={() => setQuantity(q => q + 1)}
-                  className="px-3 py-1.5 hover:bg-[#F1F1F1] text-[#000000] font-bold cursor-pointer transition-colors"
+                  className="px-3 py-1.5 hover:bg-matcha-bg text-matcha-text font-bold cursor-pointer transition-colors"
                 >
                   +
                 </button>
@@ -649,7 +649,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
           </div>
 
           {/* Bottom Actions: Add to Bag Button & Verified Shipping Rules (Requirement 5) */}
-          <div className="mt-6 pt-5 border-t border-[#DCDCDC] space-y-3">
+          <div className="mt-6 pt-5 border-t border-matcha-border space-y-3">
             <div className="flex items-center gap-2.5">
               <button
                 onClick={handleAdd}
@@ -657,9 +657,9 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                 className={`flex-1 py-4 font-mono font-bold text-xs sm:text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A] ${
                   product.inStock
                     ? addedAnimation
-                      ? 'bg-[#042509] text-[#F1F1F1]'
-                      : 'bg-[#0A0A0A] hover:bg-[#C91D1D] text-[#F1F1F1]'
-                    : 'bg-[#DCDCDC] text-[#666666] cursor-not-allowed'
+                      ? 'bg-matcha-primary text-matcha-bg'
+                      : 'bg-[#0A0A0A] hover:bg-matcha-accent text-matcha-bg'
+                    : 'bg-matcha-border text-matcha-muted cursor-not-allowed'
                 }`}
               >
                 <ShoppingBag size={16} />
@@ -678,8 +678,8 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                 aria-label={wishlistActive ? t('product.wishlistRemove') : t('product.wishlistAdd')}
                 className={`p-4 border transition-colors cursor-pointer flex items-center justify-center outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
                   wishlistActive
-                    ? 'bg-[#C91D1D] border-[#C91D1D] text-[#F1F1F1]'
-                    : 'bg-[#F1F1F1] border-[#DCDCDC] text-[#666666] hover:text-[#C91D1D] hover:border-[#C91D1D]'
+                    ? 'bg-matcha-accent border-matcha-accent text-matcha-bg'
+                    : 'bg-matcha-bg border-matcha-border text-matcha-muted hover:text-matcha-accent hover:border-matcha-accent'
                 }`}
               >
                 <Heart size={18} fill={wishlistActive ? '#F1F1F1' : 'none'} />
@@ -687,9 +687,9 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             </div>
 
             {/* ค่าส่งมาจากตารางกลางเดียวกับเซิร์ฟเวอร์ — ตัวเลขที่นี่คือตัวแรกที่ผู้ซื้อเห็น */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] font-mono text-[#666666] pt-1">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] font-mono text-matcha-muted pt-1">
               <div className="flex items-center gap-1.5">
-                <Truck size={13} className={isFreeShippingEligible ? 'text-[#042509]' : 'text-[#C91D1D]'} />
+                <Truck size={13} className={isFreeShippingEligible ? 'text-matcha-primary' : 'text-matcha-accent'} />
                 <span>
                   {isFreeShippingEligible
                     ? t('product.shippingFree', { threshold: FREE_SHIPPING_THRESHOLD })

@@ -13,8 +13,8 @@ export default function OrdersTab({ status, errors, setOrderStatusFilter, orderS
                     onClick={() => setOrderStatusFilter(st)}
                     className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border ${
                       orderStatusFilter === st
-                        ? 'bg-[#042509] text-white border-[#042509] shadow-xs'
-                        : 'bg-white text-[#666666] border-[#DCDCDC] hover:border-[#042509]'
+                        ? 'bg-matcha-primary text-white border-matcha-primary shadow-xs'
+                        : 'bg-white text-matcha-muted border-matcha-border hover:border-matcha-primary'
                     }`}
                   >
                     {st === 'ALL' ? 'All Orders' : st}
@@ -23,10 +23,10 @@ export default function OrdersTab({ status, errors, setOrderStatusFilter, orderS
               </div>
 
               {/* Orders Table */}
-              <div className="rounded-2xl bg-white border border-[#DCDCDC] shadow-sm overflow-hidden">
+              <div className="rounded-2xl bg-white border border-matcha-border shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left font-mono text-xs">
-                    <thead className="bg-[#F1F1F1] border-b border-[#DCDCDC] text-[#666666]">
+                    <thead className="bg-matcha-bg border-b border-matcha-border text-matcha-muted">
                       <tr>
                         <th className="p-4 font-bold">Order ID</th>
                         <th className="p-4 font-bold">Customer</th>
@@ -37,11 +37,11 @@ export default function OrdersTab({ status, errors, setOrderStatusFilter, orderS
                         <th className="p-4 font-bold">Fulfillment Status</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#DCDCDC]/40">
+                    <tbody className="divide-y divide-matcha-border/40">
                       {filteredOrders.length === 0 && <tr><td colSpan={7} className="p-6 text-center">No records match the current filters.</td></tr>}
                       {filteredOrders.map(ord => (
-                        <tr key={ord.id} className="hover:bg-[#F1F1F1]/80 transition-colors">
-                          <td className="p-4 font-bold text-[#042509]">{ord.id}</td>
+                        <tr key={ord.id} className="hover:bg-matcha-bg/80 transition-colors">
+                          <td className="p-4 font-bold text-matcha-primary">{ord.id}</td>
                           <td className="p-4">
                             <button
                               type="button"
@@ -49,17 +49,17 @@ export default function OrdersTab({ status, errors, setOrderStatusFilter, orderS
                               className="text-left group cursor-pointer"
                               title="Click to view full Order Tracking & Fulfillment status"
                             >
-                              <div className="font-bold text-[#000000] group-hover:text-[#042509] group-hover:underline flex items-center gap-1.5">
+                              <div className="font-bold text-matcha-text group-hover:text-matcha-primary group-hover:underline flex items-center gap-1.5">
                                 <span>{ord.customer}</span>
-                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#042509]/10 text-[#042509] font-semibold group-hover:bg-[#042509] group-hover:text-white transition-colors">
+                                <span className="text-[10px] px-1.5 py-0.5 rounded bg-matcha-primary/10 text-matcha-primary font-semibold group-hover:bg-matcha-primary group-hover:text-white transition-colors">
                                   Track ↗
                                 </span>
                               </div>
-                              <div className="text-[10px] text-[#666666]">{ord.email}</div>
+                              <div className="text-[10px] text-matcha-muted">{ord.email}</div>
                             </button>
                           </td>
-                          <td className="p-4 text-[#000000]">{ord.items} pcs</td>
-                          <td className="p-4 font-bold text-[#042509]">${Number(ord.total).toFixed(2)}</td>
+                          <td className="p-4 text-matcha-text">{ord.items} pcs</td>
+                          <td className="p-4 font-bold text-matcha-primary">${Number(ord.total).toFixed(2)}</td>
                           <td className="p-4">
                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
                               String(ord.paymentStatus || 'Unknown').toLowerCase() === 'paid'
@@ -69,13 +69,13 @@ export default function OrdersTab({ status, errors, setOrderStatusFilter, orderS
                               {ord.paymentStatus || 'Unknown'}
                             </span>
                           </td>
-                          <td className="p-4 text-[#666666]">{ord.date}</td>
+                          <td className="p-4 text-matcha-muted">{ord.date}</td>
                           <td className="p-4">
                             <select
                               value={ord.status}
                               disabled={saving || isDemo}
                               onChange={(e) => handleUpdateOrderStatus(ord.id, e.target.value)}
-                              className="px-2.5 py-1 rounded-lg border border-[#DCDCDC] bg-white font-mono text-xs font-bold text-[#000000] outline-none cursor-pointer"
+                              className="px-2.5 py-1 rounded-lg border border-matcha-border bg-white font-mono text-xs font-bold text-matcha-text outline-none cursor-pointer"
                             >
                               <option value="Pending">Pending</option>
                               <option value="Processing">Processing</option>

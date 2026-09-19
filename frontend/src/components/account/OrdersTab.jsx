@@ -13,7 +13,7 @@ export default function OrdersTab({ orders = [], isLoaded = true }) {
   const getStatusBadge = (status = '') => {
     const s = status.toLowerCase();
     if (s === 'delivered' || s === 'completed') {
-      return 'bg-[#518F5C] text-[#042509] border border-[#3E7047]';
+      return 'bg-matcha-secondary text-matcha-primary border border-matcha-secondary-dark';
     }
     if (s === 'shipped') {
       return 'bg-purple-100 text-purple-800 border border-purple-200';
@@ -43,30 +43,35 @@ export default function OrdersTab({ orders = [], isLoaded = true }) {
   };
 
   return (
-    <div className="bg-white border border-[#DCDCDC] p-6 sm:p-8 space-y-6">
-      <div className="flex items-center justify-between pb-4 border-b border-[#DCDCDC]">
+    <div className="bg-white border border-matcha-border p-6 sm:p-8 space-y-6">
+      <div className="flex items-center justify-between pb-4 border-b border-matcha-border">
         <div className="flex items-center gap-2">
-          <Package size={18} className="text-[#042509]" />
+          <Package size={18} className="text-matcha-primary" />
+          {/* Written in English in the markup, so it stayed English on the
+              Thai page, above a Thai empty state. */}
           <h2 className="text-base font-extrabold uppercase tracking-tight text-[#0A0A0A]">
-            Order History ({orders.length})
+            {t('account.orderHistoryHeading')} ({orders.length})
           </h2>
         </div>
       </div>
 
       {/* Empty State: displayed when the parent has no orders to provide. */}
       {orders.length === 0 && (
-        <div className="py-12 px-4 text-center border border-dashed border-[#DCDCDC] bg-[#F1F1F1]/60 space-y-3">
-          <div className="w-12 h-12 mx-auto bg-[#F1F1F1] border border-[#DCDCDC] flex items-center justify-center text-[#666666]">
+        <div className="py-12 px-4 text-center border border-dashed border-matcha-border bg-matcha-bg/60 space-y-3">
+          <div className="w-12 h-12 mx-auto bg-matcha-bg border border-matcha-border flex items-center justify-center text-matcha-muted">
             <Package size={24} />
           </div>
           <div className="text-sm font-bold text-[#0A0A0A]">{t('account.noOrders')}</div>
-          <p className="text-xs text-[#666666] max-w-sm mx-auto font-mono">
-            คำสั่งซื้อใหม่และสถานะการจัดส่งแบบเรียลไทม์จะปรากฏที่นี่หลังจากทำรายการ
+          {/* Was a Thai sentence written straight into the markup, so an
+              English reader got an English heading and a Thai explanation
+              underneath it. */}
+          <p className="text-xs text-matcha-muted max-w-sm mx-auto font-mono">
+            {t('account.noOrdersHint')}
           </p>
           <button
             type="button"
             onClick={() => navigate('/catalog')}
-            className="mt-2 inline-flex items-center gap-2 px-5 py-2.5 bg-[#042509] hover:bg-[#021505] text-white text-xs font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer"
+            className="mt-2 inline-flex items-center gap-2 px-5 py-2.5 bg-matcha-primary hover:bg-matcha-primary-dark text-white text-xs font-mono font-bold uppercase tracking-wider transition-colors cursor-pointer"
           >
             <ShoppingBag size={14} />
             <span>{t('account.browseCatalog')}</span>
@@ -78,13 +83,13 @@ export default function OrdersTab({ orders = [], isLoaded = true }) {
       {orders.length > 0 && (
         <div className="space-y-4">
           {orders.map((order) => (
-            <div key={order.id} className="p-5 border border-[#DCDCDC] bg-[#F1F1F1]/50 space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#DCDCDC]/60 text-xs font-mono">
+            <div key={order.id} className="p-5 border border-matcha-border bg-matcha-bg/50 space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-matcha-border/60 text-xs font-mono">
                 <div className="flex items-center gap-2.5 flex-wrap">
                   <span className="font-bold text-[#0A0A0A]">#{order.id}</span>
-                  <span className="text-[#666666]">• {order.date}</span>
+                  <span className="text-matcha-muted">• {order.date}</span>
                   {order.paymentMethod && (
-                    <span className="text-[10px] text-[#666666] bg-white px-2 py-0.5 rounded border border-[#DCDCDC] uppercase">
+                    <span className="text-[10px] text-matcha-muted bg-white px-2 py-0.5 rounded border border-matcha-border uppercase">
                       {order.paymentMethod}
                     </span>
                   )}
@@ -106,7 +111,7 @@ export default function OrdersTab({ orders = [], isLoaded = true }) {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {order.items.map((item, i) => (
                   <div key={i} className="flex items-center gap-3 text-xs font-mono">
-                    <div className="w-12 h-14 bg-white border border-[#DCDCDC] overflow-hidden shrink-0">
+                    <div className="w-12 h-14 bg-white border border-matcha-border overflow-hidden shrink-0">
                       <img 
                         src={webpSrc(item.image)} data-original-src={item.image} 
                         loading="lazy"
@@ -118,7 +123,7 @@ export default function OrdersTab({ orders = [], isLoaded = true }) {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="font-bold text-[#0A0A0A] truncate">{item.name}</div>
-                      <div className="text-[10px] text-[#666666]">
+                      <div className="text-[10px] text-matcha-muted">
                         {item.color} {item.size ? `• ${item.size}` : ''} • Qty {item.qty}
                       </div>
                     </div>

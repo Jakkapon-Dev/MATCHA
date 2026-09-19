@@ -226,13 +226,13 @@ export default function EditorialLookbookPage() {
 
   if (!curatedEditorialSpreads?.length || !coverStory) {
     return (
-      <div className="max-w-3xl mx-auto my-16 p-8 border border-dashed border-[#DCDCDC] rounded-3xl bg-white text-center shadow-sm">
-        <h1 className="text-2xl font-bold text-[#000000]">{loading ? 'กำลังโหลด Lookbook' : 'ยังไม่มี Lookbook ที่เผยแพร่'}</h1>
-        <p className="my-4 text-xs font-mono text-[#666666]">กลับมาดูลุคใหม่ของเราได้เร็ว ๆ นี้ หรือลองเลือกซีซันอื่น</p>
+      <div className="max-w-3xl mx-auto my-16 p-8 border border-dashed border-matcha-border rounded-3xl bg-white text-center shadow-sm">
+        <h1 className="text-2xl font-bold text-matcha-text">{loading ? 'กำลังโหลด Lookbook' : 'ยังไม่มี Lookbook ที่เผยแพร่'}</h1>
+        <p className="my-4 text-xs font-mono text-matcha-muted">กลับมาดูลุคใหม่ของเราได้เร็ว ๆ นี้ หรือลองเลือกซีซันอื่น</p>
         <button
           disabled={loading}
           onClick={retry}
-          className="px-5 py-2.5 bg-[#000000] text-white font-mono text-xs font-bold rounded-xl cursor-pointer hover:bg-black/80 transition-all disabled:opacity-50"
+          className="px-5 py-2.5 bg-matcha-text text-white font-mono text-xs font-bold rounded-xl cursor-pointer hover:bg-black/80 transition-all disabled:opacity-50"
         >
           {loading ? 'กำลังโหลด...' : 'โหลดใหม่'}
         </button>
@@ -241,10 +241,10 @@ export default function EditorialLookbookPage() {
   }
 
   return (
-    <div className="w-full bg-[#F1F1F1] text-[#000000] min-h-screen">
+    <div className="w-full bg-matcha-bg text-matcha-text min-h-screen">
       {purchaseItem && <ProductModal product={purchaseItem} onClose={() => setPurchaseItem(null)} />}
       {loading && <div role="status" aria-label="กำลังโหลดข้อมูลสินค้า" className="h-16 bg-[#EAE5DB]" />}
-      {error && <div role="alert" className="p-4 border-b border-[#C91D1D] bg-[#FFF4ED] text-center">{error} <button onClick={retry} className="underline font-bold ml-3">ลองใหม่</button></div>}
+      {error && <div role="alert" className="p-4 border-b border-matcha-accent bg-[#FFF4ED] text-center">{error} <button onClick={retry} className="underline font-bold ml-3">ลองใหม่</button></div>}
 
       {/* ========================================================================= */}
       {/* 1. THE COVER STORY: FULL-BLEED EDITORIAL MAGAZINE COVER (OPTION 1)         */}
@@ -274,8 +274,8 @@ export default function EditorialLookbookPage() {
                   <span>MatchA Archive Magazine — Issue No. 04</span>
                   <span className="hidden sm:inline"> — Tokyo · Kyoto · Enoshima (2026 Edition)</span>
                 </div>
-                <div className="text-[10px] font-mono text-[#518F5C] uppercase tracking-widest flex items-center gap-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#518F5C]" />
+                <div className="text-[10px] font-mono text-matcha-secondary uppercase tracking-widest flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-matcha-secondary" />
                   <span>Cover Story: {coverStory.vol} — {coverStory.season}</span>
                 </div>
               </div>
@@ -287,7 +287,7 @@ export default function EditorialLookbookPage() {
                 aria-pressed={Boolean(likedLooks[coverStory.id])}
                 className="shrink-0 text-white cursor-pointer transition-transform hover:scale-110 outline-hidden focus-visible:ring-2 focus-visible:ring-white p-2.5 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 shadow-md"
               >
-                <Heart size={20} className={likedLooks[coverStory.id] ? 'fill-[#C91D1D] text-[#C91D1D]' : 'drop-shadow'} />
+                <Heart size={20} className={likedLooks[coverStory.id] ? 'fill-matcha-accent text-matcha-accent' : 'drop-shadow'} />
               </button>
             </figcaption>
 
@@ -330,7 +330,7 @@ export default function EditorialLookbookPage() {
                     <span
                       className={`block rounded-full border transition-all duration-200 ${
                         active
-                          ? 'h-4 w-4 bg-[#C91D1D] border-white ring-4 ring-white/30'
+                          ? 'h-4 w-4 bg-matcha-accent border-white ring-4 ring-white/30'
                           : 'h-3 w-3 bg-white/90 border-white/60 hover:h-4 hover:w-4'
                       }`}
                     />
@@ -351,7 +351,7 @@ export default function EditorialLookbookPage() {
                           className="w-12 h-14 object-contain bg-[#FAF9F5] rounded-md shrink-0 border border-[#E5E2D8]"
                         />
                         <div className="min-w-0 flex-1">
-                          <span className="text-[9px] font-mono uppercase tracking-wider text-[#666666] block">
+                          <span className="text-[9px] font-mono uppercase tracking-wider text-matcha-muted block">
                             {hs.category || 'Garment'}
                           </span>
                           <div className="text-xs font-bold text-[#0A0A0A] leading-snug truncate">
@@ -377,7 +377,7 @@ export default function EditorialLookbookPage() {
                             color: 'Editorial MatchA'
                           });
                         }}
-                        className="mt-2.5 w-full py-2 bg-[#0A0A0A] hover:bg-[#C91D1D] disabled:bg-[#DCDCDC] disabled:text-[#666666] text-[#F1F1F1] font-mono text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:cursor-not-allowed rounded-lg"
+                        className="mt-2.5 w-full py-2 bg-[#0A0A0A] hover:bg-matcha-accent disabled:bg-matcha-border disabled:text-matcha-muted text-matcha-bg font-mono text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:cursor-not-allowed rounded-lg"
                       >
                         {addedItems[hs.productId || hs.id] ? <Check size={12} /> : <ShoppingBag size={12} />}
                         <span>{addedItems[hs.productId || hs.id] ? 'Added' : !hs.inStock ? 'Unavailable' : 'Add to bag'}</span>
@@ -391,7 +391,7 @@ export default function EditorialLookbookPage() {
             {/* Bottom Cover Story Captions */}
             <div className="absolute bottom-0 inset-x-0 z-10 p-5 sm:p-8 lg:p-12 text-white pointer-events-none flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
-                <span className="inline-block px-2.5 py-0.5 bg-[#C91D1D] text-white font-mono text-[10px] uppercase tracking-[0.18em] rounded-xs font-bold mb-2 shadow-xs">
+                <span className="inline-block px-2.5 py-0.5 bg-matcha-accent text-white font-mono text-[10px] uppercase tracking-[0.18em] rounded-xs font-bold mb-2 shadow-xs">
                   {coverStory.theme} — {coverStory.seasonThai}
                 </span>
                 <h2 className="mt-1 text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-[-0.02em] leading-[0.9] max-w-3xl text-white drop-shadow-md">
@@ -416,7 +416,7 @@ export default function EditorialLookbookPage() {
       )}
 
       {/* Running ticker (Full-Width Edge-to-Edge) */}
-      <div className="w-full overflow-hidden border-y border-[#DCDCDC] py-2.5 bg-white font-mono text-[11px] text-[#666666] tracking-[0.15em] uppercase">
+      <div className="w-full overflow-hidden border-y border-matcha-border py-2.5 bg-white font-mono text-[11px] text-matcha-muted tracking-[0.15em] uppercase">
         <div className="animate-marquee whitespace-nowrap flex items-center">
           {[
             'Matcha Archive, Spring to Autumn 2026',
@@ -430,7 +430,7 @@ export default function EditorialLookbookPage() {
           ]).map((line, i) => (
             <span key={i} className="flex items-center">
               <span className="px-6">{line}</span>
-              <span aria-hidden="true" className="h-3 w-px bg-[#DCDCDC]" />
+              <span aria-hidden="true" className="h-3 w-px bg-matcha-border" />
             </span>
           ))}
         </div>
@@ -442,7 +442,7 @@ export default function EditorialLookbookPage() {
       <div className="max-w-7xl mx-auto py-10 sm:py-16 px-5 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
         
         {/* Issue navigation */}
-        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 pb-6 border-b border-[#DCDCDC]">
+        <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 pb-6 border-b border-matcha-border">
           <nav aria-label="Filter by issue" className="flex flex-wrap items-baseline gap-x-5 gap-y-2">
             {SEASONS.map((s) => {
               const isActive = selectedSeason === s.id;
@@ -463,8 +463,8 @@ export default function EditorialLookbookPage() {
                   }}
                   className={`font-mono text-xs uppercase tracking-wider cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
                     isActive
-                      ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-[#C91D1D]'
-                      : 'text-[#666666] hover:text-[#0A0A0A]'
+                      ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-matcha-accent'
+                      : 'text-matcha-muted hover:text-[#0A0A0A]'
                   }`}
                 >
                   {s.label}
@@ -477,7 +477,7 @@ export default function EditorialLookbookPage() {
           <button
             type="button"
             onClick={() => navigate('/mix-match')}
-            className="font-mono text-xs uppercase tracking-wider text-[#C91D1D] hover:underline underline-offset-4 cursor-pointer flex items-center gap-1.5 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+            className="font-mono text-xs uppercase tracking-wider text-matcha-accent hover:underline underline-offset-4 cursor-pointer flex items-center gap-1.5 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
           >
             <span>Open Mix &amp; Match Studio</span>
             <ArrowRight size={13} />
@@ -491,18 +491,18 @@ export default function EditorialLookbookPage() {
               <div className="lg:col-span-7 space-y-7">
                 {/* The pull quote is set as a pull quote — large, hung off the
                     measure — rather than parked in a tinted rounded box. */}
-                <blockquote className="font-serif italic text-xl sm:text-2xl text-[#0A0A0A] leading-snug border-l-2 border-[#C91D1D] pl-5">
+                <blockquote className="font-serif italic text-xl sm:text-2xl text-[#0A0A0A] leading-snug border-l-2 border-matcha-accent pl-5">
                   {coverStory.leadQuote}
                 </blockquote>
 
-                <p className="text-sm text-[#666666] leading-relaxed max-w-prose">
+                <p className="text-sm text-matcha-muted leading-relaxed max-w-prose">
                   {coverStory.narrative}
                 </p>
 
                 {/* The palette speaks the catalogue's language: solid colour
                     with its name on it, not a dot inside a rounded chip. */}
                 <div className="pt-2">
-                  <h3 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">
+                  <h3 className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">
                     Botanical palette
                   </h3>
                   <div className="flex flex-wrap">
@@ -522,10 +522,10 @@ export default function EditorialLookbookPage() {
               <div className="lg:col-span-5">
                 <div className="flex items-baseline justify-between pb-3 border-b border-[#0A0A0A] font-mono text-[10px] uppercase tracking-[0.18em]">
                   <h3 className="text-[#0A0A0A] font-bold">Shop this look</h3>
-                  <span className="text-[#666666]">{coverStory.shoppableItems.length} pieces</span>
+                  <span className="text-matcha-muted">{coverStory.shoppableItems.length} pieces</span>
                 </div>
 
-                <ul className="divide-y divide-[#DCDCDC]">
+                <ul className="divide-y divide-matcha-border">
                   {coverStory.shoppableItems.map((item) => {
                     const isActive = isItemActive(item);
                     const isPinned = pinnedItemId === item.id;
@@ -548,7 +548,7 @@ export default function EditorialLookbookPage() {
                         <span
                           aria-hidden="true"
                           className={`self-stretch w-0.5 shrink-0 transition-colors ${
-                            isPinned ? 'bg-[#C91D1D]' : isActive ? 'bg-[#0A0A0A]' : 'bg-transparent'
+                            isPinned ? 'bg-matcha-accent' : isActive ? 'bg-[#0A0A0A]' : 'bg-transparent'
                           }`}
                         />
                         <img
@@ -560,14 +560,14 @@ export default function EditorialLookbookPage() {
                         />
                         <div className="min-w-0 flex-1">
                           <div className="text-xs font-bold text-[#0A0A0A] truncate">{item.name}</div>
-                          <div className="text-[11px] font-mono text-[#666666]">
+                          <div className="text-[11px] font-mono text-matcha-muted">
                             {item.color} · ${item.price.toFixed(2)}
                           </div>
                         </div>
                         <button
                           type="button"
                           disabled={loading || !item.inStock} onClick={(e) => handleQuickAdd(e, item)}
-                          className="shrink-0 px-3 py-1.5 bg-[#0A0A0A] hover:bg-[#C91D1D] disabled:bg-transparent disabled:text-[#999999] text-[#F1F1F1] font-mono text-[10px] uppercase tracking-wider transition-colors cursor-pointer disabled:cursor-not-allowed"
+                          className="shrink-0 px-3 py-1.5 bg-[#0A0A0A] hover:bg-matcha-accent disabled:bg-transparent disabled:text-[#999999] text-matcha-bg font-mono text-[10px] uppercase tracking-wider transition-colors cursor-pointer disabled:cursor-not-allowed"
                         >
                           {isAdded ? 'Added' : !item.inStock ? 'Sold out' : 'Add'}
                         </button>
@@ -580,7 +580,7 @@ export default function EditorialLookbookPage() {
                   type="button"
                   disabled={loading || !coverStory.shoppableItems.some(i => i.inStock)}
                   onClick={() => handleAddEntireLook(coverStory)}
-                  className="mt-5 w-full py-3.5 bg-[#C91D1D] hover:bg-[#A81515] disabled:bg-[#DCDCDC] disabled:text-[#666666] text-white font-mono text-xs uppercase tracking-[0.15em] transition-colors cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="mt-5 w-full py-3.5 bg-matcha-accent hover:bg-matcha-accent-hover disabled:bg-matcha-border disabled:text-matcha-muted text-white font-mono text-xs uppercase tracking-[0.15em] transition-colors cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   {addedEntireLook && <Check size={14} />}
                   <span>
@@ -603,7 +603,7 @@ export default function EditorialLookbookPage() {
             <h2 className="font-bold text-[#0A0A0A]">
               Curated seasonal editions
             </h2>
-            <span className="text-[#666666]">
+            <span className="text-matcha-muted">
               {remainingSpreads.length} feature {remainingSpreads.length === 1 ? 'story' : 'stories'}
             </span>
           </div>
@@ -650,7 +650,7 @@ export default function EditorialLookbookPage() {
                         aria-pressed={Boolean(likedLooks[spread.id])}
                         className="shrink-0 text-white cursor-pointer transition-transform hover:scale-110 outline-hidden focus-visible:ring-2 focus-visible:ring-white"
                       >
-                        <Heart size={17} className={likedLooks[spread.id] ? 'fill-[#C91D1D] text-[#C91D1D]' : 'drop-shadow'} />
+                        <Heart size={17} className={likedLooks[spread.id] ? 'fill-matcha-accent text-matcha-accent' : 'drop-shadow'} />
                       </button>
                     </figcaption>
 
@@ -681,22 +681,22 @@ export default function EditorialLookbookPage() {
                 >
 
                   <div className="space-y-2">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C91D1D] block">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-accent block">
                       {spread.theme}
                     </span>
                     <h3 className="text-3xl sm:text-4xl font-black uppercase text-[#0A0A0A] tracking-[-0.02em] leading-[0.95]">
                       {spread.title}
                     </h3>
-                    <p className="font-mono text-[11px] text-[#666666]">
+                    <p className="font-mono text-[11px] text-matcha-muted">
                       {spread.subtitle}
                     </p>
                   </div>
 
-                  <blockquote className="font-serif italic text-lg text-[#0A0A0A] border-l-2 border-[#C91D1D] pl-5 leading-snug">
+                  <blockquote className="font-serif italic text-lg text-[#0A0A0A] border-l-2 border-matcha-accent pl-5 leading-snug">
                     {spread.leadQuote}
                   </blockquote>
 
-                  <p className="text-sm text-[#666666] leading-relaxed">
+                  <p className="text-sm text-matcha-muted leading-relaxed">
                     {spread.narrative}
                   </p>
 
@@ -721,14 +721,14 @@ export default function EditorialLookbookPage() {
                       <button
                         type="button"
                         onClick={() => setSelectedSpread(spread)}
-                        className="text-[#C91D1D] hover:underline underline-offset-4 cursor-pointer flex items-center gap-1 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+                        className="text-matcha-accent hover:underline underline-offset-4 cursor-pointer flex items-center gap-1 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                       >
                         <span>All details</span>
                         <ArrowRight size={11} />
                       </button>
                     </div>
 
-                    <ul className="divide-y divide-[#DCDCDC]">
+                    <ul className="divide-y divide-matcha-border">
                       {spread.shoppableItems.map((item) => {
                         const isAdded = addedItems[item.id];
                         return (
@@ -745,12 +745,12 @@ export default function EditorialLookbookPage() {
                             />
                             <div className="min-w-0 flex-1">
                               <span className="text-xs font-bold text-[#0A0A0A] block truncate">{item.name}</span>
-                              <span className="text-[11px] font-mono text-[#666666]">${item.price.toFixed(2)}</span>
+                              <span className="text-[11px] font-mono text-matcha-muted">${item.price.toFixed(2)}</span>
                             </div>
                             <button
                               type="button"
                               disabled={loading || !item.inStock} onClick={(e) => handleQuickAdd(e, item)}
-                              className="shrink-0 px-3 py-1.5 bg-[#0A0A0A] hover:bg-[#C91D1D] disabled:bg-transparent disabled:text-[#999999] text-[#F1F1F1] font-mono text-[10px] uppercase tracking-wider transition-colors cursor-pointer disabled:cursor-not-allowed"
+                              className="shrink-0 px-3 py-1.5 bg-[#0A0A0A] hover:bg-matcha-accent disabled:bg-transparent disabled:text-[#999999] text-matcha-bg font-mono text-[10px] uppercase tracking-wider transition-colors cursor-pointer disabled:cursor-not-allowed"
                             >
                               {isAdded ? 'Added' : !item.inStock ? 'Sold out' : 'Add'}
                             </button>
@@ -784,7 +784,7 @@ export default function EditorialLookbookPage() {
           >
             <div
               data-lenis-prevent="true"
-              className="bg-[#F1F1F1] text-[#0A0A0A] max-w-5xl w-full h-full sm:h-auto sm:max-h-[92vh] overflow-y-auto overscroll-contain relative flex flex-col md:flex-row animate-scale-up"
+              className="bg-matcha-bg text-[#0A0A0A] max-w-5xl w-full h-full sm:h-auto sm:max-h-[92vh] overflow-y-auto overscroll-contain relative flex flex-col md:flex-row animate-scale-up"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Paging and close. Three white circles floating over the
@@ -866,23 +866,23 @@ export default function EditorialLookbookPage() {
                 <div className="space-y-5">
 
                   <div className="space-y-1.5">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C91D1D] block">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-accent block">
                       {selectedSpread.theme} — {selectedSpread.seasonThai}
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-[-0.02em] leading-[0.95] text-[#0A0A0A]">
                       {selectedSpread.title}
                     </h2>
-                    <p className="font-mono text-[11px] text-[#666666] flex items-center gap-1.5">
+                    <p className="font-mono text-[11px] text-matcha-muted flex items-center gap-1.5">
                       <MapPin size={11} />
                       {selectedSpread.location}
                     </p>
                   </div>
 
-                  <blockquote className="font-serif italic text-base text-[#0A0A0A] border-l-2 border-[#C91D1D] pl-4 leading-snug">
+                  <blockquote className="font-serif italic text-base text-[#0A0A0A] border-l-2 border-matcha-accent pl-4 leading-snug">
                     {selectedSpread.leadQuote}
                   </blockquote>
 
-                  <p className="text-xs text-[#666666] leading-relaxed">
+                  <p className="text-xs text-matcha-muted leading-relaxed">
                     {selectedSpread.narrative}
                   </p>
 
@@ -890,7 +890,7 @@ export default function EditorialLookbookPage() {
                     <h3 className="pb-2 border-b border-[#0A0A0A] font-mono text-[10px] uppercase tracking-[0.18em] font-bold text-[#0A0A0A]">
                       Pieces in this spread
                     </h3>
-                    <ul className="divide-y divide-[#DCDCDC] max-h-56 overflow-y-auto">
+                    <ul className="divide-y divide-matcha-border max-h-56 overflow-y-auto">
                       {selectedSpread.shoppableItems.map((item) => {
                         const isAdded = addedItems[item.id];
                         return (
@@ -904,12 +904,12 @@ export default function EditorialLookbookPage() {
                             />
                             <div className="min-w-0 flex-1">
                               <div className="text-xs font-bold text-[#0A0A0A] truncate">{item.name}</div>
-                              <div className="text-[11px] font-mono text-[#666666]">${item.price.toFixed(2)}</div>
+                              <div className="text-[11px] font-mono text-matcha-muted">${item.price.toFixed(2)}</div>
                             </div>
                             <button
                               type="button"
                               disabled={loading || !item.inStock} onClick={(e) => handleQuickAdd(e, item)}
-                              className="shrink-0 px-3 py-1.5 bg-[#0A0A0A] hover:bg-[#C91D1D] disabled:bg-transparent disabled:text-[#999999] text-[#F1F1F1] font-mono text-[10px] uppercase tracking-wider transition-colors cursor-pointer disabled:cursor-not-allowed"
+                              className="shrink-0 px-3 py-1.5 bg-[#0A0A0A] hover:bg-matcha-accent disabled:bg-transparent disabled:text-[#999999] text-matcha-bg font-mono text-[10px] uppercase tracking-wider transition-colors cursor-pointer disabled:cursor-not-allowed"
                             >
                               {isAdded ? 'Added' : !item.inStock ? 'Sold out' : 'Add'}
                             </button>
@@ -921,12 +921,12 @@ export default function EditorialLookbookPage() {
 
                 </div>
 
-                <div className="space-y-2 pt-4 border-t border-[#DCDCDC]">
+                <div className="space-y-2 pt-4 border-t border-matcha-border">
                   <button
                     type="button"
                     disabled={loading || !selectedSpread.shoppableItems.some(i => i.inStock)}
                     onClick={() => handleAddEntireLook(selectedSpread)}
-                    className="w-full py-3.5 bg-[#C91D1D] hover:bg-[#A81515] disabled:bg-[#DCDCDC] disabled:text-[#666666] text-white font-mono text-xs uppercase tracking-[0.15em] transition-colors cursor-pointer disabled:cursor-not-allowed"
+                    className="w-full py-3.5 bg-matcha-accent hover:bg-matcha-accent-hover disabled:bg-matcha-border disabled:text-matcha-muted text-white font-mono text-xs uppercase tracking-[0.15em] transition-colors cursor-pointer disabled:cursor-not-allowed"
                   >
                     Add the whole look
                   </button>
@@ -937,7 +937,7 @@ export default function EditorialLookbookPage() {
                       setSelectedSpread(null);
                       navigate('/mix-match');
                     }}
-                    className="w-full py-2.5 font-mono text-xs uppercase tracking-wider text-[#0A0A0A] hover:text-[#C91D1D] transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                    className="w-full py-2.5 font-mono text-xs uppercase tracking-wider text-[#0A0A0A] hover:text-matcha-accent transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                   >
                     <Sparkles size={13} />
                     <span>Open in Mix &amp; Match Studio</span>

@@ -126,23 +126,23 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-fade-in select-none">
-      <div className="bg-[#F1F1F1] border border-[#DCDCDC] rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
+      <div className="bg-matcha-bg border border-matcha-border rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
         
         {/* Modal Header */}
-        <div className="sticky top-0 bg-[#F1F1F1]/95 backdrop-blur-md px-6 py-5 border-b border-[#DCDCDC] flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-matcha-bg/95 backdrop-blur-md px-6 py-5 border-b border-matcha-border flex items-center justify-between z-10">
           <div>
-            <div className="flex items-center gap-2 text-xs font-mono font-bold text-[#042509] uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-xs font-mono font-bold text-matcha-primary uppercase tracking-wider">
               <Sparkles size={14} />
               <span>Admin Inventory Control</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black uppercase text-[#000000] tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-black uppercase text-matcha-text tracking-tight">
               Add New Garment Release
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="p-2 rounded-xl text-[#666666] hover:text-[#000000] hover:bg-[#DCDCDC]/40 transition-colors cursor-pointer"
+            className="p-2 rounded-xl text-matcha-muted hover:text-matcha-text hover:bg-matcha-border/40 transition-colors cursor-pointer"
           >
             <X size={20} />
           </button>
@@ -154,9 +154,9 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
           {/* 1. Garment Name & SKU */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-2 space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#000000] uppercase flex items-center justify-between">
-                <span>Garment Name <span className="text-[#C91D1D]">*</span></span>
-                <span className="text-[10px] font-normal text-[#666666]">Min 3 chars</span>
+              <label className="font-bold text-matcha-text uppercase flex items-center justify-between">
+                <span>Garment Name <span className="text-matcha-accent">*</span></span>
+                <span className="text-[10px] font-normal text-matcha-muted">Min 3 chars</span>
               </label>
               <input
                 type="text"
@@ -164,10 +164,10 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="e.g. MatchA Heavyweight Boxy Tee"
-                className={`w-full px-4 py-3 bg-white border ${errors.name ? 'border-[#C91D1D] focus:ring-1 focus:ring-[#C91D1D]' : 'border-[#DCDCDC] focus:ring-1 focus:ring-[#042509]'} rounded-xl text-[#000000] outline-none transition-all`}
+                className={`w-full px-4 py-3 bg-white border ${errors.name ? 'border-matcha-accent focus:ring-1 focus:ring-matcha-accent' : 'border-matcha-border focus:ring-1 focus:ring-matcha-primary'} rounded-xl text-matcha-text outline-none transition-all`}
               />
               {errors.name && (
-                <p className="text-[11px] text-[#C91D1D] font-bold flex items-center gap-1 mt-1">
+                <p className="text-[11px] text-matcha-accent font-bold flex items-center gap-1 mt-1">
                   <AlertCircle size={12} />
                   <span>{errors.name}</span>
                 </p>
@@ -175,13 +175,13 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
             </div>
 
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#000000] uppercase">SKU Identifier</label>
+              <label className="font-bold text-matcha-text uppercase">SKU Identifier</label>
               <input
                 type="text"
                 name="id"
                 value={formData.id}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-[#EFECE6] border border-[#DCDCDC] rounded-xl text-[#000000] font-bold outline-none"
+                className="w-full px-4 py-3 bg-[#EFECE6] border border-matcha-border rounded-xl text-matcha-text font-bold outline-none"
               />
             </div>
           </div>
@@ -189,12 +189,12 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
           {/* 2. Category, Price, Quantity (Stock) */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#000000] uppercase">Category</label>
+              <label className="font-bold text-matcha-text uppercase">Category</label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-white border border-[#DCDCDC] rounded-xl text-[#000000] font-bold outline-none focus:ring-1 focus:ring-[#042509] cursor-pointer"
+                className="w-full px-4 py-3 bg-white border border-matcha-border rounded-xl text-matcha-text font-bold outline-none focus:ring-1 focus:ring-matcha-primary cursor-pointer"
               >
                 <option value="Tops">Tops & Knitwear</option>
                 <option value="Bottoms">Bottoms & Denim</option>
@@ -205,11 +205,11 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
             </div>
 
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#000000] uppercase">
-                Price (USD) <span className="text-[#C91D1D]">*</span>
+              <label className="font-bold text-matcha-text uppercase">
+                Price (USD) <span className="text-matcha-accent">*</span>
               </label>
               <div className="relative">
-                <span className="absolute left-3.5 inset-y-0 my-auto h-fit text-[#666666] font-bold">$</span>
+                <span className="absolute left-3.5 inset-y-0 my-auto h-fit text-matcha-muted font-bold">$</span>
                 <input
                   type="number"
                   step="0.01"
@@ -217,11 +217,11 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
                   value={formData.price}
                   onChange={handleChange}
                   placeholder="48.00"
-                  className={`w-full pl-8 pr-4 py-3 bg-white border ${errors.price ? 'border-[#C91D1D] focus:ring-1 focus:ring-[#C91D1D]' : 'border-[#DCDCDC] focus:ring-1 focus:ring-[#042509]'} rounded-xl text-[#000000] font-bold outline-none transition-all`}
+                  className={`w-full pl-8 pr-4 py-3 bg-white border ${errors.price ? 'border-matcha-accent focus:ring-1 focus:ring-matcha-accent' : 'border-matcha-border focus:ring-1 focus:ring-matcha-primary'} rounded-xl text-matcha-text font-bold outline-none transition-all`}
                 />
               </div>
               {errors.price && (
-                <p className="text-[11px] text-[#C91D1D] font-bold flex items-center gap-1 mt-1">
+                <p className="text-[11px] text-matcha-accent font-bold flex items-center gap-1 mt-1">
                   <AlertCircle size={12} />
                   <span>{errors.price}</span>
                 </p>
@@ -229,8 +229,8 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
             </div>
 
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#000000] uppercase">
-                Quantity (Stock) <span className="text-[#C91D1D]">*</span>
+              <label className="font-bold text-matcha-text uppercase">
+                Quantity (Stock) <span className="text-matcha-accent">*</span>
               </label>
               <input
                 type="number"
@@ -238,10 +238,10 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
                 value={formData.stock}
                 onChange={handleChange}
                 placeholder="25"
-                className={`w-full px-4 py-3 bg-white border ${errors.stock ? 'border-[#C91D1D] focus:ring-1 focus:ring-[#C91D1D]' : 'border-[#DCDCDC] focus:ring-1 focus:ring-[#042509]'} rounded-xl text-[#000000] font-bold outline-none transition-all`}
+                className={`w-full px-4 py-3 bg-white border ${errors.stock ? 'border-matcha-accent focus:ring-1 focus:ring-matcha-accent' : 'border-matcha-border focus:ring-1 focus:ring-matcha-primary'} rounded-xl text-matcha-text font-bold outline-none transition-all`}
               />
               {errors.stock && (
-                <p className="text-[11px] text-[#C91D1D] font-bold flex items-center gap-1 mt-1">
+                <p className="text-[11px] text-matcha-accent font-bold flex items-center gap-1 mt-1">
                   <AlertCircle size={12} />
                   <span>{errors.stock}</span>
                 </p>
@@ -254,19 +254,19 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
             
             {/* Field: Date */}
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#000000] uppercase flex items-center gap-1.5">
-                <Calendar size={13} className="text-[#042509]" />
-                <span>Release Date <span className="text-[#C91D1D]">*</span></span>
+              <label className="font-bold text-matcha-text uppercase flex items-center gap-1.5">
+                <Calendar size={13} className="text-matcha-primary" />
+                <span>Release Date <span className="text-matcha-accent">*</span></span>
               </label>
               <input
                 type="date"
                 name="date"
                 value={formData.date}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 bg-white border ${errors.date ? 'border-[#C91D1D] focus:ring-1 focus:ring-[#C91D1D]' : 'border-[#DCDCDC] focus:ring-1 focus:ring-[#042509]'} rounded-xl text-[#000000] font-bold outline-none transition-all cursor-pointer`}
+                className={`w-full px-4 py-3 bg-white border ${errors.date ? 'border-matcha-accent focus:ring-1 focus:ring-matcha-accent' : 'border-matcha-border focus:ring-1 focus:ring-matcha-primary'} rounded-xl text-matcha-text font-bold outline-none transition-all cursor-pointer`}
               />
               {errors.date && (
-                <p className="text-[11px] text-[#C91D1D] font-bold flex items-center gap-1 mt-1">
+                <p className="text-[11px] text-matcha-accent font-bold flex items-center gap-1 mt-1">
                   <AlertCircle size={12} />
                   <span>{errors.date}</span>
                 </p>
@@ -275,15 +275,15 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
 
             {/* Field: Tag */}
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#000000] uppercase flex items-center gap-1.5">
-                <TagIcon size={13} className="text-[#C91D1D]" />
-                <span>Product Tag <span className="text-[#C91D1D]">*</span></span>
+              <label className="font-bold text-matcha-text uppercase flex items-center gap-1.5">
+                <TagIcon size={13} className="text-matcha-accent" />
+                <span>Product Tag <span className="text-matcha-accent">*</span></span>
               </label>
               <select
                 name="tag"
                 value={formData.tag}
                 onChange={handleChange}
-                className={`w-full px-4 py-3 bg-white border ${errors.tag ? 'border-[#C91D1D] focus:ring-1 focus:ring-[#C91D1D]' : 'border-[#DCDCDC] focus:ring-1 focus:ring-[#042509]'} rounded-xl text-[#000000] font-bold outline-none transition-all cursor-pointer`}
+                className={`w-full px-4 py-3 bg-white border ${errors.tag ? 'border-matcha-accent focus:ring-1 focus:ring-matcha-accent' : 'border-matcha-border focus:ring-1 focus:ring-matcha-primary'} rounded-xl text-matcha-text font-bold outline-none transition-all cursor-pointer`}
               >
                 <option value="NEW RELEASE">NEW RELEASE</option>
                 <option value="BESTSELLER">BESTSELLER</option>
@@ -293,7 +293,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
                 <option value="ORGANIC COTTON">ORGANIC COTTON</option>
               </select>
               {errors.tag && (
-                <p className="text-[11px] text-[#C91D1D] font-bold flex items-center gap-1 mt-1">
+                <p className="text-[11px] text-matcha-accent font-bold flex items-center gap-1 mt-1">
                   <AlertCircle size={12} />
                   <span>{errors.tag}</span>
                 </p>
@@ -302,12 +302,12 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
 
             {/* Field: Season */}
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#000000] uppercase">Season</label>
+              <label className="font-bold text-matcha-text uppercase">Season</label>
               <select
                 name="season"
                 value={formData.season}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-white border border-[#DCDCDC] rounded-xl text-[#000000] outline-none focus:ring-1 focus:ring-[#042509] cursor-pointer"
+                className="w-full px-4 py-3 bg-white border border-matcha-border rounded-xl text-matcha-text outline-none focus:ring-1 focus:ring-matcha-primary cursor-pointer"
               >
                 <option value="SS26">SS26 (Spring/Summer)</option>
                 <option value="FW26">FW26 (Fall/Winter)</option>
@@ -321,24 +321,24 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
           {/* 4. Color & Silhouette / Fit */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#000000] uppercase">Color Shade</label>
+              <label className="font-bold text-matcha-text uppercase">Color Shade</label>
               <input
                 type="text"
                 name="color"
                 value={formData.color}
                 onChange={handleChange}
                 placeholder="e.g. Matcha Green"
-                className="w-full px-4 py-3 bg-white border border-[#DCDCDC] rounded-xl text-[#000000] outline-none focus:ring-1 focus:ring-[#042509]"
+                className="w-full px-4 py-3 bg-white border border-matcha-border rounded-xl text-matcha-text outline-none focus:ring-1 focus:ring-matcha-primary"
               />
             </div>
 
             <div className="sm:col-span-2 space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-[#000000] uppercase">Silhouette / Fit</label>
+              <label className="font-bold text-matcha-text uppercase">Silhouette / Fit</label>
               <select
                 name="fit"
                 value={formData.fit}
                 onChange={handleChange}
-                className="w-full px-4 py-3 bg-white border border-[#DCDCDC] rounded-xl text-[#000000] outline-none focus:ring-1 focus:ring-[#042509] cursor-pointer"
+                className="w-full px-4 py-3 bg-white border border-matcha-border rounded-xl text-matcha-text outline-none focus:ring-1 focus:ring-matcha-primary cursor-pointer"
               >
                 <option value="Boxy Oversized">Boxy Oversized (ทรงหลวมคลาสสิก)</option>
                 <option value="Relaxed Tailored">Relaxed Tailored (ทรงปล่อยเข้ารูป)</option>
@@ -351,7 +351,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
 
           {/* 5. Image URL & Live Preview */}
           <div className="space-y-3 font-mono text-xs">
-            <label className="font-bold text-[#000000] uppercase">Garment Photo / Artwork URL</label>
+            <label className="font-bold text-matcha-text uppercase">Garment Photo / Artwork URL</label>
             <div className="flex gap-3">
               <div className="relative flex-1">
                 <input
@@ -360,22 +360,22 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
                   value={formData.image}
                   onChange={handleChange}
                   placeholder="Paste direct HTTPS image URL"
-                  className="w-full px-4 py-3 bg-white border border-[#DCDCDC] rounded-xl text-[#000000] outline-none focus:ring-1 focus:ring-[#042509]"
+                  className="w-full px-4 py-3 bg-white border border-matcha-border rounded-xl text-matcha-text outline-none focus:ring-1 focus:ring-matcha-primary"
                 />
               </div>
-              <div className="w-12 h-12 rounded-xl bg-[#EFECE6] border border-[#DCDCDC] overflow-hidden flex items-center justify-center shrink-0">
+              <div className="w-12 h-12 rounded-xl bg-[#EFECE6] border border-matcha-border overflow-hidden flex items-center justify-center shrink-0">
                 {/* Hide a broken thumbnail while retaining the typed URL for correction. */}
                 {imagePreview ? (
                   <img src={webpSrc(imagePreview)} data-original-src={imagePreview} alt="Preview" className="w-full h-full object-cover" onError={() => setImagePreview('')} />
                 ) : (
-                  <ImageIcon size={18} className="text-[#666666]" />
+                  <ImageIcon size={18} className="text-matcha-muted" />
                 )}
               </div>
             </div>
 
             {/* Quick Sample Image Presets */}
             <div className="flex flex-wrap items-center gap-2 pt-1">
-              <span className="text-[11px] text-[#666666]">Presets:</span>
+              <span className="text-[11px] text-matcha-muted">Presets:</span>
               {sampleImages.map((s) => (
                 <button
                   type="button"
@@ -386,7 +386,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
                     setFormData((p) => ({ ...p, image: s.url }));
                     setImagePreview(s.url);
                   }}
-                  className="px-2.5 py-1 rounded-lg bg-white border border-[#DCDCDC] hover:border-[#042509] text-[11px] font-bold text-[#000000] transition-all cursor-pointer active:scale-95"
+                  className="px-2.5 py-1 rounded-lg bg-white border border-matcha-border hover:border-matcha-primary text-[11px] font-bold text-matcha-text transition-all cursor-pointer active:scale-95"
                 >
                   {s.label}
                 </button>
@@ -397,10 +397,10 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
           {/* 6. Description & Material Notes (Validated Field) */}
           <div className="space-y-1.5 font-mono text-xs">
             <div className="flex items-center justify-between">
-              <label className="font-bold text-[#000000] uppercase">
-                Description & Material Notes <span className="text-[#C91D1D]">*</span>
+              <label className="font-bold text-matcha-text uppercase">
+                Description & Material Notes <span className="text-matcha-accent">*</span>
               </label>
-              <span className="text-[10px] text-[#666666]">Min 10 characters</span>
+              <span className="text-[10px] text-matcha-muted">Min 10 characters</span>
             </div>
             <textarea
               name="description"
@@ -408,10 +408,10 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
               onChange={handleChange}
               rows={3}
               placeholder="e.g. Crafted from 320gsm organic Japanese cotton. Bio-washed with natural matcha pigments for a tactile drape."
-              className={`w-full px-4 py-3 bg-white border ${errors.description ? 'border-[#C91D1D] focus:ring-1 focus:ring-[#C91D1D]' : 'border-[#DCDCDC] focus:ring-1 focus:ring-[#042509]'} rounded-xl text-[#000000] outline-none transition-all resize-none`}
+              className={`w-full px-4 py-3 bg-white border ${errors.description ? 'border-matcha-accent focus:ring-1 focus:ring-matcha-accent' : 'border-matcha-border focus:ring-1 focus:ring-matcha-primary'} rounded-xl text-matcha-text outline-none transition-all resize-none`}
             />
             {errors.description && (
-              <p className="text-[11px] text-[#C91D1D] font-bold flex items-center gap-1 mt-1">
+              <p className="text-[11px] text-matcha-accent font-bold flex items-center gap-1 mt-1">
                 <AlertCircle size={12} />
                 <span>{errors.description}</span>
               </p>
@@ -420,18 +420,18 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
 
           {saveError && <p role="alert" className="text-red-800">บันทึกไม่สำเร็จ / Save failed: {saveError}</p>}
           {/* Form Actions */}
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#DCDCDC]">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-matcha-border">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-3 border border-[#DCDCDC] text-xs font-bold font-mono uppercase text-[#666666] hover:text-[#000000] hover:bg-white rounded-xl transition-all cursor-pointer"
+              className="px-5 py-3 border border-matcha-border text-xs font-bold font-mono uppercase text-matcha-muted hover:text-matcha-text hover:bg-white rounded-xl transition-all cursor-pointer"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 px-6 py-3 bg-[#042509] hover:bg-[#021505] text-white text-xs font-bold font-mono uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-98 cursor-pointer"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-matcha-primary hover:bg-matcha-primary-dark text-white text-xs font-bold font-mono uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-98 cursor-pointer"
             >
               <Plus size={16} />
               <span>Publish to Inventory</span>

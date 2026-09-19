@@ -12,8 +12,8 @@ export default function MembersTab({ status, errors, setMemberTierFilter, member
                     onClick={() => setMemberTierFilter(t)}
                     className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border ${
                       memberTierFilter === t
-                        ? 'bg-[#042509] text-white border-[#042509]'
-                        : 'bg-white text-[#666666] border-[#DCDCDC] hover:border-[#042509]'
+                        ? 'bg-matcha-primary text-white border-matcha-primary'
+                        : 'bg-white text-matcha-muted border-matcha-border hover:border-matcha-primary'
                     }`}
                   >
                     {t === 'ALL' ? 'All Customers' : `${t} Tier`}
@@ -21,10 +21,10 @@ export default function MembersTab({ status, errors, setMemberTierFilter, member
                 ))}
               </div>
 
-              <div className="rounded-2xl bg-white border border-[#DCDCDC] shadow-sm overflow-hidden">
+              <div className="rounded-2xl bg-white border border-matcha-border shadow-sm overflow-hidden">
                 <div className="overflow-x-auto">
                   <table className="w-full text-left font-mono text-xs">
-                    <thead className="bg-[#F1F1F1] border-b border-[#DCDCDC] text-[#666666]">
+                    <thead className="bg-matcha-bg border-b border-matcha-border text-matcha-muted">
                       <tr>
                         <th className="p-4 font-bold">Member ID</th>
                         <th className="p-4 font-bold">Customer Name</th>
@@ -34,14 +34,14 @@ export default function MembersTab({ status, errors, setMemberTierFilter, member
                         <th className="p-4 font-bold text-right">VIP Tier Management</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#DCDCDC]/40">
+                    <tbody className="divide-y divide-matcha-border/40">
                       {filteredMembers.length === 0 && <tr><td colSpan={6} className="p-6 text-center">No records match the current filters.</td></tr>}
                       {filteredMembers.map(mem => (
-                        <tr key={mem.id} className="hover:bg-[#F1F1F1]/80 transition-colors">
-                          <td className="p-4 font-bold text-[#042509]">{mem.id}</td>
-                          <td className="p-4 font-bold text-[#000000]">{mem.name}</td>
-                          <td className="p-4 text-[#666666]">{mem.email}</td>
-                          <td className="p-4 font-bold text-[#042509]">${mem.totalSpent.toFixed(2)}</td>
+                        <tr key={mem.id} className="hover:bg-matcha-bg/80 transition-colors">
+                          <td className="p-4 font-bold text-matcha-primary">{mem.id}</td>
+                          <td className="p-4 font-bold text-matcha-text">{mem.name}</td>
+                          <td className="p-4 text-matcha-muted">{mem.email}</td>
+                          <td className="p-4 font-bold text-matcha-primary">${mem.totalSpent.toFixed(2)}</td>
                           <td className="p-4">
                             <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold ${
                               mem.tier.includes('VIP')
@@ -55,7 +55,7 @@ export default function MembersTab({ status, errors, setMemberTierFilter, member
                             <button
                               onClick={() => handleToggleVIPTier(mem.id)}
                               disabled={saving || isDemo}
-                              className="px-3 py-1 rounded-lg border border-[#DCDCDC] hover:border-[#042509] text-xs font-mono font-bold text-[#000000] transition-all cursor-pointer"
+                              className="px-3 py-1 rounded-lg border border-matcha-border hover:border-matcha-primary text-xs font-mono font-bold text-matcha-text transition-all cursor-pointer"
                             >
                               {mem.tier.includes('VIP') ? 'Demote to Regular' : 'Promote to VIP 👑'}
                             </button>

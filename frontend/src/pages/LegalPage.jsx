@@ -109,14 +109,14 @@ export default function LegalPage() {
   const Icon = doc.icon;
 
   return (
-    <div className="min-h-[85vh] bg-[#F1F1F1] py-12 sm:py-16 px-5 sm:px-6 lg:px-8">
+    <div className="min-h-[85vh] bg-matcha-bg py-12 sm:py-16 px-5 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         
         {/* Navigation Breadcrumb */}
         <div className="mb-6 flex items-center justify-between">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-[#000000] hover:text-[#C91D1D] transition-colors"
+            className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-matcha-text hover:text-matcha-accent transition-colors"
           >
             <ArrowLeft size={14} />
             <span>Back to Store</span>
@@ -125,15 +125,15 @@ export default function LegalPage() {
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex flex-wrap gap-2 mb-8 border-b border-[#DCDCDC] pb-4">
+        <div className="flex flex-wrap gap-2 mb-8 border-b border-matcha-border pb-4">
           {Object.entries(LEGAL_DOCS).map(([key, item]) => (
             <Link
               key={key}
               to={`/legal/${key}`}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-mono uppercase tracking-wider transition-all ${
                 docKey === key
-                  ? 'bg-[#042509] text-white font-bold shadow-xs'
-                  : 'bg-white text-[#666666] hover:bg-[#DCDCDC]/50 hover:text-black'
+                  ? 'bg-matcha-primary text-white font-bold shadow-xs'
+                  : 'bg-white text-matcha-muted hover:bg-matcha-border/50 hover:text-black'
               }`}
             >
               {item.title}
@@ -142,27 +142,27 @@ export default function LegalPage() {
         </div>
 
         {/* Main Document Content */}
-        <div className="bg-white border border-[#DCDCDC] rounded-3xl p-6 sm:p-10 shadow-xl shadow-black/5">
+        <div className="bg-white border border-matcha-border rounded-3xl p-6 sm:p-10 shadow-xl shadow-black/5">
           <div className="flex items-center gap-3 mb-4">
-            <div className="w-10 h-10 rounded-xl bg-[#518F5C]/15 text-[#042509] flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-matcha-secondary/15 text-matcha-primary flex items-center justify-center">
               <Icon size={20} />
             </div>
             <div>
-              <h1 className="text-2xl font-black uppercase text-[#000000] tracking-tight">
+              <h1 className="text-2xl font-black uppercase text-matcha-text tracking-tight">
                 {doc.title}
               </h1>
-              <p className="text-xs font-mono text-[#666666]">
+              <p className="text-xs font-mono text-matcha-muted">
                 {doc.titleTh} • Effective Date: {doc.updated}
               </p>
             </div>
           </div>
 
-          <div className="h-px bg-[#DCDCDC] my-6" />
+          <div className="h-px bg-matcha-border my-6" />
 
           <div className="space-y-6 text-sm text-[#333333] leading-relaxed">
             {doc.sections.map((sec, idx) => (
               <div key={idx} className="space-y-2">
-                <h2 className="text-base font-bold text-[#000000] uppercase tracking-wide font-mono">
+                <h2 className="text-base font-bold text-matcha-text uppercase tracking-wide font-mono">
                   {sec.heading}
                 </h2>
                 <p className="text-xs sm:text-sm text-[#555555] font-sans leading-relaxed">
@@ -172,8 +172,8 @@ export default function LegalPage() {
             ))}
           </div>
 
-          <div className="mt-10 pt-6 border-t border-[#DCDCDC] text-center text-xs font-mono text-[#888888]">
-            For inquiries regarding our policies, reach out to <a href="mailto:contact@matcha-archive.com" className="text-[#042509] font-bold underline">contact@matcha-archive.com</a>
+          <div className="mt-10 pt-6 border-t border-matcha-border text-center text-xs font-mono text-[#888888]">
+            For inquiries regarding our policies, reach out to <a href="mailto:contact@matcha-archive.com" className="text-matcha-primary font-bold underline">contact@matcha-archive.com</a>
           </div>
         </div>
 

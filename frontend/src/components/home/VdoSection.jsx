@@ -66,7 +66,7 @@ export default function VdoSection({ onClaimPromo }) {
   };
 
   return (
-    <section className="relative w-full min-h-screen bg-[#1A2218] overflow-hidden flex items-center justify-center border-y border-[#042509]/30 select-none py-16 sm:py-24">
+    <section className="relative w-full min-h-screen bg-[#1A2218] overflow-hidden flex items-center justify-center border-y border-matcha-primary/30 select-none py-16 sm:py-24">
       
       {/* 1. Full-Height Background Video (Anchored to top to prevent head crop).
           วิดีโอเลื่อนสวนทางกับข้อความด้านหน้าเล็กน้อย จึงต้องกินพื้นที่เกินขอบ
@@ -110,7 +110,7 @@ export default function VdoSection({ onClaimPromo }) {
         
         {/* Left Side: Editorial Cinematic Title */}
         <Reveal y={44} duration={0.8} className="max-w-xl text-center lg:text-left">
-          <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-[#F1F1F1] tracking-tight uppercase leading-[0.95] drop-shadow-xl">
+          <h2 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold text-matcha-bg tracking-tight uppercase leading-[0.95] drop-shadow-xl">
             {t('video.titleTop')} <br />
             <span>{t('video.titleBottom')}</span>
           </h2>
@@ -122,30 +122,30 @@ export default function VdoSection({ onClaimPromo }) {
         {/* Right Side: Floating Glass Promotion Card (Glassmorphism).
             Entrance lives on the wrapper so the card keeps its own hover lift. */}
         <Reveal x={64} y={0} delay={0.15} duration={0.8} className="w-full max-w-md">
-        <div className="w-full bg-[#F1F1F1] p-6 sm:p-8">
+        <div className="w-full bg-matcha-bg p-6 sm:p-8">
           
           <div className="flex items-center justify-between mb-4">
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C91D1D] flex items-center gap-1.5">
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-accent flex items-center gap-1.5">
               <Sparkles size={11} />
               <span>{t('video.promoBadge')}</span>
             </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666]">
+            <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted">
               {t('video.promoCode')}
             </span>
           </div>
 
-          <h3 className="text-2xl sm:text-3xl font-extrabold text-[#000000] leading-tight">
+          <h3 className="text-2xl sm:text-3xl font-extrabold text-matcha-text leading-tight">
             {t('video.promoTitle')}
           </h3>
 
-          <p className="text-xs text-[#666666] mt-3 leading-relaxed font-sans">
+          <p className="text-xs text-matcha-muted mt-3 leading-relaxed font-sans">
             {t('video.promoBody')}
           </p>
 
           {/* Promo behavior is owned by the parent (for example, navigation or cart rules). */}
           <button 
             onClick={handleClaim}
-            className="mt-6 w-full py-4 bg-[#C91D1D] hover:bg-[#A81515] text-white font-mono text-xs uppercase tracking-[0.15em] transition-colors cursor-pointer flex items-center justify-center gap-2 group"
+            className="mt-6 w-full py-4 bg-matcha-accent hover:bg-matcha-accent-hover text-white font-mono text-xs uppercase tracking-[0.15em] transition-colors cursor-pointer flex items-center justify-center gap-2 group"
           >
             <span>{t('video.promoCta')}</span>
             <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />

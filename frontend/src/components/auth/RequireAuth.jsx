@@ -35,9 +35,9 @@ export default function RequireAuth({ children }) {
 
   if (verdict === 'checking') {
     return (
-      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-3 bg-[#F1F1F1]">
-        <div className="w-8 h-8 rounded-full border-2 border-[#DCDCDC] border-t-[#000000] animate-spin" />
-        <p className="text-[10px] font-mono uppercase tracking-widest text-[#666666]">กำลังตรวจสอบสิทธิ์การเข้าถึง...</p>
+      <div className="min-h-[70vh] flex flex-col items-center justify-center gap-3 bg-matcha-bg">
+        <div className="w-8 h-8 rounded-full border-2 border-matcha-border border-t-matcha-text animate-spin" />
+        <p className="text-[10px] font-mono uppercase tracking-widest text-matcha-muted">กำลังตรวจสอบสิทธิ์การเข้าถึง...</p>
       </div>
     );
   }

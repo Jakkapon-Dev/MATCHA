@@ -271,14 +271,14 @@ export default function MixMatchStudioPage() {
   }, [activeSlotTab, tops, bottoms, footwear, accessories, userSeason]);
 
   return (
-    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-5 sm:px-6 lg:px-8">
+    <div className="w-full bg-matcha-bg min-h-screen py-10 sm:py-16 px-5 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-10 sm:space-y-14">
 
         {/* 1. HEADER — the masthead rule the catalogue, lookbook and colour lab
             all use, so the five pages read as one site. The bordered pill that
             used to sit above the title said nothing the title does not. */}
         <div className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-3 border-b border-[#0A0A0A] font-mono text-[11px] uppercase tracking-[0.18em] text-[#666666]">
+          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-3 border-b border-[#0A0A0A] font-mono text-[11px] uppercase tracking-[0.18em] text-matcha-muted">
             <span className="text-[#0A0A0A] font-bold">{t('mixMatch.eyebrow')}</span>
             <span>{t('mixMatch.discount', { n: BUNDLE_DISCOUNT_PERCENT })}</span>
           </div>
@@ -288,7 +288,7 @@ export default function MixMatchStudioPage() {
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase text-[#0A0A0A] tracking-[-0.02em] leading-[0.95]">
               Mix &amp; Match Fashion Studio
             </h1>
-            <p className="text-[#666666] text-xs sm:text-sm mt-3 leading-relaxed">
+            <p className="text-matcha-muted text-xs sm:text-sm mt-3 leading-relaxed">
               {t('mixMatch.heroBody')}
             </p>
           </div>
@@ -296,14 +296,14 @@ export default function MixMatchStudioPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={handleRandomize}
-              className="px-4 py-2.5  border border-[#DCDCDC] bg-white hover:bg-[#F1F1F1] text-[#000000] font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer "
+              className="px-4 py-2.5  border border-matcha-border bg-white hover:bg-matcha-bg text-matcha-text font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer "
             >
               <Shuffle size={14} />
               <span>{t('mixMatch.shuffle')}</span>
             </button>
             <button
               onClick={() => navigate('/personal-color')}
-              className="px-4 py-2.5  bg-[#000000] text-[#518F5C] hover:text-white font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer "
+              className="px-4 py-2.5  bg-matcha-text text-matcha-secondary hover:text-white font-mono text-xs font-bold flex items-center gap-2 transition-all cursor-pointer "
             >
               <Palette size={14} />
               <span>{t('mixMatch.colorLab')}</span>
@@ -315,13 +315,13 @@ export default function MixMatchStudioPage() {
         {/* 2. EDITORIAL PRESET CHIPS */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-mono font-bold uppercase text-[#666666] tracking-wider block">
+            <span className="text-[11px] font-mono font-bold uppercase text-matcha-muted tracking-wider block">
               {userSeason
                 ? t('mixMatch.presetsForYou', { season: userSeason })
                 : t('mixMatch.presetsPopular')}
             </span>
             {activePresetId && (
-              <span className="text-[10px] font-mono text-[#042509] font-bold bg-[#F1F1F1] px-2.5 py-0.5 ">
+              <span className="text-[10px] font-mono text-matcha-primary font-bold bg-matcha-bg px-2.5 py-0.5 ">
                 ✓ กำลังแสดงลุคที่เลือก
               </span>
             )}
@@ -336,13 +336,13 @@ export default function MixMatchStudioPage() {
                   onClick={() => handleApplyPreset(preset)}
                   className={`p-3.5  border-2 text-left transition-all duration-200 cursor-pointer group relative ${
                     isActive
-                      ? 'border-[#042509] bg-[#042509]/8  ring-2 ring-[#042509]/25 scale-[1.02]'
-                      : 'border-[#DCDCDC] bg-white hover:border-[#042509]/50 hover:bg-[#F1F1F1] hover:'
+                      ? 'border-matcha-primary bg-matcha-primary/8  ring-2 ring-matcha-primary/25 scale-[1.02]'
+                      : 'border-matcha-border bg-white hover:border-matcha-primary/50 hover:bg-matcha-bg hover:'
                   }`}
                 >
                   <div className="flex items-center justify-between text-xs font-bold font-mono mb-1.5">
                     <span className={`truncate font-bold transition-colors ${
-                      isActive ? 'text-[#042509]' : 'text-[#000000] group-hover:text-[#042509]'
+                      isActive ? 'text-matcha-primary' : 'text-matcha-text group-hover:text-matcha-primary'
                     }`}>
                       {preset.name}
                     </span>
@@ -350,20 +350,20 @@ export default function MixMatchStudioPage() {
                       title={`Color Harmony: ${preset.harmonyType}`}
                       className={`text-[10px] font-bold px-2 py-0.5  transition-colors shrink-0 ${
                         isActive
-                          ? 'bg-[#042509] text-white '
-                          : 'bg-[#F1F1F1] text-[#042509]'
+                          ? 'bg-matcha-primary text-white '
+                          : 'bg-matcha-bg text-matcha-primary'
                       }`}
                     >
                       {PRESET_HARMONY[preset.id]}% Harmony
                     </span>
                   </div>
                   <p className={`text-[11px] line-clamp-2 leading-relaxed transition-colors ${
-                    isActive ? 'text-[#000000] font-medium' : 'text-[#666666]'
+                    isActive ? 'text-matcha-text font-medium' : 'text-matcha-muted'
                   }`}>
                     {t(`mixMatch.presets.${preset.id}`)}
                   </p>
                   {isUserSeason && (
-                    <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-mono font-bold text-[#042509] bg-[#F1F1F1] px-2 py-0.5 ">
+                    <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-mono font-bold text-matcha-primary bg-matcha-bg px-2 py-0.5 ">
                       ✓ ตรงกับผลวิเคราะห์ของคุณ
                     </span>
                   )}
@@ -379,16 +379,16 @@ export default function MixMatchStudioPage() {
           {/* LEFT COLUMN: 4-Slot Interactive Fitting Canvas (5 Cols - Sourced Height) */}
           <div 
             ref={leftColRef}
-            className="lg:col-span-5 bg-white  border border-[#DCDCDC] p-6  space-y-6"
+            className="lg:col-span-5 bg-white  border border-matcha-border p-6  space-y-6"
           >
             
-            <div className="flex items-center justify-between border-b border-[#DCDCDC]/60 pb-3">
+            <div className="flex items-center justify-between border-b border-matcha-border/60 pb-3">
               <div className="flex items-center gap-2">
-                <Layers size={18} className="text-[#042509]" />
-                <h3 className="font-serif text-lg font-bold text-[#000000]">{t('mixMatch.canvas')}</h3>
+                <Layers size={18} className="text-matcha-primary" />
+                <h3 className="font-serif text-lg font-bold text-matcha-text">{t('mixMatch.canvas')}</h3>
               </div>
               <span className={`text-xs font-mono font-bold px-2.5 py-1  ${
-                isCompleteBundle ? 'bg-[#042509] text-white' : 'bg-[#FEE4E2] text-[#B42318]'
+                isCompleteBundle ? 'bg-matcha-primary text-white' : 'bg-[#FEE4E2] text-[#B42318]'
               }`}>
                 {isCompleteBundle
                   ? `${buyableItems.length} ชิ้นครบเซ็ต`
@@ -407,7 +407,7 @@ export default function MixMatchStudioPage() {
                 thirteen times the area, laid out in reading order so the column
                 still runs head to toe, each standing on a wash of its own dye
                 the way the catalogue shows it. */}
-            <div ref={outfitMotionRef} className="grid grid-cols-2 gap-px bg-[#DCDCDC] border border-[#DCDCDC]">
+            <div ref={outfitMotionRef} className="grid grid-cols-2 gap-px bg-matcha-border border border-matcha-border">
               {[
                 { key: 'tops', item: selectedTop, Icon: Shirt, label: '1. Upper Body (30%)', sizes: ['S', 'M', 'L', 'XL', 'XXL'] },
                 { key: 'bottoms', item: selectedBottom, Icon: Shirt, label: '2. Lower Body (60% Base)', sizes: ['30', '32', '34', '36'] },
@@ -442,19 +442,19 @@ export default function MixMatchStudioPage() {
                         className="absolute inset-0 w-full h-full object-contain object-center mix-blend-multiply"
                       />
                       {item && !item.inStock && (
-                        <div className="absolute inset-0 bg-[#F1F1F1]/70 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-matcha-bg/70 flex items-center justify-center">
                           <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#0A0A0A]">{t('mixMatch.soldOut')}</span>
                         </div>
                       )}
                     </div>
 
                     <div className={`px-2.5 py-2 transition-colors ${active ? 'bg-[#0A0A0A]' : 'bg-white'}`}>
-                      <span className={`flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-wider ${active ? 'text-[#F1F1F1]/60' : 'text-[#C91D1D]'}`}>
+                      <span className={`flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-wider ${active ? 'text-matcha-bg/60' : 'text-matcha-accent'}`}>
                         <Icon size={11} />
                         <span className="truncate">{label}</span>
                       </span>
-                      <h4 className={`text-[11px] font-bold truncate mt-0.5 ${active ? 'text-[#F1F1F1]' : 'text-[#0A0A0A]'}`}>{item?.name}</h4>
-                      <span className={`font-mono text-[10px] ${active ? 'text-[#F1F1F1]/70' : 'text-[#666666]'}`}>
+                      <h4 className={`text-[11px] font-bold truncate mt-0.5 ${active ? 'text-matcha-bg' : 'text-[#0A0A0A]'}`}>{item?.name}</h4>
+                      <span className={`font-mono text-[10px] ${active ? 'text-matcha-bg/70' : 'text-matcha-muted'}`}>
                         ${item?.price} · {item?.fit || item?.color || 'Regular'}
                       </span>
 
@@ -480,10 +480,10 @@ export default function MixMatchStudioPage() {
                             /* On the inverted caption the usual black chip
                                would vanish, so the selected size flips to
                                light on the dark strip. */
-                            className={`px-1.5 py-0.5 font-mono text-[9px] whitespace-nowrap transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#C91D1D] ${
+                            className={`px-1.5 py-0.5 font-mono text-[9px] whitespace-nowrap transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-accent ${
                               selectedSizes[key] === sz
-                                ? (active ? 'bg-[#F1F1F1] text-[#0A0A0A]' : 'bg-[#0A0A0A] text-[#F1F1F1]')
-                                : (active ? 'bg-[#F1F1F1]/15 text-[#F1F1F1]/70 hover:bg-[#F1F1F1]/25' : 'bg-[#F1F1F1] text-[#666666] hover:bg-[#DCDCDC]')
+                                ? (active ? 'bg-matcha-bg text-[#0A0A0A]' : 'bg-[#0A0A0A] text-matcha-bg')
+                                : (active ? 'bg-matcha-bg/15 text-matcha-bg/70 hover:bg-matcha-bg/25' : 'bg-matcha-bg text-matcha-muted hover:bg-matcha-border')
                             }`}
                           >
                             {sz}
@@ -497,24 +497,24 @@ export default function MixMatchStudioPage() {
             </div>
 
             {/* Color Harmony Score Metric (Computational Fashion Engine) */}
-            <div className="p-4  bg-[#F1F1F1] border border-[#DCDCDC] space-y-3">
+            <div className="p-4  bg-matcha-bg border border-matcha-border space-y-3">
               <div className="flex items-center justify-between text-xs font-mono font-bold">
-                <span className="uppercase text-[#666666]">{t('mixMatch.harmony')}:</span>
-                <span className="text-[#042509] font-black text-sm">{harmonyScore}% Synergy</span>
+                <span className="uppercase text-matcha-muted">{t('mixMatch.harmony')}:</span>
+                <span className="text-matcha-primary font-black text-sm">{harmonyScore}% Synergy</span>
               </div>
-              <div className="w-full h-2  bg-white border border-[#DCDCDC] overflow-hidden">
+              <div className="w-full h-2  bg-white border border-matcha-border overflow-hidden">
                 <div 
-                  className="h-full bg-linear-to-r from-[#8F9779] to-[#042509] transition-all duration-500" 
+                  className="h-full bg-linear-to-r from-[#8F9779] to-matcha-primary transition-all duration-500" 
                   style={{ width: `${harmonyScore}%` }}
                 />
               </div>
 
               {/* Harmony Type & Season Tag */}
               <div className="flex items-center justify-between text-[11px] font-mono">
-                <span className="px-2 py-0.5  bg-[#042509]/10 text-[#042509] font-bold">
+                <span className="px-2 py-0.5  bg-matcha-primary/10 text-matcha-primary font-bold">
                   {synergy.harmonyType}
                 </span>
-                <span className="text-[#666666]">
+                <span className="text-matcha-muted">
                   {synergy.dominantSeason} Capsule
                 </span>
               </div>
@@ -528,8 +528,8 @@ export default function MixMatchStudioPage() {
                   enough to read, with each colour named on itself using the
                   same ink rule the catalogue's dye bars use. */}
               {synergy.proportion60_30_10 && (
-                <div className="pt-3 border-t border-[#DCDCDC] space-y-2">
-                  <div className="flex items-baseline justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666]">
+                <div className="pt-3 border-t border-matcha-border space-y-2">
+                  <div className="flex items-baseline justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted">
                     <span>{t('mixMatch.proportion')}</span>
                     <span>{t('mixMatch.slots')}</span>
                   </div>
@@ -562,7 +562,7 @@ export default function MixMatchStudioPage() {
                       </div>
                     ))}
                   </div>
-                  <div className="flex justify-end gap-4 font-mono text-[9px] uppercase tracking-wider text-[#666666]">
+                  <div className="flex justify-end gap-4 font-mono text-[9px] uppercase tracking-wider text-matcha-muted">
                     <span>5% {synergy.proportion60_30_10.footwear.color}</span>
                     <span>5% {synergy.proportion60_30_10.accent.color}</span>
                   </div>
@@ -570,28 +570,28 @@ export default function MixMatchStudioPage() {
               )}
 
               {/* Detected Itten Optical Contrasts & Delta E */}
-              <div className="pt-2 border-t border-[#DCDCDC]/60 space-y-1.5">
-                <span className="text-[10px] font-mono font-bold uppercase text-[#666666] block">
+              <div className="pt-2 border-t border-matcha-border/60 space-y-1.5">
+                <span className="text-[10px] font-mono font-bold uppercase text-matcha-muted block">
                   Optical Contrasts (Johannes Itten):
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {synergy.ittenContrasts && synergy.ittenContrasts.map((contrast) => (
                     <span 
                       key={contrast.id} 
-                      className="text-[9px] font-mono px-2 py-0.5  bg-[#F1F1F1] text-[#042509] font-semibold"
+                      className="text-[9px] font-mono px-2 py-0.5  bg-matcha-bg text-matcha-primary font-semibold"
                       title={contrast.description}
                     >
                       {contrast.name}: {contrast.badge}
                     </span>
                   ))}
-                  <span className="text-[9px] font-mono px-2 py-0.5  bg-white border border-[#DCDCDC] text-[#666666]" title="CIELAB Color Distance (ΔE)">
+                  <span className="text-[9px] font-mono px-2 py-0.5  bg-white border border-matcha-border text-matcha-muted" title="CIELAB Color Distance (ΔE)">
                     ΔE: {synergy.deltaE}
                   </span>
                 </div>
               </div>
 
               {/* Styling Critique Advice */}
-              <p className="text-[11px] text-[#000000] leading-relaxed pt-1 font-medium bg-white/60 p-2  border border-[#DCDCDC]/50">
+              <p className="text-[11px] text-matcha-text leading-relaxed pt-1 font-medium bg-white/60 p-2  border border-matcha-border/50">
                 {/* The season is a name the site already translates, so it
                     reads as it does in the colour lab. The harmony type stays
                     as written — it is a term of art, not a word to localise. */}
@@ -604,14 +604,14 @@ export default function MixMatchStudioPage() {
             {/* Pricing & 1-Click Bundle Button */}
             <div className="space-y-3 pt-2">
               <div className="flex items-baseline justify-between font-mono">
-                <span className="text-xs text-[#666666] uppercase font-bold">
+                <span className="text-xs text-matcha-muted uppercase font-bold">
                   Total Bundle ({buyableItems.length} Item{buyableItems.length === 1 ? '' : 's'}):
                 </span>
                 <div className="text-right">
                   {isCompleteBundle && (
-                    <span className="text-xs line-through text-[#666666] mr-2">${bundleSubtotal.toFixed(2)}</span>
+                    <span className="text-xs line-through text-matcha-muted mr-2">${bundleSubtotal.toFixed(2)}</span>
                   )}
-                  <span className="text-xl font-black text-[#000000]">${finalBundleTotal.toFixed(2)}</span>
+                  <span className="text-xl font-black text-matcha-text">${finalBundleTotal.toFixed(2)}</span>
                 </div>
               </div>
 
@@ -627,7 +627,7 @@ export default function MixMatchStudioPage() {
                 className={`w-full py-4  font-mono font-bold text-xs sm:text-sm uppercase tracking-wider  flex items-center justify-center gap-2 transition-all active:scale-98 cursor-pointer ${
                   justAddedBundle 
                     ? 'bg-emerald-600 text-white' 
-                    : 'bg-[#042509] hover:bg-[#1E3D1A] text-white /25'
+                    : 'bg-matcha-primary hover:bg-[#1E3D1A] text-white /25'
                 }`}
               >
                 {justAddedBundle ? (
@@ -656,17 +656,17 @@ export default function MixMatchStudioPage() {
           {/* RIGHT COLUMN: Interactive Slot Item Pickers (7 Cols - Equal Height to Left Column) */}
           <div 
             style={isLgScreen && leftColHeight ? { height: `${leftColHeight}px` } : undefined}
-            className="lg:col-span-7 bg-white  border border-[#DCDCDC] p-6 sm:p-8  flex flex-col transition-[height] duration-150"
+            className="lg:col-span-7 bg-white  border border-matcha-border p-6 sm:p-8  flex flex-col transition-[height] duration-150"
           >
             
             {/* Slot Tab Switches (4 Tabs) */}
-            <div className="flex items-center gap-1.5 sm:gap-2 border-b border-[#DCDCDC] pb-4 overflow-x-auto shrink-0 mb-6">
+            <div className="flex items-center gap-1.5 sm:gap-2 border-b border-matcha-border pb-4 overflow-x-auto shrink-0 mb-6">
               <button
                 onClick={() => setActiveSlotTab('tops')}
                 className={`px-3 sm:px-4 py-2  font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeSlotTab === 'tops' 
-                    ? 'bg-[#000000] text-white ' 
-                    : 'bg-[#F1F1F1] text-[#666666] hover:text-[#000000]'
+                    ? 'bg-matcha-text text-white ' 
+                    : 'bg-matcha-bg text-matcha-muted hover:text-matcha-text'
                 }`}
               >
                 <Shirt size={14} />
@@ -677,8 +677,8 @@ export default function MixMatchStudioPage() {
                 onClick={() => setActiveSlotTab('bottoms')}
                 className={`px-3 sm:px-4 py-2  font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeSlotTab === 'bottoms' 
-                    ? 'bg-[#000000] text-white ' 
-                    : 'bg-[#F1F1F1] text-[#666666] hover:text-[#000000]'
+                    ? 'bg-matcha-text text-white ' 
+                    : 'bg-matcha-bg text-matcha-muted hover:text-matcha-text'
                 }`}
               >
                 <Scissors size={14} />
@@ -689,8 +689,8 @@ export default function MixMatchStudioPage() {
                 onClick={() => setActiveSlotTab('footwear')}
                 className={`px-3 sm:px-4 py-2  font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeSlotTab === 'footwear' 
-                    ? 'bg-[#000000] text-white ' 
-                    : 'bg-[#F1F1F1] text-[#666666] hover:text-[#000000]'
+                    ? 'bg-matcha-text text-white ' 
+                    : 'bg-matcha-bg text-matcha-muted hover:text-matcha-text'
                 }`}
               >
                 <Footprints size={14} />
@@ -701,8 +701,8 @@ export default function MixMatchStudioPage() {
                 onClick={() => setActiveSlotTab('accessories')}
                 className={`px-3 sm:px-4 py-2  font-mono text-xs font-bold uppercase transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
                   activeSlotTab === 'accessories' 
-                    ? 'bg-[#000000] text-white ' 
-                    : 'bg-[#F1F1F1] text-[#666666] hover:text-[#000000]'
+                    ? 'bg-matcha-text text-white ' 
+                    : 'bg-matcha-bg text-matcha-muted hover:text-matcha-text'
                 }`}
               >
                 <Briefcase size={14} />
@@ -742,11 +742,11 @@ export default function MixMatchStudioPage() {
                     }}
                     className={`p-3.5 border text-left transition-colors cursor-pointer flex flex-col justify-between group w-full outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-inset ${
                       isSelected 
-                        ? 'border-[#0A0A0A] bg-[#F1F1F1]' 
-                        : 'border-[#DCDCDC] bg-white hover:border-[#0A0A0A]'
+                        ? 'border-[#0A0A0A] bg-matcha-bg' 
+                        : 'border-matcha-border bg-white hover:border-[#0A0A0A]'
                     }`}
                   >
-                    <div className="relative aspect-4/5 w-full bg-[#F1F1F1]  overflow-hidden mb-2.5 p-2 flex items-center justify-center">
+                    <div className="relative aspect-4/5 w-full bg-matcha-bg  overflow-hidden mb-2.5 p-2 flex items-center justify-center">
                       <img 
                         src={webpSrc(item.image)} data-original-src={item.image} 
                         loading="lazy"
@@ -756,11 +756,11 @@ export default function MixMatchStudioPage() {
                         className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-200" 
                       />
                       {isSelected && (
-                        <div className="absolute top-2 right-2 w-6 h-6  bg-[#042509] text-white flex items-center justify-center ">
+                        <div className="absolute top-2 right-2 w-6 h-6  bg-matcha-primary text-white flex items-center justify-center ">
                           <Check size={14} />
                         </div>
                       )}
-                      <span className="absolute bottom-2 left-2 text-[9px] font-mono px-2 py-0.5 bg-white/90  backdrop-blur-xs font-bold text-[#000000]">
+                      <span className="absolute bottom-2 left-2 text-[9px] font-mono px-2 py-0.5 bg-white/90  backdrop-blur-xs font-bold text-matcha-text">
                         {item.season}
                       </span>
                       {!item.inStock && (
@@ -771,14 +771,14 @@ export default function MixMatchStudioPage() {
                     </div>
 
                     <div className="space-y-1">
-                      <h5 className="font-bold text-xs text-[#000000] line-clamp-1 group-hover:text-[#042509]">
+                      <h5 className="font-bold text-xs text-matcha-text line-clamp-1 group-hover:text-matcha-primary">
                         {item.name}
                       </h5>
                       <div className="flex items-center justify-between text-[11px] font-mono">
-                        <span className="font-bold text-[#000000]">${Number(item.price).toFixed(2)}</span>
+                        <span className="font-bold text-matcha-text">${Number(item.price).toFixed(2)}</span>
                         <div className="flex items-center gap-1">
                           <span className="w-2 h-2  border border-black/10" style={{ backgroundColor: item.colorHex }} />
-                          <span className="text-[10px] text-[#666666] truncate max-w-16">{item.color}</span>
+                          <span className="text-[10px] text-matcha-muted truncate max-w-16">{item.color}</span>
                         </div>
                       </div>
                     </div>

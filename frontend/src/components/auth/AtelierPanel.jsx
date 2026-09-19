@@ -21,23 +21,23 @@ export default function AtelierPanel({ title, footer }) {
   ];
 
   return (
-    <div className="lg:col-span-5 lg:order-1 p-8 sm:p-10 lg:p-12 bg-[#042509] text-[#F1F1F1] flex flex-col justify-between relative overflow-hidden">
+    <div className="lg:col-span-5 lg:order-1 p-8 sm:p-10 lg:p-12 bg-matcha-primary text-matcha-bg flex flex-col justify-between relative overflow-hidden">
 
       <div className="relative z-10">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-xs font-mono text-[#F1F1F1]/70 hover:text-[#F1F1F1] transition-colors mb-8 outline-hidden focus-visible:underline"
+          className="inline-flex items-center gap-2 text-xs font-mono text-matcha-bg/70 hover:text-matcha-bg transition-colors mb-8 outline-hidden focus-visible:underline"
         >
           <ArrowLeft size={14} aria-hidden="true" />
           <span>{t('auth.backToStore')}</span>
         </Link>
 
         <div className="space-y-4">
-          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#F1F1F1] leading-snug uppercase">
+          <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-matcha-bg leading-snug uppercase">
             {title}
           </h2>
 
-          <p className="text-xs text-[#F1F1F1]/70 leading-relaxed max-w-[46ch]">
+          <p className="text-xs text-matcha-bg/70 leading-relaxed max-w-[46ch]">
             {t('auth.atelierPledgeBody')}
           </p>
         </div>
@@ -45,17 +45,17 @@ export default function AtelierPanel({ title, footer }) {
 
       {/* The perks are a set, not a sequence, so they are marked rather than
           numbered — and marked with a rule rather than a badge. */}
-      <ul className="relative z-10 my-8 py-6 border-y border-[#F1F1F1]/15 space-y-3">
+      <ul className="relative z-10 my-8 py-6 border-y border-matcha-bg/15 space-y-3">
         {perks.map((perk) => (
           <li key={perk} className="flex items-start gap-3 text-xs">
-            <span className="w-4 h-px bg-[#518F5C] shrink-0 mt-2" aria-hidden="true" />
-            <span className="text-[#F1F1F1]/85 leading-relaxed">{perk}</span>
+            <span className="w-4 h-px bg-matcha-secondary shrink-0 mt-2" aria-hidden="true" />
+            <span className="text-matcha-bg/85 leading-relaxed">{perk}</span>
           </li>
         ))}
       </ul>
 
       {footer && (
-        <div className="relative z-10 pt-2 text-[11px] font-mono text-[#F1F1F1]/55 border-t border-[#F1F1F1]/15">
+        <div className="relative z-10 pt-2 text-[11px] font-mono text-matcha-bg/55 border-t border-matcha-bg/15">
           {footer}
         </div>
       )}

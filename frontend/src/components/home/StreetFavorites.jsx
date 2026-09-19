@@ -70,8 +70,8 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
     >
       {/* Tag and category, set as the plain marginalia they are. */}
       <div className="flex justify-between items-baseline gap-2 px-3 pt-3 pb-2 font-mono text-[10px] uppercase tracking-wider">
-        <span className="text-[#C91D1D] truncate">{item.tag || item.season}</span>
-        <span className="text-[#666666] truncate">{item.category}</span>
+        <span className="text-matcha-accent truncate">{item.tag || item.season}</span>
+        <span className="text-matcha-muted truncate">{item.category}</span>
       </div>
 
       {/* The garment on its own dye. Every product here is shot on white, so
@@ -90,7 +90,7 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
         />
 
         {!item.inStock && (
-          <div className="absolute inset-0 bg-[#F1F1F1]/70 flex items-center justify-center">
+          <div className="absolute inset-0 bg-matcha-bg/70 flex items-center justify-center">
             <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#0A0A0A]">
               {t('favorites.soldOutBadge')}
             </span>
@@ -115,7 +115,7 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
                   quantity: 1
                 });
               }}
-              className="flex-1 py-2.5 bg-[#0A0A0A] hover:bg-[#C91D1D] text-[#F1F1F1] font-mono text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+              className="flex-1 py-2.5 bg-[#0A0A0A] hover:bg-matcha-accent text-matcha-bg font-mono text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
             >
               {needsSizeChoice ? <Eye size={13} /> : <ShoppingBag size={13} />}
               <span>{needsSizeChoice ? t('favorites.selectSize') : t('favorites.addToCart')}</span>
@@ -143,7 +143,7 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
       </div>
 
       <div className="px-3 pt-2.5 pb-3 flex flex-col gap-2.5">
-        <h3 className="text-[13px] leading-snug text-[#0A0A0A] line-clamp-2 group-hover:underline underline-offset-4 decoration-2 decoration-[#C91D1D]">
+        <h3 className="text-[13px] leading-snug text-[#0A0A0A] line-clamp-2 group-hover:underline underline-offset-4 decoration-2 decoration-matcha-accent">
           {item.name}
         </h3>
 
@@ -215,13 +215,13 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
   };
 
   return (
-    <section id="street-favorites" className="w-full bg-[#F1F1F1] text-[#000000] py-16 sm:py-24 px-5 sm:px-8 lg:px-12 border-b border-[#DCDCDC] overflow-hidden select-none">
+    <section id="street-favorites" className="w-full bg-matcha-bg text-matcha-text py-16 sm:py-24 px-5 sm:px-8 lg:px-12 border-b border-matcha-border overflow-hidden select-none">
       <div className="max-w-7xl mx-auto">
         
         {/* 1. Header Title & Navigation Controls */}
         <Reveal y={30} className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
           <div>
-            <h2 className="text-4xl sm:text-6xl font-black text-[#C91D1D] tracking-tight font-sans">
+            <h2 className="text-4xl sm:text-6xl font-black text-matcha-accent tracking-tight font-sans">
               {t('favorites.title')}
             </h2>
           </div>
@@ -229,23 +229,23 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
             {onExploreCatalog && (
               <button
                 onClick={onExploreCatalog}
-                className="font-mono text-xs uppercase tracking-wider text-[#C91D1D] hover:underline underline-offset-4 cursor-pointer flex items-center gap-1.5 mr-2 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+                className="font-mono text-xs uppercase tracking-wider text-matcha-accent hover:underline underline-offset-4 cursor-pointer flex items-center gap-1.5 mr-2 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
               >
-                <Sparkles size={13} className="text-[#518F5C]" />
+                <Sparkles size={13} className="text-matcha-secondary" />
                 <span>{t('favorites.viewCatalog')}{!loading && !error ? ` (${products.length})` : ''}</span>
               </button>
             )}
             <button
               onClick={scrollLeft}
               aria-label={t('favorites.prevAria')}
-              className="w-9 h-9 text-[#0A0A0A] hover:text-[#C91D1D] flex items-center justify-center transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+              className="w-9 h-9 text-[#0A0A0A] hover:text-matcha-accent flex items-center justify-center transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
             >
               <ChevronLeft size={20} />
             </button>
             <button
               onClick={scrollRight}
               aria-label={t('favorites.nextAria')}
-              className="w-9 h-9 text-[#0A0A0A] hover:text-[#C91D1D] flex items-center justify-center transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+              className="w-9 h-9 text-[#0A0A0A] hover:text-matcha-accent flex items-center justify-center transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
             >
               <ChevronRight size={20} />
             </button>
@@ -266,7 +266,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
                 aria-pressed={isActive}
                 onClick={() => setActiveCategory(key)}
                 className={`relative pb-1.5 font-mono text-xs uppercase tracking-wider whitespace-nowrap cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
-                  isActive ? 'text-[#0A0A0A] font-bold' : 'text-[#666666] hover:text-[#0A0A0A]'
+                  isActive ? 'text-[#0A0A0A] font-bold' : 'text-matcha-muted hover:text-[#0A0A0A]'
                 }`}
               >
                 <span>{t(`favorites.categories.${key}`)}</span>
@@ -276,11 +276,11 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
                     the eye can follow the selection to where it went. */}
                 {isActive && (
                   reduced ? (
-                    <span className="absolute inset-x-0 bottom-0 h-0.5 bg-[#C91D1D]" />
+                    <span className="absolute inset-x-0 bottom-0 h-0.5 bg-matcha-accent" />
                   ) : (
                     <motion.span
                       layoutId="favorites-active-pill"
-                      className="absolute inset-x-0 bottom-0 h-0.5 bg-[#C91D1D]"
+                      className="absolute inset-x-0 bottom-0 h-0.5 bg-matcha-accent"
                       transition={{ type: 'spring', stiffness: 380, damping: 32 }}
                     />
                   )
@@ -302,14 +302,14 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
           >
             {loading ? <div role="status" aria-label={t('common.loading')} className="p-5">
                 {slow && (
-                  <p className="mb-4 text-xs font-mono text-[#666666] leading-relaxed">
+                  <p className="mb-4 text-xs font-mono text-matcha-muted leading-relaxed">
                     {t('favorites.wakingServer')}
                   </p>
                 )}
                 <div className="flex gap-4">{[0, 1, 2, 3].map(i => <div key={i} className="w-64 sm:w-72 lg:w-80 shrink-0"><ProductCardSkeleton /></div>)}</div>
               </div>
-              : error ? <div role="alert" className="p-6 text-red-900"><p>{t('favorites.loadError')}</p><button onClick={retry} className="mt-3 px-4 py-2 rounded-lg bg-[#042509] text-white hover:bg-[#021505]">{t('common.retry')}</button></div>
-              : !filteredProducts.length ? <div className="m-5 p-6 border border-dashed border-[#DCDCDC] rounded-xl"><ShoppingBag aria-hidden="true" /><p className="my-3">{t('favorites.emptyCategory')}</p><button onClick={onExploreCatalog} className="px-4 py-2 rounded-lg bg-[#042509] text-white hover:bg-[#021505]">{t('favorites.viewAll')}</button></div>
+              : error ? <div role="alert" className="p-6 text-red-900"><p>{t('favorites.loadError')}</p><button onClick={retry} className="mt-3 px-4 py-2 rounded-lg bg-matcha-primary text-white hover:bg-matcha-primary-dark">{t('common.retry')}</button></div>
+              : !filteredProducts.length ? <div className="m-5 p-6 border border-dashed border-matcha-border rounded-xl"><ShoppingBag aria-hidden="true" /><p className="my-3">{t('favorites.emptyCategory')}</p><button onClick={onExploreCatalog} className="px-4 py-2 rounded-lg bg-matcha-primary text-white hover:bg-matcha-primary-dark">{t('favorites.viewAll')}</button></div>
               : (
               /* Changing category reorders one shared set of cards instead of
                  tearing the rail down and building a new one: what survives the
@@ -329,7 +329,7 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
                       ease: EASE,
                       layout: { type: 'spring', stiffness: 340, damping: 34 },
                     }}
-                    className="shrink-0 border-r border-[#DCDCDC] last:border-r-0"
+                    className="shrink-0 border-r border-matcha-border last:border-r-0"
                   >
                     <StreetFavoriteCard
                       item={item}

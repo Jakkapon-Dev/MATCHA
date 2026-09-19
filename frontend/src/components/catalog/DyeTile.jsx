@@ -78,7 +78,7 @@ export default function DyeTile({ product, variant, onAddToCart, onQuickView }) 
         />
 
         {!inStock && (
-          <div className="absolute inset-0 bg-[#F1F1F1]/70 flex items-center justify-center">
+          <div className="absolute inset-0 bg-matcha-bg/70 flex items-center justify-center">
             <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-[#0A0A0A]">
               Sold out
             </span>
@@ -92,7 +92,7 @@ export default function DyeTile({ product, variant, onAddToCart, onQuickView }) 
             <button
               type="button"
               onClick={handleAdd}
-              className="flex-1 py-2.5 bg-[#0A0A0A] text-[#F1F1F1] font-mono text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer hover:bg-[#C91D1D] transition-colors"
+              className="flex-1 py-2.5 bg-[#0A0A0A] text-matcha-bg font-mono text-[11px] uppercase tracking-wider flex items-center justify-center gap-1.5 cursor-pointer hover:bg-matcha-accent transition-colors"
             >
               {justAdded ? <Check size={13} /> : needsSizeChoice ? <Eye size={13} /> : <ShoppingBag size={13} />}
               <span>{justAdded ? 'Added' : needsSizeChoice ? 'Choose size' : 'Add to bag'}</span>
@@ -130,7 +130,7 @@ export default function DyeTile({ product, variant, onAddToCart, onQuickView }) 
             event.stopPropagation();
             openQuickView();
           }}
-          className="text-left text-[13px] leading-snug text-[#0A0A0A] line-clamp-2 cursor-pointer outline-hidden underline-offset-4 decoration-2 decoration-[#C91D1D] group-hover:underline focus-visible:underline"
+          className="text-left text-[13px] leading-snug text-[#0A0A0A] line-clamp-2 cursor-pointer outline-hidden underline-offset-4 decoration-2 decoration-matcha-accent group-hover:underline focus-visible:underline"
         >
           {product?.name}
         </button>

@@ -77,7 +77,7 @@ const QUIZ_QUESTIONS = [
   {
     id: 1,
     image: '/images/personal_test/undertone.jpg',
-    icon: <Droplet size={18} className="text-[#042509]" />,
+    icon: <Droplet size={18} className="text-matcha-primary" />,
     options: [
       { 
         letter: 'A',
@@ -105,7 +105,7 @@ const QUIZ_QUESTIONS = [
   {
     id: 2,
     image: '/images/personal_test/acc.jpg',
-    icon: <Sun size={18} className="text-[#C91D1D]" />,
+    icon: <Sun size={18} className="text-matcha-accent" />,
     options: [
       { 
         letter: 'A', 
@@ -161,7 +161,7 @@ const QUIZ_QUESTIONS = [
   {
     id: 4,
     image: '/images/personal_test/fabric.jpg',
-    icon: <Layers size={18} className="text-[#042509]" />,
+    icon: <Layers size={18} className="text-matcha-primary" />,
     options: [
       { 
         letter: 'A', 
@@ -189,7 +189,7 @@ const QUIZ_QUESTIONS = [
   {
     id: 5,
     image: '/images/personal_test/intensity-tone.jpg',
-    icon: <Eye size={18} className="text-[#000000]" />,
+    icon: <Eye size={18} className="text-matcha-text" />,
     options: [
       { 
         letter: 'A', 
@@ -301,9 +301,9 @@ function ColorAxis({ season, reading, dyes }) {
 
   return (
     <div className="space-y-4">
-      <div className="border border-[#DCDCDC]">
+      <div className="border border-matcha-border">
         {rows.map((band) => (
-          <div key={band} className="grid grid-cols-2 border-b border-[#DCDCDC] last:border-b-0">
+          <div key={band} className="grid grid-cols-2 border-b border-matcha-border last:border-b-0">
             {columns.map((tone) => {
               const cellSeason = seasonAt(tone, band);
               const isYours = cellSeason === season;
@@ -311,17 +311,17 @@ function ColorAxis({ season, reading, dyes }) {
               return (
                 <div
                   key={tone}
-                  className={`relative p-4 sm:p-5 border-r border-[#DCDCDC] last:border-r-0 transition-colors ${
-                    isYours ? 'bg-[#0A0A0A] text-[#F1F1F1]' : inBand ? 'bg-white' : ''
+                  className={`relative p-4 sm:p-5 border-r border-matcha-border last:border-r-0 transition-colors ${
+                    isYours ? 'bg-[#0A0A0A] text-matcha-bg' : inBand ? 'bg-white' : ''
                   }`}
                 >
                   <span className={`font-mono text-[10px] uppercase tracking-[0.18em] block ${
-                    isYours ? 'text-[#F1F1F1]/60' : 'text-[#999999]'
+                    isYours ? 'text-matcha-bg/60' : 'text-[#999999]'
                   }`}>
                     {tone} · {band}
                   </span>
                   <span className={`font-bold text-lg sm:text-xl block mt-1 ${
-                    isYours ? 'text-[#F1F1F1]' : 'text-[#666666]'
+                    isYours ? 'text-matcha-bg' : 'text-matcha-muted'
                   }`}>
                     {cellSeason}
                   </span>
@@ -342,7 +342,7 @@ function ColorAxis({ season, reading, dyes }) {
 
       {/* The undertone scale, with the answer standing on its tick. */}
       <div>
-        <div className="flex justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">
+        <div className="flex justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">
           <span>Cool</span>
           <span className="text-[#0A0A0A]">Undertone</span>
           <span>Warm</span>
@@ -360,7 +360,7 @@ function ColorAxis({ season, reading, dyes }) {
               <span
                 key={i}
                 className={`flex-1 transition-all ${
-                  isMark ? 'h-10 bg-[#C91D1D]' : isMiddle ? 'h-5 bg-[#999999]' : 'h-3 bg-[#DCDCDC]'
+                  isMark ? 'h-10 bg-matcha-accent' : isMiddle ? 'h-5 bg-[#999999]' : 'h-3 bg-matcha-border'
                 }`}
               />
             );
@@ -368,11 +368,11 @@ function ColorAxis({ season, reading, dyes }) {
         </div>
 
         {diff === null ? (
-          <p className="mt-3 font-mono text-[11px] text-[#666666]">
+          <p className="mt-3 font-mono text-[11px] text-matcha-muted">
             {t('quiz.savedNote')}
           </p>
         ) : (
-          <div className="mt-3 flex flex-wrap items-baseline gap-x-6 gap-y-1 font-mono text-[11px] text-[#666666]">
+          <div className="mt-3 flex flex-wrap items-baseline gap-x-6 gap-y-1 font-mono text-[11px] text-matcha-muted">
             <span>
               อุ่น <span className="text-[#0A0A0A] tabular-nums">{reading.warm}</span>
               <span className="mx-1.5">·</span>
@@ -517,7 +517,7 @@ export default function PersonalColorPage() {
   const theory = t(`seasons.${selectedSeasonTab}`);
 
   return (
-    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-5 sm:px-6 lg:px-8">
+    <div className="w-full bg-matcha-bg min-h-screen py-10 sm:py-16 px-5 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto space-y-10 sm:space-y-14">
 
         {/* 1. HEADER. Left-aligned under a masthead rule, matching the
@@ -526,7 +526,7 @@ export default function PersonalColorPage() {
             said nothing the title does not, and centring it was the one layout
             every page of this kind arrives at by default. */}
         <header className="space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-3 border-b border-[#0A0A0A] font-mono text-[11px] uppercase tracking-[0.18em] text-[#666666]">
+          <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2 pb-3 border-b border-[#0A0A0A] font-mono text-[11px] uppercase tracking-[0.18em] text-matcha-muted">
             <span className="text-[#0A0A0A] font-bold">{t('quiz.eyebrow')}</span>
             <span>{SEASONS.length} seasons</span>
           </div>
@@ -535,7 +535,7 @@ export default function PersonalColorPage() {
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-[#0A0A0A] tracking-tight leading-[1.05]">
               {t('quiz.heroTitle')}
             </h1>
-            <p className="text-[#666666] text-sm sm:text-base leading-relaxed">
+            <p className="text-matcha-muted text-sm sm:text-base leading-relaxed">
               {t('quiz.heroBody')}
             </p>
           </div>
@@ -550,8 +550,8 @@ export default function PersonalColorPage() {
               onClick={handleQuizTabClick}
               className={`font-mono text-xs uppercase tracking-wider cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
                 activeTab === 'quiz'
-                  ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-[#C91D1D]'
-                  : 'text-[#666666] hover:text-[#0A0A0A]'
+                  ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-matcha-accent'
+                  : 'text-matcha-muted hover:text-[#0A0A0A]'
               }`}
             >
               {t('quiz.tabQuiz')}
@@ -563,8 +563,8 @@ export default function PersonalColorPage() {
               onClick={() => setActiveTab('theory')}
               className={`font-mono text-xs uppercase tracking-wider cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
                 activeTab === 'theory'
-                  ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-[#C91D1D]'
-                  : 'text-[#666666] hover:text-[#0A0A0A]'
+                  ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-matcha-accent'
+                  : 'text-matcha-muted hover:text-[#0A0A0A]'
               }`}
             >
               {t('quiz.tabTheory')}
@@ -584,7 +584,7 @@ export default function PersonalColorPage() {
                 {/* Progress as five rules rather than a bar inside a panel:
                     the questions are countable, so show the count. */}
                 <div>
-                  <div className="flex justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">
+                  <div className="flex justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">
                     <span>{t('quiz.progress', { n: currentStep + 1, total: QUIZ_QUESTIONS.length })}</span>
                     <span>{Math.round(((currentStep + 1) / QUIZ_QUESTIONS.length) * 100)}%</span>
                   </div>
@@ -600,7 +600,7 @@ export default function PersonalColorPage() {
                       <span
                         key={q.id}
                         className={`h-0.5 flex-1 transition-colors duration-300 ${
-                          i <= currentStep ? 'bg-[#0A0A0A]' : 'bg-[#DCDCDC]'
+                          i <= currentStep ? 'bg-[#0A0A0A]' : 'bg-matcha-border'
                         }`}
                       />
                     ))}
@@ -615,7 +615,7 @@ export default function PersonalColorPage() {
                       short line — while the photographs below take everything
                       the container has. */}
                   <div className="max-w-3xl mx-auto text-center">
-                    <span className="font-mono text-[10px] font-bold uppercase text-[#C91D1D] tracking-[0.18em] flex items-center justify-center gap-1.5 mb-3">
+                    <span className="font-mono text-[10px] font-bold uppercase text-matcha-accent tracking-[0.18em] flex items-center justify-center gap-1.5 mb-3">
                       {QUIZ_QUESTIONS[currentStep].icon}
                       <span>{t(`quiz.q${QUIZ_QUESTIONS[currentStep].id}.category`)}</span>
                     </span>
@@ -623,7 +623,7 @@ export default function PersonalColorPage() {
                       {t(`quiz.q${QUIZ_QUESTIONS[currentStep].id}.question`)}
                     </h2>
                     {t(`quiz.q${QUIZ_QUESTIONS[currentStep].id}.subtitle`) && (
-                      <p className="text-xs sm:text-sm text-[#666666] mt-3">
+                      <p className="text-xs sm:text-sm text-matcha-muted mt-3">
                         {t(`quiz.q${QUIZ_QUESTIONS[currentStep].id}.subtitle`)}
                       </p>
                     )}
@@ -667,7 +667,7 @@ export default function PersonalColorPage() {
                           <button
                             type="button"
                             onClick={() => handleSelectOption(QUIZ_QUESTIONS[currentStep].id, option)}
-                            className="group w-full h-full text-left cursor-pointer flex flex-col outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F1F1F1]"
+                            className="group w-full h-full text-left cursor-pointer flex flex-col outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-offset-2 focus-visible:ring-offset-matcha-bg"
                           >
                             {option.image ? (
                               <span className="block w-full aspect-3/4 overflow-hidden bg-[#E4E4E4]">
@@ -685,10 +685,10 @@ export default function PersonalColorPage() {
                             )}
 
                             <span className="flex justify-center gap-2 pt-3 flex-1 text-center px-1">
-                              <span className="font-mono text-xs text-[#999999] group-hover:text-[#C91D1D] transition-colors shrink-0">
+                              <span className="font-mono text-xs text-[#999999] group-hover:text-matcha-accent transition-colors shrink-0">
                                 {letter}
                               </span>
-                              <span className="text-xs sm:text-sm font-bold text-[#0A0A0A] leading-snug group-hover:underline underline-offset-4 decoration-[#C91D1D] decoration-2">
+                              <span className="text-xs sm:text-sm font-bold text-[#0A0A0A] leading-snug group-hover:underline underline-offset-4 decoration-matcha-accent decoration-2">
                                 {t(`quiz.q${QUIZ_QUESTIONS[currentStep].id}.${letter}`)}
                               </span>
                             </span>
@@ -703,7 +703,7 @@ export default function PersonalColorPage() {
                       <button
                         type="button"
                         onClick={() => setCurrentStep(prev => prev - 1)}
-                        className="font-mono text-xs uppercase tracking-wider text-[#666666] hover:text-[#0A0A0A] cursor-pointer inline-flex items-center gap-1.5 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+                        className="font-mono text-xs uppercase tracking-wider text-matcha-muted hover:text-[#0A0A0A] cursor-pointer inline-flex items-center gap-1.5 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                       >
                         ← ย้อนกลับข้อก่อนหน้า
                       </button>
@@ -716,13 +716,13 @@ export default function PersonalColorPage() {
               /* A compass spinning on its axis illustrated nothing about
                  matching a skin tone. The wait says what it is doing. */
               <div className="max-w-xl py-24 space-y-3" role="status" aria-live="polite">
-                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C91D1D]">
+                <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-accent">
                   กำลังวิเคราะห์
                 </p>
                 <h2 className="text-2xl sm:text-3xl font-black text-[#0A0A0A] leading-tight">
                   กำลังวิเคราะห์ข้อมูล Personal Color...
                 </h2>
-                <p className="text-xs font-mono text-[#666666]">
+                <p className="text-xs font-mono text-matcha-muted">
                   ประมวลผลความสอดคล้องของ Undertone, Contrast และเฉดสีผ้า
                 </p>
                 <div className="flex gap-1.5 pt-3 max-w-xs">
@@ -736,14 +736,14 @@ export default function PersonalColorPage() {
 
                 <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-5 border-b border-[#0A0A0A]">
                   <div className="space-y-2">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C91D1D] flex items-center gap-1.5">
+                    <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-accent flex items-center gap-1.5">
                       <CheckCircle2 size={12} />
                       <span>{t('quiz.resultTitle')}</span>
                     </span>
                     <h2 className="text-3xl sm:text-5xl font-black text-[#0A0A0A] tracking-tight leading-[1.05]">
                       {profile.name} — {profile.tagline}
                     </h2>
-                    <p className="font-mono text-xs text-[#666666]">
+                    <p className="font-mono text-xs text-matcha-muted">
                       {profile.undertone}
                     </p>
                   </div>
@@ -752,7 +752,7 @@ export default function PersonalColorPage() {
                     <button
                       type="button"
                       onClick={handleResetQuiz}
-                      className="font-mono text-xs uppercase tracking-wider text-[#666666] hover:text-[#0A0A0A] cursor-pointer flex items-center gap-1.5 transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+                      className="font-mono text-xs uppercase tracking-wider text-matcha-muted hover:text-[#0A0A0A] cursor-pointer flex items-center gap-1.5 transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                     >
                       <RotateCcw size={12} />
                       <span>{t('quiz.retake')}</span>
@@ -760,7 +760,7 @@ export default function PersonalColorPage() {
                     <button
                       type="button"
                       onClick={() => navigate('/mix-match')}
-                      className="px-5 py-3 bg-[#C91D1D] hover:bg-[#A81515] text-white font-mono text-xs uppercase tracking-[0.15em] flex items-center gap-2 transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+                      className="px-5 py-3 bg-matcha-accent hover:bg-matcha-accent-hover text-white font-mono text-xs uppercase tracking-[0.15em] flex items-center gap-2 transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                     >
                       <span>{t('quiz.toStudio')}</span>
                       <ArrowRight size={13} />
@@ -770,10 +770,10 @@ export default function PersonalColorPage() {
 
                 {/* The answer, at the size of an answer. */}
                 <div>
-                  <h3 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-1">
+                  <h3 className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-1">
                     {t('colorLab.paletteTitle')}
                   </h3>
-                  <p className="text-xs text-[#666666] mb-3 max-w-[58ch]">
+                  <p className="text-xs text-matcha-muted mb-3 max-w-[58ch]">
                     {t('colorLab.paletteNote')}
                   </p>
                   {/* The answer is drawn from stock rather than from theory: a
@@ -789,7 +789,7 @@ export default function PersonalColorPage() {
                 {/* The working behind the verdict. The palette stays the
                     answer; this is the evidence for it. */}
                 <div>
-                  <h3 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-3">
+                  <h3 className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-3">
                     {t('quiz.axisTitle')}
                   </h3>
                   <ColorAxis season={diagnosedSeason} reading={reading} dyes={dyes} />
@@ -798,7 +798,7 @@ export default function PersonalColorPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-14">
                   <div className="lg:col-span-7 space-y-6">
                     <div>
-                      <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">
+                      <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">
                         ลักษณะเด่นของสีผิวคุณ
                       </h4>
                       <p className="text-sm text-[#0A0A0A] leading-relaxed max-w-prose">
@@ -807,12 +807,12 @@ export default function PersonalColorPage() {
                     </div>
 
                     <div>
-                      <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">
+                      <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">
                         จุดสังเกตตามธรรมชาติ
                       </h4>
-                      <ul className="divide-y divide-[#DCDCDC] border-t border-[#DCDCDC]">
+                      <ul className="divide-y divide-matcha-border border-t border-matcha-border">
                         {profile.characteristics.map((c, i) => (
-                          <li key={i} className="py-2.5 text-sm text-[#666666]">{c}</li>
+                          <li key={i} className="py-2.5 text-sm text-matcha-muted">{c}</li>
                         ))}
                       </ul>
                     </div>
@@ -820,7 +820,7 @@ export default function PersonalColorPage() {
 
                   <div className="lg:col-span-5 space-y-6">
                     <div>
-                      <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">
+                      <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">
                         {t('quiz.fabrics')}
                       </h4>
                       <p className="text-sm text-[#0A0A0A] leading-relaxed">
@@ -829,12 +829,12 @@ export default function PersonalColorPage() {
                     </div>
 
                     <div>
-                      <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C91D1D] mb-2">
+                      <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-accent mb-2">
                         {t('quiz.avoid')}
                       </h4>
-                      <ul className="divide-y divide-[#DCDCDC] border-t border-[#DCDCDC]">
+                      <ul className="divide-y divide-matcha-border border-t border-matcha-border">
                         {profile.avoid.map((c, i) => (
-                          <li key={i} className="py-2.5 text-sm text-[#666666]">{c}</li>
+                          <li key={i} className="py-2.5 text-sm text-matcha-muted">{c}</li>
                         ))}
                       </ul>
                     </div>
@@ -847,7 +847,7 @@ export default function PersonalColorPage() {
         ) : (
           /* Theory: the same four palettes, read rather than diagnosed. */
           <div className="space-y-8 animate-fade-in">
-            <nav aria-label="เลือกฤดูกาล" className="flex flex-wrap items-baseline gap-x-6 gap-y-2 pb-3 border-b border-[#DCDCDC]">
+            <nav aria-label="เลือกฤดูกาล" className="flex flex-wrap items-baseline gap-x-6 gap-y-2 pb-3 border-b border-matcha-border">
               {SEASONS.map((seasonKey) => (
                 <button
                   key={seasonKey}
@@ -856,8 +856,8 @@ export default function PersonalColorPage() {
                   onClick={() => setSelectedSeasonTab(seasonKey)}
                   className={`font-mono text-xs uppercase tracking-wider cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] ${
                     selectedSeasonTab === seasonKey
-                      ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-[#C91D1D]'
-                      : 'text-[#666666] hover:text-[#0A0A0A]'
+                      ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-matcha-accent'
+                      : 'text-matcha-muted hover:text-[#0A0A0A]'
                   }`}
                 >
                   {seasonKey}
@@ -868,14 +868,14 @@ export default function PersonalColorPage() {
             <div ref={seasonMotionRef} className="space-y-8">
               <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                 <div>
-                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666]">
+                  <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted">
                     The 12-Season Architecture
                   </span>
                   <h3 className="text-3xl sm:text-4xl font-black text-[#0A0A0A] tracking-tight leading-[1.05] mt-1">
                     {theory.name} — {theory.tagline}
                   </h3>
                 </div>
-                <span className="font-mono text-xs text-[#666666] shrink-0">
+                <span className="font-mono text-xs text-matcha-muted shrink-0">
                   {theory.undertone}
                 </span>
               </div>
@@ -885,7 +885,7 @@ export default function PersonalColorPage() {
               </p>
 
               <div>
-                <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-3">
+                <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-3">
                   {t('colorLab.seasonPalette', { season: theory.name, n: dyesForSeason(dyes, selectedSeasonTab).length })}
                 </h4>
                 <PaletteBand
@@ -896,22 +896,22 @@ export default function PersonalColorPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div>
-                  <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] mb-2">
+                  <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">
                     จุดสังเกตตามธรรมชาติ
                   </h4>
-                  <ul className="divide-y divide-[#DCDCDC] border-t border-[#DCDCDC]">
+                  <ul className="divide-y divide-matcha-border border-t border-matcha-border">
                     {theory.characteristics.map((c, i) => (
-                      <li key={i} className="py-2.5 text-sm text-[#666666]">{c}</li>
+                      <li key={i} className="py-2.5 text-sm text-matcha-muted">{c}</li>
                     ))}
                   </ul>
                 </div>
                 <div>
-                  <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#C91D1D] mb-2">
+                  <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-accent mb-2">
                     {t('quiz.avoid')}
                   </h4>
-                  <ul className="divide-y divide-[#DCDCDC] border-t border-[#DCDCDC]">
+                  <ul className="divide-y divide-matcha-border border-t border-matcha-border">
                     {theory.avoid.map((c, i) => (
-                      <li key={i} className="py-2.5 text-sm text-[#666666]">{c}</li>
+                      <li key={i} className="py-2.5 text-sm text-matcha-muted">{c}</li>
                     ))}
                   </ul>
                 </div>

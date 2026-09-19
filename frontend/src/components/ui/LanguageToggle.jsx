@@ -15,7 +15,7 @@ export default function LanguageToggle({ className = '' }) {
       onClick={toggleLang}
       title={t('nav.switchLanguage')}
       aria-label={t('nav.switchLanguage')}
-      className={`w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-white hover:bg-[#F1F1F1] text-[#000000] border border-[#DCDCDC] shadow-xs transition-colors cursor-pointer font-mono text-[11px] font-bold uppercase tracking-wider ${className}`}
+      className={`w-10 h-10 shrink-0 flex items-center justify-center rounded-xl bg-white hover:bg-matcha-bg text-matcha-text border border-matcha-border shadow-xs transition-colors cursor-pointer font-mono text-[11px] font-bold uppercase tracking-wider ${className}`}
     >
       {lang}
     </button>

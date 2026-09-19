@@ -279,23 +279,23 @@ export default function AdminPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F1F1F1] text-[#000000] flex flex-col md:flex-row">
+    <div className="min-h-screen bg-matcha-bg text-matcha-text flex flex-col md:flex-row">
       
       {/* ========================================================================= */}
       {/* 1. LEFT DASHBOARD NAVIGATION SIDEBAR                                      */}
       {/* ========================================================================= */}
-      <aside className="w-full md:w-64 lg:w-72 bg-[#000000] text-white flex flex-col shrink-0 border-r border-[#3E322C] select-none">
+      <aside className="w-full md:w-64 lg:w-72 bg-matcha-text text-white flex flex-col shrink-0 border-r border-[#3E322C] select-none">
         
         {/* Brand Header */}
         <div className="p-6 border-b border-[#3E322C]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#042509] flex items-center justify-center text-lg font-black text-white shadow-md">
+              <div className="w-9 h-9 rounded-xl bg-matcha-primary flex items-center justify-center text-lg font-black text-white shadow-md">
                 🍵
               </div>
               <div>
                 <h1 className="font-extrabold text-base tracking-tight uppercase font-sans">MatchA Admin</h1>
-                <span className="block text-[9px] font-mono text-[#518F5C] tracking-widest uppercase">
+                <span className="block text-[9px] font-mono text-matcha-secondary tracking-widest uppercase">
                   Command Center
                 </span>
               </div>
@@ -307,10 +307,10 @@ export default function AdminPage() {
         {/* Current Admin Identity Card */}
         <div className="p-4 mx-4 mt-4 rounded-xl bg-[#3A2E28] border border-[#4D3E35] flex items-center justify-between text-xs font-mono">
           <div className="truncate">
-            <div className="text-[10px] text-[#518F5C] uppercase">Active Operator</div>
+            <div className="text-[10px] text-matcha-secondary uppercase">Active Operator</div>
             <div className="font-bold text-white truncate">{currentUser?.name || 'Administrator'}</div>
           </div>
-          <span className="px-2 py-0.5 rounded bg-[#C91D1D] text-white text-[10px] font-bold">
+          <span className="px-2 py-0.5 rounded bg-matcha-accent text-white text-[10px] font-bold">
             {currentUser?.role || 'Admin'}
           </span>
         </div>
@@ -333,17 +333,17 @@ export default function AdminPage() {
                 }}
                 className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-[#042509] text-white shadow-md translate-x-1'
-                    : 'text-[#DCDCDC] hover:bg-[#3A2E28] hover:text-white'
+                    ? 'bg-matcha-primary text-white shadow-md translate-x-1'
+                    : 'text-matcha-border hover:bg-[#3A2E28] hover:text-white'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <Icon size={16} className={isActive ? 'text-[#518F5C]' : 'text-[#A89F91]'} />
+                  <Icon size={16} className={isActive ? 'text-matcha-secondary' : 'text-[#A89F91]'} />
                   <span>{tab.label}</span>
                 </div>
                 {tab.badge !== null && tab.badge > 0 && (
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                    isActive ? 'bg-[#C91D1D] text-white' : 'bg-[#4D3E35] text-[#518F5C]'
+                    isActive ? 'bg-matcha-accent text-white' : 'bg-[#4D3E35] text-matcha-secondary'
                   }`}>
                     {tab.badge}
                   </span>
@@ -357,7 +357,7 @@ export default function AdminPage() {
         <div className="p-4 border-t border-[#3E322C] space-y-2 font-mono text-xs">
           <button
             onClick={() => navigate('/catalog')}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#3A2E28] hover:bg-[#4D3E35] text-[#518F5C] transition-colors cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#3A2E28] hover:bg-[#4D3E35] text-matcha-secondary transition-colors cursor-pointer"
           >
             <ExternalLink size={13} />
             <span>Visit Live Storefront</span>
@@ -368,7 +368,7 @@ export default function AdminPage() {
               navigate('/login');
               showToast('Logged out of Admin Session', 'info');
             }}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-[#C91D1D] hover:bg-[#C91D1D]/10 transition-colors cursor-pointer font-bold"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-matcha-accent hover:bg-matcha-accent/10 transition-colors cursor-pointer font-bold"
           >
             <LogOut size={13} />
             <span>End Session</span>
@@ -393,16 +393,16 @@ export default function AdminPage() {
         )}
 
         {/* Top Header Bar with Universal Search & Action Buttons */}
-        <header className="sticky top-0 z-20 bg-[#F1F1F1]/90 backdrop-blur-md border-b border-[#DCDCDC] px-6 py-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+        <header className="sticky top-0 z-20 bg-matcha-bg/90 backdrop-blur-md border-b border-matcha-border px-6 py-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
           
           {/* Breadcrumb & Tab Title */}
           <div>
-            <div className="flex items-center gap-2 text-[11px] font-mono text-[#666666]">
+            <div className="flex items-center gap-2 text-[11px] font-mono text-matcha-muted">
               <span>Admin</span>
               <ChevronRight size={11} />
-              <span className="text-[#042509] font-bold capitalize">{activeTab}</span>
+              <span className="text-matcha-primary font-bold capitalize">{activeTab}</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-[#000000]">
+            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-matcha-text">
               {navTabs.find(t => t.id === activeTab)?.label}
             </h2>
           </div>
@@ -412,18 +412,18 @@ export default function AdminPage() {
             
             {/* Global Search Input */}
             <div className="relative flex-1 sm:w-64">
-              <Search size={14} className="absolute left-3 inset-y-0 my-auto text-[#666666]" />
+              <Search size={14} className="absolute left-3 inset-y-0 my-auto text-matcha-muted" />
               <input
                 type="text"
                 value={globalSearch}
                 onChange={(e) => setGlobalSearch(e.target.value)}
                 placeholder="Search metrics, SKU, orders, members..."
-                className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-[#DCDCDC] bg-white font-mono text-xs text-[#000000] outline-none focus:ring-2 focus:ring-[#042509]/40"
+                className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-matcha-border bg-white font-mono text-xs text-matcha-text outline-none focus:ring-2 focus:ring-matcha-primary/40"
               />
               {globalSearch && (
                 <button
                   onClick={() => setGlobalSearch('')}
-                  className="absolute right-2.5 inset-y-0 my-auto h-fit text-xs text-[#C91D1D] hover:font-bold cursor-pointer"
+                  className="absolute right-2.5 inset-y-0 my-auto h-fit text-xs text-matcha-accent hover:font-bold cursor-pointer"
                 >
                   ✕
                 </button>
@@ -433,7 +433,7 @@ export default function AdminPage() {
             {/* Quick Add Product Button */}
             <button
               onClick={() => { setMutationNotice(null); setIsAddModalOpen(true); }} disabled={saving || isDemo || status.inventory !== 'ready'}
-              className="px-3.5 py-1.5 bg-[#042509] hover:bg-[#021505] text-white rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-98"
+              className="px-3.5 py-1.5 bg-matcha-primary hover:bg-matcha-primary-dark text-white rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-98"
             >
               <Plus size={14} />
               <span>Add Garment</span>
@@ -443,9 +443,9 @@ export default function AdminPage() {
             <div className="relative">
               <button
                 onClick={() => setIsExportMenuOpen(!isExportMenuOpen)}
-                className="px-3 py-1.5 bg-white border border-[#DCDCDC] hover:border-[#042509] text-[#000000] rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                className="px-3 py-1.5 bg-white border border-matcha-border hover:border-matcha-primary text-matcha-text rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
               >
-                <Download size={13} className="text-[#042509]" />
+                <Download size={13} className="text-matcha-primary" />
                 <span>Export Data</span>
                 <ChevronDown size={12} />
               </button>
@@ -453,27 +453,27 @@ export default function AdminPage() {
               {isExportMenuOpen && (
                 <>
                   <div className="fixed inset-0 z-20 cursor-default" onClick={() => setIsExportMenuOpen(false)} />
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl border border-[#DCDCDC] shadow-2xl p-2 z-30 font-mono text-xs animate-fade-in">
-                    <div className="p-1.5 space-y-1 border-b border-[#DCDCDC]/40">
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl border border-matcha-border shadow-2xl p-2 z-30 font-mono text-xs animate-fade-in">
+                    <div className="p-1.5 space-y-1 border-b border-matcha-border/40">
                       <button
                         onClick={handleExportInventory}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-[#F1F1F1] text-left transition-colors cursor-pointer"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-matcha-bg text-left transition-colors cursor-pointer"
                       >
-                        <FileSpreadsheet size={14} className="text-[#042509]" />
+                        <FileSpreadsheet size={14} className="text-matcha-primary" />
                         <span>Inventory CSV</span>
                       </button>
                       <button
                         onClick={handleExportOrders}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-[#F1F1F1] text-left transition-colors cursor-pointer"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-matcha-bg text-left transition-colors cursor-pointer"
                       >
-                        <FileSpreadsheet size={14} className="text-[#042509]" />
+                        <FileSpreadsheet size={14} className="text-matcha-primary" />
                         <span>Orders Pipeline CSV</span>
                       </button>
                     </div>
                     <div className="p-1.5">
                       <button
                         onClick={handleExportFullJSON}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-[#C91D1D]/10 text-[#C91D1D] font-bold text-left transition-colors cursor-pointer"
+                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-matcha-accent/10 text-matcha-accent font-bold text-left transition-colors cursor-pointer"
                       >
                         <FileJson size={14} />
                         <span>Admin Data Export (JSON)</span>
@@ -494,7 +494,7 @@ export default function AdminPage() {
           {/* TAB 1: OVERVIEW & KPIS (EXECUTIVE DASHBOARD)                              */}
           {/* ========================================================================= */}
           <div className="flex flex-wrap items-center gap-3">
-            <button type="button" disabled={saving || Object.values(status).includes('loading')} onClick={() => { setSelectedOrderForModal(null); setMutationNotice(null); refresh(); }} className="px-4 py-2 rounded-lg bg-[#042509] text-white disabled:opacity-50">Refresh data</button>
+            <button type="button" disabled={saving || Object.values(status).includes('loading')} onClick={() => { setSelectedOrderForModal(null); setMutationNotice(null); refresh(); }} className="px-4 py-2 rounded-lg bg-matcha-primary text-white disabled:opacity-50">Refresh data</button>
             {saving && <span role="status">Saving changes…</span>}
             {mutationNotice && <p role={mutationNotice.error ? 'alert' : 'status'} className={mutationNotice.error ? 'text-red-800' : 'text-green-900'}>{mutationNotice.error && 'บันทึกไม่สำเร็จ / Save failed: '}{mutationNotice.text}</p>}
             {isDemo && <span>Demo session — changes disabled</span>}

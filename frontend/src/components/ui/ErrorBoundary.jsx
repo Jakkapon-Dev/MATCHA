@@ -44,29 +44,29 @@ export default class ErrorBoundary extends React.Component {
     if (!this.state.hasError) return this.props.children;
 
     return (
-      <div className="w-full bg-[#F1F1F1] min-h-[60vh] flex items-center justify-center px-4 sm:px-6 py-16">
+      <div className="w-full bg-matcha-bg min-h-[60vh] flex items-center justify-center px-4 sm:px-6 py-16">
         <div className="max-w-md w-full text-center">
 
-          <div className="mx-auto mb-6 w-14 h-14 rounded-full bg-[#518F5C] flex items-center justify-center">
-            <AlertTriangle className="w-7 h-7 text-[#042509]" strokeWidth={1.75} />
+          <div className="mx-auto mb-6 w-14 h-14 rounded-full bg-matcha-secondary flex items-center justify-center">
+            <AlertTriangle className="w-7 h-7 text-matcha-primary" strokeWidth={1.75} />
           </div>
 
-          <span className="text-xs font-mono font-bold text-[#C91D1D] uppercase tracking-widest">
+          <span className="text-xs font-mono font-bold text-matcha-accent uppercase tracking-widest">
             Something interrupted
           </span>
 
-          <h2 className="mt-3 text-2xl sm:text-3xl font-bold text-[#000000]">
+          <h2 className="mt-3 text-2xl sm:text-3xl font-bold text-matcha-text">
             This page didn&rsquo;t finish loading
           </h2>
 
-          <p className="mt-3 text-sm leading-relaxed text-[#666666]">
+          <p className="mt-3 text-sm leading-relaxed text-matcha-muted">
             The rest of the store is still fine. Try this page again, or head back
             to the front and pick up where you left off.
           </p>
 
           {/* รายละเอียดข้อผิดพลาดมีไว้ให้นักพัฒนาเท่านั้น ไม่ใช่สิ่งที่ลูกค้าควรเห็น */}
           {import.meta.env.DEV && this.state.error?.message && (
-            <pre className="mt-5 text-left text-xs font-mono text-[#666666] bg-white border border-[#DCDCDC] rounded-lg p-3 overflow-x-auto">
+            <pre className="mt-5 text-left text-xs font-mono text-matcha-muted bg-white border border-matcha-border rounded-lg p-3 overflow-x-auto">
               {this.state.error.message}
             </pre>
           )}
@@ -75,7 +75,7 @@ export default class ErrorBoundary extends React.Component {
             <button
               type="button"
               onClick={this.handleRetry}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#042509] text-white text-sm font-semibold tracking-wide hover:bg-[#021505] transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-matcha-primary text-white text-sm font-semibold tracking-wide hover:bg-matcha-primary-dark transition-colors"
             >
               <RotateCcw className="w-4 h-4" strokeWidth={2} />
               ลองใหม่
@@ -83,7 +83,7 @@ export default class ErrorBoundary extends React.Component {
             <button
               type="button"
               onClick={this.handleGoHome}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-[#DCDCDC] text-[#000000] text-sm font-semibold tracking-wide hover:bg-[#518F5C] transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-matcha-border text-matcha-text text-sm font-semibold tracking-wide hover:bg-matcha-secondary transition-colors"
             >
               <Home className="w-4 h-4" strokeWidth={2} />
               กลับหน้าแรก

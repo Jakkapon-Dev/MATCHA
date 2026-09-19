@@ -60,11 +60,11 @@ export default function Navbar({
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-[#F1F1F1]/95 border-b border-[#DCDCDC] transition-all">
+      <header className="sticky top-0 z-40 w-full backdrop-blur-md bg-matcha-bg/95 border-b border-matcha-border transition-all">
 
         {/* Persistent Demo Session Warning Banner */}
         {currentUser?.isDemoSession && (
-          <div className="bg-[#518F5C] text-[#042509] text-[11px] py-1.5 px-4 font-mono font-bold flex items-center justify-between gap-2 shadow-inner border-b border-[#042509]/20">
+          <div className="bg-matcha-secondary text-matcha-primary text-[11px] py-1.5 px-4 font-mono font-bold flex items-center justify-between gap-2 shadow-inner border-b border-matcha-primary/20">
             <div className="flex items-center gap-2 mx-auto sm:mx-0">
               <span>{t('nav.demoBanner')}</span>
             </div>
@@ -79,11 +79,11 @@ export default function Navbar({
         )}
 
         {/* 1. Top Announcement Bar - Sleek Monochrome with Red Sparkle */}
-        <div className="bg-[#000000] text-[#F1F1F1] text-[11px] py-1.5 px-4 text-center font-mono flex items-center justify-center gap-2">
-          <span className="text-[#C91D1D]">✦</span>
+        <div className="bg-matcha-text text-matcha-bg text-[11px] py-1.5 px-4 text-center font-mono flex items-center justify-center gap-2">
+          <span className="text-matcha-accent">✦</span>
           <span>{t('nav.shippingPromo')}</span>
-          <span className="text-[#C91D1D] hidden sm:inline">✦</span>
-          <span className="hidden sm:inline text-[#F1F1F1]/70">{t('nav.capsulePromo')}</span>
+          <span className="text-matcha-accent hidden sm:inline">✦</span>
+          <span className="hidden sm:inline text-matcha-bg/70">{t('nav.capsulePromo')}</span>
         </div>
 
         {/* 2. Main Navigation Bar */}
@@ -101,7 +101,7 @@ export default function Navbar({
                 alt="MatchA" 
                 className="h-8 sm:h-9 w-auto object-contain object-left group-hover:scale-[1.02] transition-transform duration-200" 
               />
-              <span className="block text-[9px] font-mono tracking-[0.22em] text-[#666666] uppercase mt-0.5 group-hover:text-[#000000] transition-colors">
+              <span className="block text-[9px] font-mono tracking-[0.22em] text-matcha-muted uppercase mt-0.5 group-hover:text-matcha-text transition-colors">
                 {t('nav.tagline')}
               </span>
             </button>
@@ -118,12 +118,12 @@ export default function Navbar({
                   href={link.href}
                   onClick={(e) => { e.preventDefault(); handleLinkClick(link.href); }}
                   className={`text-xs font-semibold tracking-wider uppercase font-mono transition-colors relative py-1 ${
-                    isActive ? 'text-[#000000] font-bold' : 'text-[#000000]/80 hover:text-[#000000]'
+                    isActive ? 'text-matcha-text font-bold' : 'text-matcha-text/80 hover:text-matcha-text'
                   }`}
                 >
                   {t(`nav.links.${link.id}`)}
                   {isActive && (
-                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#000000] rounded-full" />
+                    <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-matcha-text rounded-full" />
                   )}
                 </a>
               );
@@ -136,10 +136,10 @@ export default function Navbar({
             {/* Main Feature Action: MIX@MATCH Button (Black with subtle Green/Red BorderBeam) */}
             <button
               onClick={() => handleLinkClick('/mix-match')}
-              className="relative overflow-hidden hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 bg-[#000000] hover:bg-[#1a1a1a] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-95 cursor-pointer"
+              className="relative overflow-hidden hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 bg-matcha-text hover:bg-[#1a1a1a] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-95 cursor-pointer"
             >
               <BorderBeam size={80} duration={6} colorFrom="#518F5C" colorTo="#C91D1D" />
-              <Sparkles size={14} className="text-[#518F5C] relative z-10" />
+              <Sparkles size={14} className="text-matcha-secondary relative z-10" />
               <span className="relative z-10">MIX@MATCH</span>
             </button>
 
@@ -148,30 +148,30 @@ export default function Navbar({
               onClick={onOpenCart}
               aria-label={t('nav.cartAria')}
               data-cart-target
-              className={`relative p-2.5 rounded-xl bg-white hover:bg-[#F1F1F1] text-[#000000] border border-[#DCDCDC] transition-all cursor-pointer shadow-xs ${
-                cartAnimated ? 'animate-cart-pop ring-3 ring-[#C91D1D]' : ''
+              className={`relative p-2.5 rounded-xl bg-white hover:bg-matcha-bg text-matcha-text border border-matcha-border transition-all cursor-pointer shadow-xs ${
+                cartAnimated ? 'animate-cart-pop ring-3 ring-matcha-accent' : ''
               }`}
             >
               <ShoppingBag size={20} />
               {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 px-1.5 py-0.5 min-w-4.5 text-center bg-[#C91D1D] text-white text-[10px] font-mono font-bold rounded-full shadow-md animate-bounce">
+                <span className="absolute -top-1.5 -right-1.5 px-1.5 py-0.5 min-w-4.5 text-center bg-matcha-accent text-white text-[10px] font-mono font-bold rounded-full shadow-md animate-bounce">
                   {cartCount}
                 </span>
               )}
             </button>
 
             {/* Divider */}
-            <div className="hidden lg:block h-6 w-px bg-[#DCDCDC] mx-1" />
+            <div className="hidden lg:block h-6 w-px bg-matcha-border mx-1" />
 
             {/* Far Right: Desktop Auth Buttons or User Avatar */}
             {currentUser ? (
               <div className="hidden lg:flex items-center gap-2 font-mono">
                 <button
                   onClick={() => handleLinkClick(currentUser.role === 'Admin' ? '/admin' : '/account')}
-                  className="flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-[#F1F1F1] border border-[#000000]/20 hover:border-[#000000] rounded-xl text-xs font-bold text-[#000000] transition-all cursor-pointer shadow-xs group"
+                  className="flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-matcha-bg border border-matcha-text/20 hover:border-matcha-text rounded-xl text-xs font-bold text-matcha-text transition-all cursor-pointer shadow-xs group"
                   title={currentUser.role === 'Admin' ? t('nav.adminTitle') : t('nav.myAccountTitle')}
                 >
-                  <User size={14} className="text-[#000000]" />
+                  <User size={14} className="text-matcha-text" />
                   <span className="font-mono text-xs font-bold tracking-wide uppercase">
                     {currentUser.role === 'Admin' ? t('nav.adminDashboard') : t('nav.myAccount')}
                   </span>
@@ -180,12 +180,12 @@ export default function Navbar({
                 <button
                   onClick={handleLogoutClick}
                   disabled={isLoggingOut}
-                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-[#C91D1D] hover:bg-[#C91D1D]/10 rounded-lg transition-all cursor-pointer disabled:opacity-70 font-mono"
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-matcha-accent hover:bg-matcha-accent/10 rounded-lg transition-all cursor-pointer disabled:opacity-70 font-mono"
                   title={t('nav.logOutTitle')}
                 >
                   {isLoggingOut ? (
                     <>
-                      <Loader2 size={12} className="animate-spin text-[#C91D1D]" />
+                      <Loader2 size={12} className="animate-spin text-matcha-accent" />
                       <span>{t('nav.exiting')}</span>
                     </>
                   ) : (
@@ -199,7 +199,7 @@ export default function Navbar({
               <div className="hidden lg:flex items-center font-mono">
                 <button
                   onClick={() => handleLinkClick('/login')}
-                  className="px-4 py-2 text-xs font-bold bg-[#0A0A0A] text-[#F1F1F1] hover:bg-[#C91D1D] transition-colors cursor-pointer flex items-center gap-1.5 outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]"
+                  className="px-4 py-2 text-xs font-bold bg-[#0A0A0A] text-matcha-bg hover:bg-matcha-accent transition-colors cursor-pointer flex items-center gap-1.5 outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]"
                 >
                   <User size={13} aria-hidden="true" />
                   <span>{t('nav.access')}</span>
@@ -210,7 +210,7 @@ export default function Navbar({
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2.5 rounded-xl bg-white text-[#000000] border border-[#DCDCDC] transition-all cursor-pointer"
+              className="md:hidden p-2.5 rounded-xl bg-white text-matcha-text border border-matcha-border transition-all cursor-pointer"
               aria-label={t('nav.menuAria')}
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
@@ -225,12 +225,12 @@ export default function Navbar({
 
         {/* 3. Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-[#F1F1F1] border-b border-[#DCDCDC] px-6 py-5 shadow-xl animate-fade-in">
+          <div className="md:hidden bg-matcha-bg border-b border-matcha-border px-6 py-5 shadow-xl animate-fade-in">
             <nav className="flex flex-col gap-4">
 
               {/* Mobile Auth Quick Buttons */}
               {currentUser ? (
-                <div className="flex items-center justify-between pb-3 border-b border-[#DCDCDC]">
+                <div className="flex items-center justify-between pb-3 border-b border-matcha-border">
                   <button
                     onClick={() => {
                       setMobileMenuOpen(false);
@@ -238,12 +238,12 @@ export default function Navbar({
                     }}
                     className="flex items-center gap-2 text-left cursor-pointer group"
                   >
-                    <div className="w-8 h-8 rounded-full bg-[#000000] text-white flex items-center justify-center text-xs font-bold font-mono group-hover:scale-105 transition-transform">
+                    <div className="w-8 h-8 rounded-full bg-matcha-text text-white flex items-center justify-center text-xs font-bold font-mono group-hover:scale-105 transition-transform">
                       {currentUser.name?.charAt(0)?.toUpperCase() || 'M'}
                     </div>
                     <div>
-                      <p className="text-xs font-mono font-bold text-[#000000]">{currentUser.name}</p>
-                      <p className="text-[10px] font-mono text-[#666666]">{currentUser.role === 'Admin' ? t('nav.adminCenter') : t('nav.myAccountMobile')}</p>
+                      <p className="text-xs font-mono font-bold text-matcha-text">{currentUser.name}</p>
+                      <p className="text-[10px] font-mono text-matcha-muted">{currentUser.role === 'Admin' ? t('nav.adminCenter') : t('nav.myAccountMobile')}</p>
                     </div>
                   </button>
                   <button
@@ -252,17 +252,17 @@ export default function Navbar({
                       handleLogoutClick();
                     }}
                     disabled={isLoggingOut}
-                    className="text-xs font-mono font-bold text-[#C91D1D] hover:underline cursor-pointer flex items-center gap-1 disabled:opacity-60"
+                    className="text-xs font-mono font-bold text-matcha-accent hover:underline cursor-pointer flex items-center gap-1 disabled:opacity-60"
                   >
                     {isLoggingOut && <Loader2 size={11} className="animate-spin" />}
                     <span>{isLoggingOut ? t('nav.exitingMobile') : t('nav.logOutMobile')}</span>
                   </button>
                 </div>
               ) : (
-                <div className="pb-3 border-b border-[#DCDCDC]">
+                <div className="pb-3 border-b border-matcha-border">
                   <button
                     onClick={() => { setMobileMenuOpen(false); handleLinkClick('/login'); }}
-                    className="w-full py-2.5 px-3 bg-[#0A0A0A] text-[#F1F1F1] text-xs font-mono font-bold hover:bg-[#C91D1D] transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="w-full py-2.5 px-3 bg-[#0A0A0A] text-matcha-bg text-xs font-mono font-bold hover:bg-matcha-accent transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <User size={13} aria-hidden="true" />
                     <span>{t('nav.access')}</span>
@@ -272,9 +272,9 @@ export default function Navbar({
 
               <button
                 onClick={() => { setMobileMenuOpen(false); onGoToLanding(); }}
-                className="text-left text-sm font-semibold text-[#000000] py-1 border-b border-[#DCDCDC]"
+                className="text-left text-sm font-semibold text-matcha-text py-1 border-b border-matcha-border"
               >
-                <span className="text-[#C91D1D] mr-1">✦</span> {t('nav.returnToLanding')}
+                <span className="text-matcha-accent mr-1">✦</span> {t('nav.returnToLanding')}
               </button>
 
               {navLinks.map((link) => (
@@ -282,7 +282,7 @@ export default function Navbar({
                   key={link.id}
                   href={link.href}
                   onClick={(e) => { e.preventDefault(); handleLinkClick(link.href); }}
-                  className="text-sm font-semibold text-[#000000]/80 hover:text-[#000000] py-1 border-b border-[#DCDCDC]"
+                  className="text-sm font-semibold text-matcha-text/80 hover:text-matcha-text py-1 border-b border-matcha-border"
                 >
                   {t(`nav.links.${link.id}`)}
                 </a>

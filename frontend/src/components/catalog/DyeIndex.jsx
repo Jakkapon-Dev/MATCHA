@@ -35,7 +35,7 @@ function DyeBand({ dye, active, onSelect, total }) {
         >
           {dye.name === 'ALL' ? 'Every dye' : dye.name}
         </span>
-        <span className="font-mono text-[11px] text-[#666666] tabular-nums shrink-0">
+        <span className="font-mono text-[11px] text-matcha-muted tabular-nums shrink-0">
           {dye.name === 'ALL' ? total : dye.count}
         </span>
       </span>
@@ -81,12 +81,12 @@ export default function DyeIndex({ dyes, selected, onSelect, total, variant = 'r
          scrolls past it. */
       <nav
         aria-label="Filter by dye"
-        className="hidden lg:block sticky top-24 self-start w-48 shrink-0 border-t border-[#DCDCDC]"
+        className="hidden lg:block sticky top-24 self-start w-48 shrink-0 border-t border-matcha-border"
       >
-        <h2 className="px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666] border-b border-[#DCDCDC]">
+        <h2 className="px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted border-b border-matcha-border">
           Dye index
         </h2>
-        <div className="divide-y divide-[#DCDCDC] max-h-[calc(100vh-11rem)] overflow-y-auto scrollbar-none">
+        <div className="divide-y divide-matcha-border max-h-[calc(100vh-11rem)] overflow-y-auto scrollbar-none">
           <DyeBand dye={all} active={selected === 'ALL'} onSelect={onSelect} total={total} />
           {dyes.map((dye, i) => (
             <React.Fragment key={dye.name}>
@@ -94,7 +94,7 @@ export default function DyeIndex({ dyes, selected, onSelect, total, variant = 'r
                   break stops the jump from violet to white reading as a
                   mistake in the ordering. */}
               {dye.neutral && !dyes[i - 1]?.neutral && (
-                <p className="px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-[#666666]">
+                <p className="px-3 py-2 font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted">
                   Undyed
                 </p>
               )}
@@ -125,8 +125,8 @@ export default function DyeIndex({ dyes, selected, onSelect, total, variant = 'r
                 type="button"
                 onClick={() => onSelect(dye.name)}
                 aria-pressed={active}
-                className={`shrink-0 cursor-pointer transition-all outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F1F1F1] ${
-                  active ? 'ring-2 ring-[#0A0A0A] ring-offset-2 ring-offset-[#F1F1F1]' : ''
+                className={`shrink-0 cursor-pointer transition-all outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-offset-2 focus-visible:ring-offset-matcha-bg ${
+                  active ? 'ring-2 ring-[#0A0A0A] ring-offset-2 ring-offset-matcha-bg' : ''
                 }`}
               >
                 <span

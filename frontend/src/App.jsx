@@ -13,6 +13,7 @@ const CartPage = React.lazy(() => import('./pages/CartPage.jsx'));
 const AccessPage = React.lazy(() => import('./pages/AccessPage.jsx'));
 const PaymentPage = React.lazy(() => import('./pages/PaymentPage.jsx'));
 const UserAccount = React.lazy(() => import('./pages/UserAccount.jsx'));
+const GuestOrdersPage = React.lazy(() => import('./pages/GuestOrdersPage.jsx'));
 const AdminPage = React.lazy(() => import('./pages/AdminPage.jsx'));
 const PersonalColorPage = React.lazy(() => import('./pages/PersonalColorPage.jsx'));
 const MixMatchStudioPage = React.lazy(() => import('./pages/MixMatchStudioPage.jsx'));
@@ -36,14 +37,14 @@ import { LanguageProvider, useLanguage } from './context/LanguageContext.jsx';
 // ความสูงคงที่ระหว่างรอ chunk เพื่อไม่ให้หน้ากระตุกตอนหน้าใหม่มาถึง
 function PageSkeleton() {
   return (
-    <div className="w-full bg-[#F1F1F1] min-h-[70vh] px-5 sm:px-6 lg:px-8 py-16" aria-busy="true">
+    <div className="w-full bg-matcha-bg min-h-[70vh] px-5 sm:px-6 lg:px-8 py-16" aria-busy="true">
       <div className="max-w-6xl mx-auto animate-pulse">
-        <div className="h-3 w-32 rounded-full bg-[#DCDCDC]" />
-        <div className="mt-5 h-10 w-2/3 max-w-md rounded-lg bg-[#DCDCDC]" />
-        <div className="mt-4 h-4 w-1/2 max-w-sm rounded-full bg-[#DCDCDC]" />
+        <div className="h-3 w-32 rounded-full bg-matcha-border" />
+        <div className="mt-5 h-10 w-2/3 max-w-md rounded-lg bg-matcha-border" />
+        <div className="mt-4 h-4 w-1/2 max-w-sm rounded-full bg-matcha-border" />
         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-5">
           {[0, 1, 2, 3].map((i) => (
-            <div key={i} className="aspect-[3/4] rounded-2xl bg-[#DCDCDC]" />
+            <div key={i} className="aspect-[3/4] rounded-2xl bg-matcha-border" />
           ))}
         </div>
       </div>
@@ -67,6 +68,7 @@ const TITLE_KEYS = [
   ['/payment', 'titles.payment'],
   ['/signup', 'titles.signup'],
   ['/account', 'titles.account'],
+  ['/orders', 'titles.orders'],
   ['/admin', 'titles.admin'],
   ['/login', 'titles.login'],
   ['/legal', 'titles.legal'],
@@ -358,6 +360,11 @@ function AppContent() {
           {/* 5 & 6. Sign in and register, one page */}
           <Route path="/login" element={<AccessPage mode="signin" />} />
           <Route path="/signup" element={<AccessPage mode="register" />} />
+
+          {/* Order history for whoever is asking. Open on purpose: without the
+              browser's guest id the API returns an empty list, so there is
+              nothing here to reach that the caller does not own. */}
+          <Route path="/orders" element={<GuestOrdersPage />} />
 
           {/* 7. User Account Page (Member VIP Lounge) */}
           <Route
