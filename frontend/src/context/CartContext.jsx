@@ -9,7 +9,7 @@ const CartContext = globalThis[CART_CONTEXT_KEY] || (globalThis[CART_CONTEXT_KEY
 
 export const getCartKey = (item) => `${item.id || item.productId}-${item.size || 'default'}-${item.color || 'default'}`;
 
-const parsePrice = (price) => {
+export const parsePrice = (price) => {
   if (typeof price === 'number') return price;
   if (typeof price === 'string') {
     const parsed = parseFloat(price.replace(/[^0-9.]/g, ''));
