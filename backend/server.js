@@ -33,8 +33,47 @@ process.on('uncaughtException', (err) => {
 const app = express();
 const PORT = process.env.PORT || 5001;
 
+/* Who may call this API from a browser.
+
+   `origin: true` echoed back whatever Origin arrived and allowed credentials
+   with it, so any site could make credentialed cross-origin calls. The token
+   lives in localStorage rather than a cookie, so it is not attached
+   automatically and the exposure was narrower than it looks — but the setting
+   was wider than anything here needs.
+
+   Development allows any localhost port rather than a fixed list: Vite picks
+   the next free port when its default is taken, and this project has already
+   run on both 5173 and 5178, so a hardcoded list locks the developer out of
+   their own API. Production takes an explicit list from the environment.
+
+   A request with no Origin — curl, a server-to-server call, a health check —
+   is not a browser cross-origin request and is left alone. */
+const LOCALHOST = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/;
+
+const allowedOrigins = (process.env.CORS_ORIGINS || process.env.FRONTEND_URL || '')
+  .split(',')
+  .map((value) => value.trim())
+  .filter(Boolean);
+
+const isAllowedOrigin = (origin) => {
+  if (!origin) return true;
+  if (allowedOrigins.includes(origin)) return true;
+  return process.env.NODE_ENV !== 'production' && LOCALHOST.test(origin);
+};
+
 // Middleware
-app.use(cors({ origin: true, credentials: true }));
+app.use(cors({
+  origin: (origin, callback) => {
+    if (isAllowedOrigin(origin)) return callback(null, true);
+    // A refused origin is a policy decision, not a server fault. errorHandler
+    // honours error.status, so say 403 rather than letting it fall through
+    // to a 500 that reads as something broken here.
+    const denied = new Error(`Origin not allowed by CORS: ${origin}`);
+    denied.status = 403;
+    return callback(denied);
+  },
+  credentials: true,
+}));
 app.use(express.json());
 
 // API Request Logging
