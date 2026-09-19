@@ -13,6 +13,8 @@ import { fileURLToPath } from 'node:url';
 import { isDemo } from './config/storeMode.js';
 import { init as initUserStore } from './services/userStore.js';
 import authRoutes from './routes/auth.js';
+import userRoutes from './routes/userRoutes.js';
+import adminRoutes from './routes/adminRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import lookbookRoutes from './routes/lookbookRoutes.js';
 import mediaRoutes from './routes/mediaRoutes.js';
@@ -180,6 +182,8 @@ app.get('/api/store-config', (req, res) => {
 
 // Modular Routes Registration
 app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api', productRoutes);

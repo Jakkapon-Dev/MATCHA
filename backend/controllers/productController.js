@@ -334,6 +334,7 @@ export async function getProductById(req, res) {
  * Create Garment (Admin Protected)
  */
 export async function createProduct(req, res) {
+  if (mongoose.connection.readyState !== 1) return res.status(503).json({ success: false, message: 'Database unavailable; changes were not saved' });
   try {
     const data = { ...req.body };
     if (!data.id && !data.sku) {
@@ -359,6 +360,7 @@ export async function createProduct(req, res) {
  * Update Garment (Admin Protected)
  */
 export async function updateProduct(req, res) {
+  if (mongoose.connection.readyState !== 1) return res.status(503).json({ success: false, message: 'Database unavailable; changes were not saved' });
   try {
     const { id } = req.params;
     const updates = { ...req.body };
@@ -382,7 +384,7 @@ export async function updateProduct(req, res) {
         return res.json({ success: true, data: updated });
       }
     }
-    res.json({ success: true, data: { id, ...updates } });
+    res.status(404).json({ success: false, message: 'Product not found' });
   } catch (err) {
     console.error(`Error updating product ${req.params.id}:`, err);
     res.status(400).json({ success: false, message: err.message });
@@ -394,17 +396,19 @@ export async function updateProduct(req, res) {
  * Delete Garment (Admin Protected)
  */
 export async function deleteProduct(req, res) {
+  if (mongoose.connection.readyState !== 1) return res.status(503).json({ success: false, message: 'Database unavailable; changes were not saved' });
   try {
     const { id } = req.params;
     if (mongoose.connection.readyState === 1) {
       const isOid = mongoose.Types.ObjectId.isValid(id);
-      await Product.findOneAndDelete({
+      const deleted = await Product.findOneAndDelete({
         $or: [
           { id: id },
           { sku: id.toUpperCase() },
           ...(isOid ? [{ _id: id }] : [])
         ]
       });
+      if (!deleted) return res.status(404).json({ success: false, message: 'Product not found' });
     }
     res.json({ success: true, message: `Product ${id} deleted successfully` });
   } catch (err) {

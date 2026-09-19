@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, Plus, Sparkles, Calendar, AlertCircle } from 'lucide-react';
 import { webpSrc } from '../../utils/imageFallback';
 
-export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
+export default function AddProductModal({ isOpen, onClose, onAddProduct, saving, saveError }) {
   // The form is initialized once when this component mounts. Defaults provide a testable product shape, 
   // while the generated SKU distinguishes new entries.
   const [formData, setFormData] = useState({
@@ -90,7 +90,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
     return Object.keys(errs).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Invalid submissions remain open and do not notify the parent inventory page.
     if (!validate()) return;
@@ -112,8 +112,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
     };
 
     // The parent persists/inserts the completed product before the modal is closed.
-    onAddProduct(newProduct);
-    onClose();
+    if (await onAddProduct(newProduct)) onClose();
   };
 
   // Preset sample image options for quick testing
@@ -419,6 +418,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
             )}
           </div>
 
+          {saveError && <p role="alert" className="text-red-800">บันทึกไม่สำเร็จ / Save failed: {saveError}</p>}
           {/* Form Actions */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#DCDCDC]">
             <button
@@ -430,6 +430,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct }) {
             </button>
             <button
               type="submit"
+              disabled={saving}
               className="inline-flex items-center gap-2 px-6 py-3 bg-[#042509] hover:bg-[#021505] text-white text-xs font-bold font-mono uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-98 cursor-pointer"
             >
               <Plus size={16} />

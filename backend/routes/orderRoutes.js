@@ -7,7 +7,7 @@ import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
 import Product from '../models/Product.js';
 import productsData from '../data/products.js';
-import { getJwtSecret } from '../middleware/auth.js';
+import { getJwtSecret, authRequired, adminOnly } from '../middleware/auth.js';
 import { isDemo } from '../config/storeMode.js';
 import { normaliseCode, discountFor, isFreeShippingCoupon } from '../config/coupons.js';
 
@@ -368,7 +368,11 @@ router.get('/:id', async (req, res) => {
 });
 
 // PATCH /api/orders/:id — อัปเดตสถานะออเดอร์ (Admin Status Updates)
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', authRequired, adminOnly, async (req, res) => {
+  if (mongoose.connection.readyState !== 1) return res.status(503).json({ success: false, message: 'Database unavailable; changes were not saved' });
+  const validStatus = !req.body.status || ['pending', 'processing', 'shipped', 'delivered', 'cancelled'].includes(req.body.status);
+  const validPayment = !req.body.paymentStatus || ['unpaid', 'paid', 'refunded'].includes(req.body.paymentStatus);
+  if (!validStatus || !validPayment || (!req.body.status && !req.body.paymentStatus) || Object.keys(req.body).some(key => !['status', 'paymentStatus'].includes(key))) return res.status(400).json({ success: false, message: 'Invalid order status update' });
   try {
     const { id } = req.params;
     const { status, paymentStatus } = req.body;
@@ -387,7 +391,7 @@ router.patch('/:id', async (req, res) => {
           ]
         },
         { $set: updates },
-        { new: true }
+        { new: true, runValidators: true }
       );
     } else {
       const idx = memoryOrders.findIndex(o => o.orderNumber === id || o._id === id);

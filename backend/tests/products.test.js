@@ -108,7 +108,7 @@ test('POST /api/products blocks unauthenticated and non-admin requests', async (
   assert.equal(resMember.status, 403);
 });
 
-test('POST /api/products allows Admin request', async () => {
+test('POST /api/products reports unavailable persistence to Admin', async () => {
   const newGarment = {
     name: 'Artisan Linen Robe',
     category: 'Outerwear',
@@ -126,8 +126,7 @@ test('POST /api/products allows Admin request', async () => {
     body: JSON.stringify(newGarment)
   });
 
-  assert.equal(res.status, 201);
+  assert.equal(res.status, 503);
   const data = await res.json();
-  assert.equal(data.success, true);
-  assert.ok(data.data.id);
+  assert.equal(data.success, false);
 });
