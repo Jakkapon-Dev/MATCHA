@@ -202,7 +202,7 @@ export function analyzeIttenContrasts(items) {
       id: 'light-dark',
       name: 'Light-Dark Contrast (Value)',
       badge: `ΔL = ${deltaL}%`,
-      description: 'ความต่างของระดับความสว่าง-มืด ช่วยสร้างมิติความลึก (Depth) ให้รูปร่างไม่แบนราบ'
+      descriptionKey: 'mixMatch.contrastLightDark'
     });
   }
 
@@ -215,7 +215,7 @@ export function analyzeIttenContrasts(items) {
       id: 'cold-warm',
       name: 'Cold-Warm Balance (Temperature)',
       badge: 'Thermal Synergy',
-      description: 'การผสานระหว่างโทนอุ่นและโทนเย็น ดึงดูดสายตาอย่างมีระดับ'
+      descriptionKey: 'mixMatch.contrastColdWarm'
     });
   }
 
@@ -227,7 +227,7 @@ export function analyzeIttenContrasts(items) {
       id: 'saturation',
       name: 'Saturation Contrast (Chroma)',
       badge: `ΔS = ${deltaS}%`,
-      description: 'การจับคู่สีสดเข้ากับสีหม่น เป็นจุดพักสายตาช่วยให้ชุดดูแพงขึ้น'
+      descriptionKey: 'mixMatch.contrastSaturation'
     });
   }
 

@@ -1,8 +1,21 @@
 import React from 'react';
 import { AlertTriangle, RotateCcw, Home } from 'lucide-react';
+import { LanguageContext } from '../../context/LanguageContext.jsx';
 
 // React 18 ยังไม่มี hook สำหรับดักข้อผิดพลาดตอน render — ต้องเป็น class component เท่านั้น
 export default class ErrorBoundary extends React.Component {
+  /* A class cannot call useLanguage, and this one has to keep working in the
+     worst case anyway: if the failure it caught happened above the language
+     provider, there is no context to read. Hence the guard rather than a bare
+     this.context.t — an untranslated screen is a poor result, a boundary that
+     throws while reporting an error is a much worse one. */
+  static contextType = LanguageContext;
+
+  translate(key, fallback) {
+    const t = this.context?.t;
+    return typeof t === 'function' ? t(key) : fallback;
+  }
+
   constructor(props) {
     super(props);
     this.state = { hasError: false, error: null };
@@ -52,16 +65,15 @@ export default class ErrorBoundary extends React.Component {
           </div>
 
           <span className="text-xs font-mono font-bold text-matcha-accent uppercase tracking-widest">
-            Something interrupted
+            {this.translate('errors.interrupted', 'Something interrupted')}
           </span>
 
           <h2 className="mt-3 text-2xl sm:text-3xl font-bold text-matcha-text">
-            This page didn&rsquo;t finish loading
+            {this.translate('errors.pageTitle', 'This page didn’t finish loading')}
           </h2>
 
           <p className="mt-3 text-sm leading-relaxed text-matcha-muted">
-            The rest of the store is still fine. Try this page again, or head back
-            to the front and pick up where you left off.
+            {this.translate('errors.pageBody', 'The rest of the store is still fine. Try this page again, or head back to the front and pick up where you left off.')}
           </p>
 
           {/* รายละเอียดข้อผิดพลาดมีไว้ให้นักพัฒนาเท่านั้น ไม่ใช่สิ่งที่ลูกค้าควรเห็น */}
@@ -78,7 +90,7 @@ export default class ErrorBoundary extends React.Component {
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-matcha-primary text-white text-sm font-semibold tracking-wide hover:bg-matcha-primary-dark transition-colors"
             >
               <RotateCcw className="w-4 h-4" strokeWidth={2} />
-              ลองใหม่
+              {this.translate('common.retry', 'Try again')}
             </button>
             <button
               type="button"
@@ -86,7 +98,7 @@ export default class ErrorBoundary extends React.Component {
               className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-matcha-border text-matcha-text text-sm font-semibold tracking-wide hover:bg-matcha-secondary transition-colors"
             >
               <Home className="w-4 h-4" strokeWidth={2} />
-              กลับหน้าแรก
+              {this.translate('errors.backHome', 'Back to home')}
             </button>
           </div>
 

@@ -128,7 +128,7 @@ export default function UserAccount() {
     setShowLogoutConfirm(false);
     setJustLoggedOut(true);
     logout();
-    showToast('ออกจากระบบเรียบร้อยแล้ว', 'info');
+    showToast(t('signedOut.toast'), 'info');
   };
 
   // If user is not logged in, display appropriate prompt based on whether they just logged out
@@ -143,7 +143,7 @@ export default function UserAccount() {
             <div data-enter style={{ '--enter-delay': '70ms' }} className="space-y-2">
               <h1 className="text-2xl font-black uppercase text-[#0A0A0A]">{t('account.signedOut')}</h1>
               <p className="text-xs font-mono text-matcha-muted">
-                คุณได้ออกจากระบบ MatchA เรียบร้อยแล้ว สามารถกลับมาเข้าสู่ระบบได้ทุกเมื่อ
+                {t('signedOut.done')}
               </p>
             </div>
             <div data-enter style={{ '--enter-delay': '190ms' }} className="flex flex-col sm:flex-row gap-3">
@@ -151,13 +151,13 @@ export default function UserAccount() {
                 onClick={() => navigate('/login')}
                 className="flex-1 py-3 bg-[#0A0A0A] text-white text-xs font-bold font-mono uppercase hover:bg-black/80 transition-all cursor-pointer"
               >
-                เข้าสู่ระบบอีกครั้ง
+                {t('signedOut.signInAgain')}
               </button>
               <button
                 onClick={() => navigate('/')}
                 className="flex-1 py-3 border border-matcha-border text-xs font-bold font-mono uppercase text-[#0A0A0A] hover:bg-matcha-bg transition-all cursor-pointer"
               >
-                กลับสู่หน้าร้าน
+                {t('signedOut.backToStore')}
               </button>
             </div>
           </div>
@@ -174,7 +174,7 @@ export default function UserAccount() {
           <div data-enter style={{ '--enter-delay': '70ms' }} className="space-y-2">
             <h1 className="text-2xl font-black uppercase text-[#0A0A0A]">{t('account.pleaseSignIn')}</h1>
             <p className="text-xs font-mono text-matcha-muted">
-              เข้าสู่ระบบสมาชิก MatchA เพื่อดูข้อมูลโปรไฟล์ ประวัติคำสั่งซื้อ และจัดการบัญชีของคุณ
+              {t('signedOut.lead')}
             </p>
           </div>
           <div data-enter style={{ '--enter-delay': '190ms' }} className="flex flex-col sm:flex-row gap-3">
@@ -182,13 +182,13 @@ export default function UserAccount() {
               onClick={() => navigate('/login', { state: { from: '/account' } })}
               className="flex-1 py-3 bg-[#0A0A0A] text-white text-xs font-bold font-mono uppercase hover:bg-black/80 transition-all cursor-pointer"
             >
-              เข้าสู่ระบบทันที
+              {t('signedOut.signInNow')}
             </button>
             <button
               onClick={() => navigate('/signup')}
               className="flex-1 py-3 border border-matcha-border text-xs font-bold font-mono uppercase text-[#0A0A0A] hover:bg-matcha-bg transition-all cursor-pointer"
             >
-              สมัครสมาชิก
+              {t('signedOut.createAccount')}
             </button>
           </div>
         </div>

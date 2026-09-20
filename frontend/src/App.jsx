@@ -288,8 +288,8 @@ function AppContent() {
                 // ต้องบอกให้ผู้ใช้กรอกเอง ไม่ใช่สัญญาว่าจะใส่ให้แล้วไม่เกิดอะไรขึ้น
                 onClaimPromo={(held) => showToast(
                   held
-                    ? 'รับส่วนลด 15% แล้ว — จะใส่ให้อัตโนมัติตอนชำระเงิน 🎉'
-                    : 'คัดลอกโค้ด MATCHA15 แล้ว! กรอกในหน้าชำระเงินเพื่อรับส่วนลด 15%',
+                    ? t('promo.claimed')
+                    : t('promo.copied'),
                   'success'
                 )}
                 onAddToCart={addToCart}

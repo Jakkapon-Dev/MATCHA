@@ -51,25 +51,52 @@ function guestId() {
   }
 }
 
-function mapHttpError(status, serverMessage) {
+/* Errors leave this module carrying a dictionary key rather than a sentence.
+
+   These used to be Thai sentences, which meant a visitor reading the store in
+   English met Thai the moment a request failed — the one place where being
+   understood matters most. This module has no access to the chosen language,
+   so it names the message and lets whoever displays it do the translating:
+   `apiErrorText(err, t)` below, or `t(err.i18nKey)` directly.
+
+   A message the server sent is still preferred where the old code preferred
+   one, because it is more specific than anything named here. Those are still
+   written in Thai on the backend; translating them is its own job and has not
+   been done. */
+function httpErrorKey(status) {
+  if (status === 401) return 'errors.unauthorized';
+  if (status === 403) return 'errors.forbidden';
+  if (status === 404) return 'errors.notFound';
+  if (status === 400) return 'errors.badRequest';
+  if (status === 405 || (status >= 500 && status <= 599)) return 'errors.server';
+  return 'errors.unknown';
+}
+
+// Only these two statuses used to let the server's own wording through.
+const SERVER_MESSAGE_WINS = new Set([400, 404]);
+
+function apiError(status, serverMessage) {
   console.warn(`[API] Request failed (${status}):`, serverMessage || 'No server message');
 
-  if (status === 401) {
-    return 'อีเมลหรือรหัสผ่านไม่ถูกต้อง';
-  }
-  if (status === 403) {
-    return 'คุณไม่มีสิทธิ์เข้าถึงส่วนนี้';
-  }
-  if (status === 404) {
-    return serverMessage || 'ไม่พบข้อมูลที่ต้องการในระบบ';
-  }
-  if (status === 400) {
-    return serverMessage || 'ข้อมูลที่ส่งไม่ถูกต้อง กรุณาตรวจสอบอีกครั้ง';
-  }
-  if (status === 405 || (status >= 500 && status <= 599)) {
-    return 'ระบบขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง';
-  }
-  return serverMessage || 'เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง';
+  const useServerMessage = serverMessage && (SERVER_MESSAGE_WINS.has(status) || status >= 600 || !status);
+  if (useServerMessage) return new Error(serverMessage);
+
+  const i18nKey = httpErrorKey(status);
+  // The Error still carries readable text for logs and for any caller that has
+  // no translator to hand.
+  return Object.assign(new Error(i18nKey), { i18nKey });
+}
+
+/* What a component should show for an error that came out of this module.
+   Falls back to the error's own text, so a failure raised anywhere else — or a
+   message the server worded itself — still reads properly. */
+export function apiErrorText(err, t) {
+  if (err?.i18nKey && typeof t === 'function') return t(err.i18nKey);
+  return err?.message || (typeof t === 'function' ? t('errors.unknown') : 'Something went wrong.');
+}
+
+export function isNetworkErrorKey(err) {
+  return err?.i18nKey === 'errors.network';
 }
 
 async function fetchWithFallback(endpoint, options = {}) {
@@ -89,11 +116,11 @@ async function fetchWithFallback(endpoint, options = {}) {
         return await res.json();
       } catch (parseErr) {
         console.warn(`[API] JSON parse error on ${endpoint}:`, parseErr);
-        throw new Error('ระบบขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง');
+        throw Object.assign(new Error('errors.server'), { i18nKey: 'errors.server' });
       }
     }
     const errorData = await res.json().catch(() => ({}));
-    throw new Error(mapHttpError(res.status, errorData.message));
+    throw apiError(res.status, errorData.message);
   } catch (err) {
     if (err.message && !err.message.includes('Failed to fetch') && !err.message.includes('NetworkError') && !err.message.includes('Failed to communicate')) {
       throw err;
@@ -102,7 +129,7 @@ async function fetchWithFallback(endpoint, options = {}) {
 
   // Fallback to direct backend URL (local development only)
   if (!DIRECT_API) {
-    throw new Error('ตอนนี้เชื่อมต่อระบบไม่ได้ กรุณาลองใหม่อีกครั้ง');
+    throw Object.assign(new Error('errors.network'), { i18nKey: 'errors.network' });
   }
 
   try {
@@ -112,17 +139,17 @@ async function fetchWithFallback(endpoint, options = {}) {
         return await directRes.json();
       } catch (parseErr) {
         console.warn(`[API] JSON parse error on ${DIRECT_API}${endpoint}:`, parseErr);
-        throw new Error('ระบบขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง');
+        throw Object.assign(new Error('errors.server'), { i18nKey: 'errors.server' });
       }
     }
     const errorData = await directRes.json().catch(() => ({}));
-    throw new Error(mapHttpError(directRes.status, errorData.message));
+    throw apiError(directRes.status, errorData.message);
   } catch (err) {
     if (err.message && !err.message.includes('Failed to fetch') && !err.message.includes('NetworkError')) {
       throw err;
     }
     console.warn(`[API] Network failure at ${endpoint}:`, err.message);
-    throw new Error('ตอนนี้เชื่อมต่อระบบไม่ได้ กรุณาลองใหม่อีกครั้ง');
+    throw Object.assign(new Error('errors.network'), { i18nKey: 'errors.network' });
   }
 }
 
