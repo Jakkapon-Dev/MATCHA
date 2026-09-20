@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import useChangeMotion from '../hooks/useChangeMotion';
+import { handleImageError, webpSrc } from '../utils/imageFallback';
 import {
   CheckCircle2,
   ArrowRight,
@@ -637,7 +638,9 @@ export default function PersonalColorPage() {
                             does not map the camelCase form and passes it to the
                             DOM with a warning instead. */}
                         <img
-                          src={QUIZ_QUESTIONS[currentStep].image}
+                          src={webpSrc(QUIZ_QUESTIONS[currentStep].image)}
+                          data-original-src={QUIZ_QUESTIONS[currentStep].image}
+                          onError={handleImageError}
                           alt=""
                           className="w-full h-full object-cover object-center"
                           referrerPolicy="no-referrer"
@@ -672,7 +675,9 @@ export default function PersonalColorPage() {
                             {option.image ? (
                               <span className="block w-full aspect-3/4 overflow-hidden bg-[#E4E4E4]">
                                 <img
-                                  src={option.image}
+                                  src={webpSrc(option.image)}
+                                  data-original-src={option.image}
+                                  onError={handleImageError}
                                   alt=""
                                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
                                   style={{ objectPosition: option.imagePosition || 'center' }}
