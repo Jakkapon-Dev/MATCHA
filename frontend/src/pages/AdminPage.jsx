@@ -7,6 +7,7 @@ import DashboardTab from '../components/admin/DashboardTab';
 import React, { useState, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext.jsx';
+import { apiErrorText } from '../services/api';
 import { Plus, BarChart3, Layers, Search, ExternalLink, ChevronRight, Download, FileSpreadsheet, FileJson, ChevronDown, LayoutDashboard, Boxes, ClipboardList, UserCheck, HardDrive, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
@@ -44,7 +45,7 @@ export default function AdminPage() {
     setSaving(true);
     setMutationNotice(null);
     try { await action(); setMutationNotice({ error: false, text: t('admin.saved') }); return true; }
-    catch (error) { setMutationNotice({ error: true, text: error.message || t('errors.saveFailed') }); return false; }
+    catch (error) { setMutationNotice({ error: true, text: apiErrorText(error, t) || t('errors.saveFailed') }); return false; }
     finally { savingRef.current = false; setSaving(false); }
   };
   const monthlyData = useMemo(() => monthlyRevenue(orders), [orders]);

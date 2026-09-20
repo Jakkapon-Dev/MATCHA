@@ -289,6 +289,10 @@ export const translations = {
     },
 
     checkout: {
+      processing: 'Processing…',
+      editDestination: 'Edit destination',
+      orderFailedTitle: 'Unable to place order',
+      orderFailedBody: 'Your items and shipping details remain saved.',
       stepBag: 'Bag',
       orderConfirmed: 'Order confirmed',
       orderThanks: 'Thank you, {name}. Order {ref} is placed.',
@@ -452,6 +456,7 @@ export const translations = {
       loading: 'Loading products',
       offline: 'Cannot reach the store right now. Try again in a moment.',
       retry: 'Try again',
+      dismiss: 'Dismiss',
     },
 
     /* What the API layer reports when a request does not come back the way it
@@ -1034,6 +1039,10 @@ export const translations = {
     },
 
     checkout: {
+      processing: 'กำลังดำเนินการ…',
+      editDestination: 'แก้ที่อยู่จัดส่ง',
+      orderFailedTitle: 'สั่งซื้อไม่สำเร็จ',
+      orderFailedBody: 'สินค้าและข้อมูลจัดส่งของคุณยังถูกเก็บไว้',
       stepBag: 'ตะกร้า',
       orderConfirmed: 'สั่งซื้อสำเร็จ',
       orderThanks: 'ขอบคุณ {name} คำสั่งซื้อ {ref} เรียบร้อยแล้ว',
@@ -1197,6 +1206,7 @@ export const translations = {
       loading: 'กำลังดึงข้อมูลสินค้า',
       offline: 'ตอนนี้เชื่อมต่อระบบไม่ได้ ลองใหม่อีกครั้ง',
       retry: 'ลองอีกครั้ง',
+      dismiss: 'ปิด',
     },
 
     admin: {

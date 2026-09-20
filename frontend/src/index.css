@@ -282,4 +282,9 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .animate-editorial-reveal,
   [data-reveal="editorial"].revealed { animation-name: enter-fade; }
+
+  /* A toast slides up as it appears. For a reader who has asked for less
+     movement, the message still needs to arrive — it just arrives without
+     travelling. */
+  .animate-fade-in { animation: none; }
 }

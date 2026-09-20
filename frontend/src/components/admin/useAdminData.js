@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { api } from '../../services/api';
+import { api, apiErrorText } from '../../services/api';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 import { normalizeProduct, normalizeOrder, normalizeMember } from './adminData';
 
 // Only API-confirmed data is kept in memory. Old localStorage records can contain
 // demo customers and failed writes, so they must never populate these tables.
 export default function useAdminData(userId) {
+  const { t } = useLanguage();
   const [inventory, setInventory] = useState([]);
   const [orders, setOrders] = useState([]);
   const [members, setMembers] = useState([]);
@@ -29,7 +31,7 @@ export default function useAdminData(userId) {
       } catch (error) {
         if (current !== generation.current) return;
         setData([]);
-        setErrors(previous => ({ ...previous, [key]: error.message }));
+        setErrors(previous => ({ ...previous, [key]: apiErrorText(error, t) }));
         setStatus(previous => ({ ...previous, [key]: 'error' }));
       }
     }));
