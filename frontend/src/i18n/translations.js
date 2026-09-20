@@ -12,6 +12,18 @@ export const DEFAULT_LANG = 'en';
 export const translations = {
   en: {
     access: {
+      forgotNeedsEmail: 'Enter your email address first, then ask for the link.',
+      forgotSent: 'If that address has an account, a link to set a new password is on its way.',
+      resetTitle: 'Set a new password',
+      resetLead: 'Choose something you have not used here before. The link works once.',
+      resetNew: 'New password',
+      resetConfirm: 'Type it again',
+      resetSubmit: 'Save the new password',
+      resetTooShort: 'Use at least 8 characters.',
+      resetMismatch: 'The two passwords do not match.',
+      resetDone: 'Your password is set. Sign in with it.',
+      resetNoToken: 'This link is missing its token. Ask for a new one from the sign-in page.',
+      resetBackToSignIn: 'Back to sign in',
       signInTitle: 'Sign in',
       registerTitle: 'Create an account',
       signInLead: 'Your orders, saved addresses and colour reading, all in one place.',
@@ -233,6 +245,7 @@ export const translations = {
     },
 
     titles: {
+      resetPassword: 'Set a new password',
       home: 'MatchA — tea-dyed streetwear',
       catalog: 'The archive — MatchA',
       personalColor: 'Colour lab — MatchA',
@@ -762,6 +775,18 @@ export const translations = {
 
   th: {
     access: {
+      forgotNeedsEmail: 'กรอกอีเมลของคุณก่อน แล้วจึงขอลิงก์',
+      forgotSent: 'ถ้าอีเมลนี้มีบัญชีอยู่ เราได้ส่งลิงก์สำหรับตั้งรหัสผ่านใหม่ไปให้แล้ว',
+      resetTitle: 'ตั้งรหัสผ่านใหม่',
+      resetLead: 'เลือกรหัสที่ไม่เคยใช้กับที่นี่มาก่อน ลิงก์นี้ใช้ได้ครั้งเดียว',
+      resetNew: 'รหัสผ่านใหม่',
+      resetConfirm: 'พิมพ์อีกครั้ง',
+      resetSubmit: 'บันทึกรหัสผ่านใหม่',
+      resetTooShort: 'ใช้อย่างน้อย 8 ตัวอักษร',
+      resetMismatch: 'รหัสผ่านสองช่องไม่ตรงกัน',
+      resetDone: 'ตั้งรหัสผ่านใหม่แล้ว เข้าสู่ระบบด้วยรหัสใหม่ได้เลย',
+      resetNoToken: 'ลิงก์นี้ไม่มีโทเคน กรุณาขอลิงก์ใหม่จากหน้าเข้าสู่ระบบ',
+      resetBackToSignIn: 'กลับไปหน้าเข้าสู่ระบบ',
       signInTitle: 'เข้าสู่ระบบ',
       registerTitle: 'สมัครสมาชิก',
       signInLead: 'คำสั่งซื้อ ที่อยู่ที่บันทึกไว้ และผลวิเคราะห์สีของคุณ อยู่ที่เดียวกัน',
@@ -983,6 +1008,7 @@ export const translations = {
     },
 
     titles: {
+      resetPassword: 'ตั้งรหัสผ่านใหม่',
       home: 'MatchA — เสื้อผ้าย้อมชา',
       catalog: 'สินค้าทั้งหมด — MatchA',
       personalColor: 'ค้นหาสีประจำตัว — MatchA',

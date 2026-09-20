@@ -14,6 +14,7 @@ const AccessPage = React.lazy(() => import('./pages/AccessPage.jsx'));
 const PaymentPage = React.lazy(() => import('./pages/PaymentPage.jsx'));
 const UserAccount = React.lazy(() => import('./pages/UserAccount.jsx'));
 const GuestOrdersPage = React.lazy(() => import('./pages/GuestOrdersPage.jsx'));
+const ResetPasswordPage = React.lazy(() => import('./pages/ResetPasswordPage.jsx'));
 const AdminPage = React.lazy(() => import('./pages/AdminPage.jsx'));
 const PersonalColorPage = React.lazy(() => import('./pages/PersonalColorPage.jsx'));
 const MixMatchStudioPage = React.lazy(() => import('./pages/MixMatchStudioPage.jsx'));
@@ -69,6 +70,7 @@ const TITLE_KEYS = [
   ['/signup', 'titles.signup'],
   ['/account', 'titles.account'],
   ['/orders', 'titles.orders'],
+  ['/reset-password', 'titles.resetPassword'],
   ['/admin', 'titles.admin'],
   ['/login', 'titles.login'],
   ['/legal', 'titles.legal'],
@@ -365,6 +367,9 @@ function AppContent() {
               browser's guest id the API returns an empty list, so there is
               nothing here to reach that the caller does not own. */}
           <Route path="/orders" element={<GuestOrdersPage />} />
+          {/* Where an emailed reset link lands. Open by design: the token in
+              the query string is the only thing that makes it useful. */}
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
 
           {/* 7. User Account Page (Member VIP Lounge) */}
           <Route

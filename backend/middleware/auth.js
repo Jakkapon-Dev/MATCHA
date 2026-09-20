@@ -56,6 +56,22 @@ export async function requireAuth(req, res, next) {
     if (!user) {
       return res.status(401).json({ success: false, message: 'User not found' });
     }
+
+    /* A token minted before the password changed is spent.
+
+       Resetting a password is usually an attempt to get someone else out, and
+       a JWT cannot be recalled. Comparing the token's own issue time against
+       the moment the password changed is what actually ends those sessions.
+       `iat` is in seconds; the stored moment is a Date. A second of slack
+       covers the case where both happen inside the same second, which would
+       otherwise sign the customer out of the session they just reset from. */
+    if (user.passwordChangedAt && payload.iat) {
+      const issuedAt = payload.iat * 1000;
+      if (issuedAt + 1000 < new Date(user.passwordChangedAt).getTime()) {
+        return res.status(401).json({ success: false, message: 'Session ended by a password change' });
+      }
+    }
+
     req.user = user;
     next();
   } catch {

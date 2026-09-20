@@ -46,7 +46,7 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
   const navigate = useNavigate();
   const { login } = useAuth();
   const { showToast } = useToast();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const reduced = useReducedMotion();
 
   const [mode, setMode] = useState(initialMode);
@@ -65,6 +65,33 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const firstExtraRef = useRef(null);
+
+  /* Ask for a reset link.
+
+     The address comes from the field the visitor is already looking at, so
+     nothing has to be typed twice. The message afterwards is the same whether
+     or not that address has an account: the server answers that way on purpose
+     so this endpoint cannot be used to find out who shops here, and showing a
+     different message for a failure would give away exactly what the server
+     was careful not to. */
+  const requestReset = async () => {
+    const address = form.email.trim();
+    if (!address) {
+      setError(t('access.forgotNeedsEmail'));
+      return;
+    }
+    setBusy(true);
+    setError('');
+    try {
+      await api.forgotPassword(address, lang);
+    } catch (err) {
+      console.warn('Reset request failed:', err?.message);
+    } finally {
+      setBusy(false);
+      showToast(t('access.forgotSent'), 'info');
+    }
+  };
+
 
   const set = (name) => (event) => {
     setError('');
@@ -206,7 +233,7 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
               <div className="flex items-baseline justify-between gap-3">
                 <label htmlFor="access-password" className={label}>{t('access.password')}</label>
                 {!registering && (
-                  <button type="button" onClick={() => showToast(t('auth.resetDesc'), 'info')}
+                  <button type="button" onClick={requestReset} disabled={busy}
                     className="text-xs font-mono text-[#0A0A0A] underline underline-offset-4 decoration-matcha-accent decoration-2 cursor-pointer">
                     {t('access.forgot')}
                   </button>

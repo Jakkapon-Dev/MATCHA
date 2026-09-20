@@ -123,6 +123,51 @@ const COPY = {
   },
 };
 
+const RESET_COPY = {
+  th: {
+    subject: 'ตั้งรหัสผ่านใหม่ — MatchA',
+    heading: 'ตั้งรหัสผ่านใหม่',
+    body: 'มีการขอตั้งรหัสผ่านใหม่สำหรับบัญชีนี้ กดปุ่มด้านล่างเพื่อตั้งรหัสใหม่',
+    cta: 'ตั้งรหัสผ่านใหม่',
+    expires: (m) => `ลิงก์นี้ใช้ได้ ${m} นาที และใช้ได้ครั้งเดียว`,
+    ignore: 'ถ้าคุณไม่ได้เป็นคนขอ ไม่ต้องทำอะไร รหัสผ่านเดิมยังใช้ได้ตามปกติ',
+    fallback: 'ถ้าปุ่มกดไม่ได้ ให้คัดลอกลิงก์นี้ไปวางในเบราว์เซอร์',
+  },
+  en: {
+    subject: 'Set a new password — MatchA',
+    heading: 'Set a new password',
+    body: 'Someone asked to set a new password for this account. Use the button below.',
+    cta: 'Set a new password',
+    expires: (m) => `This link works for ${m} minutes and can be used once.`,
+    ignore: 'If this was not you, nothing needs doing — the current password still works.',
+    fallback: 'If the button does not work, copy this link into your browser:',
+  },
+};
+
+/* Send someone a way back into their account.
+ *
+ * The link is the only copy of the token that exists outside the customer's
+ * inbox; the database holds its digest. Same rules as everything else here:
+ * no throwing, and neither the address nor the link is logged. */
+export async function sendPasswordReset({ email, resetUrl, locale, ttlMinutes = 60 }) {
+  if (!email || !resetUrl) return { sent: false, reason: 'missing address or link' };
+  const copy = RESET_COPY[locale === 'en' ? 'en' : 'th'];
+
+  const text = [copy.heading, '', copy.body, '', resetUrl, '', copy.expires(ttlMinutes), copy.ignore].join('\n');
+
+  const html = `<!doctype html><html><body style="margin:0;padding:24px;background:#F1F1F1;font-family:ui-monospace,Menlo,Consolas,monospace;color:#0A0A0A">
+<div style="max-width:520px;margin:0 auto;background:#FFFFFF;border:1px solid #DCDCDC;padding:28px">
+<p style="margin:0 0 12px;font-size:15px;font-weight:bold">${escape(copy.heading)}</p>
+<p style="margin:0 0 20px;font-size:13px">${escape(copy.body)}</p>
+<p style="margin:0 0 20px"><a href="${escape(resetUrl)}" style="display:inline-block;background:#042509;color:#FFFFFF;text-decoration:none;padding:12px 22px;font-size:13px">${escape(copy.cta)}</a></p>
+<p style="margin:0 0 6px;font-size:11px;color:#666666">${escape(copy.expires(ttlMinutes))}</p>
+<p style="margin:0 0 20px;font-size:11px;color:#666666">${escape(copy.ignore)}</p>
+<p style="margin:0;font-size:11px;color:#666666;border-top:1px solid #DCDCDC;padding-top:14px">${escape(copy.fallback)}<br><span style="word-break:break-all">${escape(resetUrl)}</span></p>
+</div></body></html>`;
+
+  return deliver({ to: email, subject: copy.subject, html, text });
+}
+
 const money = (n) => `$${(Number(n) || 0).toFixed(2)}`;
 const escape = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => (
   { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]

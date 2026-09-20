@@ -32,7 +32,28 @@ const userSchema = new mongoose.Schema(
     passwordHash: { type: String, default: '' },
     role: { type: String, enum: ['Member', 'Admin'], default: 'Member' },
     tier: { type: String, default: 'Regular Member' },
-    addresses: { type: Array, default: [] }
+    addresses: { type: Array, default: [] },
+
+    /* Password reset.
+
+       Only the SHA-256 of the token is kept, never the token itself. Anyone
+       reading this collection — a backup, a leaked dump, an over-broad admin
+       query — holds something they cannot reset an account with, because the
+       hash is what is compared and the raw value only ever existed in the
+       email. SHA-256 rather than bcrypt on purpose: this is 32 bytes of
+       randomness, not a password, so there is nothing to slow an attacker
+       down about and a fast digest keeps the lookup a single indexed query. */
+    passwordResetTokenHash: { type: String, default: null, index: true },
+    passwordResetExpires: { type: Date, default: null },
+
+    /* When the password last changed.
+
+       Tokens already issued carry an `iat` and cannot be recalled, so a reset
+       that only changed the password would leave whoever prompted it still
+       signed in on their own device — which is the one thing a person resetting
+       a password is usually trying to stop. middleware/auth.js refuses any
+       token minted before this moment. */
+    passwordChangedAt: { type: Date, default: null }
   },
   { timestamps: true, collection: 'users' }
 );
@@ -128,5 +149,48 @@ export async function init(opts = {}) {
   await ensureAdminSeed(opts.adminPassword || process.env.SEED_ADMIN_PASSWORD || 'admin1234');
 }
 
-export default { init, findByEmail, findById, createUser, ensureAdminSeed, normalizeEmail };
+/* Issue a reset token for an account, returning the raw value for the email.
+
+   The caller gets the only copy that will ever exist outside the customer's
+   inbox; what is stored is its digest. */
+export async function issuePasswordReset(userId, { ttlMinutes = 60 } = {}) {
+  if (mongoose.connection.readyState !== 1) return null;
+  const token = crypto.randomBytes(32).toString('hex');
+  const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
+  const expires = new Date(Date.now() + ttlMinutes * 60 * 1000);
+
+  const updated = await User.findByIdAndUpdate(
+    String(userId),
+    { $set: { passwordResetTokenHash: tokenHash, passwordResetExpires: expires } },
+    { new: true }
+  ).lean();
+
+  return updated ? { token, expires } : null;
+}
+
+/* Spend a reset token: set the new password and make the token unusable.
+
+   The expiry is part of the query rather than a check afterwards, so a token
+   that ran out cannot be used by a caller that raced the clock, and the token
+   fields are cleared in the same write that sets the password — one operation,
+   so a token can never be spent twice. */
+export async function consumePasswordReset(rawToken, newPasswordHash) {
+  if (mongoose.connection.readyState !== 1) return null;
+  const tokenHash = crypto.createHash('sha256').update(String(rawToken || '')).digest('hex');
+
+  return User.findOneAndUpdate(
+    { passwordResetTokenHash: tokenHash, passwordResetExpires: { $gt: new Date() } },
+    {
+      $set: {
+        passwordHash: newPasswordHash,
+        passwordChangedAt: new Date(),
+        passwordResetTokenHash: null,
+        passwordResetExpires: null,
+      },
+    },
+    { new: true }
+  ).lean();
+}
+
+export default { init, findByEmail, findById, createUser, ensureAdminSeed, normalizeEmail, issuePasswordReset, consumePasswordReset };
 export { User };
