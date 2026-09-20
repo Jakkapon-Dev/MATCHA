@@ -56,6 +56,42 @@ test('POST /api/orders calculates pricing and creates order for guest', async ()
   assert.equal(data.data.customer.email, 'guest.checkout@matcha.test');
 });
 
+/* The field used to be decided by the payment method — a card meant 'paid',
+   cash on delivery meant 'unpaid' — which recorded an intention as a fact.
+   Nothing in this endpoint takes money, so nothing in it may say money
+   arrived. The day a gateway is connected, that difference is the goods. */
+test('a new order is never born paid, whatever it says it will be paid with', async () => {
+  const base = {
+    customer: {
+      firstName: 'Test',
+      lastName: 'Guest',
+      email: 'payment.status@matcha.test',
+      phone: '0899999999',
+      address: '100 Road',
+      city: 'Bangkok',
+      zipCode: '10110'
+    },
+    items: [{ productId: 'AUT-ACC-001', quantity: 1, size: 'OS' }],
+    shippingOption: 'standard'
+  };
+
+  for (const paymentMethod of ['visa', 'mastercard', 'qr', 'cod', 'demo']) {
+    const res = await fetch(baseUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...base, paymentMethod })
+    });
+
+    assert.equal(res.status, 201, `${paymentMethod} should still create an order`);
+    const { data } = await res.json();
+    assert.equal(
+      data.paymentStatus,
+      'unpaid',
+      `an order paid by ${paymentMethod} must start unpaid, not ${data.paymentStatus}`
+    );
+  }
+});
+
 test('GET /api/orders returns orders list without requiring authentication', async () => {
   const res = await fetch(baseUrl);
   assert.equal(res.status, 200);

@@ -175,7 +175,25 @@ router.post('/', orderLimiter, async (req, res) => {
 
     const validPaymentMethods = ['visa', 'mastercard', 'cod', 'qr', 'demo'];
     const safePaymentMethod = validPaymentMethods.includes(paymentMethod) ? paymentMethod : 'demo';
-    const paymentStatus = safePaymentMethod === 'cod' ? 'unpaid' : 'paid';
+
+    /* Every order is born unpaid, whatever the customer said they would pay
+       with.
+
+       This line used to read `safePaymentMethod === 'cod' ? 'unpaid' : 'paid'`,
+       which confused the method with the fact: choosing a card is an intention,
+       receiving the money is an event, and only the second one belongs in this
+       field. Nothing here takes any money, so nothing here may record that any
+       arrived.
+
+       It costs nothing today because no money is real yet. It would cost the
+       shop the goods on the day a gateway is connected, because a customer who
+       reaches this endpoint and then closes the payment window would have an
+       order marked paid and nothing charged.
+
+       Only two things may promote an order: an administrator through
+       PATCH /api/orders/:id, and — once there is one — a payment webhook whose
+       signature has been checked. Both write the fact after it has happened. */
+    const paymentStatus = 'unpaid';
 
     /* A guest's own id is recorded so the order can be shown back to them
        later. A signed-in customer does not need it: their orders are found by
