@@ -1,7 +1,7 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';
-import orderRoutes from '../routes/orderRoutes.js';
+import orderRoutes, { stockKeyFor } from '../routes/orderRoutes.js';
 
 let server;
 let baseUrl;
@@ -90,6 +90,43 @@ test('a new order is never born paid, whatever it says it will be paid with', as
       `an order paid by ${paymentMethod} must start unpaid, not ${data.paymentStatus}`
     );
   }
+});
+
+/* Which bucket an ordered line comes out of.
+
+   This is where a subtle oversell would hide. The browser sends 'M' when no
+   size was chosen, and the order route used to write that straight onto the
+   line. A garment sold without sizes keeps its stock under ONE, so an order
+   carrying the default 'M' would look for a bucket that does not exist —
+   and the obvious 'fix', falling back to whichever size has stock, would sell
+   an M to someone who never asked for one. */
+test('the stock bucket is chosen by what the product actually sells', () => {
+  const sized = { sizes: ['S', 'M', 'L'] };
+  const shoes = { sizes: ['EU 38', 'EU 39'] };
+  const oneSize = { sizes: [] };
+
+  assert.equal(stockKeyFor(sized, 'M'), 'M', 'a declared size is used as given');
+  assert.equal(stockKeyFor(shoes, 'EU 39'), 'EU 39', 'shoe sizing is not special-cased');
+
+  // Not declared: left alone so the reservation refuses it, rather than being
+  // rounded to a size that happens to be in stock.
+  assert.equal(stockKeyFor(sized, 'XXL'), 'XXL', 'an undeclared size is passed through to be refused');
+
+  // No sizes at all: everything lands in the one bucket the migration made,
+  // whatever the browser sent.
+  assert.equal(stockKeyFor(oneSize, 'M'), 'ONE', "the browser's default size does not invent a bucket");
+  assert.equal(stockKeyFor(oneSize, ''), 'ONE');
+  assert.equal(stockKeyFor(oneSize, undefined), 'ONE');
+
+  // A product the cache never found is treated as sizeless rather than
+  // throwing: the reservation is what decides, and it will find nothing.
+  assert.equal(stockKeyFor(undefined, 'M'), 'ONE');
+});
+
+test('a declared size is matched on its trimmed text, not loosely', () => {
+  const sized = { sizes: [' M ', 'L'] };
+  assert.equal(stockKeyFor(sized, ' M '), 'M', 'surrounding space is not part of the size');
+  assert.equal(stockKeyFor(sized, 'm'), 'm', 'case is left as sent, so a mismatch is refused rather than guessed');
 });
 
 test('GET /api/orders returns orders list without requiring authentication', async () => {

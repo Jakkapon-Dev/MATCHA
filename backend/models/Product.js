@@ -11,6 +11,26 @@ const variantSchema = new Schema(
   { _id: false }
 );
 
+/* Stock is held per size, because that is how it runs out.
+
+   A single number per product cannot answer the only question a shopper
+   actually asks — "is there an M?" — so a garment whose M had gone still
+   showed as in stock on the strength of the XLs nobody wanted.
+
+   ONE_SIZE is the bucket for anything sold without a size: accessories, and
+   for now the lookbook garments that were imported without one. It is a real
+   key rather than an empty string so that an order that forgot to send a size
+   cannot silently land in the same bucket as a deliberate one-size item. */
+export const ONE_SIZE = 'ONE';
+
+const sizeStockSchema = new Schema(
+  {
+    size: { type: String, required: true, trim: true },
+    stock: { type: Number, required: true, min: 0, default: 0 }
+  },
+  { _id: false }
+);
+
 const productSchema = new Schema(
   {
     id: {
@@ -88,6 +108,20 @@ const productSchema = new Schema(
       type: [variantSchema],
       default: []
     },
+    /* Per-size stock. The authoritative figure: this is what is decremented
+       when an order is placed, under a condition that refuses to go below
+       zero. */
+    sizeStock: {
+      type: [sizeStockSchema],
+      default: []
+    },
+
+    /* The total across every size, kept in step by the hook below.
+
+       It is derived, not authoritative. It stays because the catalogue,
+       the admin inventory table and `inStock` all read a single number, and
+       because an order placed before a product was migrated still needs
+       somewhere to land. Never decrement this directly. */
     stock: {
       type: Number,
       min: 0,
@@ -133,14 +167,20 @@ productSchema.pre('validate', function syncIdentifiers(next) {
   if (!this.sku && this.id) this.sku = this.id;
   if (!this.id && this.sku) this.id = this.sku;
   
-  if (this.stock === undefined && this.inStock !== undefined) {
+  /* sizeStock leads and stock follows, once a product has been migrated.
+     A product that has not been is left on its own `stock` exactly as before,
+     so nothing breaks while the migration is only half run. */
+  if (Array.isArray(this.sizeStock) && this.sizeStock.length) {
+    this.stock = this.sizeStock.reduce((sum, row) => sum + (Number(row.stock) || 0), 0);
+  } else if (this.stock === undefined && this.inStock !== undefined) {
     this.stock = this.inStock ? 50 : 0;
-  } else {
-    this.inStock = (this.stock || 0) > 0;
   }
+  this.inStock = (this.stock || 0) > 0;
   if (typeof next === 'function') next();
 });
 
+// Order placement looks a product up by id or sku and then by size within it.
+productSchema.index({ id: 1, 'sizeStock.size': 1 });
 productSchema.index({ category: 1, season: 1 });
 productSchema.index({ name: 'text', description: 'text', color: 'text', tag: 'text' });
 

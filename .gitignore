@@ -191,5 +191,6 @@ backend/scripts/*
 # file. Without it there is no record of how the live collection reached its
 # current form, and no way to redo it. Idempotent, and it writes a backup first.
 !backend/scripts/migrateUsersToMongo.mjs
+!backend/scripts/migrateSizeStock.mjs
 
 

@@ -5,7 +5,7 @@ import rateLimit from 'express-rate-limit';
 
 import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
-import Product from '../models/Product.js';
+import Product, { ONE_SIZE } from '../models/Product.js';
 import productsData from '../data/products.js';
 import { getJwtSecret, authRequired, adminOnly } from '../middleware/auth.js';
 import { isDemo } from '../config/storeMode.js';
@@ -61,6 +61,136 @@ const extractAuthUser = (req) => {
   }
 };
 
+/* Who is allowed to see, or act on, one order.
+
+   An order number is readable — MTA-2026-439417-924 — and therefore worth
+   guessing at, so holding one is never enough on its own. An administrator
+   qualifies, as does the account the order belongs to, the email on it, or
+   the browser that placed it as a guest. */
+function ownsOrder(req, order) {
+  const viewer = extractAuthUser(req);
+  const callerGuestId = String(req.headers['x-guest-id'] || '').trim();
+  return (viewer && (
+    String(viewer.role || '').toLowerCase() === 'admin' ||
+    (viewer.email && order.customer?.email &&
+      String(viewer.email).toLowerCase() === String(order.customer.email).toLowerCase()) ||
+    (order.userId && String(order.userId) === String(viewer.id || viewer.userId || viewer._id || ''))
+  )) || Boolean(order.guestId && callerGuestId && order.guestId === callerGuestId);
+}
+
+/* Which stock bucket an ordered item comes out of.
+
+   A product that declares sizes is sold by size, so the size must be one it
+   declares — anything else is a request for something that does not exist and
+   is left as it came, to be refused by the reservation below rather than
+   quietly rounded to a size that happens to be in stock.
+
+   A product with no declared sizes is sold as one thing, and `ONE` is where
+   its stock lives. The browser sends 'M' by default for those, which would
+   otherwise look for a bucket that was never created. */
+export function stockKeyFor(product, requestedSize) {
+  const declared = (product?.sizes || []).map(s => String(s).trim()).filter(Boolean);
+  const wanted = String(requestedSize || '').trim();
+  if (!declared.length) return ONE_SIZE;
+  return wanted;
+}
+
+/* Take the stock before the order is written, all of it or none of it.
+
+   Each line is decremented by a single findOneAndUpdate carrying its own
+   condition: the matching size must already hold at least what is being
+   taken. Two shoppers reaching for the last M therefore cannot both succeed,
+   because the condition and the subtraction are one operation to the database
+   rather than a read this code then acts on.
+
+   Everything runs in one transaction with the order write, so a shortfall on
+   the fourth line puts the first three back by abandoning the transaction
+   rather than by trying to remember what to undo.
+
+   A product with no sizeStock has not been migrated yet. Rather than refuse an
+   order over a migration that has not been run, those fall back to the whole
+   product's `stock` under the same kind of condition, which is still a real
+   check — just a coarser one. */
+async function reserveStock(validatedItems, productCache, session) {
+  // Two cart lines can name the same garment and size; they come out of one
+  // bucket, so they are counted as one draw on it.
+  const wanted = new Map();
+  for (const item of validatedItems) {
+    const product = productCache.get(item.productId);
+    const key = `${item.productId}::${stockKeyFor(product, item.size)}`;
+    const row = wanted.get(key) || { productId: item.productId, size: stockKeyFor(product, item.size), quantity: 0, name: item.name };
+    row.quantity += item.quantity;
+    wanted.set(key, row);
+  }
+
+  for (const row of wanted.values()) {
+    const product = productCache.get(row.productId);
+    const migrated = Array.isArray(product?.sizeStock) && product.sizeStock.length > 0;
+
+    const filter = migrated
+      ? {
+          $or: [{ id: row.productId }, { sku: row.productId }],
+          sizeStock: { $elemMatch: { size: row.size, stock: { $gte: row.quantity } } },
+        }
+      : {
+          $or: [{ id: row.productId }, { sku: row.productId }],
+          stock: { $gte: row.quantity },
+        };
+
+    const update = migrated
+      ? { $inc: { 'sizeStock.$[bucket].stock': -row.quantity, stock: -row.quantity } }
+      : { $inc: { stock: -row.quantity } };
+
+    const options = migrated
+      ? { session, arrayFilters: [{ 'bucket.size': row.size }] }
+      : { session };
+
+    const hit = await Product.updateOne(filter, update, options);
+    if (!hit.modifiedCount) {
+      const err = new Error('insufficient stock');
+      err.shortfall = { productId: row.productId, name: row.name, size: row.size, requested: row.quantity };
+      throw err;
+    }
+  }
+}
+
+/* Put back what a cancelled order was holding.
+
+   The mirror of reserveStock, and deliberately more forgiving: a bucket that
+   has since been renamed, or a product that has been deleted, must not stop a
+   customer cancelling. Stock that cannot be returned is logged rather than
+   thrown, because the alternative is an order stuck open over a garment that
+   no longer exists. */
+async function releaseStock(items, session) {
+  const back = new Map();
+  for (const item of items || []) {
+    const key = `${item.productId}::${item.size || ONE_SIZE}`;
+    const row = back.get(key) || { productId: item.productId, size: item.size || ONE_SIZE, quantity: 0 };
+    row.quantity += Number(item.quantity) || 0;
+    back.set(key, row);
+  }
+
+  for (const row of back.values()) {
+    if (row.quantity <= 0) continue;
+    const selector = { $or: [{ id: row.productId }, { sku: row.productId }] };
+
+    const toBucket = await Product.updateOne(
+      { ...selector, 'sizeStock.size': row.size },
+      { $inc: { 'sizeStock.$[bucket].stock': row.quantity, stock: row.quantity } },
+      { session, arrayFilters: [{ 'bucket.size': row.size }] }
+    );
+    if (toBucket.modifiedCount) continue;
+
+    // No such bucket: the product may predate the migration, or the size may
+    // have been renamed since the order was placed. The total is still right
+    // to credit.
+    const toTotal = await Product.updateOne(selector, { $inc: { stock: row.quantity } }, { session });
+    if (!toTotal.modifiedCount) {
+      console.warn(`[orders] cancelled order held ${row.quantity} of ${row.productId} (${row.size}) that could not be returned`);
+    }
+  }
+}
+
 // POST /api/orders — สร้างออเดอร์ใหม่ (คำนวณราคาฝั่งเซิร์ฟเวอร์ + รองรับทั้ง Member และ Guest)
 router.post('/', orderLimiter, async (req, res) => {
   try {
@@ -101,7 +231,10 @@ router.post('/', orderLimiter, async (req, res) => {
     // เตรียมแคชสินค้าจากทั้ง DB และ local productsData
     const productCache = new Map(productsData.map(p => [p.id, p]));
     if (mongoose.connection.readyState === 1) {
-      const dbProds = await Product.find({}, 'id sku price name image color').lean();
+      // sizes and sizeStock ride along now: the stock check below cannot be
+      // made without them, and the old projection is exactly why this endpoint
+      // could say yes to a garment it did not have.
+      const dbProds = await Product.find({}, 'id sku price name image color sizes sizeStock').lean();
       dbProds.forEach(p => {
         if (p.id) productCache.set(p.id, p);
         if (p.sku) productCache.set(p.sku, p);
@@ -221,8 +354,30 @@ router.post('/', orderLimiter, async (req, res) => {
 
     let savedOrder;
     if (mongoose.connection.readyState === 1) {
-      const orderDoc = new Order(orderPayload);
-      savedOrder = await orderDoc.save();
+      /* The stock comes off and the order goes on together, or neither does.
+
+         Before this, nothing was decremented at all: the comment at the top of
+         this file claimed the endpoint decrements stock and it never had, so
+         the same garment could be sold without limit. */
+      const session = await mongoose.connection.getClient().startSession();
+      try {
+        await session.withTransaction(async () => {
+          await reserveStock(orderPayload.items, productCache, session);
+          const [written] = await Order.create([orderPayload], { session });
+          savedOrder = written;
+        });
+      } catch (err) {
+        if (err?.shortfall) {
+          return res.status(409).json({
+            success: false,
+            message: 'สินค้าบางรายการเหลือไม่พอ กรุณาตรวจสอบตะกร้าอีกครั้ง',
+            shortfall: err.shortfall,
+          });
+        }
+        throw err;
+      } finally {
+        await session.endSession();
+      }
 
       /* The bag is emptied here rather than left to the browser. clearCart()
          only ever reset local state, and no route existed to clear the server
@@ -437,16 +592,7 @@ router.get('/:id', async (req, res) => {
        caller gets for an order that does not exist. A different reply here
        would confirm the number is real, which is the first half of the thing
        being protected against. */
-    const viewer = extractAuthUser(req);
-    const callerGuestId = String(req.headers['x-guest-id'] || '').trim();
-    const isOwner = (viewer && (
-      String(viewer.role || '').toLowerCase() === 'admin' ||
-      (viewer.email && order.customer?.email &&
-        String(viewer.email).toLowerCase() === String(order.customer.email).toLowerCase()) ||
-      (order.userId && String(order.userId) === String(viewer.id || viewer.userId || viewer._id || ''))
-    )) || Boolean(order.guestId && callerGuestId && order.guestId === callerGuestId);
-
-    if (!isOwner) {
+    if (!ownsOrder(req, order)) {
       return res.status(404).json({
         success: false,
         message: 'ไม่พบคำสั่งซื้อที่ต้องการ'
@@ -463,6 +609,87 @@ router.get('/:id', async (req, res) => {
       success: false,
       message: 'ไม่สามารถดึงข้อมูลคำสั่งซื้อได้'
     });
+  }
+});
+
+/* POST /api/orders/:id/cancel — the customer calls this one off themselves.
+
+   'cancelled' has been in the schema all along, but only an administrator
+   could set it, so someone who ordered the wrong size had nothing to do but
+   wait for a person to notice.
+
+   Only while the order is still `pending`. Once the shop has started
+   processing or shipping it, cancelling is a conversation rather than a
+   button, and a cancellation that arrived after the parcel had gone would put
+   stock back that had physically left.
+
+   The stock goes back the way it came off: inside a transaction, so an order
+   cannot end up cancelled with the goods still held, nor released with the
+   order still open. */
+router.post('/:id/cancel', orderLimiter, async (req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ success: false, message: 'ระบบฐานข้อมูลไม่พร้อมใช้งาน ยังยกเลิกไม่ได้' });
+  }
+
+  try {
+    const { id } = req.params;
+    const isOid = mongoose.Types.ObjectId.isValid(id);
+    const order = await Order.findOne({
+      $or: [{ orderNumber: id }, { idempotencyKey: id }, ...(isOid ? [{ _id: id }] : [])]
+    }).lean();
+
+    // Same 404 for an order that is not yours as for one that does not exist:
+    // a different answer here would confirm the number is real.
+    if (!order || !ownsOrder(req, order)) {
+      return res.status(404).json({ success: false, message: 'ไม่พบคำสั่งซื้อที่ต้องการ' });
+    }
+
+    if (order.status === 'cancelled') {
+      return res.status(200).json({ success: true, data: withStoreMode(order), message: 'คำสั่งซื้อนี้ถูกยกเลิกไปแล้ว' });
+    }
+
+    if (order.status !== 'pending') {
+      return res.status(409).json({
+        success: false,
+        message: 'คำสั่งซื้อนี้เริ่มดำเนินการแล้ว กรุณาติดต่อร้านเพื่อยกเลิก',
+        status: order.status,
+      });
+    }
+
+    let cancelled = null;
+    const session = await mongoose.connection.getClient().startSession();
+    try {
+      await session.withTransaction(async () => {
+        /* The condition on status is what makes this safe to call twice at
+           once: the second attempt matches nothing and the transaction that
+           would have released the stock a second time does nothing. */
+        const updated = await Order.findOneAndUpdate(
+          { _id: order._id, status: 'pending' },
+          { $set: { status: 'cancelled' } },
+          { new: true, session }
+        );
+        if (!updated) {
+          const raced = new Error('already handled');
+          raced.raced = true;
+          throw raced;
+        }
+        await releaseStock(order.items, session);
+        cancelled = updated;
+      });
+    } catch (err) {
+      if (err?.raced) {
+        const now = await Order.findById(order._id).lean();
+        return res.status(409).json({ success: false, message: 'คำสั่งซื้อนี้เพิ่งถูกเปลี่ยนสถานะ กรุณาโหลดใหม่', status: now?.status });
+      }
+      throw err;
+    } finally {
+      await session.endSession();
+    }
+
+    res.json({ success: true, data: withStoreMode(cancelled), message: 'ยกเลิกคำสั่งซื้อเรียบร้อยแล้ว' });
+  } catch (err) {
+    console.error('Error cancelling order:', err);
+    res.status(500).json({ success: false, message: 'ยกเลิกคำสั่งซื้อไม่สำเร็จ กรุณาลองใหม่' });
   }
 });
 
