@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Clock, RotateCcw, ArrowRightLeft, Check } from 'lucide-react';
 import { useToast } from '../../context/ToastContext.jsx';
+import { handleImageError, webpSrc } from '../../utils/imageFallback';
 
 export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateStatus, saveError }) {
   const [currentStatus, setCurrentStatus] = useState(order?.status || 'Processing');
@@ -140,7 +141,8 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
               <div className="pb-4 border-b border-[#E5E5E5]">
                 <div className="flex flex-col">
                   <img
-                    src="/images/brand/matcha-logo-primary.png"
+                    src={webpSrc('/images/brand/matcha-logo-primary.png')} data-original-src="/images/brand/matcha-logo-primary.png"
+                    onError={handleImageError}
                     alt="MatchA"
                     className="h-8 sm:h-9 w-auto object-contain object-left"
                   />

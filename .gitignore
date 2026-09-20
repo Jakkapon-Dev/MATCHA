@@ -10,9 +10,11 @@ docs/*
 Requirement/
 Requirement/*
 Requirement
-scripts/
+# Local one-off scripts stay out, except the ones the code depends on —
+# same arrangement as backend/scripts below.
+!scripts/
 scripts/*
-scripts
+!scripts/convert-images.sh
 Alldata.md
 *Alldata*.md
 StepUp-01.md

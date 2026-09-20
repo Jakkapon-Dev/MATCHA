@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext.jsx';
+import { handleImageError, webpSrc } from '../../utils/imageFallback';
 
 export default function Footer() {
   const { t } = useLanguage();
@@ -12,7 +13,8 @@ export default function Footer() {
         {/* Frame 10 Header: Brand Name (Official Brand Asset) */}
         <div className="md:col-span-12 pb-6 border-b border-white/15">
           <img 
-            src="/images/brand/matcha-logo-white.png" 
+            src={webpSrc('/images/brand/matcha-logo-white.png')} data-original-src="/images/brand/matcha-logo-white.png"
+            onError={handleImageError}
             alt="MatchA Logo" 
             className="h-10 sm:h-12 w-auto object-contain mb-2" 
           />

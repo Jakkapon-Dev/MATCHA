@@ -10,6 +10,7 @@ import {
 import { BorderBeam } from '../ui/BorderBeam';
 import LanguageToggle from '../ui/LanguageToggle';
 import { useLanguage } from '../../context/LanguageContext.jsx';
+import { handleImageError, webpSrc } from '../../utils/imageFallback';
 
 export default function Navbar({
   cartCount = 0,
@@ -97,7 +98,8 @@ export default function Navbar({
               aria-label={t('nav.homeAria')}
             >
               <img 
-                src="/images/brand/matcha-logo-primary.png" 
+                src={webpSrc('/images/brand/matcha-logo-primary.png')} data-original-src="/images/brand/matcha-logo-primary.png"
+                onError={handleImageError}
                 alt="MatchA" 
                 className="h-8 sm:h-9 w-auto object-contain object-left group-hover:scale-[1.02] transition-transform duration-200" 
               />
