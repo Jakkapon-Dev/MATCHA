@@ -8,7 +8,7 @@ import ShippingStep from '../components/payment/ShippingStep';
 import PaymentMethodStep from '../components/payment/PaymentMethodStep';
 import OrderSummarySidebar from '../components/payment/OrderSummarySidebar';
 import OrderSuccessModal from '../components/payment/OrderSuccessModal';
-import { api } from '../services/api';
+import { api, apiErrorText } from '../services/api';
 import { useStoreMode } from '../context/StoreModeContext.jsx';
 import { SHIPPING_OPTIONS, shippingCostFor } from '../config/shipping';
 import { couponFor, discountFor, normaliseCode, FEATURED_CODES, takePendingCoupon } from '../config/coupons';
@@ -148,8 +148,9 @@ export default function PaymentPage() {
       clearCart();
     } catch (err) {
       console.error('Order creation failed:', err.message);
-      showToast(err.message || 'Could not place order. Please try again.', 'error');
-      setOrderError(err.message || 'Could not place order. Please try again.');
+      const message = apiErrorText(err, t);
+      showToast(message, 'error');
+      setOrderError(message);
     } finally {
       setIsProcessing(false);
     }
@@ -256,10 +257,12 @@ export default function PaymentPage() {
                   <AlertTriangle size={18} className="text-matcha-accent shrink-0 mt-0.5" />
                   <div>
                     <h3 className="font-bold text-sm text-[#0A0A0A]">
-                      Unable to place order
+                      {t('checkout.orderFailedTitle')}
                     </h3>
+                    {/* The message already ends in a full stop, so the sentence
+                        that follows it is joined rather than punctuated again. */}
                     <p className="text-xs font-mono text-matcha-muted mt-1 leading-relaxed">
-                      {orderError}. Your items and shipping details remain saved.
+                      {orderError} {t('checkout.orderFailedBody')}
                     </p>
                   </div>
                 </div>
@@ -272,14 +275,14 @@ export default function PaymentPage() {
                     className="px-5 py-2.5 bg-matcha-primary hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-wider transition-all disabled:opacity-40 cursor-pointer flex items-center gap-2"
                   >
                     <RotateCcw size={13} className={isProcessing ? 'animate-spin' : ''} />
-                    <span>{isProcessing ? 'Processing...' : 'Try again'}</span>
+                    <span>{isProcessing ? t('checkout.processing') : t('common.retry')}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setStep('shipping')}
                     className="px-4 py-2.5 bg-white border border-matcha-border text-[#0A0A0A] hover:border-matcha-primary text-xs font-mono transition-colors cursor-pointer"
                   >
-                    Edit destination
+                    {t('checkout.editDestination')}
                   </button>
                 </div>
               </div>
