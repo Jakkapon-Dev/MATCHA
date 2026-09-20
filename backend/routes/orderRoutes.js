@@ -9,6 +9,7 @@ import Product, { ONE_SIZE } from '../models/Product.js';
 import productsData from '../data/products.js';
 import { getJwtSecret, authRequired, adminOnly } from '../middleware/auth.js';
 import { isDemo } from '../config/storeMode.js';
+import { sendOrderConfirmation } from '../services/email.js';
 import { normaliseCode, discountFor, isFreeShippingCoupon } from '../config/coupons.js';
 
 const router = express.Router();
@@ -201,7 +202,8 @@ router.post('/', orderLimiter, async (req, res) => {
       items = [],
       couponCode,
       paymentMethod = 'demo',
-      shippingOption = 'standard'
+      shippingOption = 'standard',
+      locale
     } = req.body;
 
     // Sanitize idempotency key as a strict string to prevent NoSQL query object injection
@@ -349,7 +351,8 @@ router.post('/', orderLimiter, async (req, res) => {
       discount: totalDiscount,
       total,
       status: 'pending',
-      paymentStatus
+      paymentStatus,
+      locale: locale === 'en' ? 'en' : 'th'
     };
 
     let savedOrder;
@@ -378,6 +381,22 @@ router.post('/', orderLimiter, async (req, res) => {
       } finally {
         await session.endSession();
       }
+
+      /* The confirmation goes out after the order is safe, and its failure
+         is never the customer's problem: they have an order either way, and
+         the screen in front of them already shows it.
+
+         Deliberately not awaited. A mail provider having a slow minute must
+         not hold the checkout response open — the customer is watching a
+         spinner. The promise is kept alive with its own logging so a failure
+         is still visible in the log rather than swallowed. */
+      sendOrderConfirmation(savedOrder.toObject ? savedOrder.toObject() : savedOrder)
+        .then((result) => {
+          if (!result.sent) {
+            console.warn(`[email] confirmation for ${savedOrder.orderNumber} not sent: ${result.reason}${result.detail ? ' — ' + result.detail : ''}`);
+          }
+        })
+        .catch((err) => console.warn(`[email] confirmation for ${savedOrder.orderNumber} threw: ${err?.message}`));
 
       /* The bag is emptied here rather than left to the browser. clearCart()
          only ever reset local state, and no route existed to clear the server

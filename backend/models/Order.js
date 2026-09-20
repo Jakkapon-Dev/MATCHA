@@ -112,6 +112,16 @@ const orderSchema = new Schema(
       type: String,
       enum: ['unpaid', 'paid', 'refunded'],
       default: 'unpaid'
+    },
+
+    /* Which language to write to this customer in.
+       Taken from the site at the moment of checkout rather than guessed later
+       from the address or the country, both of which are wrong often enough to
+       matter. Thai is the default because the shop is. */
+    locale: {
+      type: String,
+      enum: ['th', 'en'],
+      default: 'th'
     }
   },
   { timestamps: true }

@@ -48,7 +48,7 @@ const initialCardData = {
 };
 
 export default function PaymentPage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const navigate = useNavigate();
   const { cartItems, clearCart } = useCart();
   const { showToast } = useToast();
@@ -135,7 +135,11 @@ export default function PaymentPage() {
         })),
         couponCode: appliedCoupon?.code || null,
         paymentMethod: selectedPayment,
-        shippingOption: selectedShipping
+        shippingOption: selectedShipping,
+        // Which language to write the confirmation email in. Taken from what
+        // the shopper is reading right now, rather than guessed later from an
+        // address or a country.
+        locale: lang
       };
 
       const res = await api.createOrder(orderPayload);
