@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { X, Clock, RotateCcw, ArrowRightLeft, Check } from 'lucide-react';
 import { useToast } from '../../context/ToastContext.jsx';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateStatus, saveError }) {
+  const { t } = useLanguage();
   const [currentStatus, setCurrentStatus] = useState(order?.status || 'Processing');
   const [isApplying, setIsApplying] = useState(false);
   const { showToast } = useToast();
@@ -376,7 +378,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
             <span>Order ID: <strong className="text-matcha-text">{order.id}</strong></span>
           </div>
 
-          {saveError && <p role="alert" className="text-red-800">บันทึกไม่สำเร็จ / Save failed: {saveError}</p>}
+          {saveError && <p role="alert" className="text-red-800">{t('errors.saveFailed')}: {saveError}</p>}
           {/* Bottom Right Fulfillment Status Selector & Apply Button */}
           <div className="flex items-center justify-end gap-3 flex-wrap">
             <div className="flex items-center gap-2">

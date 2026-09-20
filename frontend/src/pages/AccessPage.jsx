@@ -4,7 +4,7 @@ import { motion, useReducedMotion } from 'motion/react';
 import { Eye, EyeOff, AlertCircle } from 'lucide-react';
 import { EASE } from '../components/motion';
 import AtelierPanel from '../components/auth/AtelierPanel';
-import { api } from '../services/api';
+import { api, apiErrorText, isNetworkErrorKey } from '../services/api';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
@@ -26,15 +26,18 @@ import { passwordStrength } from '../features/auth/passwordStrength';
    in the navbar, in the hash router, and in whatever links people already
    have. They differ only in which mode opens. */
 
+/* Errors from services/api.js now name themselves, so the usual case is a
+   key comparison. The text hints stay for failures raised outside that module
+   — fetch rejecting before any status exists, most of all — where there is
+   nothing but a message to go on. */
 const NETWORK_HINTS = [
-  'ติดต่อเซิร์ฟเวอร์ไม่ได้',
   'Failed to communicate',
   'Failed to fetch',
   'NetworkError',
 ];
 
-const isNetworkError = (message) =>
-  NETWORK_HINTS.some((hint) => String(message || '').includes(hint));
+const isNetworkError = (err) =>
+  isNetworkErrorKey(err) || NETWORK_HINTS.some((hint) => String(err?.message || '').includes(hint));
 
 const STRENGTH_WIDTH = { tooShort: '10%', weak: '33%', fair: '66%', strong: '100%' };
 const STRENGTH_COLOUR = { tooShort: '#DCDCDC', weak: '#C91D1D', fair: '#D4A338', strong: '#042509' };
@@ -142,9 +145,9 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
         }, res.token);
       }
     } catch (err) {
-      setError(isNetworkError(err.message)
+      setError(isNetworkError(err)
         ? t('common.offline')
-        : err.message || t('auth.invalidCredentials'));
+        : apiErrorText(err, t) || t('auth.invalidCredentials'));
     } finally {
       setBusy(false);
     }

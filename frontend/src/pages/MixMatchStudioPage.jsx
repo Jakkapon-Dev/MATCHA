@@ -250,9 +250,9 @@ export default function MixMatchStudioPage() {
 
     if (outOfStockItems.length > 0) {
       const oosNames = outOfStockItems.map(i => i.name).join(', ');
-      showToast(`⚠️ เพิ่มลงตะกร้า ${buyableItems.length} ชิ้น (ยกเว้น ${oosNames} เนื่องจากหมดสต็อก) — ส่วนลดเซ็ต ${BUNDLE_DISCOUNT_PERCENT}% ใช้ได้เมื่อครบ 4 ชิ้นเท่านั้น`, 'info');
+      showToast(t('mixMatch.addedPartial', { count: buyableItems.length, skipped: oosNames, percent: BUNDLE_DISCOUNT_PERCENT }), 'info');
     } else {
-      showToast(`✨ เพิ่มเซ็ตชุดครบ ${buyableItems.length} ชิ้นลงตะกร้าเรียบร้อยแล้ว (ส่วนลดเซ็ต ${BUNDLE_DISCOUNT_PERCENT}% จะแสดงในใบสรุปยอด)`, 'success');
+      showToast(t('mixMatch.addedFullSet', { count: buyableItems.length, percent: BUNDLE_DISCOUNT_PERCENT }), 'success');
     }
   };
 
@@ -322,7 +322,7 @@ export default function MixMatchStudioPage() {
             </span>
             {activePresetId && (
               <span className="text-[10px] font-mono text-matcha-primary font-bold bg-matcha-bg px-2.5 py-0.5 ">
-                ✓ กำลังแสดงลุคที่เลือก
+                {t('mixMatch.showingLook')}
               </span>
             )}
           </div>
@@ -364,7 +364,7 @@ export default function MixMatchStudioPage() {
                   </p>
                   {isUserSeason && (
                     <span className="mt-2 inline-flex items-center gap-1 text-[10px] font-mono font-bold text-matcha-primary bg-matcha-bg px-2 py-0.5 ">
-                      ✓ ตรงกับผลวิเคราะห์ของคุณ
+                      {t('mixMatch.matchesYourReading')}
                     </span>
                   )}
                 </button>
@@ -391,8 +391,8 @@ export default function MixMatchStudioPage() {
                 isCompleteBundle ? 'bg-matcha-primary text-white' : 'bg-[#FEE4E2] text-[#B42318]'
               }`}>
                 {isCompleteBundle
-                  ? `${buyableItems.length} ชิ้นครบเซ็ต`
-                  : `ซื้อได้ ${buyableItems.length}/${itemsInOutfit.length} ชิ้น`}
+                  ? t('mixMatch.fullSetCount', { count: buyableItems.length })
+                  : t('mixMatch.buyableCount', { count: buyableItems.length, total: itemsInOutfit.length })}
               </span>
             </div>
 
@@ -579,7 +579,7 @@ export default function MixMatchStudioPage() {
                     <span 
                       key={contrast.id} 
                       className="text-[9px] font-mono px-2 py-0.5  bg-matcha-bg text-matcha-primary font-semibold"
-                      title={contrast.description}
+                      title={t(contrast.descriptionKey)}
                     >
                       {contrast.name}: {contrast.badge}
                     </span>
@@ -617,8 +617,8 @@ export default function MixMatchStudioPage() {
 
               {outOfStockItems.length > 0 && (
                 <p className="text-[10px] font-mono text-[#B42318] bg-[#FEE4E2] px-2.5 py-1.5  leading-relaxed">
-                  {outOfStockItems.map((i) => i.name).join(', ')} หมดสต็อก — ไม่ถูกนับในราคานี้
-                  {` และส่วนลดเซ็ต ${BUNDLE_DISCOUNT_PERCENT}% ใช้ได้เมื่อครบ 4 ชิ้น`}
+                  {t('mixMatch.outOfStockNote', { names: outOfStockItems.map((i) => i.name).join(', ') })}
+                  {t('mixMatch.bundleNeedsFour', { percent: BUNDLE_DISCOUNT_PERCENT })}
                 </p>
               )}
 
@@ -765,7 +765,7 @@ export default function MixMatchStudioPage() {
                       </span>
                       {!item.inStock && (
                         <span className="absolute top-2 left-2 text-[9px] font-mono px-2 py-0.5 bg-[#B42318] text-white  font-bold">
-                          หมดสต็อก
+                          {t('mixMatch.outOfStockBadge')}
                         </span>
                       )}
                     </div>

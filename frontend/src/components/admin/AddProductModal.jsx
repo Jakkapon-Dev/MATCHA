@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { X, Plus, Sparkles, Calendar, AlertCircle } from 'lucide-react';
 import { webpSrc } from '../../utils/imageFallback';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function AddProductModal({ isOpen, onClose, onAddProduct, saving, saveError }) {
+  const { t } = useLanguage();
   // The form is initialized once when this component mounts. Defaults provide a testable product shape, 
   // while the generated SKU distinguishes new entries.
   const [formData, setFormData] = useState({
@@ -340,11 +342,11 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
                 onChange={handleChange}
                 className="w-full px-4 py-3 bg-white border border-matcha-border rounded-xl text-matcha-text outline-none focus:ring-1 focus:ring-matcha-primary cursor-pointer"
               >
-                <option value="Boxy Oversized">Boxy Oversized (ทรงหลวมคลาสสิก)</option>
-                <option value="Relaxed Tailored">Relaxed Tailored (ทรงปล่อยเข้ารูป)</option>
-                <option value="Standard Fit">Standard Fit (ทรงมาตรฐาน)</option>
-                <option value="Wide Leg">Wide Leg (ขากว้าง)</option>
-                <option value="Cropped">Cropped (ทรงครอป)</option>
+                <option value="Boxy Oversized">{t('admin.fitBoxy')}</option>
+                <option value="Relaxed Tailored">{t('admin.fitRelaxed')}</option>
+                <option value="Standard Fit">{t('admin.fitStandard')}</option>
+                <option value="Wide Leg">{t('admin.fitWideLeg')}</option>
+                <option value="Cropped">{t('admin.fitCropped')}</option>
               </select>
             </div>
           </div>
@@ -418,7 +420,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
             )}
           </div>
 
-          {saveError && <p role="alert" className="text-red-800">บันทึกไม่สำเร็จ / Save failed: {saveError}</p>}
+          {saveError && <p role="alert" className="text-red-800">{t('errors.saveFailed')}: {saveError}</p>}
           {/* Form Actions */}
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-matcha-border">
             <button

@@ -1,7 +1,8 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { translations, SUPPORTED_LANGS, DEFAULT_LANG } from '../i18n/translations';
 
-const LanguageContext = createContext(null);
+// Exported because ErrorBoundary is a class and cannot call useLanguage.
+export const LanguageContext = createContext(null);
 const STORAGE_KEY = 'matcha:lang';
 
 // 'nav.cart' -> translations[lang].nav.cart

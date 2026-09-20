@@ -13,15 +13,17 @@ export async function mediaRequest(path, { body, ...options } = {}) {
   try {
     result = await res.json();
   } catch (err) {
-    if (!res.ok) throw new Error(`ระบบขัดข้องชั่วคราว (${res.status})`);
-    throw new Error('รูปแบบข้อมูลที่ตอบกลับจากเซิร์ฟเวอร์ไม่ถูกต้อง');
+    if (!res.ok) throw Object.assign(new Error(`errors.server (${res.status})`), { i18nKey: 'errors.server' });
+    throw Object.assign(new Error('errors.badResponse'), { i18nKey: 'errors.badResponse' });
   }
 
-  if (!res.ok) throw new Error(result?.message || 'ติดต่อระบบไม่สำเร็จ กรุณาลองใหม่');
+  if (!res.ok) throw result?.message
+      ? new Error(result.message)
+      : Object.assign(new Error('errors.network'), { i18nKey: 'errors.network' });
   return result;
 }
 export async function uploadImage(file, alt) {
-  if (!file || file.size > 8 * 1024 * 1024) throw new Error('กรุณาเลือกรูปขนาดไม่เกิน 8 MB');
+  if (!file || file.size > 8 * 1024 * 1024) throw Object.assign(new Error('errors.imageTooLarge'), { i18nKey: 'errors.imageTooLarge' });
   const body = new FormData();
   body.append('image', file);
   body.append('alt', alt);

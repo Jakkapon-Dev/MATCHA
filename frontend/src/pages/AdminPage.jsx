@@ -6,6 +6,7 @@ import InventoryTab from '../components/admin/InventoryTab';
 import DashboardTab from '../components/admin/DashboardTab';
 import React, { useState, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import { Plus, BarChart3, Layers, Search, ExternalLink, ChevronRight, Download, FileSpreadsheet, FileJson, ChevronDown, LayoutDashboard, Boxes, ClipboardList, UserCheck, HardDrive, LogOut } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
@@ -20,6 +21,7 @@ import useAdminData from '../components/admin/useAdminData';
 import { normalizeProduct, monthlyRevenue } from '../components/admin/adminData';
 
 export default function AdminPage() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
   const { showToast } = useToast();
@@ -41,8 +43,8 @@ export default function AdminPage() {
     savingRef.current = true;
     setSaving(true);
     setMutationNotice(null);
-    try { await action(); setMutationNotice({ error: false, text: 'บันทึกสำเร็จ / Changes saved' }); return true; }
-    catch (error) { setMutationNotice({ error: true, text: error.message || 'Could not save changes' }); return false; }
+    try { await action(); setMutationNotice({ error: false, text: t('admin.saved') }); return true; }
+    catch (error) { setMutationNotice({ error: true, text: error.message || t('errors.saveFailed') }); return false; }
     finally { savingRef.current = false; setSaving(false); }
   };
   const monthlyData = useMemo(() => monthlyRevenue(orders), [orders]);
@@ -269,7 +271,7 @@ export default function AdminPage() {
 
   // Nav Items
   const navTabs = [
-    { id: 'media', label: 'รูปสินค้า & Lookbook', icon: Layers, badge: null },
+    { id: 'media', label: t('admin.tabMedia'), icon: Layers, badge: null },
     { id: 'dashboard', label: 'Overview & KPIs', icon: LayoutDashboard, badge: null },
     { id: 'inventory', label: 'Inventory & Stock', icon: Boxes, badge: inventory.length },
     { id: 'orders', label: 'Orders Pipeline', icon: ClipboardList, badge: orders.filter(o => o.status === 'Processing').length },
@@ -384,7 +386,7 @@ export default function AdminPage() {
         {isDemo && (
           <div className="bg-amber-100 border-b border-amber-300 text-amber-900 px-6 py-2.5 text-xs font-mono font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-inner">
             <div className="flex items-center gap-2">
-              <span>โหมดสาธิต (Demo Mode): จำลองข้อมูลบนเครื่องเท่านั้น — การแก้ไขหรือลบจะไม่กระทบฐานข้อมูลจริง</span>
+              <span>{t('admin.demoNotice')}</span>
             </div>
             <span className="text-[10px] uppercase tracking-wider bg-amber-200 text-amber-900 px-2 py-0.5 rounded border border-amber-400 font-extrabold w-fit">
               READ-ONLY DEMO
@@ -496,7 +498,7 @@ export default function AdminPage() {
           <div className="flex flex-wrap items-center gap-3">
             <button type="button" disabled={saving || Object.values(status).includes('loading')} onClick={() => { setSelectedOrderForModal(null); setMutationNotice(null); refresh(); }} className="px-4 py-2 rounded-lg bg-matcha-primary text-white disabled:opacity-50">Refresh data</button>
             {saving && <span role="status">Saving changes…</span>}
-            {mutationNotice && <p role={mutationNotice.error ? 'alert' : 'status'} className={mutationNotice.error ? 'text-red-800' : 'text-green-900'}>{mutationNotice.error && 'บันทึกไม่สำเร็จ / Save failed: '}{mutationNotice.text}</p>}
+            {mutationNotice && <p role={mutationNotice.error ? 'alert' : 'status'} className={mutationNotice.error ? 'text-red-800' : 'text-green-900'}>{mutationNotice.error && `${t('errors.saveFailed')}: `}{mutationNotice.text}</p>}
             {isDemo && <span>Demo session — changes disabled</span>}
           </div>
           {activeTab === 'media' && <MediaManager />}

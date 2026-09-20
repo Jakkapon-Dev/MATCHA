@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { mediaRequest, uploadImage } from './mediaApi';
+import { apiErrorText } from '../../services/api';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function useMediaManager() {
+  const { t } = useLanguage();
   const [assets, setAssets] = useState([]);
   const [looks, setLooks] = useState([]);
   const [products, setProducts] = useState([]);
@@ -29,7 +32,7 @@ export default function useMediaManager() {
       if (!active) return;
       setAssets(media.data); setTotal(media.total); setLooks(look.data);
       setProducts(product.data); setProductTotal(product.total);
-    }).catch(e => { if (active) setError(e.message); })
+    }).catch(e => { if (active) setError(apiErrorText(e, t)); })
       .finally(() => { if (active) setLoading(false); });
     return () => { active = false; };
   }, [page, archived, search, productPage, reloadKey]);
@@ -38,16 +41,16 @@ export default function useMediaManager() {
     if (busy) return false;
     setBusy(true); setError(''); setNotice('');
     try { const result = await operation(); setNotice(success); reload(); return result || true; }
-    catch (e) { setError(e.message); return false; }
+    catch (e) { setError(apiErrorText(e, t)); return false; }
     finally { setBusy(false); }
   };
   return { assets, looks, products, loading, busy, error, notice, page, setPage, archived,
     setArchived: value => { setPage(1); setArchived(value); }, total, search,
     setSearch: value => { setProductPage(1); setSearch(value); }, productPage, setProductPage, productTotal,
-    reload, run, upload: (file, alt) => run(() => uploadImage(file, alt), 'อัปโหลดรูปแล้ว'),
-    importOriginals: () => run(() => mediaRequest('/admin/media/import-lookbook', { method: 'POST' }), 'นำเข้าภาพเดิมครบแล้ว สินค้าใหม่มีสต็อก 0 และรอระบุไซซ์'),
-    updateAsset: (id, body) => run(() => mediaRequest(`/admin/media/${id}`, { method: 'PATCH', body }), 'บันทึกรูปแล้ว'),
-    saveGallery: (product, images) => run(() => mediaRequest(`/admin/media/products/${product._id}/gallery`, { method: 'PUT', body: { images, revision: product.mediaRevision || 0 } }), 'บันทึกรูปสินค้าแล้ว'),
-    saveLook: look => run(() => mediaRequest(`/admin/lookbooks/${look.id}`, { method: 'PUT', body: { title: look.title, heroImage: look.heroImage, published: look.published, revision: look.revision || 0, items: look.items.map(({ productId, color, x, y }) => ({ productId, color, x, y })) } }), 'บันทึก Lookbook แล้ว')
+    reload, run, upload: (file, alt) => run(() => uploadImage(file, alt), t('admin.noticeUploaded')),
+    importOriginals: () => run(() => mediaRequest('/admin/media/import-lookbook', { method: 'POST' }), t('admin.noticeImported')),
+    updateAsset: (id, body) => run(() => mediaRequest(`/admin/media/${id}`, { method: 'PATCH', body }), t('admin.noticeAssetSaved')),
+    saveGallery: (product, images) => run(() => mediaRequest(`/admin/media/products/${product._id}/gallery`, { method: 'PUT', body: { images, revision: product.mediaRevision || 0 } }), t('admin.noticeGallerySaved')),
+    saveLook: look => run(() => mediaRequest(`/admin/lookbooks/${look.id}`, { method: 'PUT', body: { title: look.title, heroImage: look.heroImage, published: look.published, revision: look.revision || 0, items: look.items.map(({ productId, color, x, y }) => ({ productId, color, x, y })) } }), t('admin.noticeLookSaved'))
   };
 }

@@ -22,6 +22,7 @@ import { handleImageError, webpSrc } from '../utils/imageFallback';
 import { inkOn } from '../utils/dye';
 import { useCart } from '../context/CartContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 /* The emoji that used to sit in front of each of these undid the rest of the
    page: a magazine masthead and a weather sticker cannot share a line. The
@@ -42,6 +43,7 @@ const SEASONS = [
    flat rectangles that sit on the page. */
 
 export default function EditorialLookbookPage() {
+  const { t } = useLanguage();
   const { addToCart } = useCart();
   const { showToast } = useToast();
   const { looks: curatedEditorialSpreads, loading, error, retry } = useLookbooks();
@@ -150,7 +152,7 @@ export default function EditorialLookbookPage() {
   const handleQuickAdd = (e, item) => {
     e.stopPropagation();
     if (loading || item.inStock !== true) {
-      showToast('สินค้านี้หมดสต็อกชั่วคราว', 'error');
+      showToast(t('lookbook.outOfStock'), 'error');
       return;
     }
     if (!item.sizes || item.sizes.length !== 1) {
@@ -181,7 +183,7 @@ export default function EditorialLookbookPage() {
     if (loading) return;
     const needsSelection = spread.shoppableItems.find(item => item.inStock && item.sizes?.length !== 1);
     if (needsSelection) {
-      showToast('กรุณาเลือกไซซ์ของแต่ละชิ้นก่อนเพิ่มลงถุง', 'info');
+      showToast(t('lookbook.chooseSizes'), 'info');
       setPurchaseItem(needsSelection);
       return;
     }
@@ -189,7 +191,7 @@ export default function EditorialLookbookPage() {
     const outOfStockItems = (spread.shoppableItems || []).filter(item => item.inStock === false);
 
     if (availableItems.length === 0) {
-      showToast('ไม่สามารถเพิ่มชุดได้ เนื่องจากสินค้าทั้งหมดในเซ็ตนี้หมดสต็อกชั่วคราว', 'error');
+      showToast(t('lookbook.lookOutOfStock'), 'error');
       return;
     }
 
@@ -227,14 +229,14 @@ export default function EditorialLookbookPage() {
   if (!curatedEditorialSpreads?.length || !coverStory) {
     return (
       <div className="max-w-3xl mx-auto my-16 p-8 border border-dashed border-matcha-border rounded-3xl bg-white text-center shadow-sm">
-        <h1 className="text-2xl font-bold text-matcha-text">{loading ? 'กำลังโหลด Lookbook' : 'ยังไม่มี Lookbook ที่เผยแพร่'}</h1>
-        <p className="my-4 text-xs font-mono text-matcha-muted">กลับมาดูลุคใหม่ของเราได้เร็ว ๆ นี้ หรือลองเลือกซีซันอื่น</p>
+        <h1 className="text-2xl font-bold text-matcha-text">{loading ? t('lookbook.loading') : t('lookbook.nonePublished')}</h1>
+        <p className="my-4 text-xs font-mono text-matcha-muted">{t('lookbook.comeBackSoon')}</p>
         <button
           disabled={loading}
           onClick={retry}
           className="px-5 py-2.5 bg-matcha-text text-white font-mono text-xs font-bold rounded-xl cursor-pointer hover:bg-black/80 transition-all disabled:opacity-50"
         >
-          {loading ? 'กำลังโหลด...' : 'โหลดใหม่'}
+          {loading ? t('lookbook.loadingShort') : t('lookbook.reload')}
         </button>
       </div>
     );
@@ -243,8 +245,8 @@ export default function EditorialLookbookPage() {
   return (
     <div className="w-full bg-matcha-bg text-matcha-text min-h-screen">
       {purchaseItem && <ProductModal product={purchaseItem} onClose={() => setPurchaseItem(null)} />}
-      {loading && <div role="status" aria-label="กำลังโหลดข้อมูลสินค้า" className="h-16 bg-[#EAE5DB]" />}
-      {error && <div role="alert" className="p-4 border-b border-matcha-accent bg-[#FFF4ED] text-center">{error} <button onClick={retry} className="underline font-bold ml-3">ลองใหม่</button></div>}
+      {loading && <div role="status" aria-label={t('common.loading')} className="h-16 bg-[#EAE5DB]" />}
+      {error && <div role="alert" className="p-4 border-b border-matcha-accent bg-[#FFF4ED] text-center">{t(error)} <button onClick={retry} className="underline font-bold ml-3">{t('common.retry')}</button></div>}
 
       {/* ========================================================================= */}
       {/* 1. THE COVER STORY: FULL-BLEED EDITORIAL MAGAZINE COVER (OPTION 1)         */}
@@ -315,7 +317,7 @@ export default function EditorialLookbookPage() {
                 >
                   <button
                     type="button"
-                    aria-label={`ไฮไลต์ ${hs.title} บนภาพ`}
+                    aria-label={t('lookbook.highlightOnImage', { title: hs.title })}
                     aria-pressed={pinnedItemId === hsKey(hs)}
                     onMouseEnter={() => setHoveredItemId(hsKey(hs))}
                     onMouseLeave={() => setHoveredItemId(null)}
@@ -407,7 +409,7 @@ export default function EditorialLookbookPage() {
               </div>
 
               <div className="text-[11px] font-mono text-white/70 tracking-wider uppercase hidden md:flex items-center gap-2 drop-shadow">
-                <span>เลื่อนเพื่ออ่านเรื่องราวและช็อปชิ้นงาน</span>
+                <span>{t('lookbook.scrollToRead')}</span>
                 <span className="animate-bounce">↓</span>
               </div>
             </div>

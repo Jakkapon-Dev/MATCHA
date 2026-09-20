@@ -351,8 +351,12 @@ function ColorAxis({ season, reading, dyes }) {
 
         <div className="flex items-end gap-1" role="img" aria-label={
           diff === null
-            ? `อันเดอร์โทน: ${axis.tone}`
-            : `อันเดอร์โทน ${diff > 0 ? 'อุ่น' : diff < 0 ? 'เย็น' : 'ก้ำกึ่ง'} ที่ระดับ ${Math.abs(diff)} จาก ${UNDERTONE_MAX}`
+            ? t('quiz.undertoneAria', { tone: axis.tone })
+            : t('quiz.undertoneLevelAria', {
+                tone: t(diff > 0 ? 'quiz.warm' : diff < 0 ? 'quiz.cool' : 'quiz.balanced'),
+                score: Math.abs(diff),
+                max: UNDERTONE_MAX,
+              })
         }>
           {Array.from({ length: UNDERTONE_STEPS }).map((_, i) => {
             const isMark = i === tickIndex;
@@ -375,11 +379,11 @@ function ColorAxis({ season, reading, dyes }) {
         ) : (
           <div className="mt-3 flex flex-wrap items-baseline gap-x-6 gap-y-1 font-mono text-[11px] text-matcha-muted">
             <span>
-              อุ่น <span className="text-[#0A0A0A] tabular-nums">{reading.warm}</span>
+              {t('quiz.warm')} <span className="text-[#0A0A0A] tabular-nums">{reading.warm}</span>
               <span className="mx-1.5">·</span>
-              เย็น <span className="text-[#0A0A0A] tabular-nums">{reading.cool}</span>
+              {t('quiz.cool')} <span className="text-[#0A0A0A] tabular-nums">{reading.cool}</span>
               <span className="mx-1.5">·</span>
-              เต็ม <span className="text-[#0A0A0A] tabular-nums">{UNDERTONE_MAX}</span>
+              {t('quiz.outOf')} <span className="text-[#0A0A0A] tabular-nums">{UNDERTONE_MAX}</span>
             </span>
             <span>
               {t('quiz.depthFromQ5', { depth })}
@@ -391,7 +395,7 @@ function ColorAxis({ season, reading, dyes }) {
             undertone questions did not decide this, question 5 did. */}
         {diff === 0 && (
           <p className="mt-2 text-sm text-[#0A0A0A] leading-relaxed max-w-prose">
-            คะแนนอุ่นกับเย็นเท่ากันพอดี — ฤดูนี้ตัดสินจากข้อ 5 เป็นหลัก คุณอยู่ก้ำกึ่งกับ{' '}
+            {t('quiz.tiedScores')}{' '}
             {t('quiz.compareOther', { season: seasonAt(axis.tone === 'Warm' ? 'Cool' : 'Warm', depth) })}
           </p>
         )}
@@ -543,7 +547,7 @@ export default function PersonalColorPage() {
 
           {/* Mode switch, set as reading matter like every other navigation on
               the site rather than as two filled pills. */}
-          <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2" role="tablist" aria-label="โหมดของ Personal Color Lab">
+          <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2" role="tablist" aria-label={t('quiz.modeTablistAria')}>
             <button
               role="tab"
               type="button"
@@ -710,7 +714,7 @@ export default function PersonalColorPage() {
                         onClick={() => setCurrentStep(prev => prev - 1)}
                         className="font-mono text-xs uppercase tracking-wider text-matcha-muted hover:text-[#0A0A0A] cursor-pointer inline-flex items-center gap-1.5 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                       >
-                        ← ย้อนกลับข้อก่อนหน้า
+                        {t('quiz.backToPrevious')}
                       </button>
                     </div>
                   )}
@@ -722,13 +726,13 @@ export default function PersonalColorPage() {
                  matching a skin tone. The wait says what it is doing. */
               <div className="max-w-xl py-24 space-y-3" role="status" aria-live="polite">
                 <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-accent">
-                  กำลังวิเคราะห์
+                  {t('quiz.analysing')}
                 </p>
                 <h2 className="text-2xl sm:text-3xl font-black text-[#0A0A0A] leading-tight">
-                  กำลังวิเคราะห์ข้อมูล Personal Color...
+                  {t('quiz.analysingLong')}
                 </h2>
                 <p className="text-xs font-mono text-matcha-muted">
-                  ประมวลผลความสอดคล้องของ Undertone, Contrast และเฉดสีผ้า
+                  {t('quiz.analysingDetail')}
                 </p>
                 <div className="flex gap-1.5 pt-3 max-w-xs">
                   {QUIZ_QUESTIONS.map((q) => (
@@ -804,7 +808,7 @@ export default function PersonalColorPage() {
                   <div className="lg:col-span-7 space-y-6">
                     <div>
                       <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">
-                        ลักษณะเด่นของสีผิวคุณ
+                        {t('quiz.skinTraits')}
                       </h4>
                       <p className="text-sm text-[#0A0A0A] leading-relaxed max-w-prose">
                         {profile.description}
@@ -813,7 +817,7 @@ export default function PersonalColorPage() {
 
                     <div>
                       <h4 className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">
-                        จุดสังเกตตามธรรมชาติ
+                        {t('quiz.naturalCues')}
                       </h4>
                       <ul className="divide-y divide-matcha-border border-t border-matcha-border">
                         {profile.characteristics.map((c, i) => (
@@ -852,7 +856,7 @@ export default function PersonalColorPage() {
         ) : (
           /* Theory: the same four palettes, read rather than diagnosed. */
           <div className="space-y-8 animate-fade-in">
-            <nav aria-label="เลือกฤดูกาล" className="flex flex-wrap items-baseline gap-x-6 gap-y-2 pb-3 border-b border-matcha-border">
+            <nav aria-label={t('quiz.seasonNavAria')} className="flex flex-wrap items-baseline gap-x-6 gap-y-2 pb-3 border-b border-matcha-border">
               {SEASONS.map((seasonKey) => (
                 <button
                   key={seasonKey}
