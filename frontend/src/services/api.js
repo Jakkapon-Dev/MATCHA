@@ -188,6 +188,16 @@ export const api = {
     });
   },
 
+  forgotPassword: async (email, locale) => fetchWithFallback('/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify({ email, locale })
+  }),
+
+  resetPassword: async (token, password) => fetchWithFallback('/auth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({ token, password })
+  }),
+
   // Orders CRUD
   getOrders: async () => {
     return fetchWithFallback('/orders');
