@@ -19,8 +19,9 @@ function resolveOwner(req) {
       const payload = jwt.verify(token, getJwtSecret());
       const id = payload?.id || payload?.userId || payload?._id;
       /* Any non-empty id the token carries identifies the account. This used to
-         demand a Mongo ObjectId, which the JSON user store never issues, so a
-         signed-in visitor silently became a guest again on every cart call. */
+         demand a Mongo ObjectId, which the `u_…` ids accounts actually carry
+         are not, so a signed-in visitor silently became a guest again on every
+         cart call. */
       if (id && String(id).trim()) {
         return { userId: String(id).trim(), guestId: null };
       }
