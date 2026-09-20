@@ -246,7 +246,7 @@ export default function EditorialLookbookPage() {
     <div className="w-full bg-matcha-bg text-matcha-text min-h-screen">
       {purchaseItem && <ProductModal product={purchaseItem} onClose={() => setPurchaseItem(null)} />}
       {loading && <div role="status" aria-label={t('common.loading')} className="h-16 bg-[#EAE5DB]" />}
-      {error && <div role="alert" className="p-4 border-b border-matcha-accent bg-[#FFF4ED] text-center">{error} <button onClick={retry} className="underline font-bold ml-3">{t('common.retry')}</button></div>}
+      {error && <div role="alert" className="p-4 border-b border-matcha-accent bg-[#FFF4ED] text-center">{t(error)} <button onClick={retry} className="underline font-bold ml-3">{t('common.retry')}</button></div>}
 
       {/* ========================================================================= */}
       {/* 1. THE COVER STORY: FULL-BLEED EDITORIAL MAGAZINE COVER (OPTION 1)         */}

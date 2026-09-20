@@ -23,13 +23,13 @@ export default function useLookbooks() {
           setLooks(result.data);
         } else {
           setLooks(preview);
-          setError('ไม่พบคอลเลกชัน Lookbook บนระบบ ขณะนี้แสดงภาพลุคเดิมและพักการสั่งซื้อไว้');
+          setError('lookbook.noCollection');
         }
       })
       .catch(() => {
         if (active) {
           setLooks(preview);
-          setError('โหลดข้อมูลสินค้ายังไม่สำเร็จ ขณะนี้แสดงภาพลุคเดิมและพักการสั่งซื้อไว้');
+          setError('lookbook.productsUnavailable');
         }
       })
       .finally(() => {

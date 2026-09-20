@@ -457,7 +457,26 @@ export const translations = {
     /* What the API layer reports when a request does not come back the way it
        should. These used to be Thai sentences thrown from services/api.js, so
        an English reader met Thai the moment anything went wrong. */
+    admin: {
+      noticeUploaded: 'Image uploaded',
+      noticeImported: 'The original images are all in. New products start at zero stock and still need their sizes.',
+      noticeAssetSaved: 'Image saved',
+      noticeGallerySaved: 'Product images saved',
+      noticeLookSaved: 'Lookbook saved',
+      demoNotice: 'Demo mode: this data is simulated on this machine only. Edits and deletions do not touch the real database.',
+      loadingData: 'Loading data…',
+      saved: 'Changes saved',
+      tabMedia: 'Product images & lookbook',
+      fitBoxy: 'Boxy Oversized',
+      fitRelaxed: 'Relaxed Tailored',
+      fitStandard: 'Standard Fit',
+      fitWideLeg: 'Wide Leg',
+      fitCropped: 'Cropped',
+    },
+
     errors: {
+      badResponse: 'The server sent back something this page could not read.',
+      imageTooLarge: 'Please choose an image of 8 MB or less.',
       unauthorized: 'That email and password do not match.',
       forbidden: 'This part of the store is not open to your account.',
       notFound: 'We could not find that.',
@@ -491,6 +510,8 @@ export const translations = {
     },
 
     lookbook: {
+      noCollection: 'No lookbook collection was found. The previous looks are shown and ordering is paused.',
+      productsUnavailable: 'Product data has not loaded. The previous looks are shown and ordering is paused.',
       loading: 'Loading the lookbook',
       nonePublished: 'No lookbook is published yet',
       comeBackSoon: 'New looks are on the way. Try another season in the meantime.',
@@ -1178,7 +1199,26 @@ export const translations = {
       retry: 'ลองอีกครั้ง',
     },
 
+    admin: {
+      noticeUploaded: 'อัปโหลดรูปแล้ว',
+      noticeImported: 'นำเข้าภาพเดิมครบแล้ว สินค้าใหม่มีสต็อก 0 และรอระบุไซซ์',
+      noticeAssetSaved: 'บันทึกรูปแล้ว',
+      noticeGallerySaved: 'บันทึกรูปสินค้าแล้ว',
+      noticeLookSaved: 'บันทึก Lookbook แล้ว',
+      demoNotice: 'โหมดสาธิต (Demo Mode): จำลองข้อมูลบนเครื่องเท่านั้น — การแก้ไขหรือลบจะไม่กระทบฐานข้อมูลจริง',
+      loadingData: 'กำลังโหลดข้อมูล…',
+      saved: 'บันทึกสำเร็จ',
+      tabMedia: 'รูปสินค้า & Lookbook',
+      fitBoxy: 'Boxy Oversized (ทรงหลวมคลาสสิก)',
+      fitRelaxed: 'Relaxed Tailored (ทรงปล่อยเข้ารูป)',
+      fitStandard: 'Standard Fit (ทรงมาตรฐาน)',
+      fitWideLeg: 'Wide Leg (ขากว้าง)',
+      fitCropped: 'Cropped (ทรงครอป)',
+    },
+
     errors: {
+      badResponse: 'รูปแบบข้อมูลที่ตอบกลับจากเซิร์ฟเวอร์ไม่ถูกต้อง',
+      imageTooLarge: 'กรุณาเลือกรูปขนาดไม่เกิน 8 MB',
       unauthorized: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
       forbidden: 'คุณไม่มีสิทธิ์เข้าถึงส่วนนี้',
       notFound: 'ไม่พบข้อมูลที่ต้องการในระบบ',
@@ -1212,6 +1252,8 @@ export const translations = {
     },
 
     lookbook: {
+      noCollection: 'ไม่พบคอลเลกชัน Lookbook บนระบบ ขณะนี้แสดงภาพลุคเดิมและพักการสั่งซื้อไว้',
+      productsUnavailable: 'โหลดข้อมูลสินค้ายังไม่สำเร็จ ขณะนี้แสดงภาพลุคเดิมและพักการสั่งซื้อไว้',
       loading: 'กำลังโหลด Lookbook',
       nonePublished: 'ยังไม่มี Lookbook ที่เผยแพร่',
       comeBackSoon: 'กลับมาดูลุคใหม่ของเราได้เร็ว ๆ นี้ หรือลองเลือกซีซันอื่น',
