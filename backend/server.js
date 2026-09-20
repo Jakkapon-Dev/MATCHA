@@ -6,6 +6,8 @@ dns.setServers(['8.8.8.8', '1.1.1.1']);
 
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import compression from 'compression';
 import mongoose from 'mongoose';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -118,6 +120,31 @@ const isAllowedOrigin = (origin) => {
 };
 
 // Middleware
+
+/* Response headers the browser enforces on our behalf: nosniff, a referrer
+   policy, frame denial, HSTS in production.
+
+   Two of helmet's defaults are turned off rather than accepted.
+
+   `contentSecurityPolicy` describes what an HTML document may load. This
+   process serves JSON and image files and renders no markup, so the default
+   policy protects nothing here while being one more thing that can surprise
+   somebody later.
+
+   `crossOriginResourcePolicy` defaults to same-origin, which would stop the
+   catalogue images under /api/media/files from rendering on the shop's own
+   origin. routes/mediaRoutes.js already sets that header to cross-origin
+   deliberately, and says why; leaving it off here keeps that decision in one
+   place instead of depending on which middleware runs last. */
+app.use(helmet({
+  contentSecurityPolicy: false,
+  crossOriginResourcePolicy: false,
+}));
+
+// Product listings are the largest thing this API returns and they are almost
+// all repeated text, so they compress well.
+app.use(compression());
+
 app.use(cors({
   origin: (origin, callback) => {
     if (isAllowedOrigin(origin)) return callback(null, true);
