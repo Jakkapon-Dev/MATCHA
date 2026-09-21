@@ -163,6 +163,9 @@ export const api = {
     const query = new URLSearchParams(params).toString();
     return fetchWithFallback(`/admin/orders${query ? `?${query}` : ''}`, { signal: AbortSignal.timeout(15000) });
   },
+  getAdminNotifications: () => fetchWithFallback('/admin/notifications', { signal: AbortSignal.timeout(10000) }),
+  markNotificationRead: (id) => fetchWithFallback(`/admin/notifications/${id}/read`, { method: 'PATCH' }),
+  markAllNotificationsRead: () => fetchWithFallback('/admin/notifications/read-all', { method: 'PATCH' }),
   getStoreConfig: () => fetchWithFallback('/store-config'),
   // Check backend server health status
   checkHealth: async () => {

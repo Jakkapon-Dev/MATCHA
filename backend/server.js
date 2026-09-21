@@ -22,6 +22,7 @@ import lookbookRoutes from './routes/lookbookRoutes.js';
 import mediaRoutes from './routes/mediaRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 import errorHandler from './middleware/errorHandler.js';
 
 // Process-level Safety Guards to prevent unexpected crashes
@@ -226,6 +227,7 @@ app.get('/api/store-config', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/admin/notifications', notificationRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api', productRoutes);

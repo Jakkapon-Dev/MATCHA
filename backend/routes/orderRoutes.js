@@ -11,6 +11,8 @@ import { getJwtSecret, authRequired, adminOnly } from '../middleware/auth.js';
 import { isDemo } from '../config/storeMode.js';
 import { sendOrderConfirmation } from '../services/email.js';
 import { normaliseCode, discountFor, isFreeShippingCoupon } from '../config/coupons.js';
+import Notification from '../models/Notification.js';
+import { memoryNotifications } from './notificationRoutes.js';
 
 const router = express.Router();
 
@@ -422,6 +424,19 @@ router.post('/', orderLimiter, async (req, res) => {
       } catch (cartErr) {
         console.warn('Order saved but the server cart was not cleared:', cartErr.message);
       }
+
+      try {
+        await Notification.create({
+          type: 'new_order',
+          orderId: savedOrder._id,
+          orderNumber: savedOrder.orderNumber,
+          customerName: `${savedOrder.customer?.firstName || 'Guest'} ${savedOrder.customer?.lastName || ''}`.trim(),
+          total: savedOrder.total,
+          read: false
+        });
+      } catch (notifErr) {
+        console.warn('[Notification] Order saved but notification was not recorded:', notifErr?.message);
+      }
     } else {
       const year = new Date().getFullYear();
       const stamp = Date.now().toString().slice(-6);
@@ -436,6 +451,15 @@ router.post('/', orderLimiter, async (req, res) => {
         updatedAt: new Date().toISOString()
       };
       memoryOrders.unshift(savedOrder);
+      memoryNotifications.unshift({
+        _id: `notif_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`,
+        type: 'new_order',
+        orderNumber: savedOrder.orderNumber,
+        customerName: `${savedOrder.customer?.firstName || 'Guest'} ${savedOrder.customer?.lastName || ''}`.trim(),
+        total: savedOrder.total,
+        read: false,
+        createdAt: new Date().toISOString()
+      });
     }
 
     res.status(201).json({
