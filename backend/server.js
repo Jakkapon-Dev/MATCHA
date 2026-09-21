@@ -136,6 +136,21 @@ const isAllowedOrigin = (origin) => {
    origin. routes/mediaRoutes.js already sets that header to cross-origin
    deliberately, and says why; leaving it off here keeps that decision in one
    place instead of depending on which middleware runs last. */
+/* Render terminates TLS at its own proxy and forwards the request over the
+   loopback, so without this every request looks like it came from that proxy:
+   req.ip is the same address for everybody. express-rate-limit keys on req.ip,
+   which turns all five limiters in this codebase from per-visitor into
+   per-deployment -- authLimiter's 30 attempts per 15 minutes would be 30 for
+   the entire shop, and the 31st person to sign in gets a 429 for something
+   somebody else did. It also logs ERR_ERL_UNEXPECTED_X_FORWARDED_FOR to say so.
+
+   The value is 1, not true. `true` trusts the leftmost hop named in
+   X-Forwarded-For, and that entry is whatever the client wrote, so anyone
+   could rotate the header and never meet a limit. `1` counts one proxy in
+   from the connection -- Render's -- and ignores what the client claims.
+   Behind a second proxy this number has to go up with it. */
+app.set('trust proxy', 1);
+
 app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginResourcePolicy: false,
