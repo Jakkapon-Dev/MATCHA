@@ -1,12 +1,20 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import multer from 'multer';
+import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
 import { User } from '../services/userStore.js';
 import Order from '../models/Order.js';
 import { authRequired, adminOnly } from '../middleware/auth.js';
+import { MAX_BYTES, storeImage, deleteImage } from '../services/mediaStorage.js';
 
 const router = express.Router();
 const fields = '_id name email role tier createdAt';
+const avatarUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_BYTES, files: 1, fields: 0 }
+});
+const avatarRateLimit = rateLimit({ windowMs: 60_000, limit: 10, standardHeaders: 'draft-7', legacyHeaders: false });
 
 // All user routes require authentication
 router.use(authRequired);
@@ -29,10 +37,6 @@ const profilePatchSchema = z.object({
   phone: z.union([
     z.literal(''),
     z.string().trim().regex(phoneRegex, 'Phone number must be a valid 9 or 10-digit Thai number starting with 0')
-  ]).optional(),
-  avatarUrl: z.union([
-    z.literal(''),
-    z.string().trim().url('Avatar must be a valid URL').max(2048)
   ]).optional(),
 }).strict().refine(data => Object.keys(data).length > 0, {
   message: 'At least one field must be provided for update'
@@ -157,6 +161,62 @@ router.patch('/me', checkDbReady, async (req, res) => {
     res.json({ success: true, data: safeProfile(user) });
   } catch {
     res.status(500).json({ success: false, message: 'Could not save profile' });
+  }
+});
+
+router.post('/me/avatar', checkDbReady, avatarRateLimit, avatarUpload.single('image'), async (req, res, next) => {
+  if (!req.file?.buffer) {
+    return res.status(400).json({ success: false, message: 'Please choose an image to upload' });
+  }
+
+  let stored;
+  try {
+    stored = await storeImage(req.file.buffer);
+    const userId = req.user?._id || req.user?.id;
+    const previous = {
+      url: req.user?.avatarUrl,
+      thumbnailUrl: req.user?.avatarThumbnailUrl,
+      publicId: req.user?.avatarPublicId
+    };
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { avatarUrl: stored.url, avatarThumbnailUrl: stored.thumbnailUrl, avatarPublicId: stored.publicId || '' } },
+      { new: true, runValidators: true }
+    ).lean();
+    if (!user) {
+      await deleteImage(stored).catch(() => {});
+      return res.status(404).json({ success: false, message: 'Member not found' });
+    }
+    if (previous.publicId || previous.url?.startsWith('/api/media/files/')) {
+      await deleteImage(previous).catch(error => console.warn(`[Avatar] Old image cleanup failed: ${error.message}`));
+    }
+    res.status(201).json({ success: true, data: safeProfile(user) });
+  } catch (error) {
+    if (stored) await deleteImage(stored).catch(() => {});
+    next(error);
+  }
+});
+
+router.delete('/me/avatar', checkDbReady, avatarRateLimit, async (req, res, next) => {
+  try {
+    const userId = req.user?._id || req.user?.id;
+    const previous = {
+      url: req.user?.avatarUrl,
+      thumbnailUrl: req.user?.avatarThumbnailUrl,
+      publicId: req.user?.avatarPublicId
+    };
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { avatarUrl: '', avatarThumbnailUrl: '', avatarPublicId: '' } },
+      { new: true, runValidators: true }
+    ).lean();
+    if (!user) return res.status(404).json({ success: false, message: 'Member not found' });
+    if (previous.publicId || previous.url?.startsWith('/api/media/files/')) {
+      await deleteImage(previous).catch(error => console.warn(`[Avatar] Image cleanup failed: ${error.message}`));
+    }
+    res.json({ success: true, data: safeProfile(user) });
+  } catch (error) {
+    next(error);
   }
 });
 
