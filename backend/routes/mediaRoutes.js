@@ -9,7 +9,7 @@ import { z } from 'zod';
 import Media from '../models/MediaAsset.js';
 import Lookbook from '../models/Lookbook.js';
 import DefaultProduct from '../models/Product.js';
-import { MAX_BYTES, storeImage, storageRoot, isManagedUrl } from '../services/mediaStorage.js';
+import { MAX_BYTES, storeImage, storageRoot, isManagedUrl, deleteImage } from '../services/mediaStorage.js';
 import { authRequired as defaultAuthRequired, adminOnly as defaultAdminOnly } from '../middleware/auth.js';
 import errorHandler from '../middleware/errorHandler.js';
 import { allLooks } from './lookbookRoutes.js';
@@ -140,10 +140,25 @@ router.patch('/admin/media/:id', asyncRoute(async (req, res) => {
   if (input.archived) {
     const references = await usage(asset);
     if (references.length) return res.status(409).json({ success: false, message: 'รูปนี้ยังใช้อยู่ กรุณาเปลี่ยนรูปในรายการที่เกี่ยวข้องก่อน', usage: references });
+    if (!asset.archived) {
+      await deleteImage(asset);
+    }
   }
   Object.assign(asset, input);
   await asset.save();
   res.json({ success: true, data: asset });
+}));
+
+router.delete('/admin/media/:id', asyncRoute(async (req, res) => {
+  const asset = await Media.findById(objectId.parse(req.params.id));
+  if (!asset) return res.status(404).json({ success: false, message: 'ไม่พบรูป' });
+  const references = await usage(asset);
+  if (references.length) {
+    return res.status(409).json({ success: false, message: 'รูปนี้ยังใช้อยู่ กรุณาเปลี่ยนรูปในรายการที่เกี่ยวข้องก่อน', usage: references });
+  }
+  await deleteImage(asset);
+  await Media.findByIdAndDelete(asset._id);
+  res.json({ success: true, message: 'ลบรูปภาพถาวรเรียบร้อยแล้ว' });
 }));
 
 export async function assertActiveUrls(urls) {
