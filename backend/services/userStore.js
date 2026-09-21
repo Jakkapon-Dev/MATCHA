@@ -18,6 +18,30 @@ import bcrypt from 'bcryptjs';
    exactly these ids — and why tokens already issued keep working: the token
    carries `id: user._id`, and that value still resolves. */
 
+export const addressSchema = new mongoose.Schema(
+  {
+    _id: { type: String, default: () => `addr_${crypto.randomUUID().replace(/-/g, '')}` },
+    recipientName: { type: String, required: true, trim: true },
+    phone: { type: String, required: true, trim: true },
+    addressLine1: { type: String, required: true, trim: true },
+    addressLine2: { type: String, default: '', trim: true },
+    subdistrict: { type: String, required: true, trim: true },
+    district: { type: String, required: true, trim: true },
+    province: { type: String, required: true, trim: true },
+    postalCode: { type: String, required: true, trim: true },
+    country: { type: String, default: 'Thailand', trim: true },
+    label: { type: String, default: 'Home', trim: true },
+    isDefault: { type: Boolean, default: false }
+  },
+  { _id: false, timestamps: true }
+);
+
+addressSchema.virtual('id').get(function () {
+  return this._id;
+});
+addressSchema.set('toJSON', { virtuals: true });
+addressSchema.set('toObject', { virtuals: true });
+
 const userSchema = new mongoose.Schema(
   {
     _id: { type: String },
@@ -32,7 +56,7 @@ const userSchema = new mongoose.Schema(
     passwordHash: { type: String, default: '' },
     role: { type: String, enum: ['Member', 'Admin'], default: 'Member' },
     tier: { type: String, default: 'Regular Member' },
-    addresses: { type: Array, default: [] },
+    addresses: { type: [addressSchema], default: [] },
     // Leave this field absent for password-only accounts. A sparse unique index
     // ignores missing fields, but it would still index an explicit null and
     // make the second ordinary account fail with a duplicate-key error.
