@@ -118,16 +118,18 @@ export default function JoinDropList({ onSubscribe }) {
             ) : (
               <form onSubmit={handleSubmit} className="w-full mt-6 flex flex-col sm:flex-row gap-2.5">
                 <input
+                  id="droplist-email"
                   type="email"
                   required
+                  aria-label={t('drop.emailPlaceholder')}
                   placeholder={t('drop.emailPlaceholder')}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="flex-1 px-4 py-3 bg-matcha-bg border border-matcha-border text-xs sm:text-sm text-matcha-text focus:outline-hidden focus:ring-2 focus:ring-matcha-accent font-mono transition-colors"
+                  className="flex-1 px-4 py-3 bg-matcha-bg border border-matcha-border text-xs sm:text-sm text-matcha-text outline-hidden focus:ring-2 focus:ring-matcha-accent font-mono transition-colors"
                 />
                 <button
                   type="submit"
-                  className="px-8 py-3 bg-matcha-accent hover:bg-matcha-accent-hover text-white font-mono text-xs uppercase tracking-[0.15em] transition-colors cursor-pointer whitespace-nowrap flex items-center justify-center gap-2"
+                  className="px-8 py-3 bg-matcha-accent hover:bg-matcha-accent-hover text-white font-mono text-xs uppercase tracking-[0.15em] transition-colors cursor-pointer whitespace-nowrap flex items-center justify-center gap-2 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-offset-2"
                 >
                   <span>{t('drop.cta')}</span>
                   <ArrowRight size={14} />

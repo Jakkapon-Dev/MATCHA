@@ -70,6 +70,19 @@ export default function PreferencesTab({ preferences, onTogglePreference }) {
     return () => { active = false; };
   }, []);
 
+  // Dismiss deletion modal on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && showDeletionModal && !submittingDeletion) {
+        setShowDeletionModal(false);
+      }
+    };
+    if (showDeletionModal) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [showDeletionModal, submittingDeletion]);
+
   const handleToggleConsent = async () => {
     const nextOptedIn = !consent?.optedIn;
     setUpdatingConsent(true);
@@ -131,9 +144,12 @@ export default function PreferencesTab({ preferences, onTogglePreference }) {
               </div>
               <button
                 type="button"
+                role="switch"
+                aria-checked={Boolean(preferences?.[item.key])}
+                aria-label={item.title}
                 onClick={() => onTogglePreference(item.key)}
-                className={`w-12 h-6 rounded-full transition-colors p-1 cursor-pointer flex items-center ${
-                  preferences[item.key] ? 'bg-matcha-primary justify-end' : 'bg-matcha-border justify-start'
+                className={`w-12 h-6 rounded-full transition-colors p-1 cursor-pointer flex items-center outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary ${
+                  preferences?.[item.key] ? 'bg-matcha-primary justify-end' : 'bg-matcha-border justify-start'
                 }`}
               >
                 <div className="w-4 h-4 rounded-full bg-white" />
@@ -185,9 +201,12 @@ export default function PreferencesTab({ preferences, onTogglePreference }) {
 
             <button
               type="button"
+              role="switch"
+              aria-checked={Boolean(consent?.optedIn)}
+              aria-label="Promotional & Direct Marketing Consent"
               disabled={consentLoading || updatingConsent}
               onClick={handleToggleConsent}
-              className={`w-12 h-6 rounded-full transition-colors p-1 cursor-pointer flex items-center shrink-0 ${
+              className={`w-12 h-6 rounded-full transition-colors p-1 cursor-pointer flex items-center shrink-0 outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary ${
                 consent?.optedIn ? 'bg-matcha-primary justify-end' : 'bg-matcha-border justify-start'
               } ${updatingConsent ? 'opacity-50' : ''}`}
             >
@@ -301,11 +320,16 @@ export default function PreferencesTab({ preferences, onTogglePreference }) {
 
       {/* Deletion Request Modal */}
       {showDeletionModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="deletion-modal-title"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+        >
           <div className="bg-white border border-matcha-border rounded-2xl max-w-md w-full p-6 space-y-5 shadow-2xl">
             <div className="flex items-center gap-2 text-red-600">
               <AlertTriangle size={20} />
-              <h3 className="text-base font-black uppercase tracking-tight">Confirm Deletion Request</h3>
+              <h3 id="deletion-modal-title" className="text-base font-black uppercase tracking-tight">Confirm Deletion Request</h3>
             </div>
 
             <p className="text-xs text-[#555555] leading-relaxed">
@@ -314,15 +338,16 @@ export default function PreferencesTab({ preferences, onTogglePreference }) {
 
             <form onSubmit={handleSubmitDeletion} className="space-y-4">
               <div>
-                <label className="block text-xs font-mono font-bold uppercase text-black mb-1">
+                <label htmlFor="deletion-reason" className="block text-xs font-mono font-bold uppercase text-black mb-1">
                   Reason for Leaving (Optional)
                 </label>
                 <textarea
+                  id="deletion-reason"
                   rows={3}
                   value={deletionReason}
                   onChange={(e) => setDeletionReason(e.target.value)}
                   placeholder="Tell us why you are deleting your account..."
-                  className="w-full text-xs p-2.5 border border-matcha-border rounded-lg focus:outline-none focus:border-matcha-primary"
+                  className="w-full text-xs p-2.5 border border-matcha-border rounded-lg outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary focus:border-matcha-primary"
                   maxLength={500}
                 />
               </div>
@@ -331,14 +356,14 @@ export default function PreferencesTab({ preferences, onTogglePreference }) {
                 <button
                   type="button"
                   onClick={() => setShowDeletionModal(false)}
-                  className="px-4 py-2 text-xs font-mono uppercase font-bold border border-matcha-border rounded-lg hover:bg-gray-50"
+                  className="px-4 py-2 text-xs font-mono uppercase font-bold border border-matcha-border rounded-lg hover:bg-gray-50 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={submittingDeletion}
-                  className="px-4 py-2 text-xs font-mono uppercase font-bold bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                  className="px-4 py-2 text-xs font-mono uppercase font-bold bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 outline-hidden focus-visible:ring-2 focus-visible:ring-red-600 cursor-pointer"
                 >
                   {submittingDeletion ? 'Submitting...' : 'Confirm Request'}
                 </button>

@@ -47,7 +47,7 @@ export default function GuestOrdersPage() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-matcha-bg px-4 sm:px-6 lg:px-10 py-10 sm:py-14">
+    <div className="min-h-screen bg-matcha-bg px-4 sm:px-6 lg:px-10 py-10 sm:py-14">
       <div className="max-w-4xl mx-auto space-y-6">
         <header className="space-y-2">
           <div className="flex items-center gap-2 text-matcha-primary">
@@ -81,6 +81,6 @@ export default function GuestOrdersPage() {
           </aside>
         )}
       </div>
-    </main>
+    </div>
   );
 }

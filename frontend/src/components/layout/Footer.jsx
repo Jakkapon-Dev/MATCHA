@@ -45,31 +45,31 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-white text-sm uppercase tracking-wider mb-3">{t('footer.follow')}</h3>
             <ul className="space-y-2 font-mono text-[#999999]">
-              <li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Facebook</a></li>
-              <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Instagram</a></li>
-              <li><a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">TikTok</a></li>
+              <li><a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook (opens in new tab)" className="hover:text-white transition-colors outline-hidden focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-xs">Facebook</a></li>
+              <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram (opens in new tab)" className="hover:text-white transition-colors outline-hidden focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-xs">Instagram</a></li>
+              <li><a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" aria-label="TikTok (opens in new tab)" className="hover:text-white transition-colors outline-hidden focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-xs">TikTok</a></li>
             </ul>
           </div>
 
           <div>
             <h3 className="font-bold text-white text-sm uppercase tracking-wider mb-3">{t('footer.legal')}</h3>
-            <ul className="space-y-1.5 font-mono text-[11px] text-[#999999]">
+            <ul className="space-y-1.5 font-mono text-[11px] text-[#A3A3A3]">
               {/* Order history belongs somewhere a customer can come back to,
                   not only in the modal that shows once after checkout. It is
                   here rather than in the header because the header keeps one
                   button for a signed-out visitor on purpose. */}
-              <li><Link to="/orders" className="hover:text-white transition-colors">{t('account.viewOrders')}</Link></li>
-              <li><Link to="/legal/privacy" className="hover:text-white transition-colors">{t('footer.privacy')}</Link></li>
-              <li><Link to="/legal/terms" className="hover:text-white transition-colors">{t('footer.terms')}</Link></li>
-              <li><Link to="/legal/refund" className="hover:text-white transition-colors">{t('footer.refund')}</Link></li>
-              <li><Link to="/legal/shipping" className="hover:text-white transition-colors">{t('footer.shipping')}</Link></li>
-              <li><Link to="/legal/accessibility" className="hover:text-white transition-colors">{t('footer.accessibility')}</Link></li>
+              <li><Link to="/orders" className="hover:text-white transition-colors outline-hidden focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-xs">{t('account.viewOrders')}</Link></li>
+              <li><Link to="/legal/privacy" className="hover:text-white transition-colors outline-hidden focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-xs">{t('footer.privacy')}</Link></li>
+              <li><Link to="/legal/terms" className="hover:text-white transition-colors outline-hidden focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-xs">{t('footer.terms')}</Link></li>
+              <li><Link to="/legal/refund" className="hover:text-white transition-colors outline-hidden focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-xs">{t('footer.refund')}</Link></li>
+              <li><Link to="/legal/shipping" className="hover:text-white transition-colors outline-hidden focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-xs">{t('footer.shipping')}</Link></li>
+              <li><Link to="/legal/accessibility" className="hover:text-white transition-colors outline-hidden focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-xs">{t('footer.accessibility')}</Link></li>
             </ul>
           </div>
         </div>
 
         {/* Bottom Copyright */}
-        <div className="md:col-span-12 pt-8 mt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#888888] font-mono">
+        <div className="md:col-span-12 pt-8 mt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-[11px] text-[#A3A3A3] font-mono">
           <p>{t('footer.copyright')}</p>
           {import.meta.env.DEV && (
             <p className="text-matcha-secondary font-semibold mt-2 sm:mt-0">{t('footer.designSystem')}</p>

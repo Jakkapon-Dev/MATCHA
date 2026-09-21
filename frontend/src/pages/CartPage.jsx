@@ -122,7 +122,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                         data-original-src={item.image}
                         loading="lazy"
                         decoding="async"
-                        alt=""
+                        alt={item.color ? `${item.name} (${item.color})` : item.name}
                         className="w-full aspect-3/4 object-contain mix-blend-multiply"
                       />
                     ) : (
@@ -182,7 +182,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                         <button
                           onClick={() => onUpdateQty(key, -1)}
                           aria-label={t('cart.decrease')}
-                          className="w-8 h-8 flex items-center justify-center text-sm font-bold text-[#0A0A0A] hover:bg-matcha-border cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+                          className="w-10 h-10 flex items-center justify-center text-sm font-bold text-[#0A0A0A] hover:bg-matcha-border cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                         >
                           −
                         </button>
@@ -190,7 +190,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                         <button
                           onClick={() => onUpdateQty(key, 1)}
                           aria-label={t('cart.increase')}
-                          className="w-8 h-8 flex items-center justify-center text-sm font-bold text-[#0A0A0A] hover:bg-matcha-border cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+                          className="w-10 h-10 flex items-center justify-center text-sm font-bold text-[#0A0A0A] hover:bg-matcha-border cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                         >
                           +
                         </button>

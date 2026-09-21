@@ -145,7 +145,7 @@ export default function VdoSection({ onClaimPromo }) {
           {/* Promo behavior is owned by the parent (for example, navigation or cart rules). */}
           <button 
             onClick={handleClaim}
-            className="mt-6 w-full py-4 bg-matcha-accent hover:bg-matcha-accent-hover text-white font-mono text-xs uppercase tracking-[0.15em] transition-colors cursor-pointer flex items-center justify-center gap-2 group"
+            className="mt-6 w-full py-4 bg-matcha-accent hover:bg-matcha-accent-hover text-white font-mono text-xs uppercase tracking-[0.15em] transition-colors cursor-pointer flex items-center justify-center gap-2 group outline-hidden focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#1A2218]"
           >
             <span>{t('video.promoCta')}</span>
             <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />

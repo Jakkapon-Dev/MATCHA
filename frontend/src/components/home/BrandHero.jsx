@@ -71,6 +71,7 @@ export default function BrandHero({ onShopNow }) {
   // Reshuffle all four slices every 1.3 seconds. The collision check guarantees that
   // every visible slice changes on each tick, and cleanup prevents a leaked timer.
   useEffect(() => {
+    if (reduced) return;
     const interval = setInterval(() => {
       setSliceModels((prev) => prev.map((currentIdx) => {
         const nextIdx = Math.floor(Math.random() * models.length);
@@ -79,7 +80,7 @@ export default function BrandHero({ onShopNow }) {
     }, 1300);
 
     return () => clearInterval(interval);
-  }, [models.length]);
+  }, [models.length, reduced]);
 
 
 
@@ -179,8 +180,12 @@ export default function BrandHero({ onShopNow }) {
             
             {/* Slice 1: Head & Face (Top 25%) */}
             <div 
+              role="button"
+              tabIndex={0}
               onClick={() => cycleSingleSlice(0)}
-              className="relative w-full h-[25%] overflow-hidden border-b border-matcha-text/15 bg-neutral-100 cursor-pointer group"
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cycleSingleSlice(0); } }}
+              aria-label={t('hero.sliceHead')}
+              className="relative w-full h-[25%] overflow-hidden border-b border-matcha-text/15 bg-neutral-100 cursor-pointer group outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-matcha-accent"
               title={t('hero.sliceHead')}
             >
               <img 
@@ -192,8 +197,12 @@ export default function BrandHero({ onShopNow }) {
 
             {/* Slice 2: Torso & Apparel (25% - 50%) */}
             <div 
+              role="button"
+              tabIndex={0}
               onClick={() => cycleSingleSlice(1)}
-              className="relative w-full h-[25%] overflow-hidden border-b border-matcha-text/15 bg-neutral-100 cursor-pointer group"
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cycleSingleSlice(1); } }}
+              aria-label={t('hero.sliceTorso')}
+              className="relative w-full h-[25%] overflow-hidden border-b border-matcha-text/15 bg-neutral-100 cursor-pointer group outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-matcha-accent"
               title={t('hero.sliceTorso')}
             >
               <img 
@@ -205,8 +214,12 @@ export default function BrandHero({ onShopNow }) {
 
             {/* Slice 3: Lower Body & Pants/Skirt (50% - 75%) */}
             <div 
+              role="button"
+              tabIndex={0}
               onClick={() => cycleSingleSlice(2)}
-              className="relative w-full h-[25%] overflow-hidden border-b border-matcha-text/15 bg-neutral-100 cursor-pointer group"
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cycleSingleSlice(2); } }}
+              aria-label={t('hero.sliceLower')}
+              className="relative w-full h-[25%] overflow-hidden border-b border-matcha-text/15 bg-neutral-100 cursor-pointer group outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-matcha-accent"
               title={t('hero.sliceLower')}
             >
               <img 
@@ -218,8 +231,12 @@ export default function BrandHero({ onShopNow }) {
 
             {/* Slice 4: Sneakers & Studio Floor (75% - 100%) */}
             <div 
+              role="button"
+              tabIndex={0}
               onClick={() => cycleSingleSlice(3)}
-              className="relative w-full h-[25%] overflow-hidden bg-neutral-100 cursor-pointer group"
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cycleSingleSlice(3); } }}
+              aria-label={t('hero.sliceShoes')}
+              className="relative w-full h-[25%] overflow-hidden bg-neutral-100 cursor-pointer group outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-matcha-accent"
               title={t('hero.sliceShoes')}
             >
               <img 
@@ -268,7 +285,7 @@ export default function BrandHero({ onShopNow }) {
           <Reveal x={28} y={0} delay={0.38} duration={0.6} className="w-full sm:w-auto">
             <button
               onClick={handleAction}
-              className="w-full sm:w-auto max-w-full px-8 py-4 bg-matcha-accent hover:bg-matcha-accent-hover text-white font-mono text-sm uppercase tracking-[0.15em] transition-colors active:scale-95 cursor-pointer flex items-center justify-center gap-2 group"
+              className="w-full sm:w-auto max-w-full px-8 py-4 bg-matcha-accent hover:bg-matcha-accent-hover text-white font-mono text-sm uppercase tracking-[0.15em] transition-colors active:scale-95 cursor-pointer flex items-center justify-center gap-2 group outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-matcha-accent"
             >
               <span>{t('hero.shopNow')}</span>
               <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />

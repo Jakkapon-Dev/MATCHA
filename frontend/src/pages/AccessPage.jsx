@@ -236,7 +236,7 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
     }
   };
 
-  const field = 'w-full px-3.5 py-2.5 bg-matcha-bg border border-matcha-border text-sm text-[#0A0A0A] outline-hidden focus:border-[#0A0A0A] transition-colors';
+  const field = 'w-full px-3.5 py-2.5 bg-matcha-bg border border-matcha-border text-sm text-[#0A0A0A] outline-hidden focus:border-[#0A0A0A] focus-visible:ring-2 focus-visible:ring-[#0A0A0A] transition-colors';
   const label = 'block text-xs font-mono text-matcha-muted mb-1.5';
 
   /* The three extra fields arrive one after another rather than together: at
