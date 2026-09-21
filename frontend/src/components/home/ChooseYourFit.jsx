@@ -122,14 +122,25 @@ export default function ChooseYourFit({ onSelectFit }) {
             >
             <Reveal y={38} scale={0.92} delay={index * 0.07} amount={0.1} className="w-full h-full">
             <div
+              role="button"
+              tabIndex={0}
               onMouseEnter={() => setHoveredCard(item.id)}
               onMouseLeave={() => setHoveredCard(null)}
+              onFocus={() => setHoveredCard(item.id)}
+              onBlur={() => setHoveredCard(null)}
               onClick={() => onSelectFit && onSelectFit(item)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onSelectFit && onSelectFit(item);
+                }
+              }}
+              aria-label={`${copy.category} - ${copy.count}`}
               className={`relative w-full h-full cursor-pointer transition-all duration-300 transform ${
                 isHovered
                   ? "scale-105 -translate-y-1.5 ring-2 ring-matcha-accent"
                   : ""
-              } overflow-hidden bg-transparent border-0`}
+              } overflow-hidden bg-transparent border-0 outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-accent`}
             >
               {/* Outfit Photo */}
               <img

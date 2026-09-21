@@ -127,7 +127,7 @@ export default function VerifyEmailPage() {
   };
 
   return (
-    <main className="min-h-[75vh] bg-matcha-bg px-4 sm:px-6 py-14 flex items-center justify-center">
+    <div className="min-h-[75vh] bg-matcha-bg px-4 sm:px-6 py-14 flex items-center justify-center">
       <div className="w-full max-w-lg bg-white border border-[#0A0A0A] p-6 sm:p-10 space-y-6">
         <div className="flex items-center justify-between pb-4 border-b border-matcha-border">
           <span className="text-[11px] font-mono uppercase tracking-widest text-matcha-muted">
@@ -200,6 +200,6 @@ export default function VerifyEmailPage() {
           </Link>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

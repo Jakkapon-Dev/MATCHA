@@ -79,11 +79,20 @@ export default function PaymentMethodStep({
 
         {/* Payment Methods Selection Tabs */}
         <div className="mb-6">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div role="radiogroup" aria-label={t('checkout.methodTitle')} className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {/* 1. Credit / Debit Card */}
             <div
+              role="radio"
+              aria-checked={selectedPayment === 'visa' || selectedPayment === 'mastercard'}
+              tabIndex={0}
               onClick={() => onSelectPayment('visa')}
-              className={`p-4 border transition-all cursor-pointer flex flex-col justify-between ${
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onSelectPayment('visa');
+                }
+              }}
+              className={`p-4 border transition-all cursor-pointer flex flex-col justify-between outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary ${
                 selectedPayment === 'visa' || selectedPayment === 'mastercard'
                   ? 'border-matcha-primary bg-matcha-bg'
                   : 'border-matcha-border bg-white hover:border-matcha-secondary/60 hover:bg-matcha-bg'
@@ -103,8 +112,17 @@ export default function PaymentMethodStep({
 
             {/* 2. PromptPay QR */}
             <div
+              role="radio"
+              aria-checked={selectedPayment === 'qr'}
+              tabIndex={0}
               onClick={() => onSelectPayment('qr')}
-              className={`p-4 border transition-all cursor-pointer flex flex-col justify-between ${
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onSelectPayment('qr');
+                }
+              }}
+              className={`p-4 border transition-all cursor-pointer flex flex-col justify-between outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary ${
                 selectedPayment === 'qr'
                   ? 'border-matcha-primary bg-matcha-bg'
                   : 'border-matcha-border bg-white hover:border-matcha-secondary/60 hover:bg-matcha-bg'
@@ -124,8 +142,17 @@ export default function PaymentMethodStep({
 
             {/* 3. Cash on Delivery (COD) */}
             <div
+              role="radio"
+              aria-checked={selectedPayment === 'cod'}
+              tabIndex={0}
               onClick={() => onSelectPayment('cod')}
-              className={`p-4 border transition-all cursor-pointer flex flex-col justify-between ${
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onSelectPayment('cod');
+                }
+              }}
+              className={`p-4 border transition-all cursor-pointer flex flex-col justify-between outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary ${
                 selectedPayment === 'cod'
                   ? 'border-matcha-primary bg-matcha-bg'
                   : 'border-matcha-border bg-white hover:border-matcha-secondary/60 hover:bg-matcha-bg'
@@ -192,64 +219,68 @@ export default function PaymentMethodStep({
             {/* Inputs Form */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-matcha-bg">
               <div className="sm:col-span-2">
-                <label className="block text-xs font-mono text-matcha-muted mb-1">
+                <label htmlFor="card-number" className="block text-xs font-mono text-matcha-muted mb-1">
                   {t('checkout.cardNumber')} <span className="text-matcha-accent">*</span>
                 </label>
                 <input
+                  id="card-number"
                   type="text"
                   name="cardNumber"
                   maxLength={19}
                   value={cardData.cardNumber}
                   onChange={handleCardChange}
                   placeholder="4532 8821 0092 8899"
-                  className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-none text-xs font-mono text-[#0A0A0A] bg-matcha-bg tracking-wider transition-colors"
+                  className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg tracking-wider transition-colors"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono text-matcha-muted mb-1">
+                <label htmlFor="card-holder" className="block text-xs font-mono text-matcha-muted mb-1">
                   {t('checkout.cardName')} <span className="text-matcha-accent">*</span>
                 </label>
                 <input
+                  id="card-holder"
                   type="text"
                   name="cardHolder"
                   value={cardData.cardHolder}
                   onChange={handleCardChange}
                   placeholder="ALEX COLLECTOR"
-                  className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-none text-xs font-mono text-[#0A0A0A] bg-matcha-bg uppercase transition-colors"
+                  className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg uppercase transition-colors"
                   required
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-mono text-matcha-muted mb-1">
+                  <label htmlFor="card-expiry" className="block text-xs font-mono text-matcha-muted mb-1">
                     {t('checkout.expiry')} <span className="text-matcha-accent">*</span>
                   </label>
                   <input
+                    id="card-expiry"
                     type="text"
                     name="expiryDate"
                     maxLength={5}
                     value={cardData.expiryDate}
                     onChange={handleCardChange}
                     placeholder="MM/YY"
-                    className="w-full px-3 py-2.5 border border-matcha-border focus:border-matcha-primary outline-none text-xs font-mono text-[#0A0A0A] bg-matcha-bg text-center transition-colors"
+                    className="w-full px-3 py-2.5 border border-matcha-border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg text-center transition-colors"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-mono text-matcha-muted mb-1">
+                  <label htmlFor="card-cvv" className="block text-xs font-mono text-matcha-muted mb-1">
                     {t('checkout.cvv')} <span className="text-matcha-accent">*</span>
                   </label>
                   <input
+                    id="card-cvv"
                     type="password"
                     name="cvv"
                     maxLength={4}
                     value={cardData.cvv}
                     onChange={handleCardChange}
                     placeholder="•••"
-                    className="w-full px-3 py-2.5 border border-matcha-border focus:border-matcha-primary outline-none text-xs font-mono text-[#0A0A0A] bg-matcha-bg text-center transition-colors"
+                    className="w-full px-3 py-2.5 border border-matcha-border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg text-center transition-colors"
                     required
                   />
                 </div>
@@ -312,7 +343,7 @@ export default function PaymentMethodStep({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex items-center gap-2 text-xs font-mono text-matcha-muted hover:text-matcha-primary transition-colors cursor-pointer"
+          className="inline-flex items-center gap-2 text-xs font-mono text-matcha-muted hover:text-matcha-primary transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] px-2 py-1"
         >
           <ArrowLeft size={14} />
           <span>{t('checkout.editAddress')}</span>
@@ -322,7 +353,7 @@ export default function PaymentMethodStep({
           type="button"
           onClick={onPlaceOrder}
           disabled={!isCardValid || isProcessing}
-          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-9 py-3.5 bg-matcha-primary hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-wider transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-9 py-3.5 bg-matcha-primary hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-wider transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
         >
           {isProcessing ? (
             <span className="flex items-center gap-2">

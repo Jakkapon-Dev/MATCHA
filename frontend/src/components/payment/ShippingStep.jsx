@@ -163,14 +163,23 @@ export default function ShippingStep({
         {/* Preset Address Selection */}
         {hasSaved && (
         <div className="mb-6">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div role="radiogroup" aria-label={t('checkout.savedAddresses')} className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             {savedAddresses.map((preset) => {
               const isSelected = selectedPreset === preset.id && !isCustomAddress;
               return (
                 <div
                   key={preset.id}
+                  role="radio"
+                  aria-checked={isSelected}
+                  tabIndex={0}
                   onClick={() => handleSelectPreset(preset)}
-                  className={`p-4 border transition-all cursor-pointer flex flex-col justify-between text-left ${
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleSelectPreset(preset);
+                    }
+                  }}
+                  className={`p-4 border transition-all cursor-pointer flex flex-col justify-between text-left outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary ${
                     isSelected
                       ? 'border-matcha-primary bg-matcha-bg'
                       : 'border-matcha-border bg-white hover:border-matcha-secondary/60 hover:bg-matcha-bg'
@@ -209,8 +218,17 @@ export default function ShippingStep({
 
             {/* Custom Address Option */}
             <div
+              role="radio"
+              aria-checked={isCustomAddress}
+              tabIndex={0}
               onClick={handleCustomToggle}
-              className={`p-4 border border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-1.5 min-h-[100px] ${
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleCustomToggle();
+                }
+              }}
+              className={`p-4 border border-dashed transition-all cursor-pointer flex flex-col items-center justify-center text-center gap-1.5 min-h-[100px] outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary ${
                 isCustomAddress
                   ? 'border-matcha-primary bg-matcha-bg text-matcha-primary'
                   : 'border-matcha-border hover:border-matcha-primary text-matcha-muted'
@@ -229,106 +247,113 @@ export default function ShippingStep({
         <div className={hasSaved ? 'pt-4 border-t border-matcha-border space-y-4' : 'space-y-4'}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-mono text-matcha-muted mb-1">
+              <label htmlFor="shipping-firstName" className="block text-xs font-mono text-matcha-muted mb-1">
                 {t('checkout.firstName')} <span className="text-matcha-accent">*</span>
               </label>
               <input
+                id="shipping-firstName"
                 type="text"
                 name="firstName"
                 value={formData.firstName || ''}
                 onChange={handleChange}
                 placeholder={t('checkout.phFirst')}
-                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-none text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
+                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-matcha-muted mb-1">
+              <label htmlFor="shipping-lastName" className="block text-xs font-mono text-matcha-muted mb-1">
                 {t('checkout.lastName')} <span className="text-matcha-accent">*</span>
               </label>
               <input
+                id="shipping-lastName"
                 type="text"
                 name="lastName"
                 value={formData.lastName || ''}
                 onChange={handleChange}
                 placeholder={t('checkout.phLast')}
-                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-none text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
+                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-matcha-muted mb-1">
+              <label htmlFor="shipping-email" className="block text-xs font-mono text-matcha-muted mb-1">
                 {t('checkout.email')} <span className="text-matcha-accent">*</span>
               </label>
               <input
+                id="shipping-email"
                 type="email"
                 name="email"
                 value={formData.email || ''}
                 onChange={handleChange}
                 placeholder={t('checkout.phEmail')}
-                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-none text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
+                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-matcha-muted mb-1">
+              <label htmlFor="shipping-phone" className="block text-xs font-mono text-matcha-muted mb-1">
                 {t('checkout.phone')} <span className="text-matcha-accent">*</span>
               </label>
               <input
+                id="shipping-phone"
                 type="tel"
                 name="phone"
                 value={formData.phone || ''}
                 onChange={handleChange}
                 placeholder={t('checkout.phPhone')}
-                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-none text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
+                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
                 required
               />
             </div>
 
             <div className="sm:col-span-2">
-              <label className="block text-xs font-mono text-matcha-muted mb-1">
+              <label htmlFor="shipping-address" className="block text-xs font-mono text-matcha-muted mb-1">
                 {t('checkout.street')} <span className="text-matcha-accent">*</span>
               </label>
               <input
+                id="shipping-address"
                 type="text"
                 name="address"
                 value={formData.address || ''}
                 onChange={handleChange}
                 placeholder={t('checkout.phStreet')}
-                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-none text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
+                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-matcha-muted mb-1">
+              <label htmlFor="shipping-city" className="block text-xs font-mono text-matcha-muted mb-1">
                 {t('checkout.city')} <span className="text-matcha-accent">*</span>
               </label>
               <input
+                id="shipping-city"
                 type="text"
                 name="city"
                 value={formData.city || ''}
                 onChange={handleChange}
                 placeholder={t('checkout.phCity')}
-                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-none text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
+                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono text-matcha-muted mb-1">
+              <label htmlFor="shipping-zipCode" className="block text-xs font-mono text-matcha-muted mb-1">
                 {t('checkout.postal')} <span className="text-matcha-accent">*</span>
               </label>
               <input
+                id="shipping-zipCode"
                 type="text"
                 name="zipCode"
                 value={formData.zipCode || ''}
                 onChange={handleChange}
                 placeholder={t('checkout.phPostal')}
-                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-none text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
+                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
                 required
               />
             </div>
@@ -347,14 +372,23 @@ export default function ShippingStep({
           </p>
         </div>
 
-        <div className="space-y-3">
+        <div role="radiogroup" aria-label="Delivery Method" className="space-y-3">
           {shippingOptions.map((option) => {
             const isSelected = selectedShipping === option.id;
             return (
               <div
                 key={option.id}
+                role="radio"
+                aria-checked={isSelected}
+                tabIndex={0}
                 onClick={() => onSelectShipping(option.id)}
-                className={`p-4 border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onSelectShipping(option.id);
+                  }
+                }}
+                className={`p-4 border transition-all cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-3 outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary ${
                   isSelected
                     ? 'border-matcha-primary bg-matcha-bg'
                     : 'border-matcha-border bg-white hover:border-matcha-secondary/60 hover:bg-matcha-bg'

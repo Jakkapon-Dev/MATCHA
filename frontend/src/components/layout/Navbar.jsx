@@ -94,7 +94,7 @@ export default function Navbar({
           <div className="flex items-center">
             <button
               onClick={onGoToLanding}
-              className="flex flex-col justify-center group cursor-pointer text-left py-1"
+              className="flex flex-col justify-center group cursor-pointer text-left py-1 outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A] rounded-lg"
               aria-label={t('nav.homeAria')}
             >
               <img 
@@ -110,7 +110,7 @@ export default function Navbar({
           </div>
 
           {/* Center: Desktop Navigation Links (Clean Black & White) */}
-          <nav className="hidden md:flex items-center gap-6 lg:gap-8">
+          <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-6 lg:gap-8">
             {navLinks.map((link) => {
               const isActive = currentPage === 'home' && false;
 
@@ -119,7 +119,7 @@ export default function Navbar({
                   key={link.id}
                   href={link.href}
                   onClick={(e) => { e.preventDefault(); handleLinkClick(link.href); }}
-                  className={`text-xs font-semibold tracking-wider uppercase font-mono transition-colors relative py-1 ${
+                  className={`text-xs font-semibold tracking-wider uppercase font-mono transition-colors relative py-1 outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A] rounded-xs ${
                     isActive ? 'text-matcha-text font-bold' : 'text-matcha-text/80 hover:text-matcha-text'
                   }`}
                 >
@@ -138,7 +138,7 @@ export default function Navbar({
             {/* Main Feature Action: MIX@MATCH Button (Black with subtle Green/Red BorderBeam) */}
             <button
               onClick={() => handleLinkClick('/mix-match')}
-              className="relative overflow-hidden hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 bg-matcha-text hover:bg-[#1a1a1a] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-95 cursor-pointer"
+              className="relative overflow-hidden hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 bg-matcha-text hover:bg-[#1a1a1a] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-95 cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]"
             >
               <BorderBeam size={80} duration={6} colorFrom="#518F5C" colorTo="#C91D1D" />
               <Sparkles size={14} className="text-matcha-secondary relative z-10" />
@@ -150,7 +150,7 @@ export default function Navbar({
               onClick={onOpenCart}
               aria-label={t('nav.cartAria')}
               data-cart-target
-              className={`relative p-2.5 rounded-xl bg-white hover:bg-matcha-bg text-matcha-text border border-matcha-border transition-all cursor-pointer shadow-xs ${
+              className={`relative p-2.5 rounded-xl bg-white hover:bg-matcha-bg text-matcha-text border border-matcha-border transition-all cursor-pointer shadow-xs outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A] ${
                 cartAnimated ? 'animate-cart-pop ring-3 ring-matcha-accent' : ''
               }`}
             >
@@ -170,7 +170,7 @@ export default function Navbar({
               <div className="hidden lg:flex items-center gap-2 font-mono">
                 <button
                   onClick={() => handleLinkClick(currentUser.role === 'Admin' ? '/admin' : '/account')}
-                  className="flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-matcha-bg border border-matcha-text/20 hover:border-matcha-text rounded-xl text-xs font-bold text-matcha-text transition-all cursor-pointer shadow-xs group"
+                  className="flex items-center gap-2 px-3.5 py-2 bg-white hover:bg-matcha-bg border border-matcha-text/20 hover:border-matcha-text rounded-xl text-xs font-bold text-matcha-text transition-all cursor-pointer shadow-xs group outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]"
                   title={currentUser.role === 'Admin' ? t('nav.adminTitle') : t('nav.myAccountTitle')}
                 >
                   <User size={14} className="text-matcha-text" />
@@ -182,7 +182,7 @@ export default function Navbar({
                 <button
                   onClick={handleLogoutClick}
                   disabled={isLoggingOut}
-                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-matcha-accent hover:bg-matcha-accent/10 rounded-lg transition-all cursor-pointer disabled:opacity-70 font-mono"
+                  className="flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-matcha-accent hover:bg-matcha-accent/10 rounded-lg transition-all cursor-pointer disabled:opacity-70 font-mono outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-matcha-accent"
                   title={t('nav.logOutTitle')}
                 >
                   {isLoggingOut ? (
@@ -212,8 +212,10 @@ export default function Navbar({
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2.5 rounded-xl bg-white text-matcha-text border border-matcha-border transition-all cursor-pointer"
+              className="md:hidden p-2.5 rounded-xl bg-white text-matcha-text border border-matcha-border transition-all cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]"
               aria-label={t('nav.menuAria')}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-nav"
             >
               {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
@@ -227,8 +229,8 @@ export default function Navbar({
 
         {/* 3. Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-matcha-bg border-b border-matcha-border px-6 py-5 shadow-xl animate-fade-in">
-            <nav className="flex flex-col gap-4">
+          <div id="mobile-nav" className="md:hidden bg-matcha-bg border-b border-matcha-border px-6 py-5 shadow-xl animate-fade-in">
+            <nav aria-label="Mobile Navigation" className="flex flex-col gap-4">
 
               {/* Mobile Auth Quick Buttons */}
               {currentUser ? (

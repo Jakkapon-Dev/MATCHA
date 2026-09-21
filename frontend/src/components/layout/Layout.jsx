@@ -28,6 +28,14 @@ export default function Layout({
   return (
     <div className="min-h-screen bg-matcha-bg text-matcha-text flex flex-col font-sans selection:bg-matcha-text selection:text-white relative">
       
+      {/* Skip to Main Content Link for Keyboard Accessibility (WCAG 2.4.1) */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#0A0A0A] focus:text-white focus:font-mono focus:text-xs focus:font-bold focus:uppercase focus:tracking-wider focus:outline-2 focus:outline-offset-2 focus:outline-matcha-accent focus:shadow-xl"
+      >
+        Skip to main content
+      </a>
+
       {/* Global Scroll Progress & Frame Tracker */}
       <ScrollProgressTracker />
 
@@ -43,7 +51,7 @@ export default function Layout({
       />
 
       {/* Main Page Content */}
-      <main ref={setMainRef} className="flex-1 w-full">
+      <main ref={setMainRef} id="main-content" tabIndex="-1" className="flex-1 w-full outline-none">
         {children}
       </main>
 

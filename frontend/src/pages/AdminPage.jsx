@@ -428,7 +428,7 @@ export default function AdminPage() {
       {/* ========================================================================= */}
       {/* 2. MAIN DASHBOARD CONTENT CANVAS                                          */}
       {/* ========================================================================= */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         
         {isDemo && (
           <div className="bg-amber-100 border-b border-amber-300 text-amber-900 px-6 py-2.5 text-xs font-mono font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-2 shadow-inner">
@@ -446,6 +446,7 @@ export default function AdminPage() {
           
           {/* Breadcrumb & Tab Title */}
           <div>
+            <h1 className="sr-only">Admin Control Center</h1>
             <div className="flex items-center gap-2 text-[11px] font-mono text-matcha-muted">
               <span>Admin</span>
               <ChevronRight size={11} />
@@ -461,12 +462,13 @@ export default function AdminPage() {
             
             {/* Global Search Input */}
             <div className="relative flex-1 sm:w-64">
-              <Search size={14} className="absolute left-3 inset-y-0 my-auto text-matcha-muted" />
+              <Search size={14} className="absolute left-3 inset-y-0 my-auto text-matcha-muted" aria-hidden="true" />
               <input
                 type="text"
                 value={globalSearch}
                 onChange={(e) => setGlobalSearch(e.target.value)}
                 placeholder="Search metrics, SKU, orders, members..."
+                aria-label="Search metrics, SKU, orders, members"
                 className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-matcha-border bg-white font-mono text-xs text-matcha-text outline-none focus:ring-2 focus:ring-matcha-primary/40"
               />
               {globalSearch && (
@@ -484,7 +486,10 @@ export default function AdminPage() {
               <button
                 type="button"
                 onClick={() => setIsNotifMenuOpen(!isNotifMenuOpen)}
-                className="relative p-2 rounded-xl bg-white border border-matcha-border hover:border-matcha-primary text-matcha-text transition-all cursor-pointer shadow-2xs flex items-center justify-center"
+                aria-label="Order Notifications"
+                aria-haspopup="true"
+                aria-expanded={isNotifMenuOpen}
+                className="relative p-2 rounded-xl bg-white border border-matcha-border hover:border-matcha-primary text-matcha-text transition-all cursor-pointer shadow-2xs flex items-center justify-center outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary"
                 title="Order Notifications"
               >
                 <Bell size={16} />
@@ -563,8 +568,12 @@ export default function AdminPage() {
             {/* Export Dropdown */}
             <div className="relative">
               <button
+                type="button"
                 onClick={() => setIsExportMenuOpen(!isExportMenuOpen)}
-                className="px-3 py-1.5 bg-white border border-matcha-border hover:border-matcha-primary text-matcha-text rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
+                aria-label="Export Data"
+                aria-haspopup="true"
+                aria-expanded={isExportMenuOpen}
+                className="px-3 py-1.5 bg-white border border-matcha-border hover:border-matcha-primary text-matcha-text rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary"
               >
                 <Download size={13} className="text-matcha-primary" />
                 <span>Export Data</span>
@@ -662,7 +671,7 @@ export default function AdminPage() {
 
         </div>
 
-      </main>
+      </div>
 
       {/* Add Product Modal */}
       <AddProductModal

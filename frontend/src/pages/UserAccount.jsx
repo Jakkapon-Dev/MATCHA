@@ -206,7 +206,7 @@ export default function UserAccount() {
 
   return (
     <div className="w-full bg-matcha-bg min-h-screen py-10 sm:py-16 px-5 sm:px-6 lg:px-8">
-      <main className="w-full max-w-7xl mx-auto space-y-8">
+      <div className="w-full max-w-7xl mx-auto space-y-8">
         
         {/* Admin Quick Switch Banner if logged in user is Admin */}
         {currentUser?.role === 'Admin' && (
@@ -346,8 +346,7 @@ export default function UserAccount() {
             </div>
           </div>
         )}
-
-      </main>
+      </div>
     </div>
   );
 }

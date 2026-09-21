@@ -65,8 +65,17 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
 
   return (
     <article
+      role="button"
+      tabIndex={0}
       onClick={openQuickView}
-      className="w-64 sm:w-72 lg:w-80 shrink-0 flex flex-col cursor-pointer group relative select-none"
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          openQuickView();
+        }
+      }}
+      aria-label={`${item.name} - ${activeVariant?.color || ''}`}
+      className="w-64 sm:w-72 lg:w-80 shrink-0 flex flex-col cursor-pointer group relative select-none outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-matcha-accent rounded-xs"
     >
       {/* Tag and category, set as the plain marginalia they are. */}
       <div className="flex justify-between items-baseline gap-2 px-3 pt-3 pb-2 font-mono text-[10px] uppercase tracking-wider">
@@ -238,16 +247,16 @@ export default function StreetFavorites({ onAddToCart, onQuickView, onExploreCat
             <button
               onClick={scrollLeft}
               aria-label={t('favorites.prevAria')}
-              className="w-9 h-9 text-[#0A0A0A] hover:text-matcha-accent flex items-center justify-center transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+              className="w-11 h-11 text-[#0A0A0A] hover:text-matcha-accent flex items-center justify-center transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] rounded-lg"
             >
-              <ChevronLeft size={20} />
+              <ChevronLeft size={22} />
             </button>
             <button
               onClick={scrollRight}
               aria-label={t('favorites.nextAria')}
-              className="w-9 h-9 text-[#0A0A0A] hover:text-matcha-accent flex items-center justify-center transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+              className="w-11 h-11 text-[#0A0A0A] hover:text-matcha-accent flex items-center justify-center transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] rounded-lg"
             >
-              <ChevronRight size={20} />
+              <ChevronRight size={22} />
             </button>
           </div>
         </Reveal>

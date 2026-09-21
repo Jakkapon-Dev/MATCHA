@@ -89,6 +89,23 @@ export default function AddressesTab({ addresses: initialAddresses }) {
     return () => clearTimeout(timer);
   }, [successToast]);
 
+  // Dismiss modals on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        if (modalOpen && !isSubmitting) {
+          closeModal();
+        } else if (deletingAddress && !isDeleting) {
+          setDeletingAddress(null);
+        }
+      }
+    };
+    if (modalOpen || deletingAddress) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [modalOpen, deletingAddress, isSubmitting, isDeleting]);
+
   const openCreateModal = () => {
     setEditingAddress(null);
     setFormData({
@@ -396,17 +413,23 @@ export default function AddressesTab({ addresses: initialAddresses }) {
 
       {/* Add / Edit Modal */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in overflow-y-auto">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="address-modal-title"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in overflow-y-auto"
+        >
           <div className="bg-white border border-matcha-border p-6 sm:p-8 max-w-lg w-full space-y-6 my-8 text-left">
             <div className="flex items-center justify-between pb-3 border-b border-matcha-border">
-              <h3 className="text-sm font-bold uppercase tracking-tight text-[#0A0A0A]">
+              <h3 id="address-modal-title" className="text-sm font-bold uppercase tracking-tight text-[#0A0A0A]">
                 {editingAddress ? t('account.editAddress') : t('account.addAddress')}
               </h3>
               <button
                 type="button"
                 onClick={closeModal}
                 disabled={isSubmitting}
-                className="text-matcha-muted hover:text-[#0A0A0A] cursor-pointer"
+                aria-label={t('account.cancel')}
+                className="text-matcha-muted hover:text-[#0A0A0A] cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
               >
                 <X size={18} />
               </button>
@@ -423,15 +446,16 @@ export default function AddressesTab({ addresses: initialAddresses }) {
               {/* Recipient Name & Phone */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-matcha-muted mb-1">
+                  <label htmlFor="addr-recipientName" className="block text-matcha-muted mb-1">
                     {t('account.recipientName')} <span className="text-matcha-accent">*</span>
                   </label>
                   <input
+                    id="addr-recipientName"
                     type="text"
                     value={formData.recipientName}
                     onChange={(e) => setFormData({ ...formData, recipientName: e.target.value })}
                     placeholder="Somchai Jaidee"
-                    className={`w-full px-3 py-2 border bg-matcha-bg text-[#0A0A0A] outline-none transition-colors ${
+                    className={`w-full px-3 py-2 border bg-matcha-bg text-[#0A0A0A] outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary transition-colors ${
                       formErrors.recipientName ? 'border-red-500' : 'border-matcha-border focus:border-matcha-primary'
                     }`}
                     required
@@ -442,15 +466,16 @@ export default function AddressesTab({ addresses: initialAddresses }) {
                 </div>
 
                 <div>
-                  <label className="block text-matcha-muted mb-1">
+                  <label htmlFor="addr-phone" className="block text-matcha-muted mb-1">
                     {t('account.phone')} <span className="text-matcha-accent">*</span>
                   </label>
                   <input
+                    id="addr-phone"
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     placeholder="0812345678"
-                    className={`w-full px-3 py-2 border bg-matcha-bg text-[#0A0A0A] outline-none transition-colors ${
+                    className={`w-full px-3 py-2 border bg-matcha-bg text-[#0A0A0A] outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary transition-colors ${
                       formErrors.phone ? 'border-red-500' : 'border-matcha-border focus:border-matcha-primary'
                     }`}
                     required
@@ -463,15 +488,16 @@ export default function AddressesTab({ addresses: initialAddresses }) {
 
               {/* Address Line 1 */}
               <div>
-                <label className="block text-matcha-muted mb-1">
+                <label htmlFor="addr-addressLine1" className="block text-matcha-muted mb-1">
                   {t('account.addressLine1')} <span className="text-matcha-accent">*</span>
                 </label>
                 <input
+                  id="addr-addressLine1"
                   type="text"
                   value={formData.addressLine1}
                   onChange={(e) => setFormData({ ...formData, addressLine1: e.target.value })}
                   placeholder="123/45 Sukhumvit 55, Thong Lo"
-                  className={`w-full px-3 py-2 border bg-matcha-bg text-[#0A0A0A] outline-none transition-colors ${
+                  className={`w-full px-3 py-2 border bg-matcha-bg text-[#0A0A0A] outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary transition-colors ${
                     formErrors.addressLine1 ? 'border-red-500' : 'border-matcha-border focus:border-matcha-primary'
                   }`}
                   required
@@ -483,30 +509,32 @@ export default function AddressesTab({ addresses: initialAddresses }) {
 
               {/* Address Line 2 */}
               <div>
-                <label className="block text-matcha-muted mb-1">
+                <label htmlFor="addr-addressLine2" className="block text-matcha-muted mb-1">
                   {t('account.addressLine2')}
                 </label>
                 <input
+                  id="addr-addressLine2"
                   type="text"
                   value={formData.addressLine2}
                   onChange={(e) => setFormData({ ...formData, addressLine2: e.target.value })}
                   placeholder="Floor 4, Unit 402"
-                  className="w-full px-3 py-2 border border-matcha-border bg-matcha-bg text-[#0A0A0A] outline-none focus:border-matcha-primary transition-colors"
+                  className="w-full px-3 py-2 border border-matcha-border bg-matcha-bg text-[#0A0A0A] outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary focus:border-matcha-primary transition-colors"
                 />
               </div>
 
               {/* Subdistrict & District */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-matcha-muted mb-1">
+                  <label htmlFor="addr-subdistrict" className="block text-matcha-muted mb-1">
                     {t('account.subdistrict')} <span className="text-matcha-accent">*</span>
                   </label>
                   <input
+                    id="addr-subdistrict"
                     type="text"
                     value={formData.subdistrict}
                     onChange={(e) => setFormData({ ...formData, subdistrict: e.target.value })}
                     placeholder="Khlong Tan Nuea"
-                    className={`w-full px-3 py-2 border bg-matcha-bg text-[#0A0A0A] outline-none transition-colors ${
+                    className={`w-full px-3 py-2 border bg-matcha-bg text-[#0A0A0A] outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary transition-colors ${
                       formErrors.subdistrict ? 'border-red-500' : 'border-matcha-border focus:border-matcha-primary'
                     }`}
                     required
@@ -517,15 +545,16 @@ export default function AddressesTab({ addresses: initialAddresses }) {
                 </div>
 
                 <div>
-                  <label className="block text-matcha-muted mb-1">
+                  <label htmlFor="addr-district" className="block text-matcha-muted mb-1">
                     {t('account.district')} <span className="text-matcha-accent">*</span>
                   </label>
                   <input
+                    id="addr-district"
                     type="text"
                     value={formData.district}
                     onChange={(e) => setFormData({ ...formData, district: e.target.value })}
                     placeholder="Watthana"
-                    className={`w-full px-3 py-2 border bg-matcha-bg text-[#0A0A0A] outline-none transition-colors ${
+                    className={`w-full px-3 py-2 border bg-matcha-bg text-[#0A0A0A] outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary transition-colors ${
                       formErrors.district ? 'border-red-500' : 'border-matcha-border focus:border-matcha-primary'
                     }`}
                     required
@@ -539,15 +568,16 @@ export default function AddressesTab({ addresses: initialAddresses }) {
               {/* Province & Postal Code */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-matcha-muted mb-1">
+                  <label htmlFor="addr-province" className="block text-matcha-muted mb-1">
                     {t('account.province')} <span className="text-matcha-accent">*</span>
                   </label>
                   <input
+                    id="addr-province"
                     type="text"
                     value={formData.province}
                     onChange={(e) => setFormData({ ...formData, province: e.target.value })}
                     placeholder="Bangkok"
-                    className={`w-full px-3 py-2 border bg-matcha-bg text-[#0A0A0A] outline-none transition-colors ${
+                    className={`w-full px-3 py-2 border bg-matcha-bg text-[#0A0A0A] outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary transition-colors ${
                       formErrors.province ? 'border-red-500' : 'border-matcha-border focus:border-matcha-primary'
                     }`}
                     required
@@ -558,16 +588,17 @@ export default function AddressesTab({ addresses: initialAddresses }) {
                 </div>
 
                 <div>
-                  <label className="block text-matcha-muted mb-1">
+                  <label htmlFor="addr-postalCode" className="block text-matcha-muted mb-1">
                     {t('account.postalCode')} <span className="text-matcha-accent">*</span>
                   </label>
                   <input
+                    id="addr-postalCode"
                     type="text"
                     value={formData.postalCode}
                     onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
                     placeholder="10110"
                     maxLength={5}
-                    className={`w-full px-3 py-2 border bg-matcha-bg text-[#0A0A0A] outline-none transition-colors ${
+                    className={`w-full px-3 py-2 border bg-matcha-bg text-[#0A0A0A] outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary transition-colors ${
                       formErrors.postalCode ? 'border-red-500' : 'border-matcha-border focus:border-matcha-primary'
                     }`}
                     required
@@ -591,7 +622,7 @@ export default function AddressesTab({ addresses: initialAddresses }) {
                         key={lbl}
                         type="button"
                         onClick={() => setFormData({ ...formData, label: lbl })}
-                        className={`px-3 py-1.5 border text-xs font-mono transition-colors cursor-pointer ${
+                        className={`px-3 py-1.5 border text-xs font-mono transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary ${
                           active
                             ? 'border-matcha-primary bg-matcha-primary text-white'
                             : 'border-matcha-border bg-matcha-bg text-[#0A0A0A] hover:border-matcha-secondary'
@@ -611,7 +642,7 @@ export default function AddressesTab({ addresses: initialAddresses }) {
                     type="checkbox"
                     checked={formData.isDefault}
                     onChange={(e) => setFormData({ ...formData, isDefault: e.target.checked })}
-                    className="accent-matcha-primary w-4 h-4 cursor-pointer"
+                    className="accent-matcha-primary w-4 h-4 cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary"
                   />
                   <span className="text-xs text-[#0A0A0A]">{t('account.setAsDefault')}</span>
                 </label>
@@ -623,7 +654,7 @@ export default function AddressesTab({ addresses: initialAddresses }) {
                   type="button"
                   onClick={closeModal}
                   disabled={isSubmitting}
-                  className="px-4 py-2 border border-matcha-border text-[#0A0A0A] hover:bg-matcha-border/20 transition-colors cursor-pointer"
+                  className="px-4 py-2 border border-matcha-border text-[#0A0A0A] hover:bg-matcha-border/20 transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                 >
                   {t('account.cancel')}
                 </button>
@@ -631,7 +662,7 @@ export default function AddressesTab({ addresses: initialAddresses }) {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="inline-flex items-center gap-2 px-6 py-2 bg-matcha-primary hover:bg-[#1A381F] text-white font-bold transition-colors disabled:opacity-50 cursor-pointer"
+                  className="inline-flex items-center gap-2 px-6 py-2 bg-matcha-primary hover:bg-[#1A381F] text-white font-bold transition-colors disabled:opacity-50 cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary"
                 >
                   {isSubmitting && <Loader2 size={13} className="animate-spin" />}
                   <span>{isSubmitting ? t('account.saving') : t('account.save')}</span>
@@ -644,17 +675,23 @@ export default function AddressesTab({ addresses: initialAddresses }) {
 
       {/* Delete Confirmation Modal */}
       {deletingAddress && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
+        <div
+          role="alertdialog"
+          aria-modal="true"
+          aria-labelledby="delete-modal-title"
+          aria-describedby="delete-modal-desc"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in"
+        >
           <div className="bg-white border border-matcha-border p-6 sm:p-8 max-w-sm w-full space-y-4 text-center">
             <div className="w-12 h-12 mx-auto rounded-full bg-red-100 flex items-center justify-center text-red-600">
               <Trash2 size={22} />
             </div>
 
             <div className="space-y-1">
-              <h3 className="text-sm font-bold text-[#0A0A0A] uppercase tracking-tight">
+              <h3 id="delete-modal-title" className="text-sm font-bold text-[#0A0A0A] uppercase tracking-tight">
                 {t('account.deleteConfirmTitle')}
               </h3>
-              <p className="text-xs text-matcha-muted font-mono leading-relaxed">
+              <p id="delete-modal-desc" className="text-xs text-matcha-muted font-mono leading-relaxed">
                 {t('account.deleteConfirmMessage')}
               </p>
               <p className="text-xs font-bold text-[#0A0A0A] pt-1">
@@ -667,7 +704,7 @@ export default function AddressesTab({ addresses: initialAddresses }) {
                 type="button"
                 onClick={() => setDeletingAddress(null)}
                 disabled={isDeleting}
-                className="px-4 py-2 border border-matcha-border text-[#0A0A0A] hover:bg-matcha-border/20 transition-colors cursor-pointer"
+                className="px-4 py-2 border border-matcha-border text-[#0A0A0A] hover:bg-matcha-border/20 transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
               >
                 {t('account.cancel')}
               </button>
@@ -676,7 +713,7 @@ export default function AddressesTab({ addresses: initialAddresses }) {
                 type="button"
                 onClick={handleDelete}
                 disabled={isDeleting}
-                className="inline-flex items-center gap-1.5 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold transition-colors disabled:opacity-50 cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-bold transition-colors disabled:opacity-50 cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-red-600"
               >
                 {isDeleting && <Loader2 size={12} className="animate-spin" />}
                 <span>{isDeleting ? t('account.deleting') : t('account.confirmDelete')}</span>

@@ -63,7 +63,7 @@ export default function ResetPasswordPage() {
   // that can be told apart without asking the server anything.
   if (!token) {
     return (
-      <main className="min-h-[70vh] bg-matcha-bg px-4 sm:px-6 py-16">
+      <div className="min-h-[70vh] bg-matcha-bg px-4 sm:px-6 py-16">
         <div className="max-w-md mx-auto bg-white border border-matcha-border p-8 text-center space-y-4">
           <h1 className="text-lg font-extrabold uppercase tracking-tight text-[#0A0A0A]">{t('access.resetTitle')}</h1>
           <p className="text-xs font-mono text-matcha-muted leading-relaxed">{t('access.resetNoToken')}</p>
@@ -71,12 +71,12 @@ export default function ResetPasswordPage() {
             {t('access.resetBackToSignIn')}
           </Link>
         </div>
-      </main>
+      </div>
     );
   }
 
   return (
-    <main className="min-h-[70vh] bg-matcha-bg px-4 sm:px-6 py-16">
+    <div className="min-h-[70vh] bg-matcha-bg px-4 sm:px-6 py-16">
       <form onSubmit={submit} className="max-w-md mx-auto bg-white border border-matcha-border p-8 space-y-5">
         <div className="space-y-2">
           <h1 className="text-lg font-extrabold uppercase tracking-tight text-[#0A0A0A]">{t('access.resetTitle')}</h1>
@@ -137,6 +137,6 @@ export default function ResetPasswordPage() {
           </Link>
         </p>
       </form>
-    </main>
+    </div>
   );
 }
