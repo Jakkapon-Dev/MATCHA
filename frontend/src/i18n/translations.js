@@ -74,6 +74,21 @@ export const translations = {
       facebookSoon: 'Facebook — coming soon',
     },
 
+    verifyEmail: {
+      title: 'Verify your email',
+      badge: 'Account Activation',
+      desc: 'We sent a verification link to {email}. Please click the link in your email to activate your account before accessing all features.',
+      checkStatus: "I've verified my email",
+      checking: 'Checking status...',
+      resend: 'Resend verification link',
+      resendCooldown: 'Resend link in {seconds}s',
+      resendSuccess: 'A fresh verification email has been sent to {email}.',
+      notVerified: 'Email is not verified yet. Please check your inbox or spam folder.',
+      verifiedSuccess: 'Email verified successfully! Welcome to MatchA.',
+      backToSignIn: 'Return to Sign In',
+      notice: 'Did not receive the email? Check your junk/spam folder or request a new link above.',
+    },
+
     mixMatch: {
       addedPartial: '⚠️ Added {count} to your bag ({skipped} left out, out of stock). The {percent}% set discount needs all four pieces.',
       addedFullSet: '✨ The full set of {count} is in your bag. The {percent}% set discount shows on the order summary.',
@@ -845,6 +860,21 @@ export const translations = {
       google: 'เข้าสู่ระบบด้วย Google',
       googleFailed: 'เข้าสู่ระบบด้วย Google ไม่สำเร็จ กรุณาลองอีกครั้ง',
       facebookSoon: 'Facebook — เร็ว ๆ นี้',
+    },
+
+    verifyEmail: {
+      title: 'กรุณายืนยันที่อยู่อีเมลของคุณ',
+      badge: 'การเปิดใช้งานบัญชี',
+      desc: 'เราได้ส่งลิงก์สำหรับยืนยันไปที่ {email} แล้ว กรุณากดลิงก์ดังกล่าวเพื่อเปิดใช้งานบัญชีก่อนเริ่มต้นเข้าใช้งานทุกฟังก์ชัน',
+      checkStatus: 'ฉันยืนยันอีเมลเรียบร้อยแล้ว',
+      checking: 'กำลังตรวจสอบสถานะ...',
+      resend: 'ส่งอีเมลยืนยันอีกครั้ง',
+      resendCooldown: 'ส่งใหม่อีกครั้งได้ใน {seconds} วินาที',
+      resendSuccess: 'ส่งลิงก์ยืนยันใหม่อีกครั้งไปยัง {email} เรียบร้อยแล้ว',
+      notVerified: 'อีเมลนี้ยังไม่ได้รับการยืนยัน กรุณาตรวจสอบกล่องจดหมายหรือโฟลเดอร์จดหมายขยะ',
+      verifiedSuccess: 'ยืนยันอีเมลสำเร็จ! ยินดีต้อนรับสู่ MatchA',
+      backToSignIn: 'กลับไปหน้าเข้าสู่ระบบ',
+      notice: 'ไม่พบอีเมลใช่หรือไม่? ลองตรวจสอบในโฟลเดอร์สแปม/จดหมายขยะ หรือกดขอรับลิงก์ใหม่ด้านบน',
     },
 
     mixMatch: {

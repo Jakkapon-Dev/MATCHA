@@ -4,8 +4,10 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
   sendEmailVerification,
   updateProfile,
+  reload,
 } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -26,6 +28,23 @@ export function getFirebaseAuth() {
   return getAuth(app);
 }
 
+export function getCurrentFirebaseUser() {
+  try {
+    const auth = getFirebaseAuth();
+    return auth.currentUser;
+  } catch {
+    return null;
+  }
+}
+
+export async function reloadFirebaseUser() {
+  const auth = getFirebaseAuth();
+  const user = auth.currentUser;
+  if (!user) return null;
+  await reload(user);
+  return auth.currentUser;
+}
+
 export async function signInWithGoogle() {
   const auth = getFirebaseAuth();
   const provider = new GoogleAuthProvider();
@@ -41,6 +60,12 @@ export async function signUpWithEmail(email, password, displayName = '') {
     await updateProfile(credential.user, { displayName }).catch(() => {});
   }
   await sendEmailVerification(credential.user);
+  return credential.user;
+}
+
+export async function signInWithEmail(email, password) {
+  const auth = getFirebaseAuth();
+  const credential = await signInWithEmailAndPassword(auth, email, password);
   return credential.user;
 }
 

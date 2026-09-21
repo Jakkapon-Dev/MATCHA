@@ -173,8 +173,7 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
       if (registering) {
         const name = `${form.firstName} ${form.lastName}`.trim() || form.email.split('@')[0];
         await signUpWithEmail(form.email.trim(), form.password, name);
-        setVerificationSentEmail(form.email.trim());
-        showToast(t('access.verificationSentTitle'), 'success');
+        navigate(`/verify-email?email=${encodeURIComponent(form.email.trim())}`);
       } else {
         const res = await api.login(form.email.trim(), form.password);
         const account = res.data || {};

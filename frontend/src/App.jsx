@@ -15,6 +15,7 @@ const PaymentPage = React.lazy(() => import('./pages/PaymentPage.jsx'));
 const UserAccount = React.lazy(() => import('./pages/UserAccount.jsx'));
 const GuestOrdersPage = React.lazy(() => import('./pages/GuestOrdersPage.jsx'));
 const ResetPasswordPage = React.lazy(() => import('./pages/ResetPasswordPage.jsx'));
+const VerifyEmailPage = React.lazy(() => import('./pages/VerifyEmailPage.jsx'));
 const AdminPage = React.lazy(() => import('./pages/AdminPage.jsx'));
 const PersonalColorPage = React.lazy(() => import('./pages/PersonalColorPage.jsx'));
 const MixMatchStudioPage = React.lazy(() => import('./pages/MixMatchStudioPage.jsx'));
@@ -71,6 +72,7 @@ const TITLE_KEYS = [
   ['/account', 'titles.account'],
   ['/orders', 'titles.orders'],
   ['/reset-password', 'titles.resetPassword'],
+  ['/verify-email', 'verifyEmail.title'],
   ['/admin', 'titles.admin'],
   ['/login', 'titles.login'],
   ['/legal', 'titles.legal'],
@@ -370,6 +372,8 @@ function AppContent() {
           {/* Where an emailed reset link lands. Open by design: the token in
               the query string is the only thing that makes it useful. */}
           <Route path="/reset-password" element={<ResetPasswordPage />} />
+          {/* Email verification prompt with cooldown resend and status reload */}
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
 
           {/* 7. User Account Page (Member VIP Lounge) */}
           <Route
