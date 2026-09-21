@@ -360,6 +360,29 @@ export const api = {
     });
   },
 
+  // Privacy & Data Rights
+  getConsent: async () => {
+    return fetchWithFallback('/users/me/consent');
+  },
+
+  updateConsent: async ({ optedIn, version = '1.0' }) => {
+    return fetchWithFallback('/users/me/consent', {
+      method: 'PATCH',
+      body: JSON.stringify({ optedIn, version })
+    });
+  },
+
+  getDeletionRequest: async () => {
+    return fetchWithFallback('/users/me/deletion-request');
+  },
+
+  submitDeletionRequest: async ({ reason = '' }) => {
+    return fetchWithFallback('/users/me/deletion-request', {
+      method: 'POST',
+      body: JSON.stringify({ reason })
+    });
+  },
+
   // Fetch categories with product counts
   getCategories: async () => {
     try {

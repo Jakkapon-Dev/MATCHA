@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import { z } from 'zod';
 import { User } from '../services/userStore.js';
 import Order from '../models/Order.js';
+import DeletionRequest from '../models/DeletionRequest.js';
 import { authRequired, adminOnly } from '../middleware/auth.js';
 import { MAX_BYTES, storeImage, deleteImage } from '../services/mediaStorage.js';
 
@@ -217,6 +218,97 @@ router.delete('/me/avatar', checkDbReady, avatarRateLimit, async (req, res, next
     res.json({ success: true, data: safeProfile(user) });
   } catch (error) {
     next(error);
+  }
+});
+
+// ==========================================
+// Privacy & Consent Endpoints (Self-Service)
+// ==========================================
+
+router.get('/me/consent', checkDbReady, async (req, res) => {
+  try {
+    const userId = req.user?._id || req.user?.id;
+    const user = await User.findById(userId).select('marketingConsent createdAt').lean();
+    if (!user) return res.status(404).json({ success: false, message: 'Member not found' });
+    res.json({
+      success: true,
+      data: user.marketingConsent || { optedIn: false, version: '1.0', updatedAt: user.createdAt }
+    });
+  } catch {
+    res.status(503).json({ success: false, message: 'Could not load consent status' });
+  }
+});
+
+router.patch('/me/consent', checkDbReady, async (req, res) => {
+  const { optedIn, version = '1.0' } = req.body;
+  if (typeof optedIn !== 'boolean') {
+    return res.status(400).json({ success: false, message: 'optedIn must be a boolean' });
+  }
+
+  try {
+    const userId = req.user?._id || req.user?.id;
+    const consentPayload = {
+      optedIn,
+      version: typeof version === 'string' ? version.slice(0, 20) : '1.0',
+      updatedAt: new Date()
+    };
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: { marketingConsent: consentPayload } },
+      { new: true }
+    ).select('marketingConsent').lean();
+
+    if (!user) return res.status(404).json({ success: false, message: 'Member not found' });
+    res.json({
+      success: true,
+      data: user.marketingConsent
+    });
+  } catch {
+    res.status(503).json({ success: false, message: 'Could not update consent' });
+  }
+});
+
+router.get('/me/deletion-request', checkDbReady, async (req, res) => {
+  try {
+    const userId = req.user?._id || req.user?.id;
+    const latest = await DeletionRequest.findOne({ userId }).sort({ createdAt: -1 }).lean();
+    res.json({
+      success: true,
+      data: latest || null
+    });
+  } catch {
+    res.status(503).json({ success: false, message: 'Could not load deletion request' });
+  }
+});
+
+router.post('/me/deletion-request', checkDbReady, async (req, res) => {
+  try {
+    const userId = req.user?._id || req.user?.id;
+    const email = req.user?.email;
+    const reason = typeof req.body.reason === 'string' ? req.body.reason.slice(0, 500).trim() : '';
+
+    const existingPending = await DeletionRequest.findOne({ userId, status: 'pending' });
+    if (existingPending) {
+      return res.status(409).json({
+        success: false,
+        message: 'A data deletion request is already pending review for this account.'
+      });
+    }
+
+    const created = await DeletionRequest.create({
+      userId,
+      email,
+      reason,
+      status: 'pending'
+    });
+
+    res.status(201).json({
+      success: true,
+      message: 'Deletion request submitted. Your personal identification data will be reviewed for removal; past orders will have customer identifiers anonymized to satisfy accounting compliance.',
+      data: created
+    });
+  } catch {
+    res.status(503).json({ success: false, message: 'Could not submit deletion request' });
   }
 });
 
