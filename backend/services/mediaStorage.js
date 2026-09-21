@@ -103,4 +103,42 @@ export async function storeImage(buffer, root = storageRoot) {
   return usingCloudinary() ? uploadToCloudinary(prepared) : writeToDisk(prepared, root);
 }
 
-export default { storageRoot, MAX_BYTES, usingCloudinary, isManagedUrl, prepareImage, storeImage };
+export async function deleteImage(asset, root = storageRoot) {
+  if (!asset) return { success: false, message: 'No asset provided' };
+
+  if (asset.publicId) {
+    try {
+      const result = await new Promise((resolve, reject) => {
+        client().uploader.destroy(asset.publicId, { invalidate: true }, (error, res) => {
+          if (error) return reject(error);
+          resolve(res);
+        });
+      });
+      if (result?.result !== 'ok' && result?.result !== 'not found') {
+        throw new Error(result?.result || 'Cloudinary destroy failed');
+      }
+      return { success: true, backend: 'cloudinary', result: result?.result };
+    } catch (err) {
+      const safeMsg = err?.message || 'Storage deletion failed';
+      console.warn(`[MediaStorage] Cloudinary destroy failed: ${safeMsg}`);
+      throw Object.assign(new Error(safeMsg), { status: 502 });
+    }
+  }
+
+  // Delete from local disk
+  const files = [];
+  if (typeof asset.url === 'string' && asset.url.startsWith('/api/media/files/')) {
+    files.push(path.join(root, path.basename(asset.url)));
+  }
+  if (typeof asset.thumbnailUrl === 'string' && asset.thumbnailUrl.startsWith('/api/media/files/')) {
+    files.push(path.join(root, path.basename(asset.thumbnailUrl)));
+  }
+
+  await Promise.all(
+    files.map(file => fs.unlink(file).catch(() => {}))
+  );
+
+  return { success: true, backend: 'disk' };
+}
+
+export default { storageRoot, MAX_BYTES, usingCloudinary, isManagedUrl, prepareImage, storeImage, deleteImage };

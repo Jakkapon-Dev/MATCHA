@@ -15,8 +15,9 @@ import sharp from 'sharp';
 import express from 'express';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
+import { v2 as cloudinary } from 'cloudinary';
 
-import { prepareImage, isManagedUrl, storeImage } from '../services/mediaStorage.js';
+import { prepareImage, isManagedUrl, storeImage, deleteImage } from '../services/mediaStorage.js';
 import { defaultLookbooks, resolveLookbooks } from '../services/lookbook.js';
 import router from '../routes/mediaLookbook.js';
 import { setAuthGuards } from '../routes/mediaRoutes.js';
@@ -175,4 +176,141 @@ test('Lookbook rejects duplicate products in hotspot links', async () => {
   const link = { productId: 'LOOK-01-JACKET', color: '', x: 40, y: 30 };
   const res = await fetch(`${base}/admin/lookbooks/SPREAD-01`, { method: 'PUT', headers, body: JSON.stringify({ title: 'Look', heroImage: '/images/hero.png', published: true, revision: 0, items: [link, link] }) });
   assert.equal(res.status, 400);
+});
+
+test('deleteImage removes local disk files without throwing if missing', async () => {
+  const root = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'matcha-del-test-'));
+  const mainFile = path.join(root, 'del-1.webp');
+  const thumbFile = path.join(root, 'del-1-thumb.webp');
+  await fs.promises.writeFile(mainFile, 'fake image data');
+  await fs.promises.writeFile(thumbFile, 'fake thumb data');
+
+  const asset = {
+    url: '/api/media/files/del-1.webp',
+    thumbnailUrl: '/api/media/files/del-1-thumb.webp',
+    publicId: null,
+  };
+
+  const res = await deleteImage(asset, root);
+  assert.equal(res.success, true);
+  assert.equal(res.backend, 'disk');
+  assert.equal(fs.existsSync(mainFile), false);
+  assert.equal(fs.existsSync(thumbFile), false);
+
+  // Calling again on missing files does not crash
+  const res2 = await deleteImage(asset, root);
+  assert.equal(res2.success, true);
+});
+
+test('deleteImage destroys asset on Cloudinary when publicId is present', async () => {
+  let destroyedPublicId = null;
+  let destroyOptions = null;
+  mock.method(cloudinary.uploader, 'destroy', (publicId, options, callback) => {
+    destroyedPublicId = publicId;
+    destroyOptions = options;
+    callback(null, { result: 'ok' });
+  });
+
+  const asset = {
+    url: 'https://res.cloudinary.com/matcha/image/upload/v1/matcha/media/test_123.webp',
+    publicId: 'matcha/media/test_123',
+  };
+
+  const res = await deleteImage(asset);
+  assert.equal(res.success, true);
+  assert.equal(res.backend, 'cloudinary');
+  assert.equal(destroyedPublicId, 'matcha/media/test_123');
+  assert.equal(destroyOptions.invalidate, true);
+});
+
+test('archiving media asset destroys Cloudinary file and marks archived', async () => {
+  const id = new mongoose.Types.ObjectId();
+  let destroyedId = null;
+  mock.method(cloudinary.uploader, 'destroy', (publicId, options, callback) => {
+    destroyedId = publicId;
+    callback(null, { result: 'ok' });
+  });
+
+  const assetDoc = {
+    _id: id,
+    url: 'https://res.cloudinary.com/matcha/image/upload/v1/matcha/media/abc_456.webp',
+    publicId: 'matcha/media/abc_456',
+    archived: false,
+    save: async function() { this.saved = true; return this; },
+  };
+
+  mock.method(Media, 'findById', async () => assetDoc);
+  mock.method(Product, 'find', () => query([]));
+  mock.method(Lookbook, 'find', () => query([]));
+
+  const res = await fetch(`${base}/admin/media/${id}`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify({ archived: true })
+  });
+
+  assert.equal(res.status, 200);
+  assert.equal(destroyedId, 'matcha/media/abc_456');
+  assert.equal(assetDoc.archived, true);
+});
+
+test('Cloudinary destroy failure aborts archive and preserves DB record', async () => {
+  const id = new mongoose.Types.ObjectId();
+  mock.method(cloudinary.uploader, 'destroy', (publicId, options, callback) => {
+    callback(new Error('Cloudinary error'));
+  });
+
+  let saved = false;
+  const assetDoc = {
+    _id: id,
+    url: 'https://res.cloudinary.com/matcha/image/upload/v1/matcha/media/fail_789.webp',
+    publicId: 'matcha/media/fail_789',
+    archived: false,
+    save: async function() { saved = true; return this; },
+  };
+
+  mock.method(Media, 'findById', async () => assetDoc);
+  mock.method(Product, 'find', () => query([]));
+  mock.method(Lookbook, 'find', () => query([]));
+
+  const res = await fetch(`${base}/admin/media/${id}`, {
+    method: 'PATCH',
+    headers,
+    body: JSON.stringify({ archived: true })
+  });
+
+  assert.notEqual(res.status, 200);
+  assert.equal(saved, false);
+  assert.equal(assetDoc.archived, false);
+});
+
+test('DELETE /admin/media/:id hard-deletes unreferenced asset', async () => {
+  const id = new mongoose.Types.ObjectId();
+  let deletedFromDb = false;
+  let destroyedId = null;
+
+  mock.method(cloudinary.uploader, 'destroy', (publicId, options, callback) => {
+    destroyedId = publicId;
+    callback(null, { result: 'ok' });
+  });
+
+  const assetDoc = {
+    _id: id,
+    url: 'https://res.cloudinary.com/matcha/image/upload/v1/matcha/media/to_del.webp',
+    publicId: 'matcha/media/to_del',
+  };
+
+  mock.method(Media, 'findById', async () => assetDoc);
+  mock.method(Media, 'findByIdAndDelete', async () => { deletedFromDb = true; return assetDoc; });
+  mock.method(Product, 'find', () => query([]));
+  mock.method(Lookbook, 'find', () => query([]));
+
+  const res = await fetch(`${base}/admin/media/${id}`, {
+    method: 'DELETE',
+    headers
+  });
+
+  assert.equal(res.status, 200);
+  assert.equal(destroyedId, 'matcha/media/to_del');
+  assert.equal(deletedFromDb, true);
 });
