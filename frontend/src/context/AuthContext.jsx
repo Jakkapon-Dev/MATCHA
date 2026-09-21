@@ -101,12 +101,30 @@ export function AuthProvider({ children }) {
     return nextUser;
   }, []);
 
+  const commitProfileResponse = useCallback((response) => {
+    const nextUser = { ...currentUserRef.current, ...(response?.data || {}) };
+    currentUserRef.current = nextUser;
+    setCurrentUser(nextUser);
+    rememberSession(nextUser, sessionIsPersistent());
+    return nextUser;
+  }, []);
+
+  const uploadProfileAvatar = useCallback(async (file) => {
+    return commitProfileResponse(await api.uploadProfileAvatar(file));
+  }, [commitProfileResponse]);
+
+  const deleteProfileAvatar = useCallback(async () => {
+    return commitProfileResponse(await api.deleteProfileAvatar());
+  }, [commitProfileResponse]);
+
   const value = {
     currentUser,
     setCurrentUser,
     login,
     logout,
     updateProfile,
+    uploadProfileAvatar,
+    deleteProfileAvatar,
     isAuthenticated: Boolean(currentUser),
   };
 

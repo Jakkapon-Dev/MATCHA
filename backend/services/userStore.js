@@ -65,6 +65,11 @@ const userSchema = new mongoose.Schema(
     authProviders: { type: [String], default: [] },
     emailVerified: { type: Boolean, default: false },
     avatarUrl: { type: String, default: '' },
+    // Storage metadata is private and lets us remove only avatars uploaded by
+    // this service. Provider-hosted photos (for example Google) have no id and
+    // are therefore never sent to Cloudinary's deletion API.
+    avatarPublicId: { type: String, default: '' },
+    avatarThumbnailUrl: { type: String, default: '' },
 
     /* Password reset.
 

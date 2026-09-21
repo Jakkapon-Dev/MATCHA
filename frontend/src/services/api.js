@@ -101,8 +101,9 @@ export function isNetworkErrorKey(err) {
 
 async function fetchWithFallback(endpoint, options = {}) {
   const token = getToken();
+  const isFormData = options.body instanceof FormData;
   const headers = {
-    'Content-Type': 'application/json',
+    ...(!isFormData ? { 'Content-Type': 'application/json' } : {}),
     'X-Guest-Id': guestId(),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
     ...(options.headers || {})
@@ -322,6 +323,16 @@ export const api = {
       method: 'PATCH',
       body: JSON.stringify(updateData)
     });
+  },
+
+  uploadProfileAvatar: async (file) => {
+    const body = new FormData();
+    body.append('image', file);
+    return fetchWithFallback('/users/me/avatar', { method: 'POST', body });
+  },
+
+  deleteProfileAvatar: async () => {
+    return fetchWithFallback('/users/me/avatar', { method: 'DELETE' });
   },
 
   // Address Book CRUD

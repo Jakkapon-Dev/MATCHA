@@ -28,7 +28,7 @@ import { formatOrdersForDisplay } from '../utils/orderHistory';
 
 export default function UserAccount() {
   const { t } = useLanguage();
-  const { currentUser, updateProfile, logout } = useAuth();
+  const { currentUser, updateProfile, uploadProfileAvatar, deleteProfileAvatar, logout } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
 
@@ -45,6 +45,7 @@ export default function UserAccount() {
     lastName: currentUser?.lastName || currentUser?.name?.split(' ').slice(1).join(' ') || '',
     email: currentUser?.email || '',
     phone: currentUser?.phone || '',
+    avatarUrl: currentUser?.avatarUrl || '',
   });
 
   const [preferences, setPreferences] = useState({
@@ -61,7 +62,8 @@ export default function UserAccount() {
         firstName: currentUser.firstName || currentUser.name?.split(' ')[0] || prev.firstName,
         lastName: currentUser.lastName || currentUser.name?.split(' ').slice(1).join(' ') || prev.lastName,
         email: currentUser.email || prev.email,
-        phone: currentUser.phone ?? prev.phone
+        phone: currentUser.phone ?? prev.phone,
+        avatarUrl: currentUser.avatarUrl ?? prev.avatarUrl
       }));
     }
   }, [currentUser]);
@@ -294,6 +296,8 @@ export default function UserAccount() {
                 onProfileChange={setProfile}
                 onSave={handleProfileSave}
                 saveSuccess={saveSuccess}
+                onAvatarUpload={uploadProfileAvatar}
+                onAvatarDelete={deleteProfileAvatar}
               />
             )}
 
