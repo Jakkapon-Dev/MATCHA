@@ -81,7 +81,7 @@ export default function AdminPage() {
     }
   };
 
-  const { inventory, setInventory, orders, setOrders, members, setMembers, status, errors, refresh } = useAdminData(currentUser?.id || currentUser?._id);
+  const { inventory, setInventory, orders, setOrders, members, setMembers, status, errors, refresh, pagination, changePage } = useAdminData(currentUser?.id || currentUser?._id);
   const [saving, setSaving] = useState(false);
   const savingRef = useRef(false);
   const [mutationNotice, setMutationNotice] = useState(null);
@@ -629,14 +629,14 @@ export default function AdminPage() {
           {/* TAB 2: INVENTORY & STOCK MANAGEMENT                                       */}
           {/* ========================================================================= */}
           {activeTab === 'inventory' && (
-            <InventoryTab status={status} errors={errors} setInventoryCategoryFilter={setInventoryCategoryFilter} inventoryCategoryFilter={inventoryCategoryFilter} inventoryStatusFilter={inventoryStatusFilter} setInventoryStatusFilter={setInventoryStatusFilter} filteredInventory={filteredInventory} restockAmounts={restockAmounts} handleRestockInputChange={handleRestockInputChange} handleRestockSubmit={handleRestockSubmit} saving={saving} isDemo={isDemo} handleDeleteProduct={handleDeleteProduct} />
+            <InventoryTab status={status} errors={errors} setInventoryCategoryFilter={setInventoryCategoryFilter} inventoryCategoryFilter={inventoryCategoryFilter} inventoryStatusFilter={inventoryStatusFilter} setInventoryStatusFilter={setInventoryStatusFilter} filteredInventory={filteredInventory} restockAmounts={restockAmounts} handleRestockInputChange={handleRestockInputChange} handleRestockSubmit={handleRestockSubmit} saving={saving} isDemo={isDemo} handleDeleteProduct={handleDeleteProduct} pagination={pagination?.inventory} onPageChange={(p) => changePage('inventory', p, { search: globalSearch, category: inventoryCategoryFilter, status: inventoryStatusFilter })} />
           )}
 
           {/* ========================================================================= */}
           {/* TAB 3: ORDERS PIPELINE                                                    */}
           {/* ========================================================================= */}
           {activeTab === 'orders' && (
-            <OrdersTab status={status} errors={errors} setOrderStatusFilter={setOrderStatusFilter} orderStatusFilter={orderStatusFilter} filteredOrders={filteredOrders} setSelectedOrderForModal={order => { setMutationNotice(null); setSelectedOrderForModal(order); }} saving={saving} isDemo={isDemo} handleUpdateOrderStatus={handleUpdateOrderStatus} />
+            <OrdersTab status={status} errors={errors} setOrderStatusFilter={setOrderStatusFilter} orderStatusFilter={orderStatusFilter} filteredOrders={filteredOrders} setSelectedOrderForModal={order => { setMutationNotice(null); setSelectedOrderForModal(order); }} saving={saving} isDemo={isDemo} handleUpdateOrderStatus={handleUpdateOrderStatus} pagination={pagination?.orders} onPageChange={(p) => changePage('orders', p, { search: globalSearch, status: orderStatusFilter })} />
           )}
 
           {/* ========================================================================= */}
@@ -650,7 +650,7 @@ export default function AdminPage() {
           {/* TAB 5: VIP CUSTOMER REGISTRY                                              */}
           {/* ========================================================================= */}
           {activeTab === 'members' && (
-            <MembersTab status={status} errors={errors} setMemberTierFilter={setMemberTierFilter} memberTierFilter={memberTierFilter} filteredMembers={filteredMembers} handleToggleVIPTier={handleToggleVIPTier} saving={saving} isDemo={isDemo} />
+            <MembersTab status={status} errors={errors} setMemberTierFilter={setMemberTierFilter} memberTierFilter={memberTierFilter} filteredMembers={filteredMembers} handleToggleVIPTier={handleToggleVIPTier} saving={saving} isDemo={isDemo} pagination={pagination?.members} onPageChange={(p) => changePage('members', p, { search: globalSearch, tier: memberTierFilter })} />
           )}
 
           {/* ========================================================================= */}

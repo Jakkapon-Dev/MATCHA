@@ -180,3 +180,98 @@ test('order status writes validate values and return the persisted result', asyn
   assert.equal(response.status, 200);
   assert.equal((await response.json()).data.status, 'shipped');
 });
+
+test('server-side pagination returns data and pagination metadata with capped limit', async t => {
+  connected(t);
+  const sampleProducts = [
+    { id: 'p_1', name: 'Product 1', sku: 'SKU-1', color: 'Green', category: 'Tops', stock: 15 },
+    { id: 'p_2', name: 'Product 2', sku: 'SKU-2', color: 'Blue', category: 'Tops', stock: 5 }
+  ];
+  t.mock.method(Product, 'find', () => {
+    return {
+      sort: () => ({
+        skip: skip => ({
+          limit: limit => ({
+            lean: async () => {
+              assert.equal(skip, 0);
+              assert.equal(limit, 25);
+              return sampleProducts;
+            }
+          })
+        })
+      })
+    };
+  });
+
+  const res = await fetch(base + '/admin/products?page=1&limit=25', { headers: headers('Admin') });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.success, true);
+  assert.equal(body.data.length, 2);
+  assert.equal(body.pagination.page, 1);
+  assert.equal(body.pagination.limit, 25);
+  assert.equal(body.pagination.total, 2);
+  assert.equal(body.pagination.totalPages, 1);
+});
+
+test('pagination enforces limit ceiling of 100', async t => {
+  connected(t);
+  t.mock.method(Product, 'find', () => ({
+    sort: () => ({
+      skip: () => ({
+        limit: limit => ({
+          lean: async () => {
+            assert.equal(limit, 100);
+            return [];
+          }
+        })
+      })
+    })
+  }));
+
+  const res = await fetch(base + '/admin/products?page=1&limit=999', { headers: headers('Admin') });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.pagination.limit, 100);
+});
+
+test('orders and members endpoints return pagination metadata', async t => {
+  connected(t);
+  t.mock.method(Order, 'find', () => ({
+    sort: () => ({
+      skip: () => ({
+        limit: () => ({
+          lean: async () => [{ orderNumber: 'o_1', status: 'pending' }]
+        })
+      })
+    })
+  }));
+
+  const orderRes = await fetch(base + '/admin/orders?page=1&limit=10', { headers: headers('Admin') });
+  assert.equal(orderRes.status, 200);
+  const orderBody = await orderRes.json();
+  assert.equal(orderBody.success, true);
+  assert.equal(orderBody.pagination.limit, 10);
+  assert.equal(orderBody.data[0].orderNumber, 'o_1');
+
+  t.mock.method(User, 'find', () => ({
+    select: () => ({
+      sort: () => ({
+        skip: () => ({
+          limit: () => ({
+            lean: async () => [{ _id: 'u_1', name: 'User 1', email: 'u1@test.com', role: 'Member', tier: 'Regular Member' }]
+          })
+        })
+      })
+    })
+  }));
+  t.mock.method(Order, 'aggregate', async () => []);
+
+  const userRes = await fetch(base + '/users?page=1&limit=10', { headers: headers('Admin') });
+  assert.equal(userRes.status, 200);
+  const userBody = await userRes.json();
+  assert.equal(userBody.success, true);
+  assert.equal(userBody.pagination.limit, 10);
+  assert.equal(userBody.data[0].id, 'u_1');
+});
+
