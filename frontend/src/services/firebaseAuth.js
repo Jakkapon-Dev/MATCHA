@@ -6,6 +6,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendEmailVerification,
+  sendPasswordResetEmail,
   updateProfile,
   reload,
 } from 'firebase/auth';
@@ -74,4 +75,9 @@ export async function sendVerificationEmail(user) {
   const target = user || auth.currentUser;
   if (!target) throw new Error('No user is signed in');
   await sendEmailVerification(target);
+}
+
+export async function sendFirebasePasswordReset(email) {
+  const auth = getFirebaseAuth();
+  await sendPasswordResetEmail(auth, email);
 }

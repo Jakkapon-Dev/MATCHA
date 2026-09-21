@@ -9,7 +9,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import { passwordStrength } from '../features/auth/passwordStrength';
-import { signInWithGoogle, signUpWithEmail } from '../services/firebaseAuth';
+import { signInWithGoogle, signUpWithEmail, sendFirebasePasswordReset } from '../services/firebaseAuth';
 
 /* Signing in and signing up, on one page.
 
@@ -94,12 +94,17 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
     setBusy(true);
     setError('');
     try {
-      await api.forgotPassword(address, lang);
+      await sendFirebasePasswordReset(address);
+      showToast(t('access.forgotSent'), 'info');
     } catch (err) {
-      console.warn('Reset request failed:', err?.message);
+      if (err?.code === 'auth/too-many-requests') {
+        setError(t('access.tooManyRequests'));
+      } else {
+        // Under email enumeration protection, keep neutral answer
+        showToast(t('access.forgotSent'), 'info');
+      }
     } finally {
       setBusy(false);
-      showToast(t('access.forgotSent'), 'info');
     }
   };
 
