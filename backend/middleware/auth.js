@@ -95,10 +95,23 @@ export function requireRole(...roles) {
 export const authRequired = requireAuth;
 export const adminOnly = requireRole('Admin', 'admin');
 
+// Blocks critical mutations if the user registered with Firebase password but has not verified email
+export function requireVerifiedEmail(req, res, next) {
+  if (req.user && req.user.emailVerified === false) {
+    return res.status(403).json({
+      success: false,
+      code: 'EMAIL_NOT_VERIFIED',
+      message: 'กรุณายืนยันที่อยู่อีเมลของคุณก่อนดำเนินการนี้',
+    });
+  }
+  next();
+}
+
 export default { 
   requireAuth, 
   requireRole, 
   getJwtSecret,
   authRequired,
-  adminOnly 
+  adminOnly,
+  requireVerifiedEmail,
 };

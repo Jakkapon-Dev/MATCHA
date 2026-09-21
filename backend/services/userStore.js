@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema(
     // make the second ordinary account fail with a duplicate-key error.
     firebaseUid: { type: String, sparse: true, unique: true },
     authProviders: { type: [String], default: [] },
+    emailVerified: { type: Boolean, default: false },
     avatarUrl: { type: String, default: '' },
 
     /* Password reset.
@@ -107,6 +108,7 @@ export async function createUser({
   tier = 'Regular Member',
   firebaseUid = null,
   authProviders = [],
+  emailVerified = false,
   avatarUrl = ''
 }) {
   const doc = await User.create({
@@ -121,6 +123,7 @@ export async function createUser({
     addresses: [],
     ...(firebaseUid ? { firebaseUid } : {}),
     authProviders,
+    emailVerified: Boolean(emailVerified),
     avatarUrl
   });
   const user = doc.toObject();

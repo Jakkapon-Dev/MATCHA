@@ -196,6 +196,14 @@ async function releaseStock(items, session) {
 router.post('/', orderLimiter, async (req, res) => {
   try {
     const authUser = extractAuthUser(req);
+    if (authUser && authUser.emailVerified === false) {
+      return res.status(403).json({
+        success: false,
+        code: 'EMAIL_NOT_VERIFIED',
+        message: 'กรุณายืนยันที่อยู่อีเมลของคุณก่อนทำการสั่งซื้อสินค้า',
+      });
+    }
+
     const {
       idempotencyKey,
       customer = {},

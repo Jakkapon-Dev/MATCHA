@@ -33,13 +33,19 @@ export const safeUser = (u) => {
     role: u.role,
     tier: u.tier,
     avatarUrl: u.avatarUrl || '',
+    authProviders: u.authProviders || [],
+    emailVerified: Boolean(u.emailVerified),
   };
 };
 
 export const signToken = (user) =>
-  jwt.sign({ id: user._id, role: user.role }, getJwtSecret(), {
-    expiresIn: process.env.JWT_EXPIRES_IN || '7d',
-  });
+  jwt.sign(
+    { id: user._id, role: user.role, emailVerified: Boolean(user.emailVerified) },
+    getJwtSecret(),
+    {
+      expiresIn: process.env.JWT_EXPIRES_IN || '7d',
+    },
+  );
 
 // ---- Register ----
 router.post('/register', authLimiter, async (req, res) => {
@@ -136,10 +142,21 @@ export async function verifyFirebaseIdToken(idToken, apiKey = process.env.FIREBA
   });
   const payload = await response.json().catch(() => ({}));
   const identity = payload.users?.[0];
-  const isGoogleIdentity = identity?.providerUserInfo?.some((provider) => provider.providerId === 'google.com');
-  if (!response.ok || !identity?.localId || !identity?.email || identity.emailVerified !== true || !isGoogleIdentity) {
+
+  const providerIds = (identity?.providerUserInfo || []).map((provider) => provider.providerId);
+  const isGoogle = providerIds.includes('google.com');
+  const isPassword = providerIds.includes('password');
+
+  if (!response.ok || !identity?.localId || !identity?.email || (!isGoogle && !isPassword)) {
     throw Object.assign(new Error('Invalid Firebase identity'), { status: 401 });
   }
+
+  // Google identities must be verified
+  if (isGoogle && identity.emailVerified !== true) {
+    throw Object.assign(new Error('Invalid Firebase identity'), { status: 401 });
+  }
+
+  identity.provider = isGoogle ? 'google' : 'password';
   return identity;
 }
 
@@ -151,6 +168,7 @@ router.post('/firebase', authLimiter, async (req, res) => {
     }
 
     const identity = await verifyFirebaseIdToken(idToken.trim());
+    const providerName = identity.provider || 'google';
     const email = userStore.normalizeEmail(identity.email);
     let user = await User.findOne({ firebaseUid: identity.localId }).lean();
     if (!user) user = await userStore.findByEmail(email);
@@ -165,8 +183,9 @@ router.post('/firebase', authLimiter, async (req, res) => {
         email,
         passwordHash: '',
         firebaseUid: identity.localId,
-        authProviders: ['google'],
+        authProviders: [providerName],
         avatarUrl: identity.photoUrl || '',
+        emailVerified: Boolean(identity.emailVerified),
       });
     } else {
       user = await User.findByIdAndUpdate(
@@ -174,9 +193,10 @@ router.post('/firebase', authLimiter, async (req, res) => {
         {
           $set: {
             firebaseUid: identity.localId,
+            emailVerified: Boolean(identity.emailVerified),
             ...(identity.photoUrl ? { avatarUrl: identity.photoUrl } : {}),
           },
-          $addToSet: { authProviders: 'google' },
+          $addToSet: { authProviders: providerName },
         },
         { new: true, runValidators: true },
       ).lean();
@@ -188,7 +208,7 @@ router.post('/firebase', authLimiter, async (req, res) => {
     if (status >= 500) console.error('[auth] firebase', err);
     return res.status(status).json({
       success: false,
-      message: status === 401 ? 'Google sign-in could not be verified' : 'Google sign-in is temporarily unavailable',
+      message: status === 401 ? 'Firebase sign-in could not be verified' : 'Firebase sign-in is temporarily unavailable',
     });
   }
 });
