@@ -1,7 +1,8 @@
 import React from 'react';
 import AdminDataState from './AdminDataState';
+import AdminPagination from './AdminPagination';
 
-export default function MembersTab({ status, errors, setMemberTierFilter, memberTierFilter, filteredMembers, handleToggleVIPTier, saving, isDemo }) {
+export default function MembersTab({ status, errors, setMemberTierFilter, memberTierFilter, filteredMembers, handleToggleVIPTier, saving, isDemo, pagination, onPageChange }) {
   return (<AdminDataState resources={["members"]} status={status} errors={errors}>
             <div className="space-y-6 animate-fade-in">
               
@@ -27,15 +28,15 @@ export default function MembersTab({ status, errors, setMemberTierFilter, member
                     <thead className="bg-matcha-bg border-b border-matcha-border text-matcha-muted">
                       <tr>
                         <th className="p-4 font-bold">Member ID</th>
-                        <th className="p-4 font-bold">Customer Name</th>
+                        <th className="p-4 font-bold">Name</th>
                         <th className="p-4 font-bold">Email</th>
                         <th className="p-4 font-bold">Total Spent</th>
-                        <th className="p-4 font-bold">Tier Level</th>
-                        <th className="p-4 font-bold text-right">VIP Tier Management</th>
+                        <th className="p-4 font-bold">Tier</th>
+                        <th className="p-4 font-bold text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-matcha-border/40">
-                      {filteredMembers.length === 0 && <tr><td colSpan={6} className="p-6 text-center">No records match the current filters.</td></tr>}
+                      {filteredMembers.length === 0 && <tr><td colSpan={6} className="p-6 text-center">No members match the current filters.</td></tr>}
                       {filteredMembers.map(mem => (
                         <tr key={mem.id} className="hover:bg-matcha-bg/80 transition-colors">
                           <td className="p-4 font-bold text-matcha-primary">{mem.id}</td>
@@ -65,6 +66,14 @@ export default function MembersTab({ status, errors, setMemberTierFilter, member
                     </tbody>
                   </table>
                 </div>
+
+                <AdminPagination
+                  page={pagination?.page}
+                  totalPages={pagination?.totalPages}
+                  total={pagination?.total}
+                  onPageChange={onPageChange}
+                  loading={status?.members === 'loading'}
+                />
               </div>
 
             </div>
