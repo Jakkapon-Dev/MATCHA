@@ -212,9 +212,17 @@ const resetLimiter = rateLimit({
 });
 
 const RESET_TTL_MINUTES = 60;
+const ENABLE_LEGACY_PASSWORD_RESET = process.env.ENABLE_LEGACY_PASSWORD_RESET === 'true';
 
 // ---- Ask for a reset link ----
 router.post('/forgot-password', resetLimiter, async (req, res) => {
+  if (!ENABLE_LEGACY_PASSWORD_RESET) {
+    return res.status(410).json({
+      success: false,
+      message: 'ระบบรีเซ็ตรหัสผ่านแบบเดิมถูกปิดการใช้งานแล้ว กรุณาใช้ระบบรีเซ็ตของ Firebase',
+    });
+  }
+
   const { email, locale } = req.body || {};
 
   /* The same answer whether or not the address has an account.
@@ -261,6 +269,13 @@ router.post('/forgot-password', resetLimiter, async (req, res) => {
 
 // ---- Spend a reset link ----
 router.post('/reset-password', resetLimiter, async (req, res) => {
+  if (!ENABLE_LEGACY_PASSWORD_RESET) {
+    return res.status(410).json({
+      success: false,
+      message: 'ระบบรีเซ็ตรหัสผ่านแบบเดิมถูกปิดการใช้งานแล้ว กรุณาใช้ระบบรีเซ็ตของ Firebase',
+    });
+  }
+
   try {
     const { token, password } = req.body || {};
 
