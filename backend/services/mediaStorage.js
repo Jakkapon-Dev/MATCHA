@@ -16,7 +16,10 @@ const allowedFormats = new Set(['jpeg', 'png', 'webp']);
    CLOUDINARY_URL set, uploads go to Cloudinary instead and survive. Without
    it, everything below behaves exactly as it did before — local dev, the
    tests, and any host with a real disk need no configuration. */
-export const usingCloudinary = () => Boolean(process.env.CLOUDINARY_URL);
+export const usingCloudinary = () =>
+  Boolean(process.env.CLOUDINARY_URL) &&
+  process.env.NODE_ENV !== 'test' &&
+  process.env.IS_E2E !== 'true';
 const CLOUDINARY_FOLDER = 'matcha/media';
 
 // The SDK reads CLOUDINARY_URL when configured, so configure on first use
