@@ -44,7 +44,7 @@ export default function UserAccount() {
     firstName: currentUser?.firstName || currentUser?.name?.split(' ')[0] || '',
     lastName: currentUser?.lastName || currentUser?.name?.split(' ').slice(1).join(' ') || '',
     email: currentUser?.email || '',
-    phone: '',
+    phone: currentUser?.phone || '',
   });
 
   const [preferences, setPreferences] = useState({
@@ -60,7 +60,8 @@ export default function UserAccount() {
         ...prev,
         firstName: currentUser.firstName || currentUser.name?.split(' ')[0] || prev.firstName,
         lastName: currentUser.lastName || currentUser.name?.split(' ').slice(1).join(' ') || prev.lastName,
-        email: currentUser.email || prev.email
+        email: currentUser.email || prev.email,
+        phone: currentUser.phone ?? prev.phone
       }));
     }
   }, [currentUser]);
@@ -109,16 +110,19 @@ export default function UserAccount() {
     }
   };
 
-  const handleProfileSave = (e) => {
+  const handleProfileSave = async (e) => {
     e.preventDefault();
-    updateProfile({
-      firstName: profile.firstName,
-      lastName: profile.lastName,
-      name: `${profile.firstName} ${profile.lastName}`.trim(),
-      email: profile.email
-    });
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 3000);
+    try {
+      await updateProfile({
+        firstName: profile.firstName,
+        lastName: profile.lastName,
+        phone: profile.phone
+      });
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (err) {
+      showToast(err.message || 'Could not save profile.', 'error');
+    }
   };
 
   const handlePreferenceToggle = (key) => {

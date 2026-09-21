@@ -48,6 +48,7 @@ const userSchema = new mongoose.Schema(
     name: { type: String, default: '' },
     firstName: { type: String, default: '' },
     lastName: { type: String, default: '' },
+    phone: { type: String, default: '', trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     // Named passwordHash, not password, because that is what it holds: callers
     // hash before they get here. A field called `password` invites a plaintext

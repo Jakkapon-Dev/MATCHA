@@ -91,11 +91,14 @@ export function AuthProvider({ children }) {
      The confirmation toast went with it: ProfileTab already shows its own
      "saved" state, so the toast was a second announcement of one event, in
      English, on a page that had otherwise been translated. */
-  const updateProfile = useCallback((updates) => {
-    const nextUser = { ...currentUserRef.current, ...updates };
+  const updateProfile = useCallback(async (updates) => {
+    const response = await api.updateMyProfile(updates);
+    const saved = response?.data || updates;
+    const nextUser = { ...currentUserRef.current, ...saved };
     currentUserRef.current = nextUser;
     setCurrentUser(nextUser);
     rememberSession(nextUser, sessionIsPersistent());
+    return nextUser;
   }, []);
 
   const value = {

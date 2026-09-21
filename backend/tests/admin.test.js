@@ -87,6 +87,37 @@ test('tier updates persist and reject role escalation, invalid values and missin
   assert.equal((await response.json()).data.tier, 'VIP Connoisseur');
 });
 
+test('members can update only their own safe profile fields', async t => {
+  connected(t);
+  t.mock.method(User, 'findByIdAndUpdate', (id, update, options) => {
+    assert.equal(id, 'test-Member');
+    assert.deepEqual(update, { $set: { firstName: 'Mali', lastName: 'Dee', phone: '0812345678', name: 'Mali Dee' } });
+    assert.equal(options.runValidators, true);
+    return { lean: async () => ({
+      _id: id,
+      ...update.$set,
+      email: 'member@example.test',
+      role: 'Member',
+      tier: 'Regular Member'
+    }) };
+  });
+
+  const save = await fetch(base + '/users/me', {
+    method: 'PATCH',
+    headers: headers('Member'),
+    body: JSON.stringify({ firstName: 'Mali', lastName: 'Dee', phone: '0812345678' })
+  });
+  assert.equal(save.status, 200);
+  assert.equal((await save.json()).data.name, 'Mali Dee');
+
+  const forbidden = await fetch(base + '/users/me', {
+    method: 'PATCH',
+    headers: headers('Member'),
+    body: JSON.stringify({ role: 'Admin' })
+  });
+  assert.equal(forbidden.status, 400);
+});
+
 test('empty admin datasets stay empty, and database errors are not hidden', async t => {
   connected(t);
   t.mock.method(Product, 'find', () => ({ sort: () => ({ lean: async () => [] }) }));

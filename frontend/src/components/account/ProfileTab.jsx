@@ -74,9 +74,10 @@ export default function ProfileTab({
               type="email"
               name="email"
               value={profile.email}
-              onChange={handleChange}
+              readOnly
+              aria-readonly="true"
               placeholder="alex@matcha.vip"
-              className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary focus:ring-1 focus:ring-matcha-primary outline-none text-xs font-mono text-matcha-text bg-matcha-bg/40 transition-colors"
+              className="w-full px-3.5 py-2.5 border border-matcha-border outline-none text-xs font-mono text-matcha-muted bg-matcha-bg/70 cursor-not-allowed"
             />
           </div>
 
