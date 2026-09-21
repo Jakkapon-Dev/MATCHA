@@ -86,10 +86,22 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
   const [addedAnimation, setAddedAnimation] = useState(false);
   const [imageFade, setImageFade] = useState(false);
   const [galleryImage, setGalleryImage] = useState(null);
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageError, setImageError] = useState(false);
+
   // Gallery entries may be global or tied to the currently selected color.
   const gallery = (product?.gallery || []).filter(g => !g.color || g.color === activeVariant.color);
-  // Changing product or color returns the main frame to its primary variant image.
-  useEffect(() => { setGalleryImage(null); }, [product?.id, activeVariant.image, activeVariant.color]);
+  // Changing product or color returns the main frame to its primary variant image and resets loading state.
+  useEffect(() => {
+    setGalleryImage(null);
+    setImageLoading(true);
+    setImageError(false);
+  }, [product?.id, activeVariant.image, activeVariant.color]);
+
+  useEffect(() => {
+    setImageLoading(true);
+    setImageError(false);
+  }, [galleryImage?.url]);
   const [showFitGuide, setShowFitGuide] = useState(false);
   // Raised only when someone asks to buy without having chosen a size, so the
   // message is an answer to an action rather than a standing warning.
@@ -257,12 +269,42 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
             className="w-full flex-1 aspect-4/5 min-h-75 sm:min-h-90 md:min-h-100 overflow-hidden flex items-center justify-center relative p-4 sm:p-6"
             style={{ backgroundColor: dyeHex ? wash(dyeHex) : '#F1F1F1' }}
           >
+            {/* Loading Skeleton */}
+            {imageLoading && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/5 animate-pulse z-15">
+                <div className="w-8 h-8 rounded-full border-2 border-matcha-primary border-t-transparent animate-spin" />
+                <span className="text-[10px] font-mono text-matcha-muted mt-2 uppercase tracking-wider">
+                  Loading image…
+                </span>
+              </div>
+            )}
+
+            {/* Error / Fallback Banner */}
+            {imageError && (
+              <div className="absolute bottom-3 left-3 right-3 bg-[#0A0A0A]/85 text-white px-3 py-2 flex items-center justify-between text-[11px] font-mono z-20 shadow-md">
+                <span className="truncate">Image failed — displaying archive fallback</span>
+                <button
+                  type="button"
+                  onClick={() => { setImageLoading(true); setImageError(false); }}
+                  className="underline text-matcha-accent hover:text-white shrink-0 ml-2 cursor-pointer"
+                >
+                  Retry
+                </button>
+              </div>
+            )}
+
             <img
-              src={webpSrc(galleryImage?.url || activeVariant.image)} data-original-src={galleryImage?.url || activeVariant.image}
+              src={webpSrc(galleryImage?.url || activeVariant.image)}
+              data-original-src={galleryImage?.url || activeVariant.image}
               alt={galleryImage?.alt || (activeVariant.color ? `${product.name} in ${activeVariant.color}` : product.name)}
-              onError={handleImageError}
+              onLoad={() => { setImageLoading(false); }}
+              onError={(e) => {
+                setImageLoading(false);
+                setImageError(true);
+                handleImageError(e);
+              }}
               className={`w-full h-full object-contain object-center mix-blend-multiply transition-opacity duration-300 ${
-                imageFade ? 'opacity-30' : 'opacity-100'
+                imageFade || imageLoading ? 'opacity-20' : 'opacity-100'
               }`}
             />
 
