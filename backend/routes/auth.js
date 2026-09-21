@@ -29,6 +29,7 @@ export const safeUser = (u) => {
     name: u.name,
     firstName: u.firstName,
     lastName: u.lastName,
+    phone: u.phone || '',
     email: u.email,
     role: u.role,
     tier: u.tier,

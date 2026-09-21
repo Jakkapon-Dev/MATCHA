@@ -23,6 +23,21 @@ const checkDbReady = (req, res, next) => {
 const phoneRegex = /^0[0-9]{8,9}$/;
 const postalCodeRegex = /^[0-9]{5}$/;
 
+const profilePatchSchema = z.object({
+  firstName: z.string().trim().min(1, 'First name is required').max(80).optional(),
+  lastName: z.string().trim().max(80).optional(),
+  phone: z.union([
+    z.literal(''),
+    z.string().trim().regex(phoneRegex, 'Phone number must be a valid 9 or 10-digit Thai number starting with 0')
+  ]).optional(),
+  avatarUrl: z.union([
+    z.literal(''),
+    z.string().trim().url('Avatar must be a valid URL').max(2048)
+  ]).optional(),
+}).strict().refine(data => Object.keys(data).length > 0, {
+  message: 'At least one field must be provided for update'
+});
+
 const addressInputSchema = z.object({
   recipientName: z.string({ required_error: 'recipientName is required' })
     .trim()
@@ -93,6 +108,57 @@ function formatAddress(addr) {
     _id: doc._id || doc.id,
   };
 }
+
+function safeProfile(user) {
+  return {
+    _id: user._id,
+    id: user._id,
+    name: user.name || '',
+    firstName: user.firstName || '',
+    lastName: user.lastName || '',
+    phone: user.phone || '',
+    email: user.email,
+    role: user.role,
+    tier: user.tier,
+    avatarUrl: user.avatarUrl || '',
+    authProviders: user.authProviders || [],
+    emailVerified: Boolean(user.emailVerified),
+  };
+}
+
+// The account page edits the signed-in member only. Email, role and tier are
+// deliberately not accepted here: those identities are controlled by the
+// authentication provider and the admin-only membership endpoint.
+router.patch('/me', checkDbReady, async (req, res) => {
+  const parsed = profilePatchSchema.safeParse(req.body);
+  if (!parsed.success) {
+    return res.status(400).json({
+      success: false,
+      message: 'Validation failed',
+      errors: parsed.error.issues.map(i => ({ field: i.path.join('.'), message: i.message }))
+    });
+  }
+
+  const updates = { ...parsed.data };
+  if ('firstName' in updates || 'lastName' in updates) {
+    const firstName = updates.firstName ?? req.user.firstName ?? '';
+    const lastName = updates.lastName ?? req.user.lastName ?? '';
+    updates.name = `${firstName} ${lastName}`.trim();
+  }
+
+  try {
+    const userId = req.user?._id || req.user?.id;
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $set: updates },
+      { new: true, runValidators: true }
+    ).lean();
+    if (!user) return res.status(404).json({ success: false, message: 'Member not found' });
+    res.json({ success: true, data: safeProfile(user) });
+  } catch {
+    res.status(500).json({ success: false, message: 'Could not save profile' });
+  }
+});
 
 // ==========================================
 // Address Book Endpoints (Member Self-Service)

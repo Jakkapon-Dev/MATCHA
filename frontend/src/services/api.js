@@ -317,6 +317,13 @@ export const api = {
     });
   },
 
+  updateMyProfile: async (updateData) => {
+    return fetchWithFallback('/users/me', {
+      method: 'PATCH',
+      body: JSON.stringify(updateData)
+    });
+  },
+
   // Address Book CRUD
   getAddresses: async () => {
     return fetchWithFallback('/users/me/addresses');
