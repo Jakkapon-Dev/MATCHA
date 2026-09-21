@@ -9,7 +9,7 @@ import { z } from 'zod';
 import Media from '../models/MediaAsset.js';
 import Lookbook from '../models/Lookbook.js';
 import DefaultProduct from '../models/Product.js';
-import { MAX_BYTES, storeImage, storageRoot } from '../services/mediaStorage.js';
+import { MAX_BYTES, storeImage, storageRoot, isManagedUrl } from '../services/mediaStorage.js';
 import { authRequired as defaultAuthRequired, adminOnly as defaultAdminOnly } from '../middleware/auth.js';
 import errorHandler from '../middleware/errorHandler.js';
 import { allLooks } from './lookbookRoutes.js';
@@ -147,7 +147,7 @@ router.patch('/admin/media/:id', asyncRoute(async (req, res) => {
 }));
 
 export async function assertActiveUrls(urls) {
-  const managed = urls.filter(u => u?.startsWith('/api/media/files/'));
+  const managed = urls.filter(isManagedUrl);
   const assets = await Media.find({ url: { $in: managed }, archived: false }).select('url').lean();
   if (managed.some(u => !assets.some(a => a.url === u))) {
     throw Object.assign(new Error('รูปถูกเก็บเข้าคลังแล้วหรือไม่พบรูป กรุณาเลือกใหม่'), { status: 400 });
