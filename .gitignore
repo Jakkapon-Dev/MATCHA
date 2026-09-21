@@ -4,8 +4,10 @@
 # ==============================================================================
 
 # 1. Project Documentation, Internal Specifications & Requirement Docs (Local Only)
-docs/
+!docs/
 docs/*
+!docs/runbooks/
+!docs/runbooks/*
 *.visual-check.*
 Requirement/
 Requirement/*
@@ -147,6 +149,7 @@ coverage/
 *.lcov
 test-output/
 playwright-report/
+test-results/
 blob-report/
 .nyc_output/
 *.dump
@@ -172,6 +175,13 @@ backend/data/users-mongo-backup-*.json
 backend/data/backup-pre-firebase-*
 backend/logs/
 
+# Database backup archives & dumps (Never commit credentials or data dumps)
+backups/
+backend/backups/
+*.backup.json
+*.backup.gz
+*.archive
+
 # Runtime media & storage dumps
 backend/storage/media/
 backend/storage/*.json
@@ -195,6 +205,8 @@ backend/scripts/*
 !backend/scripts/migrateUsersToMongo.mjs
 !backend/scripts/migrateSizeStock.mjs
 !backend/scripts/migrate-legacy-users-firebase.mjs
+!backend/scripts/backup-mongodb.mjs
+!backend/scripts/restore-mongodb-test.mjs
 
 
 

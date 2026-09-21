@@ -198,15 +198,35 @@ app.get('/', (req, res) => {
   });
 });
 
-// Health check endpoint
-app.get(['/api/health', '/health'], (req, res) => {
-  res.json({
-    status: 'ok',
-    state: 'online',
-    message: 'Backend server is running smoothly',
+// Health check endpoint (verifies API and active MongoDB connectivity without leaking secrets)
+app.get(['/api/health', '/health'], async (req, res) => {
+  const isDbConnected = mongoose.connection.readyState === 1;
+  let dbHealthy = false;
+
+  if (isDbConnected && mongoose.connection.db) {
+    try {
+      await mongoose.connection.db.admin().ping();
+      dbHealthy = true;
+    } catch {
+      dbHealthy = false;
+    }
+  }
+
+  const isHealthy = isDbConnected && dbHealthy;
+  const statusCode = isHealthy ? 200 : 503;
+
+  res.status(statusCode).json({
+    status: isHealthy ? 'healthy' : 'degraded',
+    state: isHealthy ? 'online' : 'unhealthy',
+    message: isHealthy
+      ? 'Backend API and database are operating normally'
+      : 'Service degraded: Database connection unavailable',
     timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+    uptime: Math.floor(process.uptime()),
+    checks: {
+      api: 'healthy',
+      database: dbHealthy ? 'connected' : 'disconnected'
+    }
   });
 });
 
