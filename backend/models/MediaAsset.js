@@ -10,6 +10,11 @@ const schema = new mongoose.Schema({
   bytes: Number,
   mimeType: String,
   sourcePath: { type: String, unique: true, sparse: true },
+  /* Cloudinary's handle for the asset, and the only way to ever transform or
+     delete it — the delivery URL alone cannot be turned back into one. Null
+     for every asset written to local disk, including every asset that existed
+     before Cloudinary was wired up. Not unique: null is the normal value. */
+  publicId: { type: String, default: null },
   archived: { type: Boolean, default: false },
   /* A String, not an ObjectId, because the ids this field actually receives
      are not ObjectIds. requireAuth builds req.user from whichever store knows

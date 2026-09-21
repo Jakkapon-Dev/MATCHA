@@ -16,7 +16,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 
-import { prepareImage } from '../services/mediaStorage.js';
+import { prepareImage, isManagedUrl, storeImage } from '../services/mediaStorage.js';
 import { defaultLookbooks, resolveLookbooks } from '../services/lookbook.js';
 import router from '../routes/mediaLookbook.js';
 import { setAuthGuards } from '../routes/mediaRoutes.js';
@@ -68,6 +68,23 @@ test('decode actual bytes, reject disguised files, limit dimensions and produce 
   await assert.rejects(prepareImage(Buffer.from('<svg onload="alert(1)"></svg>')), { status: 400 });
   await assert.rejects(prepareImage(Buffer.alloc(8 * 1024 * 1024 + 1)), { status: 400 });
 });
+test('an image is recognised as ours whichever backend stored it', async (t) => {
+  assert.ok(isManagedUrl('/api/media/files/123.webp'));
+  assert.ok(isManagedUrl('https://res.cloudinary.com/matcha/image/upload/v1/matcha/media/abc.webp'));
+  // Seed art and anything a look-alike host serves is not ours to vouch for.
+  assert.ok(!isManagedUrl('/images/hero.png'));
+  assert.ok(!isManagedUrl('https://res.cloudinary.com.evil.test/x.webp'));
+  assert.ok(!isManagedUrl(undefined));
+
+  // With no CLOUDINARY_URL the disk backend still runs, unchanged.
+  const root = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'matcha-media-'));
+  t.after(() => fs.promises.rm(root, { recursive: true, force: true }));
+  const stored = await storeImage(image, root);
+  assert.match(stored.url, /^\/api\/media\/files\/[\w-]+\.webp$/);
+  assert.equal(stored.publicId, null);
+  assert.equal(fs.readdirSync(root).length, 2);
+});
+
 test('missing products remain visible as editorial but never become sellable', () => {
   const result = resolveLookbooks(defaultLookbooks(), []);
   assert.equal(result.length, 6);
