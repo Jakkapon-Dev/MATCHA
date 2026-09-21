@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { readAddressBook, rememberAddress } from '../../features/account/addressBook';
+import { fetchAddressBook, readAddressBook, rememberAddress } from '../../features/account/addressBook';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { Truck, CheckCircle2, PlusCircle, ArrowLeft, ArrowRight, ShieldCheck, Building2, Home } from 'lucide-react';
 
@@ -17,16 +17,30 @@ export default function ShippingStep({
   const { t } = useLanguage();
   const { currentUser } = useAuth();
 
-  /* Saved addresses belong to an account. A visitor who has not signed in has
-     none, so they are shown no picker at all and simply fill the form —
-     which is what the old preset cards were pretending to skip, using
-     somebody else's name and street. */
-  const savedAddresses = useMemo(() => readAddressBook(currentUser), [currentUser]);
+  /* Saved addresses belong to an account. Loaded from the API via fetchAddressBook,
+     falling back to synchronous readAddressBook for initial frame. */
+  const [savedAddresses, setSavedAddresses] = useState(() => readAddressBook(currentUser));
   const hasSaved = savedAddresses.length > 0;
 
   const [selectedPreset, setSelectedPreset] = useState(null);
   const [isCustomAddress, setIsCustomAddress] = useState(false);
   const seeded = useRef(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (currentUser) {
+      fetchAddressBook(currentUser).then((list) => {
+        if (!cancelled && Array.isArray(list)) {
+          setSavedAddresses(list);
+        }
+      }).catch((err) => {
+        console.warn('Could not load shipping addresses:', err);
+      });
+    } else {
+      setSavedAddresses([]);
+    }
+    return () => { cancelled = true; };
+  }, [currentUser]);
 
   /* The first address arrives already marked as chosen, but nothing had ever
      copied it into the form, so the page opened claiming a selection while
@@ -60,13 +74,17 @@ export default function ShippingStep({
       ...formData,
       firstName: preset.firstName,
       lastName: preset.lastName,
-      email: preset.email,
+      email: currentUser?.email || preset.email || formData?.email || '',
       phone: preset.phone,
-      address: preset.address,
-      city: preset.city,
-      state: preset.state,
-      zipCode: preset.zipCode,
-      country: preset.country,
+      address: preset.addressLine1 || preset.address,
+      addressLine2: preset.addressLine2 || '',
+      subdistrict: preset.subdistrict || '',
+      district: preset.district || '',
+      city: [preset.subdistrict, preset.district, preset.province].filter(Boolean).join(', ') || preset.city || '',
+      state: preset.province || preset.state || '',
+      province: preset.province || '',
+      zipCode: preset.postalCode || preset.zipCode,
+      country: preset.country || 'Thailand',
     });
   }, [hasSaved, savedAddresses, currentUser, formData, onFormChange]);
 
@@ -77,13 +95,17 @@ export default function ShippingStep({
       ...formData,
       firstName: preset.firstName,
       lastName: preset.lastName,
-      email: preset.email,
+      email: currentUser?.email || preset.email || formData?.email || '',
       phone: preset.phone,
-      address: preset.address,
-      city: preset.city,
-      state: preset.state,
-      zipCode: preset.zipCode,
-      country: preset.country
+      address: preset.addressLine1 || preset.address,
+      addressLine2: preset.addressLine2 || '',
+      subdistrict: preset.subdistrict || '',
+      district: preset.district || '',
+      city: [preset.subdistrict, preset.district, preset.province].filter(Boolean).join(', ') || preset.city || '',
+      state: preset.province || preset.state || '',
+      province: preset.province || '',
+      zipCode: preset.postalCode || preset.zipCode,
+      country: preset.country || 'Thailand'
     });
   };
 
@@ -156,19 +178,27 @@ export default function ShippingStep({
                 >
                   <div className="flex items-start justify-between gap-2 mb-1.5">
                     <div className="flex items-center gap-1.5">
-                      {preset.type === 'home' ? (
+                      {((preset.label || '').toLowerCase().includes('home') || preset.type === 'home' || preset.label === 'บ้าน') ? (
                         <Home size={13} className="text-matcha-primary" />
                       ) : (
                         <Building2 size={13} className="text-matcha-primary" />
                       )}
-                      <span className="font-bold text-xs text-[#0A0A0A]">{preset.title}</span>
+                      <span className="font-bold text-xs text-[#0A0A0A]">{preset.label || preset.title}</span>
+                      {preset.isDefault && (
+                        <span className="px-1.5 py-0.2 bg-matcha-primary text-white text-[9px] font-mono font-bold uppercase shrink-0">
+                          {t('account.defaultAddress')}
+                        </span>
+                      )}
                     </div>
                     {isSelected && (
                       <CheckCircle2 size={14} className="text-matcha-primary shrink-0" />
                     )}
                   </div>
+                  <div className="text-[11px] font-mono text-[#0A0A0A] font-semibold truncate">
+                    {preset.recipientName}
+                  </div>
                   <p className="text-[11px] font-mono text-matcha-muted line-clamp-2 leading-relaxed">
-                    {preset.address}, {preset.city} {preset.zipCode}
+                    {[preset.addressLine1 || preset.address, preset.subdistrict, preset.district, preset.province, preset.postalCode || preset.zipCode].filter(Boolean).join(', ')}
                   </p>
                   <span className="mt-2 text-[10px] font-mono text-matcha-muted">
                     {t('checkout.tel')}: {preset.phone}
