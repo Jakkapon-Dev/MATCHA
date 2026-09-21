@@ -252,6 +252,45 @@ router.post('/firebase', authLimiter, async (req, res) => {
   }
 });
 
+// Sync updated providers list (e.g. after link/unlink in Firebase)
+router.post('/sync-providers', requireAuth, authLimiter, async (req, res) => {
+  try {
+    const idToken = req.body?.idToken;
+    if (!idToken || typeof idToken !== 'string') {
+      return res.status(400).json({ success: false, message: 'Firebase ID token is required' });
+    }
+
+    const identity = await verifyFirebaseIdToken(idToken.trim());
+    const activeProviders = (identity?.providerUserInfo || []).map((p) =>
+      p.providerId === 'google.com' ? 'google' : p.providerId
+    );
+
+    if (activeProviders.length === 0) {
+      return res.status(400).json({ success: false, message: 'Cannot remove the last sign-in method' });
+    }
+
+    const updated = await User.findByIdAndUpdate(
+      req.user._id,
+      {
+        $set: {
+          authProviders: activeProviders,
+          firebaseUid: identity.localId,
+          emailVerified: Boolean(identity.emailVerified || req.user.emailVerified),
+        },
+      },
+      { new: true, runValidators: true }
+    ).lean();
+
+    return res.json({ success: true, data: safeUser(updated) });
+  } catch (err) {
+    const status = err?.status || 500;
+    return res.status(status).json({
+      success: false,
+      message: err?.message || 'Could not synchronize sign-in methods',
+    });
+  }
+});
+
 /* Asking for a reset, and spending one.
  *
  * Both are rate limited harder than signing in. A reset endpoint is an

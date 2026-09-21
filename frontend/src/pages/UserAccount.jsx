@@ -22,6 +22,7 @@ import FavoritesTab from '../components/account/FavoritesTab';
 import AddressesTab from '../components/account/AddressesTab';
 import PaymentMethodsTab from '../components/account/PaymentMethodsTab';
 import PreferencesTab from '../components/account/PreferencesTab';
+import LinkedAccountsTab from '../components/account/LinkedAccountsTab';
 import { api } from '../services/api';
 import { formatOrdersForDisplay } from '../utils/orderHistory';
 
@@ -94,6 +95,7 @@ export default function UserAccount() {
     { id: 'favorites', label: 'SAVED ARCHIVE', icon: Heart },
     { id: 'address', label: 'ADDRESS BOOK', icon: MapPin },
     { id: 'payment', label: 'PAYMENT METHODS', icon: CreditCard },
+    { id: 'security', label: t('linkedAccounts.tabTitle') || 'LINKED ACCOUNTS', icon: ShieldCheck },
     { id: 'preferences', label: 'PREFERENCES', icon: Sliders },
     { id: 'logout', label: 'LOG OUT', icon: LogOut, isDanger: true }
   ];
@@ -298,6 +300,8 @@ export default function UserAccount() {
             {activeTab === 'address' && <AddressesTab />}
 
             {activeTab === 'payment' && <PaymentMethodsTab />}
+
+            {activeTab === 'security' && <LinkedAccountsTab />}
 
             {activeTab === 'preferences' && (
               <PreferencesTab
