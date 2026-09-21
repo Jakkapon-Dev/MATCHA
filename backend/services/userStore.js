@@ -70,6 +70,11 @@ const userSchema = new mongoose.Schema(
     // are therefore never sent to Cloudinary's deletion API.
     avatarPublicId: { type: String, default: '' },
     avatarThumbnailUrl: { type: String, default: '' },
+    marketingConsent: {
+      optedIn: { type: Boolean, default: false },
+      version: { type: String, default: '1.0' },
+      updatedAt: { type: Date, default: Date.now }
+    },
 
     /* Password reset.
 
@@ -119,7 +124,7 @@ export async function findByEmail(email) {
    would let a duplicate through. There, failing loudly is the safe direction. */
 export async function findById(id) {
   if (!id) return null;
-  if (mongoose.connection.readyState !== 1) return null;
+  if (mongoose.connection.readyState !== 1 || !mongoose.connection.db) return null;
   try {
     return await User.findById(String(id)).lean();
   } catch (err) {
