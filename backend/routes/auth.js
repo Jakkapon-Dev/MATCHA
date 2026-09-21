@@ -168,32 +168,71 @@ router.post('/firebase', authLimiter, async (req, res) => {
     }
 
     const identity = await verifyFirebaseIdToken(idToken.trim());
-    const providerName = identity.provider || 'google';
     const email = userStore.normalizeEmail(identity.email);
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: 'Authentication provider did not return an email address.',
+      });
+    }
+
+    const providerName = identity.provider || 'google';
+
+    // 1. Check if user is already linked with this Firebase UID
     let user = await User.findOne({ firebaseUid: identity.localId }).lean();
+
+    // 2. If not found by UID, check if email has an existing account (e.g. from legacy JWT or another provider)
     if (!user) user = await userStore.findByEmail(email);
 
     if (!user) {
+      // 3. Create new user if no existing record
       const displayName = String(identity.displayName || email.split('@')[0]).trim();
       const [firstName = '', ...lastParts] = displayName.split(/\s+/);
-      user = await userStore.createUser({
-        name: displayName,
-        firstName,
-        lastName: lastParts.join(' '),
-        email,
-        passwordHash: '',
-        firebaseUid: identity.localId,
-        authProviders: [providerName],
-        avatarUrl: identity.photoUrl || '',
-        emailVerified: Boolean(identity.emailVerified),
-      });
+      try {
+        user = await userStore.createUser({
+          name: displayName,
+          firstName,
+          lastName: lastParts.join(' '),
+          email,
+          passwordHash: '',
+          firebaseUid: identity.localId,
+          authProviders: [providerName],
+          avatarUrl: identity.photoUrl || '',
+          emailVerified: Boolean(identity.emailVerified),
+        });
+      } catch (createErr) {
+        // Prevent race condition if two devices log in at the exact same moment
+        if (createErr?.code === 11000) {
+          user = await userStore.findByEmail(email);
+          if (user) {
+            user = await User.findByIdAndUpdate(
+              user._id,
+              {
+                $set: {
+                  firebaseUid: identity.localId,
+                  emailVerified: Boolean(identity.emailVerified || user.emailVerified),
+                  ...(identity.photoUrl ? { avatarUrl: identity.photoUrl } : {}),
+                },
+                $addToSet: { authProviders: providerName },
+              },
+              { new: true, runValidators: true },
+            ).lean();
+          } else {
+            throw createErr;
+          }
+        } else {
+          throw createErr;
+        }
+      }
     } else {
+      // 4. Existing account linking: attach UID, preserve order history/addresses, add provider
       user = await User.findByIdAndUpdate(
         user._id,
         {
           $set: {
             firebaseUid: identity.localId,
-            emailVerified: Boolean(identity.emailVerified),
+            emailVerified: Boolean(identity.emailVerified || user.emailVerified),
             ...(identity.photoUrl ? { avatarUrl: identity.photoUrl } : {}),
           },
           $addToSet: { authProviders: providerName },
