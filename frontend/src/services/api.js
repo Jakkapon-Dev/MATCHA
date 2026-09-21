@@ -310,6 +310,31 @@ export const api = {
     });
   },
 
+  // Address Book CRUD
+  getAddresses: async () => {
+    return fetchWithFallback('/users/me/addresses');
+  },
+
+  addAddress: async (addressData) => {
+    return fetchWithFallback('/users/me/addresses', {
+      method: 'POST',
+      body: JSON.stringify(addressData)
+    });
+  },
+
+  updateAddress: async (id, addressData) => {
+    return fetchWithFallback(`/users/me/addresses/${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(addressData)
+    });
+  },
+
+  deleteAddress: async (id) => {
+    return fetchWithFallback(`/users/me/addresses/${encodeURIComponent(id)}`, {
+      method: 'DELETE'
+    });
+  },
+
   // Fetch categories with product counts
   getCategories: async () => {
     try {
