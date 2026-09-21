@@ -9,6 +9,10 @@ import {
   sendPasswordResetEmail,
   updateProfile,
   reload,
+  linkWithPopup,
+  unlink,
+  EmailAuthProvider,
+  linkWithCredential,
 } from 'firebase/auth';
 
 const firebaseConfig = {
@@ -80,4 +84,46 @@ export async function sendVerificationEmail(user) {
 export async function sendFirebasePasswordReset(email) {
   const auth = getFirebaseAuth();
   await sendPasswordResetEmail(auth, email);
+}
+
+export async function linkGoogleProvider() {
+  const auth = getFirebaseAuth();
+  const user = auth.currentUser;
+  if (!user) throw new Error('No authenticated Firebase session');
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account' });
+  const result = await linkWithPopup(user, provider);
+  return result.user;
+}
+
+export async function linkPasswordProvider(password) {
+  const auth = getFirebaseAuth();
+  const user = auth.currentUser;
+  if (!user || !user.email) throw new Error('No authenticated user with email');
+  const credential = EmailAuthProvider.credential(user.email, password);
+  const result = await linkWithCredential(user, credential);
+  return result.user;
+}
+
+export async function unlinkFirebaseProvider(providerId) {
+  const auth = getFirebaseAuth();
+  const user = auth.currentUser;
+  if (!user) throw new Error('No authenticated Firebase session');
+  const result = await unlink(user, providerId);
+  return result;
+}
+
+export function getConnectedProviders() {
+  try {
+    const auth = getFirebaseAuth();
+    const user = auth.currentUser;
+    if (!user) return [];
+    return (user.providerData || []).map((p) => ({
+      providerId: p.providerId === 'google.com' ? 'google' : p.providerId,
+      email: p.email || user.email,
+      displayName: p.displayName,
+    }));
+  } catch {
+    return [];
+  }
 }

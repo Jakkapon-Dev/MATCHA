@@ -285,6 +285,13 @@ export const api = {
     });
   },
 
+  syncProviders: async (idToken) => {
+    return fetchWithFallback('/auth/sync-providers', {
+      method: 'POST',
+      body: JSON.stringify({ idToken })
+    });
+  },
+
   register: async (payload) => {
     return fetchWithFallback('/auth/register', {
       method: 'POST',
