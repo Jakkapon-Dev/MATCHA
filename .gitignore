@@ -147,6 +147,7 @@ coverage/
 *.lcov
 test-output/
 playwright-report/
+test-results/
 blob-report/
 .nyc_output/
 *.dump
