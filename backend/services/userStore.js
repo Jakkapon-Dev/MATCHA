@@ -33,6 +33,12 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ['Member', 'Admin'], default: 'Member' },
     tier: { type: String, default: 'Regular Member' },
     addresses: { type: Array, default: [] },
+    // Leave this field absent for password-only accounts. A sparse unique index
+    // ignores missing fields, but it would still index an explicit null and
+    // make the second ordinary account fail with a duplicate-key error.
+    firebaseUid: { type: String, sparse: true, unique: true },
+    authProviders: { type: [String], default: [] },
+    avatarUrl: { type: String, default: '' },
 
     /* Password reset.
 
@@ -98,7 +104,10 @@ export async function createUser({
   email,
   passwordHash,
   role = 'Member',
-  tier = 'Regular Member'
+  tier = 'Regular Member',
+  firebaseUid = null,
+  authProviders = [],
+  avatarUrl = ''
 }) {
   const doc = await User.create({
     _id: `u_${crypto.randomUUID().replace(/-/g, '')}`,
@@ -109,7 +118,10 @@ export async function createUser({
     passwordHash,
     role,
     tier,
-    addresses: []
+    addresses: [],
+    ...(firebaseUid ? { firebaseUid } : {}),
+    authProviders,
+    avatarUrl
   });
   const user = doc.toObject();
   user.id = user._id;

@@ -278,6 +278,13 @@ export const api = {
     });
   },
 
+  firebaseLogin: async (idToken) => {
+    return fetchWithFallback('/auth/firebase', {
+      method: 'POST',
+      body: JSON.stringify({ idToken })
+    });
+  },
+
   register: async (payload) => {
     return fetchWithFallback('/auth/register', {
       method: 'POST',

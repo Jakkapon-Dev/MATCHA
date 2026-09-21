@@ -9,6 +9,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import { passwordStrength } from '../features/auth/passwordStrength';
+import { signInWithGoogle } from '../services/firebaseAuth';
 
 /* Signing in and signing up, on one page.
 
@@ -180,6 +181,30 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    setBusy(true);
+    setError('');
+    try {
+      const idToken = await signInWithGoogle();
+      const res = await api.firebaseLogin(idToken);
+      const account = res.data || {};
+      finish({
+        id: account._id || account.id,
+        name: account.name || account.email?.split('@')[0],
+        firstName: account.firstName,
+        lastName: account.lastName,
+        email: account.email,
+        role: account.role || 'Member',
+        tier: account.tier,
+        avatarUrl: account.avatarUrl,
+      }, res.token);
+    } catch (err) {
+      if (err?.code !== 'auth/popup-closed-by-user') setError(t('access.googleFailed'));
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const field = 'w-full px-3.5 py-2.5 bg-matcha-bg border border-matcha-border text-sm text-[#0A0A0A] outline-hidden focus:border-[#0A0A0A] transition-colors';
   const label = 'block text-xs font-mono text-matcha-muted mb-1.5';
 
@@ -346,26 +371,22 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
             </div>
           )}
 
-          {/* Kept, and kept honest: these are not wired to anything yet, so
-              they say so rather than looking like live buttons that swallow
-              the click. */}
           <div className="mt-8 pt-6 border-t border-matcha-border">
             <div className="flex items-baseline justify-between gap-3 mb-3">
               <span className="text-[11px] font-mono uppercase tracking-wider text-matcha-muted">
                 {t('access.socialTitle')}
               </span>
-              <span className="text-[10px] font-mono uppercase tracking-wider text-matcha-muted border border-matcha-border px-1.5 py-0.5">
-                {t('access.socialSoon')}
-              </span>
             </div>
             <div className="grid grid-cols-2 gap-2">
-              {['Google', 'GitHub'].map((provider) => (
-                <button key={provider} type="button" aria-disabled="true"
-                  onClick={() => showToast(t('access.socialSoonToast', { provider }), 'info')}
-                  className="py-2.5 px-3 border border-dashed border-matcha-border text-xs font-mono text-matcha-muted hover:border-matcha-muted transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]">
-                  {provider}
-                </button>
-              ))}
+              <button type="button" onClick={handleGoogleSignIn} disabled={busy}
+                className="py-2.5 px-3 border border-[#0A0A0A] text-xs font-mono font-bold text-[#0A0A0A] hover:bg-[#0A0A0A] hover:text-white transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-wait outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]">
+                {t('access.google')}
+              </button>
+              <button type="button" aria-disabled="true"
+                onClick={() => showToast(t('access.socialSoonToast', { provider: 'Facebook' }), 'info')}
+                className="py-2.5 px-3 border border-dashed border-matcha-border text-xs font-mono text-matcha-muted hover:border-matcha-muted transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]">
+                {t('access.facebookSoon')}
+              </button>
             </div>
           </div>
         </div>
