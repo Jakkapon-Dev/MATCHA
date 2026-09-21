@@ -169,6 +169,8 @@ backend/data/users.json
 # The migration writes a dump of the users collection beside it, hashes and
 # all. One line short of this and it would have been committed.
 backend/data/users-mongo-backup-*.json
+backend/data/backup-pre-firebase-*
+backend/logs/
 
 # Runtime media & storage dumps
 backend/storage/media/
@@ -192,5 +194,7 @@ backend/scripts/*
 # current form, and no way to redo it. Idempotent, and it writes a backup first.
 !backend/scripts/migrateUsersToMongo.mjs
 !backend/scripts/migrateSizeStock.mjs
+!backend/scripts/migrate-legacy-users-firebase.mjs
+
 
 
