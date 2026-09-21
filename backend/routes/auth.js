@@ -183,7 +183,29 @@ router.post('/firebase', authLimiter, async (req, res) => {
     let user = await User.findOne({ firebaseUid: identity.localId }).lean();
 
     // 2. If not found by UID, check if email has an existing account (e.g. from legacy JWT or another provider)
+    const linkedByUid = Boolean(user);
     if (!user) user = await userStore.findByEmail(email);
+
+    /* Claiming an account that already exists takes a verified address, always.
+
+       Firebase does not verify an address at sign-up, so anyone can call
+       createUserWithEmailAndPassword with somebody else's email and hold a
+       genuine ID token for it seconds later. Reaching the branch below with
+       that token would hand them the account: it binds their firebaseUid to
+       the existing member and returns a MatchA JWT for it, on nothing but
+       knowing the address. The victim's own uid is overwritten on the way
+       past, so they lose the account as the attacker gains it.
+
+       Creating a brand new member unverified is a different matter and stays
+       allowed -- there is nobody else's history behind it, and the verified-
+       email guards downstream still hold it back from anything that counts. */
+    if (!linkedByUid && user && identity.emailVerified !== true) {
+      return res.status(403).json({
+        success: false,
+        code: 'EMAIL_NOT_VERIFIED',
+        message: 'อีเมลนี้มีบัญชีอยู่แล้ว กรุณายืนยันอีเมลของคุณก่อนเชื่อมบัญชี',
+      });
+    }
 
     if (!user) {
       // 3. Create new user if no existing record
@@ -205,6 +227,15 @@ router.post('/firebase', authLimiter, async (req, res) => {
         // Prevent race condition if two devices log in at the exact same moment
         if (createErr?.code === 11000) {
           user = await userStore.findByEmail(email);
+          // A concurrent request won the insert, so this is the existing-account
+          // branch again, reached by a race. The same rule applies to it.
+          if (user && identity.emailVerified !== true) {
+            return res.status(403).json({
+              success: false,
+              code: 'EMAIL_NOT_VERIFIED',
+              message: 'อีเมลนี้มีบัญชีอยู่แล้ว กรุณายืนยันอีเมลของคุณก่อนเชื่อมบัญชี',
+            });
+          }
           if (user) {
             user = await User.findByIdAndUpdate(
               user._id,
@@ -261,6 +292,19 @@ router.post('/sync-providers', requireAuth, authLimiter, async (req, res) => {
     }
 
     const identity = await verifyFirebaseIdToken(idToken.trim());
+
+    /* The token has to be this member's own. Without the check, any token the
+       caller can obtain -- a Firebase account they made a moment ago under any
+       address -- would repoint their firebaseUid at it, which is the same
+       unproven binding the sign-in route refuses above. */
+    const caller = await User.findById(req.user._id).select('firebaseUid email').lean();
+    const sameUid = caller?.firebaseUid && caller.firebaseUid === identity.localId;
+    const sameEmail = caller?.email
+      && userStore.normalizeEmail(caller.email) === userStore.normalizeEmail(identity.email);
+    if (!sameUid && !sameEmail) {
+      return res.status(403).json({ success: false, message: 'Sign-in method does not belong to this account' });
+    }
+
     const activeProviders = (identity?.providerUserInfo || []).map((p) =>
       p.providerId === 'google.com' ? 'google' : p.providerId
     );
@@ -284,9 +328,12 @@ router.post('/sync-providers', requireAuth, authLimiter, async (req, res) => {
     return res.json({ success: true, data: safeUser(updated) });
   } catch (err) {
     const status = err?.status || 500;
+    if (status >= 500) console.error('[auth] sync-providers', err?.message || err);
+    // Every other route here keeps its internals to itself; this one was
+    // echoing the raw error text straight back to the caller.
     return res.status(status).json({
       success: false,
-      message: err?.message || 'Could not synchronize sign-in methods',
+      message: 'Could not synchronize sign-in methods',
     });
   }
 });
