@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import rateLimit from 'express-rate-limit';
 import userStore from '../services/userStore.js';
+import { User } from '../services/userStore.js';
 import { requireAuth, requireRole, getJwtSecret } from '../middleware/auth.js';
 import { sendPasswordReset } from '../services/email.js';
 
@@ -31,6 +32,7 @@ export const safeUser = (u) => {
     email: u.email,
     role: u.role,
     tier: u.tier,
+    avatarUrl: u.avatarUrl || '',
   };
 };
 
@@ -114,6 +116,80 @@ router.post('/login', authLimiter, async (req, res) => {
        It is logged where it is useful and not returned. */
     console.error('[auth]', err);
     res.status(500).json({ success: false, message: 'การยืนยันตัวตนขัดข้อง กรุณาลองใหม่อีกครั้ง' });
+  }
+});
+
+/* Exchange a Firebase Google identity for the JWT used by the rest of MatchA.
+
+   accounts:lookup validates the Firebase ID token against the project selected
+   by FIREBASE_WEB_API_KEY. The browser config is public by design, but keeping
+   the lookup on the server means the app never trusts profile claims supplied
+   directly by the browser. */
+export async function verifyFirebaseIdToken(idToken, apiKey = process.env.FIREBASE_WEB_API_KEY) {
+  if (!apiKey) throw Object.assign(new Error('Firebase authentication is not configured'), { status: 503 });
+
+  const response = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${encodeURIComponent(apiKey)}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ idToken }),
+    signal: AbortSignal.timeout(10000),
+  });
+  const payload = await response.json().catch(() => ({}));
+  const identity = payload.users?.[0];
+  const isGoogleIdentity = identity?.providerUserInfo?.some((provider) => provider.providerId === 'google.com');
+  if (!response.ok || !identity?.localId || !identity?.email || identity.emailVerified !== true || !isGoogleIdentity) {
+    throw Object.assign(new Error('Invalid Firebase identity'), { status: 401 });
+  }
+  return identity;
+}
+
+router.post('/firebase', authLimiter, async (req, res) => {
+  try {
+    const idToken = req.body?.idToken;
+    if (typeof idToken !== 'string' || !idToken.trim()) {
+      return res.status(400).json({ success: false, message: 'Firebase ID token is required' });
+    }
+
+    const identity = await verifyFirebaseIdToken(idToken.trim());
+    const email = userStore.normalizeEmail(identity.email);
+    let user = await User.findOne({ firebaseUid: identity.localId }).lean();
+    if (!user) user = await userStore.findByEmail(email);
+
+    if (!user) {
+      const displayName = String(identity.displayName || email.split('@')[0]).trim();
+      const [firstName = '', ...lastParts] = displayName.split(/\s+/);
+      user = await userStore.createUser({
+        name: displayName,
+        firstName,
+        lastName: lastParts.join(' '),
+        email,
+        passwordHash: '',
+        firebaseUid: identity.localId,
+        authProviders: ['google'],
+        avatarUrl: identity.photoUrl || '',
+      });
+    } else {
+      user = await User.findByIdAndUpdate(
+        user._id,
+        {
+          $set: {
+            firebaseUid: identity.localId,
+            ...(identity.photoUrl ? { avatarUrl: identity.photoUrl } : {}),
+          },
+          $addToSet: { authProviders: 'google' },
+        },
+        { new: true, runValidators: true },
+      ).lean();
+    }
+
+    return res.json({ success: true, data: safeUser(user), token: signToken(user) });
+  } catch (err) {
+    const status = err?.status || 503;
+    if (status >= 500) console.error('[auth] firebase', err);
+    return res.status(status).json({
+      success: false,
+      message: status === 401 ? 'Google sign-in could not be verified' : 'Google sign-in is temporarily unavailable',
+    });
   }
 });
 

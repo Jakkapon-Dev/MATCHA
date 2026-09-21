@@ -62,6 +62,9 @@ export const translations = {
       socialTitle: 'Or continue with',
       socialSoon: 'Not connected yet',
       socialSoonToast: 'Sign-in with {provider} is not connected yet. Use your email for now.',
+      google: 'Continue with Google',
+      googleFailed: 'Google sign-in did not finish. Please try again.',
+      facebookSoon: 'Facebook — coming soon',
     },
 
     mixMatch: {
@@ -825,6 +828,9 @@ export const translations = {
       socialTitle: 'หรือเข้าสู่ระบบด้วย',
       socialSoon: 'ยังไม่เปิดใช้',
       socialSoonToast: 'การเข้าสู่ระบบด้วย {provider} ยังไม่เปิดใช้งาน ใช้อีเมลไปก่อนได้',
+      google: 'เข้าสู่ระบบด้วย Google',
+      googleFailed: 'เข้าสู่ระบบด้วย Google ไม่สำเร็จ กรุณาลองอีกครั้ง',
+      facebookSoon: 'Facebook — เร็ว ๆ นี้',
     },
 
     mixMatch: {
