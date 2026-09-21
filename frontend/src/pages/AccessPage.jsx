@@ -214,7 +214,9 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
     setBusy(true);
     setError('');
     try {
-      const idToken = await signInWithGoogle();
+      const idToken = typeof window !== 'undefined' && window.__PLAYWRIGHT_MOCK_GOOGLE_TOKEN__
+        ? window.__PLAYWRIGHT_MOCK_GOOGLE_TOKEN__
+        : await signInWithGoogle();
       const res = await api.firebaseLogin(idToken);
       const account = res.data || {};
       finish({
