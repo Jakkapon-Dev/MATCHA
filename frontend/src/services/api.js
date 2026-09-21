@@ -157,6 +157,9 @@ async function fetchWithFallback(endpoint, options = {}) {
 export const api = {
   getAdminProducts: () => fetchWithFallback('/admin/products', { signal: AbortSignal.timeout(15000) }),
   getAdminOrders: () => fetchWithFallback('/admin/orders', { signal: AbortSignal.timeout(15000) }),
+  getAdminNotifications: () => fetchWithFallback('/admin/notifications', { signal: AbortSignal.timeout(10000) }),
+  markNotificationRead: (id) => fetchWithFallback(`/admin/notifications/${id}/read`, { method: 'PATCH' }),
+  markAllNotificationsRead: () => fetchWithFallback('/admin/notifications/read-all', { method: 'PATCH' }),
   getStoreConfig: () => fetchWithFallback('/store-config'),
   // Check backend server health status
   checkHealth: async () => {

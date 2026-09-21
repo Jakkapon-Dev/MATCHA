@@ -8,7 +8,7 @@ import React, { useState, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import { apiErrorText } from '../services/api';
-import { Plus, BarChart3, Layers, Search, ExternalLink, ChevronRight, Download, FileSpreadsheet, FileJson, ChevronDown, LayoutDashboard, Boxes, ClipboardList, UserCheck, HardDrive, LogOut } from 'lucide-react';
+import { Plus, BarChart3, Layers, Search, ExternalLink, ChevronRight, Download, FileSpreadsheet, FileJson, ChevronDown, LayoutDashboard, Boxes, ClipboardList, UserCheck, HardDrive, LogOut, Bell, CheckCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import AddProductModal from '../components/admin/AddProductModal';
@@ -34,6 +34,52 @@ export default function AdminPage() {
   const [selectedOrderForModal, setSelectedOrderForModal] = useState(null);
   const [restockAmounts, setRestockAmounts] = useState({});
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
+
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [isNotifMenuOpen, setIsNotifMenuOpen] = useState(false);
+
+  const fetchNotifications = React.useCallback(async () => {
+    try {
+      const res = await api.getAdminNotifications();
+      if (res?.success && Array.isArray(res.data)) {
+        setNotifications(res.data);
+        setUnreadCount(typeof res.unreadCount === 'number' ? res.unreadCount : 0);
+      }
+    } catch {
+      // Quiet background polling
+    }
+  }, []);
+
+  React.useEffect(() => {
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 45000);
+    return () => clearInterval(interval);
+  }, [fetchNotifications]);
+
+  const handleMarkNotificationRead = async (notif) => {
+    try {
+      await api.markNotificationRead(notif.id || notif._id);
+      setNotifications(prev => prev.map(n => (n.id || n._id) === (notif.id || notif._id) ? { ...n, read: true } : n));
+      setUnreadCount(prev => Math.max(0, prev - 1));
+    } catch {
+      // Fail quietly
+    }
+    const matched = orders.find(o => o.id === notif.orderNumber || o.id === notif.orderId || o.orderNumber === notif.orderNumber);
+    if (matched) {
+      setSelectedOrderForModal(matched);
+    }
+  };
+
+  const handleMarkAllNotificationsRead = async () => {
+    try {
+      await api.markAllNotificationsRead();
+      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      setUnreadCount(0);
+    } catch {
+      // Fail quietly
+    }
+  };
 
   const { inventory, setInventory, orders, setOrders, members, setMembers, status, errors, refresh } = useAdminData(currentUser?.id || currentUser?._id);
   const [saving, setSaving] = useState(false);
@@ -430,6 +476,78 @@ export default function AdminPage() {
                 >
                   ✕
                 </button>
+              )}
+            </div>
+
+            {/* Notifications Bell */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsNotifMenuOpen(!isNotifMenuOpen)}
+                className="relative p-2 rounded-xl bg-white border border-matcha-border hover:border-matcha-primary text-matcha-text transition-all cursor-pointer shadow-2xs flex items-center justify-center"
+                title="Order Notifications"
+              >
+                <Bell size={16} />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white font-mono text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </button>
+
+              {isNotifMenuOpen && (
+                <>
+                  <div className="fixed inset-0 z-20 cursor-default" onClick={() => setIsNotifMenuOpen(false)} />
+                  <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl border border-matcha-border shadow-2xl p-3 z-30 font-mono text-xs animate-fade-in max-h-96 flex flex-col">
+                    <div className="flex items-center justify-between pb-2 border-b border-matcha-border px-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-matcha-text uppercase font-sans">New Orders</span>
+                        {unreadCount > 0 && (
+                          <span className="px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 text-[10px] font-bold">
+                            {unreadCount} unread
+                          </span>
+                        )}
+                      </div>
+                      {unreadCount > 0 && (
+                        <button
+                          onClick={handleMarkAllNotificationsRead}
+                          className="text-[11px] text-matcha-primary hover:underline flex items-center gap-1 cursor-pointer"
+                        >
+                          <CheckCheck size={12} />
+                          <span>Mark all read</span>
+                        </button>
+                      )}
+                    </div>
+
+                    <div className="overflow-y-auto divide-y divide-matcha-border/40 my-1 flex-1 max-h-72">
+                      {notifications.length === 0 ? (
+                        <div className="p-6 text-center text-matcha-muted text-xs">
+                          No new order notifications yet.
+                        </div>
+                      ) : (
+                        notifications.map(n => (
+                          <div
+                            key={n.id || n._id}
+                            onClick={() => handleMarkNotificationRead(n)}
+                            className={`p-2.5 hover:bg-matcha-bg/80 transition-colors cursor-pointer rounded-lg flex items-start gap-2.5 ${!n.read ? 'bg-amber-50/60' : ''}`}
+                          >
+                            <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!n.read ? 'bg-red-500' : 'bg-transparent'}`} />
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between gap-1">
+                                <span className="font-bold text-matcha-text truncate">{n.orderNumber}</span>
+                                <span className="font-bold text-matcha-primary shrink-0">${Number(n.total || 0).toFixed(2)}</span>
+                              </div>
+                              <div className="text-[11px] text-matcha-muted truncate">Customer: {n.customerName}</div>
+                              <div className="text-[10px] text-matcha-muted/70 mt-0.5">
+                                {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {new Date(n.createdAt).toLocaleDateString()}
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                </>
               )}
             </div>
 
