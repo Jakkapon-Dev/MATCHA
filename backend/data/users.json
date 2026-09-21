@@ -1,0 +1,28 @@
+[
+  {
+    "_id": "u_870b2d6b91704d94994b67babbd074bc",
+    "id": "u_870b2d6b91704d94994b67babbd074bc",
+    "name": "MatchA Admin",
+    "firstName": "MatchA",
+    "lastName": "Admin",
+    "email": "admin@matcha.com",
+    "passwordHash": "$2b$12$Pi/DyCf/cqy5BLgSjfTSfud.WWhB9frtjG4sVWkDXttuIERJ0zhNm",
+    "role": "Admin",
+    "tier": "VIP Connoisseur",
+    "addresses": [],
+    "createdAt": "2026-09-21T04:09:19.314Z"
+  },
+  {
+    "_id": "u_3026d5c76ee4408eacfc45f3587914a2",
+    "id": "u_3026d5c76ee4408eacfc45f3587914a2",
+    "name": "kri an",
+    "firstName": "",
+    "lastName": "",
+    "email": "123@test.com",
+    "passwordHash": "$2b$12$h77IMXlrZx5ivlLnPNHbIuCwwwTyeTdRyYH//5PyLExFptUb06woK",
+    "role": "Member",
+    "tier": "Regular Member",
+    "addresses": [],
+    "createdAt": "2026-09-21T08:26:41.984Z"
+  }
+]
