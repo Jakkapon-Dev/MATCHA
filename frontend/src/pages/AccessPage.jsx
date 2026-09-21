@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, useReducedMotion } from 'motion/react';
-import { Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Eye, EyeOff, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { EASE } from '../components/motion';
 import AtelierPanel from '../components/auth/AtelierPanel';
 import { api, apiErrorText, isNetworkErrorKey } from '../services/api';
@@ -9,7 +9,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import { passwordStrength } from '../features/auth/passwordStrength';
-import { signInWithGoogle } from '../services/firebaseAuth';
+import { signInWithGoogle, signUpWithEmail } from '../services/firebaseAuth';
 
 /* Signing in and signing up, on one page.
 
@@ -43,6 +43,14 @@ const isNetworkError = (err) =>
 const STRENGTH_WIDTH = { tooShort: '10%', weak: '33%', fair: '66%', strong: '100%' };
 const STRENGTH_COLOUR = { tooShort: '#DCDCDC', weak: '#C91D1D', fair: '#D4A338', strong: '#042509' };
 
+const validatePasswordPolicy = (password) => {
+  if (!password || password.length < 8) return false;
+  if (!/[A-Z]/.test(password)) return false;
+  if (!/[a-z]/.test(password)) return false;
+  if (!/[0-9]/.test(password)) return false;
+  return true;
+};
+
 export default function AccessPage({ mode: initialMode = 'signin', onLoginSuccess }) {
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -63,6 +71,8 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
   const [remember, setRemember] = useState(true);
   const [agreed, setAgreed] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [verificationSentEmail, setVerificationSentEmail] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const firstExtraRef = useRef(null);
@@ -108,6 +118,7 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
      instead, so the tab still says what the visitor is doing. */
   const toggleMode = () => {
     setError('');
+    setVerificationSentEmail('');
     const next = registering ? 'signin' : 'register';
     if (next === 'register') askedToRegister.current = true;
     setMode(next);
@@ -143,24 +154,27 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
     }
 
     if (registering) {
-      if (form.password.length < 8) { setError(t('access.tooShort')); return; }
-      if (form.password !== form.confirm) { setError(t('access.mismatch')); return; }
-      if (!agreed) { setError(t('access.termsRequired')); return; }
+      if (!validatePasswordPolicy(form.password)) {
+        setError(t('access.passwordPolicy'));
+        return;
+      }
+      if (form.password !== form.confirm) {
+        setError(t('access.mismatch'));
+        return;
+      }
+      if (!agreed) {
+        setError(t('access.termsRequired'));
+        return;
+      }
     }
 
     setBusy(true);
     try {
       if (registering) {
         const name = `${form.firstName} ${form.lastName}`.trim() || form.email.split('@')[0];
-        const res = await api.register({ name, email: form.email.trim(), password: form.password });
-        const account = res.data || {};
-        finish({
-          id: account._id,
-          name: account.name || name,
-          email: account.email || form.email.trim(),
-          role: account.role || 'Member',
-          tier: account.tier,
-        }, res.token);
+        await signUpWithEmail(form.email.trim(), form.password, name);
+        setVerificationSentEmail(form.email.trim());
+        showToast(t('access.verificationSentTitle'), 'success');
       } else {
         const res = await api.login(form.email.trim(), form.password);
         const account = res.data || {};
@@ -173,9 +187,20 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
         }, res.token);
       }
     } catch (err) {
-      setError(isNetworkError(err)
-        ? t('common.offline')
-        : apiErrorText(err, t) || t('auth.invalidCredentials'));
+      const code = err?.code || '';
+      if (code === 'auth/email-already-in-use') {
+        setError(t('access.emailInUse'));
+      } else if (code === 'auth/invalid-email') {
+        setError(t('access.invalidEmail'));
+      } else if (code === 'auth/weak-password') {
+        setError(t('access.weakPassword'));
+      } else if (code === 'auth/too-many-requests') {
+        setError(t('access.tooManyRequests'));
+      } else if (isNetworkError(err)) {
+        setError(t('common.offline'));
+      } else {
+        setError(apiErrorText(err, t) || t('auth.invalidCredentials'));
+      }
     } finally {
       setBusy(false);
     }
@@ -231,110 +256,141 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
             {registering ? t('access.registerLead') : t('access.signInLead')}
           </p>
 
-          <form onSubmit={handleSubmit} noValidate>
-            {registering && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-                <motion.div {...(stagger(0) || {})}>
-                  <label htmlFor="access-first" className={label}>{t('access.firstName')}</label>
-                  <input id="access-first" ref={firstExtraRef} name="firstName" type="text"
-                    value={form.firstName} onChange={set('firstName')} className={field} autoComplete="given-name" />
-                </motion.div>
-                <motion.div {...(stagger(1) || {})}>
-                  <label htmlFor="access-last" className={label}>{t('access.lastName')}</label>
-                  <input id="access-last" name="lastName" type="text"
-                    value={form.lastName} onChange={set('lastName')} className={field} autoComplete="family-name" />
-                </motion.div>
+          {verificationSentEmail ? (
+            <div className="py-6 border-t border-b border-matcha-border my-4">
+              <div className="flex items-center gap-3 text-matcha-accent mb-3">
+                <CheckCircle2 size={24} className="shrink-0" />
+                <h2 className="text-lg font-bold uppercase tracking-tight text-[#0A0A0A]">
+                  {t('access.verificationSentTitle')}
+                </h2>
               </div>
-            )}
-
-            <div className="mb-4">
-              <label htmlFor="access-email" className={label}>{t('access.email')}</label>
-              <input id="access-email" name="email" type="email" required
-                value={form.email} onChange={set('email')} className={field}
-                placeholder={t('access.emailPlaceholder')} autoComplete="email" />
-            </div>
-
-            <div className="mb-2">
-              <div className="flex items-baseline justify-between gap-3">
-                <label htmlFor="access-password" className={label}>{t('access.password')}</label>
-                {!registering && (
-                  <button type="button" onClick={requestReset} disabled={busy}
-                    className="text-xs font-mono text-[#0A0A0A] underline underline-offset-4 decoration-matcha-accent decoration-2 cursor-pointer">
-                    {t('access.forgot')}
-                  </button>
-                )}
-              </div>
-              <div className="relative">
-                <input id="access-password" name="password" required
-                  type={showPassword ? 'text' : 'password'}
-                  value={form.password} onChange={set('password')} className={`${field} pr-11`}
-                  placeholder={registering ? t('access.passwordPlaceholder') : undefined}
-                  autoComplete={registering ? 'new-password' : 'current-password'} />
-                <button type="button" onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? t('access.hidePassword') : t('access.showPassword')}
-                  className="absolute right-0 top-0 h-full px-3 text-matcha-muted hover:text-[#0A0A0A] cursor-pointer outline-hidden focus-visible:text-[#0A0A0A]">
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </div>
-            </div>
-
-            {registering && (
-              <motion.div {...(stagger(2) || {})} className="mb-4">
-                {/* The meter reports; the eight-character floor is what the
-                    form actually enforces. */}
-                <div className="flex items-baseline justify-between gap-3 mb-1.5">
-                  <span className="text-[11px] font-mono text-matcha-muted">{t('access.strength.label')}</span>
-                  <span className="text-[11px] font-mono" style={{ color: STRENGTH_COLOUR[strength.band] }}>
-                    {t(`access.strength.${strength.band}`)}
-                  </span>
-                </div>
-                <div className="h-1 bg-matcha-border">
-                  <div className="h-full transition-all duration-300"
-                    style={{ width: STRENGTH_WIDTH[strength.band], backgroundColor: STRENGTH_COLOUR[strength.band] }} />
-                </div>
-              </motion.div>
-            )}
-
-            {registering && (
-              <motion.div {...(stagger(3) || {})} className="mb-4">
-                <label htmlFor="access-confirm" className={label}>{t('access.confirm')}</label>
-                <input id="access-confirm" name="confirm" type="password"
-                  value={form.confirm} onChange={set('confirm')} className={field} autoComplete="new-password" />
-              </motion.div>
-            )}
-
-            {registering ? (
-              <motion.label {...(stagger(4) || {})}
-                className="flex items-start gap-2.5 mb-5 text-xs text-[#0A0A0A]/80 cursor-pointer">
-                <input type="checkbox" checked={agreed} onChange={(e) => { setError(''); setAgreed(e.target.checked); }}
-                  className="mt-0.5 accent-[#0A0A0A] w-4 h-4 shrink-0" />
-                <span>
-                  {t('access.terms')}{' '}
-                  <Link to="/legal/terms" className="underline underline-offset-4 decoration-matcha-accent decoration-2">
-                    {t('access.termsLink')}
-                  </Link>
-                </span>
-              </motion.label>
-            ) : (
-              <label className="flex items-center gap-2.5 mb-5 text-xs text-[#0A0A0A]/80 cursor-pointer">
-                <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)}
-                  className="accent-[#0A0A0A] w-4 h-4" />
-                <span>{t('access.remember')}</span>
-              </label>
-            )}
-
-            {error && (
-              <p role="alert" className="flex items-start gap-2 mb-4 text-xs font-mono text-matcha-accent">
-                <AlertCircle size={14} className="shrink-0 mt-px" aria-hidden="true" />
-                <span>{error}</span>
+              <p className="text-sm text-[#0A0A0A]/80 leading-relaxed mb-6">
+                {t('access.verificationSentBody', { email: verificationSentEmail })}
               </p>
-            )}
+              <button
+                type="button"
+                onClick={() => {
+                  setVerificationSentEmail('');
+                  setMode('signin');
+                }}
+                className="w-full py-3.5 bg-[#0A0A0A] hover:bg-matcha-accent text-matcha-bg font-mono font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer"
+              >
+                {t('access.toSignIn')}
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} noValidate>
+              {registering && (
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  <motion.div {...(stagger(0) || {})}>
+                    <label htmlFor="access-first" className={label}>{t('access.firstName')}</label>
+                    <input id="access-first" ref={firstExtraRef} name="firstName" type="text"
+                      value={form.firstName} onChange={set('firstName')} className={field} autoComplete="given-name" />
+                  </motion.div>
+                  <motion.div {...(stagger(1) || {})}>
+                    <label htmlFor="access-last" className={label}>{t('access.lastName')}</label>
+                    <input id="access-last" name="lastName" type="text"
+                      value={form.lastName} onChange={set('lastName')} className={field} autoComplete="family-name" />
+                  </motion.div>
+                </div>
+              )}
 
-            <button type="submit" disabled={busy}
-              className="w-full py-3.5 bg-[#0A0A0A] hover:bg-matcha-accent disabled:bg-matcha-border disabled:text-matcha-muted text-matcha-bg font-mono font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer disabled:cursor-not-allowed outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]">
-              {busy ? t('access.working') : registering ? t('access.submitRegister') : t('access.submitSignIn')}
-            </button>
-          </form>
+              <div className="mb-4">
+                <label htmlFor="access-email" className={label}>{t('access.email')}</label>
+                <input id="access-email" name="email" type="email" required
+                  value={form.email} onChange={set('email')} className={field}
+                  placeholder={t('access.emailPlaceholder')} autoComplete="email" />
+              </div>
+
+              <div className="mb-2">
+                <div className="flex items-baseline justify-between gap-3">
+                  <label htmlFor="access-password" className={label}>{t('access.password')}</label>
+                  {!registering && (
+                    <button type="button" onClick={requestReset} disabled={busy}
+                      className="text-xs font-mono text-[#0A0A0A] underline underline-offset-4 decoration-matcha-accent decoration-2 cursor-pointer">
+                      {t('access.forgot')}
+                    </button>
+                  )}
+                </div>
+                <div className="relative">
+                  <input id="access-password" name="password" required
+                    type={showPassword ? 'text' : 'password'}
+                    value={form.password} onChange={set('password')} className={`${field} pr-11`}
+                    placeholder={registering ? t('access.passwordPlaceholder') : undefined}
+                    autoComplete={registering ? 'new-password' : 'current-password'} />
+                  <button type="button" onClick={() => setShowPassword((v) => !v)}
+                    aria-label={showPassword ? t('access.hidePassword') : t('access.showPassword')}
+                    className="absolute right-0 top-0 h-full px-3 text-matcha-muted hover:text-[#0A0A0A] cursor-pointer outline-hidden focus-visible:text-[#0A0A0A]">
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+              </div>
+
+              {registering && (
+                <motion.div {...(stagger(2) || {})} className="mb-4">
+                  {/* The meter reports; the eight-character floor is what the
+                      form actually enforces. */}
+                  <div className="flex items-baseline justify-between gap-3 mb-1.5">
+                    <span className="text-[11px] font-mono text-matcha-muted">{t('access.strength.label')}</span>
+                    <span className="text-[11px] font-mono" style={{ color: STRENGTH_COLOUR[strength.band] }}>
+                      {t(`access.strength.${strength.band}`)}
+                    </span>
+                  </div>
+                  <div className="h-1 bg-matcha-border">
+                    <div className="h-full transition-all duration-300"
+                      style={{ width: STRENGTH_WIDTH[strength.band], backgroundColor: STRENGTH_COLOUR[strength.band] }} />
+                  </div>
+                </motion.div>
+              )}
+
+              {registering && (
+                <motion.div {...(stagger(3) || {})} className="mb-4">
+                  <label htmlFor="access-confirm" className={label}>{t('access.confirm')}</label>
+                  <div className="relative">
+                    <input id="access-confirm" name="confirm" type={showConfirmPassword ? 'text' : 'password'}
+                      value={form.confirm} onChange={set('confirm')} className={`${field} pr-11`} autoComplete="new-password" />
+                    <button type="button" onClick={() => setShowConfirmPassword((v) => !v)}
+                      aria-label={showConfirmPassword ? t('access.hidePassword') : t('access.showPassword')}
+                      className="absolute right-0 top-0 h-full px-3 text-matcha-muted hover:text-[#0A0A0A] cursor-pointer outline-hidden focus-visible:text-[#0A0A0A]">
+                      {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
+                  </div>
+                </motion.div>
+              )}
+
+              {registering ? (
+                <motion.label {...(stagger(4) || {})}
+                  className="flex items-start gap-2.5 mb-5 text-xs text-[#0A0A0A]/80 cursor-pointer">
+                  <input type="checkbox" checked={agreed} onChange={(e) => { setError(''); setAgreed(e.target.checked); }}
+                    className="mt-0.5 accent-[#0A0A0A] w-4 h-4 shrink-0" />
+                  <span>
+                    {t('access.terms')}{' '}
+                    <Link to="/legal/terms" className="underline underline-offset-4 decoration-matcha-accent decoration-2">
+                      {t('access.termsLink')}
+                    </Link>
+                  </span>
+                </motion.label>
+              ) : (
+                <label className="flex items-center gap-2.5 mb-5 text-xs text-[#0A0A0A]/80 cursor-pointer">
+                  <input type="checkbox" checked={remember} onChange={(e) => setRemember(e.target.checked)}
+                    className="accent-[#0A0A0A] w-4 h-4" />
+                  <span>{t('access.remember')}</span>
+                </label>
+              )}
+
+              {error && (
+                <p role="alert" className="flex items-start gap-2 mb-4 text-xs font-mono text-matcha-accent">
+                  <AlertCircle size={14} className="shrink-0 mt-px" aria-hidden="true" />
+                  <span>{error}</span>
+                </p>
+              )}
+
+              <button type="submit" disabled={busy}
+                className="w-full py-3.5 bg-[#0A0A0A] hover:bg-matcha-accent disabled:bg-matcha-border disabled:text-matcha-muted text-matcha-bg font-mono font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer disabled:cursor-not-allowed outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]">
+                {busy ? t('access.working') : registering ? t('access.submitRegister') : t('access.submitSignIn')}
+              </button>
+            </form>
+          )}
 
           {/* The only button on this page is the one that submits. Switching
               side is a sentence with a link in it, so the eye is not asked to
@@ -377,15 +433,10 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
                 {t('access.socialTitle')}
               </span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div>
               <button type="button" onClick={handleGoogleSignIn} disabled={busy}
-                className="py-2.5 px-3 border border-[#0A0A0A] text-xs font-mono font-bold text-[#0A0A0A] hover:bg-[#0A0A0A] hover:text-white transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-wait outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]">
+                className="w-full py-2.5 px-3 border border-[#0A0A0A] text-xs font-mono font-bold text-[#0A0A0A] hover:bg-[#0A0A0A] hover:text-white transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-wait outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]">
                 {t('access.google')}
-              </button>
-              <button type="button" aria-disabled="true"
-                onClick={() => showToast(t('access.socialSoonToast', { provider: 'Facebook' }), 'info')}
-                className="py-2.5 px-3 border border-dashed border-matcha-border text-xs font-mono text-matcha-muted hover:border-matcha-muted transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]">
-                {t('access.facebookSoon')}
               </button>
             </div>
           </div>
