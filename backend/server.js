@@ -38,6 +38,8 @@ import mediaRoutes from './routes/mediaRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import paymentRoutes from './routes/paymentRoutes.js';
+import stripeWebhook from './routes/stripeWebhook.js';
 import { startNotificationWorker, ensureNotificationIndexes } from './services/notificationService.js';
 import errorHandler from './middleware/errorHandler.js';
 
@@ -189,6 +191,11 @@ app.use(cors({
   },
   credentials: true,
 }));
+
+// Stripe verifies the signature against the exact request bytes. This route
+// must be mounted before express.json(), which would replace them with an
+// object and make every legitimate webhook fail verification.
+app.use('/api/payments/webhook', express.raw({ type: 'application/json' }), stripeWebhook);
 app.use(express.json());
 
 // API Request Logging
@@ -266,6 +273,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/admin/notifications', notificationRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/payments', paymentRoutes);
 app.use('/api', productRoutes);
 app.use('/api', lookbookRoutes);
 app.use('/api', mediaRoutes);

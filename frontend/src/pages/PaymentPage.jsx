@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useLanguage } from '../context/LanguageContext.jsx';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Elements } from '@stripe/react-stripe-js';
+import { useLanguage } from '../context/LanguageContext.jsx';
 import useChangeMotion from '../hooks/useChangeMotion';
 import { useCart } from '../context/CartContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
@@ -10,10 +11,22 @@ import OrderSummarySidebar from '../components/payment/OrderSummarySidebar';
 import OrderSuccessModal from '../components/payment/OrderSuccessModal';
 import { api, apiErrorText } from '../services/api';
 import { useStoreMode } from '../context/StoreModeContext.jsx';
-import { SHIPPING_OPTIONS, shippingCostFor } from '../config/shipping';
+import { SHIPPING_OPTIONS as SHIPPING_RATES, shippingCostFor } from '../config/shipping';
 import { couponFor, discountFor, normaliseCode, FEATURED_CODES, takePendingCoupon } from '../config/coupons';
 import PreviewNote from '../components/ui/PreviewNote';
-import { QrCode, AlertTriangle, RotateCcw, Check } from 'lucide-react';
+import { stripePromise } from '../lib/stripe';
+import { QrCode, Truck, Shield, AlertTriangle, RotateCcw } from 'lucide-react';
+
+// Stripe requires payment confirmation to be verified server-side (webhook), not
+// just trusted from the browser — this polls briefly so the UI waits for that
+// confirmation to land before declaring the order paid. See backend/routes/stripeWebhook.js.
+const PAYMENT_POLL_ATTEMPTS = 5;
+const PAYMENT_POLL_INTERVAL_MS = 1200;
+// PromptPay needs real human time to open a banking app and scan — a card's instant
+// approve/decline doesn't apply, so this window is much longer (~2 minutes total).
+const QR_POLL_ATTEMPTS = 40;
+const QR_POLL_INTERVAL_MS = 3000;
+const CARD_PAYMENT_METHODS = ['visa', 'mastercard'];
 
 const PAYMENT_METHODS = [
   { id: 'visa', name: 'Visa', icon: '💳' },
@@ -22,10 +35,11 @@ const PAYMENT_METHODS = [
   { id: 'qr', name: 'PromptPay QR', icon: <QrCode size={20} /> },
 ];
 
-const SHIPPING_METHOD_ITEMS = [
-  { id: 'standard', name: 'Standard Delivery', price: SHIPPING_OPTIONS.standard, days: '3-5 business days' },
-  { id: 'express', name: 'Priority Express Courier', price: SHIPPING_OPTIONS.express, days: '1-2 business days' },
-  { id: 'premium', name: 'Same-Day Dispatch', price: SHIPPING_OPTIONS.premium, days: 'Guaranteed 24 hours' },
+// ชื่อและระยะเวลาเป็นเรื่องของหน้าจอ ส่วนราคามาจากตารางกลางที่ตรงกับเซิร์ฟเวอร์
+const SHIPPING_OPTIONS = [
+  { id: 'standard', name: 'Standard Express Shipping', price: SHIPPING_RATES.standard, days: '3-5 business days' },
+  { id: 'express', name: 'Priority Courier Shipping', price: SHIPPING_RATES.express, days: '1-2 business days' },
+  { id: 'premium', name: 'VIP Same-Day Delivery', price: SHIPPING_RATES.premium, days: 'Guaranteed 24 Hours' },
 ];
 
 const initialFormData = {
@@ -41,10 +55,7 @@ const initialFormData = {
 };
 
 const initialCardData = {
-  cardNumber: '',
   cardHolder: '',
-  expiryDate: '',
-  cvv: '',
 };
 
 export default function PaymentPage() {
@@ -67,16 +78,18 @@ export default function PaymentPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [createdOrder, setCreatedOrder] = useState(null);
   const [orderError, setOrderError] = useState(null);
+  const [qrDisplay, setQrDisplay] = useState(null); // { imageUrl, amountThb } while a PromptPay QR is up
+  const qrCancelRef = useRef(false);
   const [checkoutRequestId] = useState(() => `req-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`);
 
-  // Redirect to cart if bag is empty and not viewing success modal
+  // โหมดเดโมมีขั้นตอนของตัวเองและล้างตะกร้าทันทีที่ออเดอร์ถูกบันทึก
+  // ถ้าปล่อยให้ guard นี้ทำงานด้วย หน้ายืนยันจะถูกเด้งทิ้งก่อนผู้ซื้อได้เห็นเลขออเดอร์
   useEffect(() => {
     if (cartItems.length === 0 && !showSuccessModal) {
       navigate('/cart');
     }
   }, [cartItems, showSuccessModal, navigate]);
 
-  // Handle pending coupon applied from banners
   useEffect(() => {
     const pending = takePendingCoupon();
     if (!pending) return;
@@ -95,6 +108,7 @@ export default function PaymentPage() {
   });
 
   const discount = discountFor(appliedCoupon, subtotal);
+
   const total = Math.max(0, subtotal + shippingCost - discount);
 
   const handleApplyCoupon = (e) => {
@@ -109,19 +123,46 @@ export default function PaymentPage() {
     }
 
     setAppliedCoupon({ ...coupon, code });
-    showToast(`Applied coupon: ${code} (${coupon.label}) ✨`);
+    showToast(`Applied coupon: ${code} (${coupon.label}) 🎉`);
     setCouponCode('');
   };
 
   const handleRemoveCoupon = () => {
     setAppliedCoupon(null);
-    showToast('Removed promo code.');
+    showToast('Removed promotional coupon.');
   };
 
-  const handlePlaceOrder = async () => {
+  // เปลี่ยนวิธีชำระเงินระหว่างที่มี QR ค้างอยู่ (เช่นกดเลือกวิธีอื่นแทนการกด "ยกเลิก")
+  // ต้องเคลียร์สถานะ QR ทิ้งด้วย ไม่งั้นจะเห็น QR เก่าค้างเวลาเปลี่ยนกลับมาที่ qr อีกที
+  const handleSelectPayment = (id) => {
+    setSelectedPayment(id);
+    if (id !== 'qr') setQrDisplay(null);
+  };
+
+  const handleCancelQr = () => {
+    qrCancelRef.current = true;
+    setQrDisplay(null);
+    setIsProcessing(false);
+  };
+
+  // รอ paymentStatus จาก webhook จริง แทนที่จะเชื่อผลจาก Stripe.js ฝั่ง browser ตรงๆ
+  // isCancelled ให้ QR flow เลิกรอกลางคันได้ทันทีเมื่อลูกค้ากด "ยกเลิก"
+  const waitForPaymentConfirmation = async (orderId, { attempts = PAYMENT_POLL_ATTEMPTS, intervalMs = PAYMENT_POLL_INTERVAL_MS, isCancelled } = {}) => {
+    for (let attempt = 0; attempt < attempts; attempt += 1) {
+      if (isCancelled?.()) return null;
+      await new Promise((resolve) => setTimeout(resolve, intervalMs));
+      if (isCancelled?.()) return null;
+      const check = await api.getOrderById(orderId).catch(() => null);
+      if (check?.data && check.data.paymentStatus === 'paid') return check.data;
+    }
+    return null;
+  };
+
+  const handlePlaceOrder = async ({ stripe, cardElement } = {}) => {
     setOrderError(null);
     setIsProcessing(true);
     try {
+      // ราคาไม่ได้ส่งไปแล้ว — เซิร์ฟเวอร์คิดเองจากราคาใน DB และโค้ดส่วนลดที่ส่งไป
       const orderPayload = {
         idempotencyKey: checkoutRequestId,
         customer: formData,
@@ -136,21 +177,148 @@ export default function PaymentPage() {
         couponCode: appliedCoupon?.code || null,
         paymentMethod: selectedPayment,
         shippingOption: selectedShipping,
-        // Which language to write the confirmation email in. Taken from what
-        // the shopper is reading right now, rather than guessed later from an
-        // address or a country.
         locale: lang
       };
 
       const res = await api.createOrder(orderPayload);
       if (!res || res.success === false || !res.data) {
-        throw new Error(res?.message || 'Server did not acknowledge order creation.');
+        throw new Error(res?.message || 'เซิร์ฟเวอร์ไม่ได้ยืนยันการสร้างออเดอร์');
       }
-      setCreatedOrder(res.data);
-      showToast('Order confirmed successfully.', 'success');
-      setShowSuccessModal(true);
-      clearCart();
+      let order = res.data;
+      const orderId = order.orderId || order._id;
+
+      const finishSuccess = (finalOrder) => {
+        setCreatedOrder(finalOrder);
+        showToast(
+          finalOrder.paymentStatus === 'paid'
+            ? 'ชำระเงินสำเร็จ! รับคำสั่งซื้อเรียบร้อยแล้ว'
+            : 'รับคำสั่งซื้อเรียบร้อยแล้ว (สถานะ: รอดำเนินการ / รอชำระเงิน)',
+          'success'
+        );
+        setShowSuccessModal(true);
+        clearCart();
+      };
+
+      if (CARD_PAYMENT_METHODS.includes(selectedPayment)) {
+        if (!stripe || !cardElement) {
+          throw new Error('ระบบชำระเงินยังไม่พร้อม กรุณารอสักครู่แล้วลองใหม่อีกครั้ง');
+        }
+
+        const intentRes = await api.createPaymentIntent(orderId);
+        if (!intentRes || intentRes.success === false || !intentRes.data?.clientSecret) {
+          throw new Error(intentRes?.message || 'ไม่สามารถเริ่มการชำระเงินได้');
+        }
+
+        const { error: stripeError } = await stripe.confirmCardPayment(intentRes.data.clientSecret, {
+          payment_method: {
+            card: cardElement,
+            billing_details: { name: cardData.cardHolder.trim() || undefined }
+          }
+        });
+
+        if (stripeError) {
+          throw new Error(stripeError.message || 'บัตรถูกปฏิเสธ กรุณาลองบัตรใบอื่น');
+        }
+
+        // Stripe confirmed on the client — the order is only truly "paid" once
+        // our webhook receives Stripe's own server-to-server confirmation.
+        const confirmedOrder = await waitForPaymentConfirmation(orderId);
+        if (confirmedOrder) order = confirmedOrder;
+      } else if (selectedPayment === 'qr') {
+        if (!stripe) {
+          throw new Error('ระบบชำระเงินยังไม่พร้อม กรุณารอสักครู่แล้วลองใหม่อีกครั้ง');
+        }
+
+        const intentRes = await api.createPaymentIntent(orderId);
+        if (!intentRes || intentRes.success === false || !intentRes.data?.clientSecret) {
+          throw new Error(intentRes?.message || 'ไม่สามารถเริ่มการชำระเงินได้');
+        }
+
+        const { error: stripeError, paymentIntent } = await stripe.confirmPromptPayPayment(intentRes.data.clientSecret, {
+          payment_method: {
+            billing_details: {
+              name: `${formData.firstName} ${formData.lastName}`.trim() || undefined,
+              email: formData.email
+            }
+          }
+        });
+
+        if (stripeError) {
+          throw new Error(stripeError.message || 'ไม่สามารถสร้าง QR PromptPay ได้ กรุณาลองใหม่อีกครั้ง');
+        }
+
+        console.log('[Stripe PromptPay] status:', paymentIntent?.status, 'next_action type:', paymentIntent?.next_action?.type || 'ไม่มี');
+
+        // Stripe test mode มักยืนยัน PromptPay "สำเร็จ" เกือบจะทันทีโดยไม่ต้องสแกนจริง — ถึงตอนที่
+        // เรามาเช็ค next_action การจ่ายเงินอาจจบไปแล้ว จึงไม่มี QR ให้โชว์เลย (ไม่ใช่ error) ข้ามการ
+        // แสดง QR แล้วรอ webhook ยืนยันสั้นๆ แบบเดียวกับบัตรได้เลย
+        if (paymentIntent?.status === 'succeeded') {
+          const confirmedOrder = await waitForPaymentConfirmation(orderId);
+          if (confirmedOrder) order = confirmedOrder;
+          finishSuccess(order);
+          return;
+        }
+
+        // ปกติ (นอก test mode) PaymentIntent จะค้างที่ requires_action พร้อมข้อมูล QR ให้สแกน —
+        // next_action บางครั้งยังไม่ populate ทันทีที่ confirm กลับมา ลอง retrieve ซ้ำอีกครั้งก่อน
+        let qrAction = paymentIntent?.next_action?.promptpay_display_qr_code;
+        let latestStatus = paymentIntent?.status;
+        let latestActionType = paymentIntent?.next_action?.type;
+
+        if (!qrAction?.image_url_png && !qrAction?.image_url_svg && !qrAction?.hosted_instructions_url) {
+          const retrieved = await stripe.retrievePaymentIntent(intentRes.data.clientSecret).catch(() => null);
+          const retrievedIntent = retrieved?.paymentIntent;
+
+          if (retrievedIntent?.status === 'succeeded') {
+            const confirmedOrder = await waitForPaymentConfirmation(orderId);
+            if (confirmedOrder) order = confirmedOrder;
+            finishSuccess(order);
+            return;
+          }
+
+          if (retrievedIntent?.next_action?.promptpay_display_qr_code) {
+            qrAction = retrievedIntent.next_action.promptpay_display_qr_code;
+            latestStatus = retrievedIntent.status;
+            latestActionType = retrievedIntent.next_action.type;
+          }
+        }
+
+        const qrImageUrl = qrAction?.image_url_png || qrAction?.image_url_svg || null;
+        const qrHostedUrl = qrAction?.hosted_instructions_url || null;
+
+        if (!qrImageUrl && !qrHostedUrl) {
+          throw new Error(`ไม่ได้รับ QR code จาก Stripe (สถานะ: ${latestStatus || 'ไม่ทราบ'}, next_action: ${latestActionType || 'ไม่มี'}) — เปิด console ดูรายละเอียดเพิ่มเติม แล้วลองใหม่อีกครั้ง`);
+        }
+
+        qrCancelRef.current = false;
+        setQrDisplay({ imageUrl: qrImageUrl, hostedUrl: qrHostedUrl, amountThb: intentRes.data.thbAmount ?? 0 });
+
+        const confirmedOrder = await waitForPaymentConfirmation(orderId, {
+          attempts: QR_POLL_ATTEMPTS,
+          intervalMs: QR_POLL_INTERVAL_MS,
+          isCancelled: () => qrCancelRef.current
+        });
+
+        if (qrCancelRef.current) {
+          // ลูกค้ากด "ยกเลิก" เอง — ไม่ใช่ความล้มเหลว ไม่ต้องแจ้ง error หรือ success ใดๆ
+          return;
+        }
+
+        setQrDisplay(null);
+
+        if (!confirmedOrder) {
+          // ยังไม่ได้รับการยืนยันภายในเวลาที่รอ — ไม่ใช่ error แค่ยังไม่จ่าย webhook จะอัปเดต
+          // สถานะให้เองเมื่อลูกค้าสแกนจ่ายจริง (เช็คสถานะย้อนหลังได้ที่หน้าประวัติคำสั่งซื้อ)
+          showToast('ยังไม่ได้รับการยืนยันการชำระเงิน กรุณาตรวจสอบสถานะออเดอร์ภายหลังในหน้าประวัติคำสั่งซื้อ', 'info');
+          return;
+        }
+
+        order = confirmedOrder;
+      }
+
+      finishSuccess(order);
     } catch (err) {
+      // ออเดอร์ที่เซิร์ฟเวอร์ปฏิเสธคือออเดอร์ที่ไม่เกิดขึ้น — อย่าบอกลูกค้าว่าสำเร็จ
       console.error('Order creation failed:', err.message);
       const message = apiErrorText(err, t);
       showToast(message, 'error');
@@ -160,64 +328,54 @@ export default function PaymentPage() {
     }
   };
 
+  // โหมดทดลองใช้ฟอร์มกรอกที่อยู่และบัตรชุดเดียวกับโหมดร้านจริง เพื่อให้ผู้ที่มาลองใช้
+  // เห็นขั้นตอนการสั่งซื้อครบตามจริง — ต่างกันแค่ไม่มีการจัดส่งจริง (การตัดเงินด้วยบัตร
+  // เชื่อมกับ Stripe จริงในโหมดทดสอบ) เลขบัตรพิมพ์เข้า Stripe Elements โดยตรง
+  // (iframe ของ Stripe) ไม่เคยผ่านโค้ดหรือ state ของแอปนี้เลย
   return (
-    <div className="w-full bg-matcha-bg text-[#0A0A0A] min-h-screen py-10 sm:py-14 px-5 sm:px-6 lg:px-8">
+    <Elements stripe={stripePromise}>
+    <div className="w-full bg-[#F1F1F1] min-h-screen py-10 sm:py-16 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto">
-        
-        {/* Confident, Quiet Header */}
-        <div className="mb-8 pb-5 border-b border-matcha-border flex flex-col md:flex-row md:items-baseline justify-between gap-4">
+
+        {/* Step Indicator Header */}
+        <div className="mb-10 pb-6 border-b border-[#DCDCDC] flex items-center justify-between">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-[#0A0A0A] tracking-tight">
-              {step === 'shipping' ? t('checkout.pageShipping') : t('checkout.pagePayment')}
+            <span data-enter className="text-xs font-mono font-bold text-[#042509] uppercase tracking-widest">
+              Checkout Flow
+            </span>
+            <h1 data-enter="wipe" style={{ '--enter-delay': '90ms' }} className="text-2xl sm:text-4xl font-black uppercase text-[#000000] tracking-tight mt-1">
+              {step === 'shipping' ? 'Shipping Details' : 'Payment Method'}
             </h1>
           </div>
 
           {/* Stepper Progress */}
           <div className="flex items-center gap-2 font-mono text-xs">
-            <button
-              onClick={() => navigate('/cart')}
-              className="flex items-center gap-1 text-matcha-muted hover:text-matcha-primary cursor-pointer"
-            >
-              <Check size={12} className="text-matcha-primary" />
-              <span>{t('checkout.stepBag')}</span>
-            </button>
-
-            <span className="text-matcha-border">/</span>
-
-            <button
-              onClick={() => setStep('shipping')}
-              className={`flex items-center gap-1 px-2.5 py-1 transition-colors cursor-pointer ${
-                step === 'shipping'
-                  ? 'bg-matcha-primary text-white font-bold'
-                  : 'text-matcha-muted hover:text-matcha-primary'
-              }`}
-            >
-              {step === 'payment' ? <Check size={12} /> : null}
-              <span>{t('checkout.stepAddress')}</span>
-            </button>
-
-            <span className="text-matcha-border">/</span>
-
-            <div
-              className={`px-2.5 py-1 ${
-                step === 'payment'
-                  ? 'bg-matcha-primary text-white font-bold'
-                  : 'text-matcha-muted'
-              }`}
-            >
-              <span>{t('checkout.stepPayment')}</span>
-            </div>
+            <span className={`px-3 py-1 rounded-lg font-bold ${
+              step === 'shipping' ? 'bg-[#042509] text-white' : 'bg-[#518F5C] text-[#042509]'
+            }`}>
+              1. Address
+            </span>
+            <span className="text-[#DCDCDC]">→</span>
+            <span className={`px-3 py-1 rounded-lg font-bold ${
+              step === 'payment' ? 'bg-[#042509] text-white' : 'bg-white border border-[#DCDCDC] text-[#666666]'
+            }`}>
+              2. Payment
+            </span>
           </div>
         </div>
 
         {/* 2-Column Checkout Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           
-          {/* Main Form Step Area */}
+          {/* Main Form Steps (Left Column) */}
           <div ref={stepMotionRef} className="lg:col-span-7">
             {isDemo && (
-              <PreviewNote className="mb-6">
-                <strong>{t('checkout.simulation')}</strong> {t('checkout.simulationBody')}
+              <PreviewNote className="mb-5">
+                <strong>โหมดทดลอง</strong> — ขั้นตอนและฟอร์มเหมือนการสั่งซื้อจริงทุกอย่าง
+                แต่ไม่มีการตัดเงินและไม่มีการจัดส่ง
+                <br />
+                กรุณา<strong>ใช้ข้อมูลสมมติเท่านั้น</strong> อย่ากรอกเลขบัตรจริง
+                (เลขบัตรที่กรอกอยู่ในหน้าจอนี้เท่านั้น ไม่ถูกส่งออกและไม่ถูกบันทึกที่ใด)
               </PreviewNote>
             )}
 
@@ -225,7 +383,7 @@ export default function PaymentPage() {
               <ShippingStep
                 formData={formData}
                 onFormChange={setFormData}
-                shippingOptions={SHIPPING_METHOD_ITEMS}
+                shippingOptions={SHIPPING_OPTIONS}
                 selectedShipping={selectedShipping}
                 onSelectShipping={setSelectedShipping}
                 onNext={() => {
@@ -238,62 +396,68 @@ export default function PaymentPage() {
               <PaymentMethodStep
                 paymentMethods={PAYMENT_METHODS}
                 selectedPayment={selectedPayment}
-                onSelectPayment={setSelectedPayment}
+                onSelectPayment={handleSelectPayment}
                 cardData={cardData}
                 onCardDataChange={setCardData}
-                onBack={() => {
-                  setStep('shipping');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
+                onBack={() => setStep('shipping')}
                 onPlaceOrder={handlePlaceOrder}
                 isProcessing={isProcessing}
                 totalAmount={total}
+                qrDisplay={qrDisplay}
+                onCancelQr={handleCancelQr}
               />
             )}
 
-            {/* Error Notification Banner */}
             {step === 'payment' && orderError && (
               <div
                 role="alert"
-                className="mt-6 p-5 border border-matcha-accent/30 bg-[#FBEAEA] space-y-3"
+                className="mt-6 p-6 rounded-2xl border border-[#DCDCDC] bg-[#F1F1F1] shadow-sm space-y-4"
               >
                 <div className="flex items-start gap-3">
-                  <AlertTriangle size={18} className="text-matcha-accent shrink-0 mt-0.5" />
+                  <div className="p-2 rounded-xl bg-white border border-[#DCDCDC] text-[#C91D1D] shrink-0 mt-0.5">
+                    <AlertTriangle size={20} />
+                  </div>
                   <div>
-                    <h3 className="font-bold text-sm text-[#0A0A0A]">
-                      {t('checkout.orderFailedTitle')}
+                    <span className="text-xs font-mono font-bold uppercase tracking-widest text-[#C91D1D] block">
+                      ORDER NOT PLACED
+                    </span>
+                    <h3 className="text-lg font-black uppercase tracking-tight text-[#000000] mt-0.5">
+                      ออเดอร์ยังไม่ถูกสร้าง
                     </h3>
-                    {/* The message already ends in a full stop, so the sentence
-                        that follows it is joined rather than punctuated again. */}
-                    <p className="text-xs font-mono text-matcha-muted mt-1 leading-relaxed">
-                      {orderError} {t('checkout.orderFailedBody')}
-                    </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3 pt-1">
+                <div className="p-3.5 rounded-xl border border-[#DCDCDC] bg-white text-xs font-mono text-[#C91D1D] break-words">
+                  {orderError}
+                </div>
+
+                <p className="text-xs text-[#666666] leading-relaxed">
+                  สินค้าในตะกร้าและข้อมูลที่คุณกรอกไว้ยังอยู่ครบถ้วน ไม่มีการตัดเงินเกิดขึ้น
+                </p>
+
+                <div className="flex flex-wrap items-center gap-3 pt-1">
                   <button
                     type="button"
                     onClick={handlePlaceOrder}
                     disabled={isProcessing}
-                    className="px-5 py-2.5 bg-matcha-primary hover:bg-[#1A381F] text-white text-xs font-mono font-bold uppercase tracking-wider transition-all disabled:opacity-40 cursor-pointer flex items-center gap-2"
+                    className="px-6 py-3 bg-[#042509] hover:bg-[#021505] text-white text-xs font-mono font-bold uppercase tracking-widest rounded-xl shadow-md transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
                   >
-                    <RotateCcw size={13} className={isProcessing ? 'animate-spin' : ''} />
-                    <span>{isProcessing ? t('checkout.processing') : t('common.retry')}</span>
+                    <RotateCcw size={14} className={isProcessing ? 'animate-spin' : ''} />
+                    <span>{isProcessing ? 'กำลังดำเนินการ...' : 'ลองสั่งซื้ออีกครั้ง'}</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setStep('shipping')}
-                    className="px-4 py-2.5 bg-white border border-matcha-border text-[#0A0A0A] hover:border-matcha-primary text-xs font-mono transition-colors cursor-pointer"
+                    className="px-6 py-3 bg-white border border-[#DCDCDC] text-[#666666] hover:text-[#000000] hover:border-[#000000] text-xs font-mono font-bold uppercase tracking-widest rounded-xl transition-colors cursor-pointer"
                   >
-                    {t('checkout.editDestination')}
+                    กลับไปแก้ข้อมูลจัดส่ง
                   </button>
                 </div>
               </div>
             )}
           </div>
 
-          {/* Sticky Order Summary Sidebar */}
+          {/* Order Summary Sidebar (Right Column) */}
           <div className="lg:col-span-5">
             <OrderSummarySidebar
               cartItems={cartItems}
@@ -312,7 +476,7 @@ export default function PaymentPage() {
 
         </div>
 
-        {/* Confirmation Modal */}
+        {/* Order Confirmation Receipt Modal */}
         <OrderSuccessModal
           isOpen={showSuccessModal}
           order={createdOrder}
@@ -324,5 +488,6 @@ export default function PaymentPage() {
 
       </div>
     </div>
+    </Elements>
   );
 }
