@@ -1,12 +1,13 @@
 #!/usr/bin/env node
 /**
- * MatchA — MongoDB Test Database Restore Utility
+ * MatchA — MongoDB Test Database Restore Utility with BSON Type Fidelity
  * 
  * Safety & Production Protection Guarantees:
  * 1. DESIGNED FOR TEST / STAGING / LOCAL DATABASES ONLY.
  * 2. Strict Safety Guard: Detects and BLOCKS restoration to Production databases.
- * 3. Verifies SHA-256 integrity of backup files before writing.
- * 4. Outputs post-restoration verification report.
+ * 3. Restores exact BSON types (ObjectId, Date, Binary) using BSON Extended JSON (EJSON).
+ * 4. Verifies SHA-256 integrity checksums and record counts before writing.
+ * 5. Outputs post-restoration verification report.
  * 
  * Usage:
  *   node backend/scripts/restore-mongodb-test.mjs --backup-dir=backend/backups/backup_xxx --confirm-test-restore
@@ -18,20 +19,21 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import mongoose from 'mongoose';
+import { EJSON, ObjectId } from 'bson';
 import { validateRestoreSafety, isDatabaseNameSafe } from '../services/mongoSafetyGuard.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-function getArg(flag) {
-  const arg = process.argv.find(a => a.startsWith(`${flag}=`));
+export function getArg(flag, args = process.argv) {
+  const arg = args.find(a => a.startsWith(`${flag}=`));
   return arg ? arg.split('=')[1].trim() : null;
 }
 
-function hasFlag(flag) {
-  return process.argv.includes(flag);
+export function hasFlag(flag, args = process.argv) {
+  return args.includes(flag);
 }
 
-function redactUri(uri) {
+export function redactUri(uri) {
   try {
     return uri.replace(/\/\/([^:]+):([^@]+)@/, '//$1:********@');
   } catch {
@@ -39,128 +41,222 @@ function redactUri(uri) {
   }
 }
 
-async function sha256(filePath) {
+export async function sha256(filePath) {
   const content = await fs.readFile(filePath);
   return crypto.createHash('sha256').update(content).digest('hex');
 }
 
-async function runRestore() {
+/**
+ * Performs restore of an EJSON backup into a verified test database.
+ * 
+ * @param {object} options
+ * @param {string} [options.uri] Target connection URI
+ * @param {string} options.backupDir Directory containing manifest.json and collection files
+ * @param {boolean} [options.confirmTest] Confirmation flag
+ * @param {object} [options.env] Environment variables
+ * @param {string[]} [options.cliArgs] CLI arguments array
+ * @param {boolean} [options.quiet] Suppress non-error logging
+ * @returns {Promise<{ success: boolean, report: Array, totalDocs: number, database: string }>}
+ */
+export async function performRestore({
+  uri = '',
+  backupDir = '',
+  confirmTest = false,
+  env = process.env,
+  cliArgs = process.argv,
+  quiet = false
+} = {}) {
   // 1. Strict Production Detection & Safety Guards (Pre-connection verification)
   const safety = validateRestoreSafety({
-    uri: getArg('--uri'),
-    env: process.env,
-    cliArgs: process.argv
+    uri: uri || getArg('--uri', cliArgs),
+    env,
+    cliArgs
   });
 
   if (!safety.safe) {
-    console.error('\n🚨 ======================================================');
-    console.error('🚨 RESTORE SAFETY GUARD: OPERATION REFUSED');
-    console.error('🚨 ======================================================');
-    console.error(`Reason: ${safety.reason}`);
-    console.error('\nAllowed Usage:');
-    console.error('  TEST_MONGODB_URI="mongodb://localhost:27017/matcha_test" node backend/scripts/restore-mongodb-test.mjs --backup-dir=<path> --confirm-test-restore');
-    console.error('  node backend/scripts/restore-mongodb-test.mjs --uri="mongodb://localhost:27017/matcha_test" --backup-dir=<path> --confirm-test-restore');
-    console.error('\nZero modifications or connections made.\n');
-    process.exit(1);
+    const errorMsg = `RESTORE SAFETY GUARD: OPERATION REFUSED. Reason: ${safety.reason}`;
+    if (!quiet) {
+      console.error('\n🚨 ======================================================');
+      console.error('🚨 RESTORE SAFETY GUARD: OPERATION REFUSED');
+      console.error('🚨 ======================================================');
+      console.error(`Reason: ${safety.reason}`);
+      console.error('\nZero modifications or connections made.\n');
+    }
+    throw new Error(errorMsg);
   }
 
-  const uri = safety.uri;
-  const backupDir = getArg('--backup-dir');
-  const confirmTest = hasFlag('--confirm-test-restore');
+  const targetUri = safety.uri;
+  const targetBackupDir = backupDir || getArg('--backup-dir', cliArgs);
+  const isConfirmed = confirmTest || hasFlag('--confirm-test-restore', cliArgs);
 
-  if (!confirmTest) {
-    console.error('\n⚠️ [CONFIRMATION REQUIRED] To prevent accidental overwrites,');
-    console.error('please pass the confirmation flag:');
-    console.error('  --confirm-test-restore\n');
-    process.exit(1);
+  if (!isConfirmed) {
+    throw new Error('Confirmation required: pass --confirm-test-restore or set confirmTest=true.');
   }
 
-  if (!backupDir) {
-    console.error('\n❌ [RESTORE ERROR] Missing --backup-dir parameter.');
-    console.error('Specify the folder containing manifest.json:');
-    console.error('  --backup-dir=backend/backups/backup_matcha_...\n');
-    process.exit(1);
+  if (!targetBackupDir) {
+    throw new Error('Missing --backup-dir parameter. Specify folder containing manifest.json.');
   }
 
   // 2. Read and verify manifest
-  const manifestPath = path.resolve(backupDir, 'manifest.json');
+  const manifestPath = path.resolve(targetBackupDir, 'manifest.json');
   let manifest;
   try {
     const raw = await fs.readFile(manifestPath, 'utf-8');
     manifest = JSON.parse(raw);
   } catch (err) {
-    console.error(`\n❌ [MANIFEST ERROR] Cannot read valid manifest.json at ${manifestPath}: ${err.message}\n`);
-    process.exit(1);
+    throw new Error(`Cannot read valid manifest.json at ${manifestPath}: ${err.message}`);
   }
 
-  console.log('🍵 [MatchA Restore] Target Database:', redactUri(uri));
-  console.log(`📦 Source Backup:     ${backupDir}`);
-  console.log(`🕒 Backup Timestamp:  ${manifest.timestamp}\n`);
+  if (!manifest.collections || typeof manifest.collections !== 'object') {
+    throw new Error(`Invalid manifest structure at ${manifestPath}: missing "collections" map.`);
+  }
 
-  // 3. Verify file checksums before connecting
-  console.log('🔍 Verifying SHA-256 checksums of backup files...');
+  if (!quiet) {
+    console.log('🍵 [MatchA Restore] Target Database:', redactUri(targetUri));
+    console.log(`📦 Source Backup:     ${targetBackupDir}`);
+    console.log(`🕒 Backup Timestamp:  ${manifest.timestamp}`);
+    console.log(`🏷  Backup Format:     ${manifest.format || 'legacy-json'}\n`);
+  }
+
+  // 3. Verify SHA-256 file checksums and record counts before establishing connection
+  if (!quiet) console.log('🔍 Verifying SHA-256 checksums and record counts of backup files...');
   for (const [colName, info] of Object.entries(manifest.collections)) {
-    const filePath = path.resolve(backupDir, info.file);
-    const checksum = await sha256(filePath);
+    const filePath = path.resolve(targetBackupDir, info.file);
+    let checksum;
+    try {
+      checksum = await sha256(filePath);
+    } catch (err) {
+      throw new Error(`Missing collection backup file "${info.file}" for collection "${colName}": ${err.message}`);
+    }
+
     if (checksum !== info.sha256) {
-      console.error(`\n❌ [CHECKSUM MISMATCH] Collection "${colName}" checksum failed!`);
-      console.error(`   Expected: ${info.sha256}`);
-      console.error(`   Actual:   ${checksum}`);
-      console.error('Backup files may have been tampered with or corrupted. Restoration aborted.\n');
-      process.exit(1);
+      throw new Error(
+        `[CHECKSUM MISMATCH] Collection "${colName}" checksum failed! Expected: ${info.sha256}, Actual: ${checksum}. Backup files may be tampered with or corrupted.`
+      );
+    }
+
+    // Verify record count before connecting to DB
+    const raw = await fs.readFile(filePath, 'utf-8');
+    let docs;
+    try {
+      docs = EJSON.parse(raw, { relaxed: false });
+    } catch {
+      docs = JSON.parse(raw);
+    }
+
+    if (!Array.isArray(docs)) {
+      throw new Error(`Invalid data in "${info.file}": expected an array of documents.`);
+    }
+
+    if (typeof info.count === 'number' && docs.length !== info.count) {
+      throw new Error(
+        `[RECORD COUNT MISMATCH] Collection "${colName}" expected ${info.count} documents from manifest, but file contains ${docs.length}.`
+      );
     }
   }
-  console.log('✔ All checksums verified successfully.\n');
+  if (!quiet) console.log('✔ All checksums and record counts verified successfully.\n');
 
   // 4. Connect and perform restore
-  try {
-    await mongoose.connect(uri, { serverSelectionTimeoutMS: 8000 });
-    const db = mongoose.connection.db;
+  await mongoose.connect(targetUri, { serverSelectionTimeoutMS: 8000 });
+  const db = mongoose.connection.db;
 
+  try {
     // Secondary post-connection safety check
     const activeDbCheck = isDatabaseNameSafe(db.databaseName);
     if (!activeDbCheck.safe) {
-      await mongoose.disconnect();
-      console.error('\n🚨 ======================================================');
-      console.error('🚨 POST-CONNECTION SAFETY GUARD FAILED');
-      console.error('🚨 ======================================================');
-      console.error(`Connected database "${db.databaseName}" is NOT permitted for restore: ${activeDbCheck.reason}`);
-      console.error('Connection terminated immediately. ZERO collections or records were modified.\n');
-      process.exit(1);
+      throw new Error(`Connected database "${db.databaseName}" is NOT permitted for restore: ${activeDbCheck.reason}`);
     }
 
-    console.log(`🍃 Connected to target database: "${db.databaseName}"\n`);
+    if (!quiet) console.log(`🍃 Connected to target database: "${db.databaseName}"\n`);
 
     const report = [];
+    let totalRestored = 0;
 
     for (const [colName, info] of Object.entries(manifest.collections)) {
-      const filePath = path.resolve(backupDir, info.file);
+      const filePath = path.resolve(targetBackupDir, info.file);
       const raw = await fs.readFile(filePath, 'utf-8');
-      const docs = JSON.parse(raw);
+
+      // Deserialize preserving BSON types (ObjectId, Date, Binary, etc.)
+      let docs;
+      try {
+        docs = EJSON.parse(raw, { relaxed: false });
+      } catch {
+        docs = JSON.parse(raw);
+      }
+
+      if (!Array.isArray(docs)) {
+        throw new Error(`Invalid data in "${info.file}": expected an array of documents.`);
+      }
+
+      // Verify document count against manifest
+      if (typeof info.count === 'number' && docs.length !== info.count) {
+        throw new Error(
+          `[RECORD COUNT MISMATCH] Collection "${colName}" expected ${info.count} documents from manifest, but file contains ${docs.length}.`
+        );
+      }
 
       const targetCol = db.collection(colName);
-      // Clean existing test collection
+      // Clean existing records in test collection
       await targetCol.deleteMany({});
 
       if (docs.length > 0) {
         await targetCol.insertMany(docs);
       }
 
-      const count = await targetCol.countDocuments();
-      report.push({ collection: colName, restored: docs.length, inDb: count });
-      console.log(`  ✔ [${colName}] Restored ${docs.length} documents (Verified in DB: ${count})`);
+      const countInDb = await targetCol.countDocuments();
+      if (typeof info.count === 'number' && countInDb !== info.count) {
+        throw new Error(
+          `[POST-RESTORE COUNT MISMATCH] Collection "${colName}" inserted ${docs.length} docs, but DB has ${countInDb}.`
+        );
+      }
+
+      totalRestored += docs.length;
+
+      // Sample first doc to verify type fidelity
+      const hasObjectIds = docs.some(d => d._id && typeof d._id === 'object' && d._id._bsontype === 'ObjectID');
+      const hasDates = docs.some(d => Object.values(d).some(v => v instanceof Date));
+
+      report.push({
+        collection: colName,
+        restored: docs.length,
+        inDb: countInDb,
+        bsonObjectId: hasObjectIds ? 'Preserved' : 'N/A',
+        bsonDate: hasDates ? 'Preserved' : 'N/A'
+      });
+
+      if (!quiet) {
+        console.log(`  ✔ [${colName}] Restored ${docs.length} documents (Verified in DB: ${countInDb})`);
+      }
     }
 
-    console.log('\n======================================================');
-    console.log('✅ Restoration & Verification Completed Successfully!');
-    console.table(report);
-    console.log('======================================================\n');
-  } catch (err) {
-    console.error(`\n❌ [RESTORE FAILED]: ${err.message}\n`);
-    process.exit(1);
+    if (!quiet) {
+      console.log('\n======================================================');
+      console.log('✅ Restoration & Verification Completed Successfully!');
+      console.table(report);
+      console.log('======================================================\n');
+    }
+
+    return {
+      success: true,
+      report,
+      totalDocs: totalRestored,
+      database: db.databaseName
+    };
   } finally {
     await mongoose.disconnect().catch(() => {});
   }
 }
 
-runRestore();
+async function runRestore() {
+  try {
+    await performRestore();
+  } catch (err) {
+    console.error(`\n❌ [RESTORE FAILED]: ${err.message}\n`);
+    process.exit(1);
+  }
+}
+
+const isMain = process.argv[1] && path.resolve(fileURLToPath(import.meta.url)).toLowerCase() === path.resolve(process.argv[1]).toLowerCase();
+if (isMain) {
+  runRestore();
+}
