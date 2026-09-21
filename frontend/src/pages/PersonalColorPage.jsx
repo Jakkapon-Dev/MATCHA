@@ -284,6 +284,7 @@ function PaletteBand({ palette, innerRef, emptyLabel }) {
    second smooth axis with a dot floating in a field would look more scientific
    and would be a lie about the instrument. */
 function ColorAxis({ season, reading, dyes }) {
+  const { t } = useLanguage();
   const axis = SEASON_AXIS[season];
   const depth = reading?.depth || axis.depth;
 
