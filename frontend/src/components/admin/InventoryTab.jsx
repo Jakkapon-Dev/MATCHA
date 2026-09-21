@@ -2,8 +2,9 @@ import React from 'react';
 import { Trash2 } from 'lucide-react';
 import AdminDataState from './AdminDataState';
 import { webpSrc } from '../../utils/imageFallback';
+import AdminPagination from './AdminPagination';
 
-export default function InventoryTab({ status, errors, setInventoryCategoryFilter, inventoryCategoryFilter, inventoryStatusFilter, setInventoryStatusFilter, filteredInventory, restockAmounts, handleRestockInputChange, handleRestockSubmit, saving, isDemo, handleDeleteProduct }) {
+export default function InventoryTab({ status, errors, setInventoryCategoryFilter, inventoryCategoryFilter, inventoryStatusFilter, setInventoryStatusFilter, filteredInventory, restockAmounts, handleRestockInputChange, handleRestockSubmit, saving, isDemo, handleDeleteProduct, pagination, onPageChange }) {
   return (<AdminDataState resources={["inventory"]} status={status} errors={errors}>
             <div className="space-y-6 animate-fade-in">
               
@@ -140,6 +141,14 @@ export default function InventoryTab({ status, errors, setInventoryCategoryFilte
                     No garments matching the selected filters.
                   </div>
                 )}
+
+                <AdminPagination
+                  page={pagination?.page}
+                  totalPages={pagination?.totalPages}
+                  total={pagination?.total}
+                  onPageChange={onPageChange}
+                  loading={status?.inventory === 'loading'}
+                />
               </div>
 
             </div>

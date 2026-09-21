@@ -354,15 +354,68 @@ router.delete('/me/addresses/:id', async (req, res) => {
 
 router.get('/', adminOnly, checkDbReady, async (req, res) => {
   try {
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 25));
+    const skip = (page - 1) * limit;
+
+    const filter = {};
+    if (req.query.search && typeof req.query.search === 'string' && req.query.search.trim()) {
+      const term = req.query.search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(term, 'i');
+      filter.$or = [
+        { name: regex },
+        { email: regex },
+        { _id: regex }
+      ];
+    }
+
+    if (req.query.tier && typeof req.query.tier === 'string' && req.query.tier.trim() && req.query.tier !== 'ALL') {
+      const tier = req.query.tier.trim();
+      if (tier === 'VIP') {
+        filter.tier = /VIP/;
+      } else {
+        filter.tier = { $not: /VIP/ };
+      }
+    }
+
+    let query = User.find(filter).select(fields).sort({ createdAt: -1 });
+    if (typeof query.skip === 'function') query = query.skip(skip);
+    if (typeof query.limit === 'function') query = query.limit(limit);
+
+    let total = 0;
+    if (mongoose.connection.db && typeof User.countDocuments === 'function') {
+      try {
+        total = await User.countDocuments(filter);
+      } catch {
+        total = 0;
+      }
+    }
+
     const [users, totals] = await Promise.all([
-      User.find({}).select(fields).sort({ createdAt: -1 }).lean(),
+      query.lean(),
       Order.aggregate([
         { $match: { userId: { $ne: null }, status: { $ne: 'cancelled' } } },
         { $group: { _id: '$userId', ordersCount: { $sum: 1 }, totalSpent: { $sum: { $cond: [{ $eq: ['$paymentStatus', 'paid'] }, '$total', 0] } } } }
       ])
     ]);
+
+    if (!total && Array.isArray(users)) {
+      total = users.length;
+    }
+
+    const totalPages = Math.ceil(total / limit) || 1;
     const byUser = new Map(totals.map(({ _id, ...total }) => [_id, total]));
-    res.json({ success: true, data: users.map(user => ({ ...user, id: user._id, ordersCount: 0, totalSpent: 0, ...byUser.get(user._id) })) });
+
+    res.json({
+      success: true,
+      data: users.map(user => ({ ...user, id: user._id, ordersCount: 0, totalSpent: 0, ...byUser.get(user._id) })),
+      pagination: {
+        total,
+        page,
+        limit,
+        totalPages
+      }
+    });
   } catch {
     res.status(503).json({ success: false, message: 'Could not load members' });
   }
