@@ -9,9 +9,8 @@
 //
 // `label` อยู่ฝั่งนี้ที่เดียว เพราะเป็นข้อความที่แสดงผล ไม่ใช่ตัวเลขที่ใช้คิดเงิน
 export const COUPONS = {
-  '01': { discount: 10, type: 'percent', label: '10% OFF' },
-  '02': { discount: 20, type: 'percent', label: '20% OFF' },
-  '03': { discount: 50, type: 'percent', label: '50% OFF' },
+  // '01' / '02' / '03' ถูกลบออก — เป็นรหัสสองหลักที่เดาได้ ไม่เคยโฆษณา และ '03'
+  // ลดครึ่งราคาทั้งออเดอร์ ตารางนี้ต้องตรงกับ backend/config/coupons.js เสมอ
   'MATCHA15': { discount: 15, type: 'percent', label: '15% OFF' },
   'WELCOME10': { discount: 10, type: 'percent', label: '10% OFF' },
   'FREESHIP': { discount: 0, type: 'free_shipping', label: 'Free Shipping' },
