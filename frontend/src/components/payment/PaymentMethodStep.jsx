@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CreditCard, QrCode, Shield, Lock, Loader2, X } from 'lucide-react';
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
 
@@ -28,7 +28,10 @@ export default function PaymentMethodStep({
   isProcessing,
   totalAmount,
   qrDisplay,
-  onCancelQr
+  onCancelQr,
+  canRetryPayment,
+  paymentDeadline,
+  onAbandonOrder
 }) {
   const stripe = useStripe();
   const elements = useElements();
@@ -51,6 +54,21 @@ export default function PaymentMethodStep({
   const isCardValid = selectedPayment !== 'visa' && selectedPayment !== 'mastercard'
     ? true
     : Boolean(cardData.cardHolder.trim()) && cardComplete;
+
+  /* An attempt that ended without payment leaves the order alive and still
+     holding its stock until this moment. The retry offer below is shown only
+     while that is true, so the button never leads to a rejected payment. */
+  const [windowOpen, setWindowOpen] = useState(true);
+  useEffect(() => {
+    if (!paymentDeadline) { setWindowOpen(true); return undefined; }
+    const closesIn = new Date(paymentDeadline).getTime() - Date.now();
+    if (closesIn <= 0) { setWindowOpen(false); return undefined; }
+    setWindowOpen(true);
+    const timer = setTimeout(() => setWindowOpen(false), closesIn);
+    return () => clearTimeout(timer);
+  }, [paymentDeadline]);
+
+  const retryOffered = canRetryPayment && windowOpen && !qrDisplay;
 
   const handlePlaceOrderClick = () => {
     if (selectedPayment === 'visa' || selectedPayment === 'mastercard') {
@@ -195,7 +213,7 @@ export default function PaymentMethodStep({
                   className="text-[11px] font-mono font-bold text-[#666666] hover:text-[#C91D1D] underline cursor-pointer inline-flex items-center gap-1"
                 >
                   <X size={11} />
-                  <span>ยกเลิกและเลือกวิธีชำระเงินอื่น</span>
+                  <span>ปิด QR (กลับมาจ่ายใหม่ได้)</span>
                 </button>
                 <p className="text-[11px] font-mono text-amber-800 bg-amber-50 py-1 px-3 rounded-lg border border-amber-200/80 inline-block">
                   QR นี้เชื่อมต่อ Stripe PromptPay จริง (Test Mode) — ยอด ฿ แปลงจาก ${totalAmount.toFixed(2)} ด้วยอัตราคงที่สำหรับทดสอบเท่านั้น
@@ -232,6 +250,51 @@ export default function PaymentMethodStep({
         )}
       </div>
 
+      {/* An attempt that did not go through — a declined card, a QR the
+          customer closed, a wait that ran out. The order is still theirs and
+          still holding its stock until the window closes, so the offer is to
+          try again rather than to start over. */}
+      {retryOffered && (
+        <div className="p-5 rounded-2xl border border-amber-200 bg-amber-50 space-y-3" role="status">
+          <p className="text-sm font-bold text-amber-900">ยังไม่ได้รับการชำระเงินสำหรับคำสั่งซื้อนี้</p>
+          <p className="text-xs font-mono text-amber-900/80">
+            สินค้าในคำสั่งซื้อยังถูกจองไว้ให้คุณ
+            {paymentDeadline ? ` จนถึง ${new Date(paymentDeadline).toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' })}` : ''}
+            {' '}— ลองชำระเงินอีกครั้งได้เลย
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={handlePlaceOrderClick}
+              disabled={!isCardValid || isProcessing}
+              className="px-5 py-2.5 bg-[#042509] hover:bg-[#021505] text-white text-xs font-bold uppercase tracking-widest rounded-xl transition-all disabled:opacity-40 disabled:pointer-events-none cursor-pointer"
+            >
+              ลองชำระเงินอีกครั้ง
+            </button>
+            <button
+              type="button"
+              onClick={onAbandonOrder}
+              disabled={isProcessing}
+              className="text-[11px] font-mono font-bold text-[#666666] hover:text-[#C91D1D] underline cursor-pointer disabled:opacity-40"
+            >
+              ยกเลิกคำสั่งซื้อและคืนสินค้าเข้าคลัง
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* The window closed while the customer was still on the page: the
+          stock has gone back and the order can no longer be paid. Saying so
+          here is kinder than a 409 from the next attempt. */}
+      {canRetryPayment && !windowOpen && (
+        <div className="p-5 rounded-2xl border border-[#DCDCDC] bg-[#F1F1F1]" role="alert">
+          <p className="text-sm font-bold text-[#C91D1D]">หมดเวลาชำระเงินสำหรับคำสั่งซื้อนี้แล้ว</p>
+          <p className="text-xs font-mono text-[#666666] mt-1">
+            สินค้าถูกคืนเข้าคลังเรียบร้อยแล้ว กรุณาสั่งซื้อใหม่อีกครั้ง
+          </p>
+        </div>
+      )}
+
       {/* Action Buttons */}
       <div className="flex items-center justify-between pt-2">
         <button
@@ -244,7 +307,7 @@ export default function PaymentMethodStep({
         {/* Block duplicate requests while processing and incomplete card submissions.
             Hidden while a PromptPay QR is up — the cancel link above is the only
             way out of that state; there's nothing to "place" again mid-scan. */}
-        {!qrDisplay && (
+        {!qrDisplay && !retryOffered && (
           <button
             type="button"
             onClick={handlePlaceOrderClick}

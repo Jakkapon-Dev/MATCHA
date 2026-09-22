@@ -52,9 +52,9 @@ const expiredOrder = (overrides = {}) => ({
   _id: 'order-1',
   orderNumber: 'MTA-2026-000001-111',
   status: 'pending',
-  paymentStatus: 'unpaid',
-  reservationReleasedAt: null,
-  reservationExpiresAt: new Date(Date.now() - 60_000),
+  paymentStatus: 'pending_payment',
+  stockReleasedAt: null,
+  paymentExpiresAt: new Date(Date.now() - 60_000),
   stripePaymentIntentId: null,
   items: [{ productId: 'LOOK-06-VEST', size: 'M', quantity: 2 }],
   ...overrides
@@ -74,14 +74,14 @@ test('an expired unpaid order is cancelled and its stock released exactly once',
 
     const { filter, update } = writes[0];
     /* These conditions are the whole safety of it: an order that has since
-       been paid, cancelled or already released matches nothing, so the same
-       units can never be credited twice. */
-    assert.equal(filter.status, 'pending');
-    assert.equal(filter.paymentStatus, 'unpaid');
-    assert.equal(filter.reservationReleasedAt, null);
+       been paid, or whose stock somebody else already returned, matches
+       nothing, so the same units can never be credited twice. */
+    assert.deepEqual(filter.paymentStatus, { $in: ['unpaid', 'pending_payment', 'failed'] });
+    assert.equal(filter.stockReleasedAt, null);
     assert.equal(update.$set.status, 'cancelled');
-    assert.equal(update.$set.reservationExpiresAt, null);
-    assert.ok(update.$set.reservationReleasedAt instanceof Date);
+    assert.equal(update.$set.paymentStatus, 'expired');
+    assert.equal(update.$set.paymentExpiresAt, null);
+    assert.ok(update.$set.stockReleasedAt instanceof Date);
   });
 });
 
@@ -94,7 +94,7 @@ test('an order claimed by someone else in the meantime releases nothing', async 
   });
 });
 
-test('the sweep only looks at pending, unpaid orders past their deadline', async () => {
+test('the sweep only looks at orders that still owe money and are past their deadline', async () => {
   await withFakeMongo(async () => {
     let seen = null;
     mock.method(Order, 'find', (filter) => {
@@ -106,10 +106,11 @@ test('the sweep only looks at pending, unpaid orders past their deadline', async
     const result = await sweeper.sweepExpiredReservations({ now });
 
     assert.deepEqual(result, { scanned: 0, released: 0 });
-    assert.equal(seen.status, 'pending');
-    assert.equal(seen.paymentStatus, 'unpaid');
-    assert.equal(seen.reservationReleasedAt, null);
-    assert.deepEqual(seen.reservationExpiresAt, { $ne: null, $lte: now });
+    assert.deepEqual(seen.paymentStatus, { $in: ['unpaid', 'pending_payment', 'failed'] });
+    assert.equal(seen.stockReleasedAt, null);
+    /* Cash on delivery never gets a deadline, so `$ne: null` is what keeps it
+       out of the sweep entirely. */
+    assert.deepEqual(seen.paymentExpiresAt, { $ne: null, $lte: now });
   });
 });
 
