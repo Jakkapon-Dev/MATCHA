@@ -1,47 +1,110 @@
-import React, { useState, useEffect } from 'react';
-import { Routes, Route, useNavigate, useLocation, Navigate } from 'react-router-dom';
+import React, { useState, useEffect, Suspense } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import Lenis from 'lenis';
 import { api } from './services/api';
 
-import HomePage from './pages/HomePage';
-import CatalogPage from './pages/CatalogPage';
-import CartPage from './pages/CartPage';
-import SignUpPage from './pages/SignUpPage';
-import Payment from './pages/Payment';
-import Layout from './components/Layout';
-import ProductModal from './components/ProductModal';
+// แต่ละหน้าโหลดตอนที่คนเดินไปถึงจริง ๆ ไม่ใช่ยกมาทั้งร้านตั้งแต่เปิดเว็บ
+const HomePage = React.lazy(() => import('./pages/HomePage.jsx'));
+const CatalogPage = React.lazy(() => import('./pages/CatalogPage.jsx'));
+const CartPage = React.lazy(() => import('./pages/CartPage.jsx'));
+/* One page serves both doors. The two routes stay because they are in the
+   navbar, in the hash router and in links people already hold; they differ
+   only in which mode opens. */
+const AccessPage = React.lazy(() => import('./pages/AccessPage.jsx'));
+const PaymentPage = React.lazy(() => import('./pages/PaymentPage.jsx'));
+const UserAccount = React.lazy(() => import('./pages/UserAccount.jsx'));
+const GuestOrdersPage = React.lazy(() => import('./pages/GuestOrdersPage.jsx'));
+const ResetPasswordPage = React.lazy(() => import('./pages/ResetPasswordPage.jsx'));
+const VerifyEmailPage = React.lazy(() => import('./pages/VerifyEmailPage.jsx'));
+const AdminPage = React.lazy(() => import('./pages/AdminPage.jsx'));
+const PersonalColorPage = React.lazy(() => import('./pages/PersonalColorPage.jsx'));
+const MixMatchStudioPage = React.lazy(() => import('./pages/MixMatchStudioPage.jsx'));
+const EditorialLookbookPage = React.lazy(() => import('./pages/EditorialLookbookPage.jsx'));
+const LegalPage = React.lazy(() => import('./pages/LegalPage.jsx'));
+const NotFoundPage = React.lazy(() => import('./pages/NotFoundPage.jsx'));
 
-const getCartKey = (item) => `${item.id}-${item.size || 'default'}-${item.color || 'default'}`;
+import Layout from './components/layout/Layout';
+import ProductModal from './components/product/ProductModal';
+import RequireRole from './components/auth/RequireRole';
+import RequireAuth from './components/auth/RequireAuth';
+import ErrorBoundary from './components/ui/ErrorBoundary';
 
-const loadCart = () => {
-  try {
-    const saved = localStorage.getItem('matcha_cart');
-    return saved ? JSON.parse(saved) : [];
-  } catch {
-    return [];
-  }
-};
+// Context Providers and Hooks
+import { ToastProvider, useToast } from './context/ToastContext.jsx';
+import { AuthProvider, useAuth } from './context/AuthContext.jsx';
+import { CartProvider, useCart } from './context/CartContext.jsx';
+import { StoreModeProvider } from './context/StoreModeContext.jsx';
+import { LanguageProvider, useLanguage } from './context/LanguageContext.jsx';
 
-export default function App() {
+// ความสูงคงที่ระหว่างรอ chunk เพื่อไม่ให้หน้ากระตุกตอนหน้าใหม่มาถึง
+function PageSkeleton() {
+  return (
+    <div className="w-full bg-matcha-bg min-h-[70vh] px-5 sm:px-6 lg:px-8 py-16" aria-busy="true">
+      <div className="max-w-6xl mx-auto animate-pulse">
+        <div className="h-3 w-32 rounded-full bg-matcha-border" />
+        <div className="mt-5 h-10 w-2/3 max-w-md rounded-lg bg-matcha-border" />
+        <div className="mt-4 h-4 w-1/2 max-w-sm rounded-full bg-matcha-border" />
+        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-5">
+          {[0, 1, 2, 3].map((i) => (
+            <div key={i} className="aspect-[3/4] rounded-2xl bg-matcha-border" />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* The tab title, per route and per language.
+
+   The old map was a literal with mixed Thai and English values, so the tab
+   never changed when the visitor switched language. It also keyed only on
+   '/legal', while the route that actually renders is '/legal/:topic' — so
+   every policy page fell back to the home title. Prefixes are matched longest
+   first, which covers sub-routes without listing each one. */
+const TITLE_KEYS = [
+  ['/personal-color', 'titles.personalColor'],
+  ['/mix-match', 'titles.mixMatch'],
+  ['/lookbook', 'titles.lookbook'],
+  ['/editorial', 'titles.lookbook'],
+  ['/catalog', 'titles.catalog'],
+  ['/payment', 'titles.payment'],
+  ['/signup', 'titles.signup'],
+  ['/account', 'titles.account'],
+  ['/orders', 'titles.orders'],
+  ['/reset-password', 'titles.resetPassword'],
+  ['/verify-email', 'verifyEmail.title'],
+  ['/admin', 'titles.admin'],
+  ['/login', 'titles.login'],
+  ['/legal', 'titles.legal'],
+  ['/cart', 'titles.cart'],
+];
+
+function titleKeyFor(pathname) {
+  if (pathname === '/') return 'titles.home';
+  const hit = TITLE_KEYS.find(([prefix]) => pathname === prefix || pathname.startsWith(prefix + '/'));
+  return hit ? hit[1] : 'titles.notFound';
+}
+
+function AppContent() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
 
-  const [healthStatus, setHealthStatus] = useState(null);
-  const [cartItems, setCartItems] = useState(loadCart);
-  const [toast, setToast] = useState(null);
+  // อัปเดต <title> ตามหน้าและภาษาที่เปิดอยู่
+  useEffect(() => {
+    document.title = t(titleKeyFor(location.pathname));
+  }, [location.pathname, t]);
+
+  // Context Hooks
+  const { cartItems, setCartItems, addToCart, updateQty, removeItem, cartCount } = useCart();
+  const { currentUser, login, logout } = useAuth();
+  const { showToast } = useToast();
+
+  // Local UI States
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [catalogCategory, setCatalogCategory] = useState('ALL');
 
-  // Sync cart to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem('matcha_cart', JSON.stringify(cartItems));
-    } catch (e) {
-      console.error('Failed to save cart to localStorage', e);
-    }
-  }, [cartItems]);
-
-  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup, #payment -> /payment)
+  // Support legacy hash redirection (#catalog -> /catalog, #cart -> /cart, #signup -> /signup, etc.)
   useEffect(() => {
     const hash = window.location.hash.toLowerCase();
     if (hash === '#catalog' && location.pathname !== '/catalog') {
@@ -50,8 +113,14 @@ export default function App() {
       navigate('/cart', { replace: true });
     } else if (hash === '#signup' && location.pathname !== '/signup') {
       navigate('/signup', { replace: true });
+    } else if (hash === '#login' && location.pathname !== '/login') {
+      navigate('/login', { replace: true });
     } else if (hash === '#payment' && location.pathname !== '/payment') {
       navigate('/payment', { replace: true });
+    } else if (hash === '#account' && location.pathname !== '/account') {
+      navigate('/account', { replace: true });
+    } else if (hash === '#admin' && location.pathname !== '/admin') {
+      navigate('/admin', { replace: true });
     }
   }, [location.pathname, navigate]);
 
@@ -68,74 +137,31 @@ export default function App() {
       infinite: false,
     });
 
+    let isRunning = true;
+    let rafId;
+
     function raf(time) {
+      if (!isRunning) return;
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafId = requestAnimationFrame(raf);
     }
 
-    const rafId = requestAnimationFrame(raf);
+    rafId = requestAnimationFrame(raf);
 
     return () => {
+      isRunning = false;
       cancelAnimationFrame(rafId);
       lenis.destroy();
     };
   }, []);
 
+  // Health check & backend warmup
   useEffect(() => {
-    async function loadHealth() {
-      try {
-        const res = await api.checkHealth().catch(() => null);
-        if (res) setHealthStatus(res);
-      } catch (err) {
-        console.error('API Error:', err);
-      }
-    }
-    loadHealth();
+    api.checkHealth().catch(() => null);
   }, []);
 
-  const showToast = (message) => {
-    setToast(message);
-    setTimeout(() => setToast(null), 3500);
-  };
-
-  const handleAddToCart = (product) => {
-    const amount = product.quantity || 1;
-    setCartItems((prev) => {
-      const key = getCartKey(product);
-      const idx = prev.findIndex((item) => getCartKey(item) === key);
-      if (idx > -1) {
-        const next = [...prev];
-        next[idx] = { ...next[idx], quantity: (next[idx].quantity || 1) + amount };
-        return next;
-      }
-      return [...prev, { ...product, quantity: amount }];
-    });
-    const details = product.size && product.color ? ` (${product.size} / ${product.color})` : '';
-    showToast(`Added ${product.name}${details} to bag! 🛍️`);
-  };
-
-  const handleUpdateQty = (key, delta) => {
-    setCartItems((prev) =>
-      prev
-        .map((item) =>
-          getCartKey(item) === key
-            ? { ...item, quantity: (item.quantity || 1) + delta }
-            : item
-        )
-        .filter((item) => (item.quantity || 1) > 0)
-    );
-  };
-
-  const handleRemoveItem = (key) => {
-    setCartItems((prev) => prev.filter((item) => getCartKey(item) !== key));
-    showToast('Removed item from cart 🗑️');
-  };
-
   const handleProceedToPayment = () => {
-    if (cartItems.length === 0) {
-      showToast('Your cart is empty! Add items first. 🛍️');
-      return;
-    }
+    if (cartItems.length === 0) return;
     navigate('/payment');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -165,8 +191,23 @@ export default function App() {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
+    if (pathOrHash === '/login' || pathOrHash === '#login') {
+      navigate('/login');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
     if (pathOrHash === '/payment' || pathOrHash === '#payment') {
       handleProceedToPayment();
+      return;
+    }
+    if (pathOrHash === '/account' || pathOrHash === '#account') {
+      navigate('/account');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (pathOrHash === '/admin' || pathOrHash === '#admin') {
+      navigate('/admin');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
     }
 
@@ -189,134 +230,196 @@ export default function App() {
   };
 
   const handleSelectFit = (fit) => {
-    showToast(`Exploring ${fit.category || fit.title} in Catalog! 🎨`);
-    const cat = fit.category || '';
-    if (cat.toLowerCase().includes('tank') || cat.toLowerCase().includes('tee') || cat.toLowerCase().includes('sweat')) {
-      setCatalogCategory('Tops');
-    } else if (cat.toLowerCase().includes('denim') || cat.toLowerCase().includes('bottom') || cat.toLowerCase().includes('suit')) {
-      setCatalogCategory('Bottoms');
-    } else if (cat.toLowerCase().includes('outerwear')) {
-      setCatalogCategory('Outerwear');
-    } else {
-      setCatalogCategory('ALL');
-    }
+    // Fit cards carry their catalog target as data. Matching on the label would break
+    // the moment the label is translated, so the label is never read here.
+    setCatalogCategory(fit.catalogCategory || 'ALL');
     navigate('/catalog');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleClaimPromo = () => {
-    showToast(`Claimed 15% discount code MATCHA15 applied at checkout! 🎉`);
-  };
-
-  const handleSubscribe = (email) => {
-    showToast(`Subscribed ${email} to VIP Drop List! 📩`);
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] text-[#2D231E] font-sans selection:bg-[#2D5A27] selection:text-white relative">
       
-      {/* Interactive Toast Notification */}
-      {toast && (
-        <div className="fixed bottom-6 right-6 z-50 animate-bounce pointer-events-none">
-          <div className="py-3 px-5 rounded-2xl bg-[#2D231E] text-[#FAF8F5] border border-[#3D312A] font-bold text-xs shadow-2xl flex items-center gap-2">
-            <span className="text-[#BC5A36]">✨</span>
-            {toast}
-          </div>
-        </div>
-      )}
-
       {/* Product Customizer & Quick View Modal */}
       {selectedProduct && (
-        <ProductModal 
+        <ProductModal
           product={selectedProduct}
           onClose={() => setSelectedProduct(null)}
-          onAddToCart={handleAddToCart}
+          onAddToCart={addToCart}
         />
       )}
 
       {/* Main Experience Layout */}
-      <Layout 
-        cartCount={cartItems.length}
+      <Layout
+        cartCount={cartCount}
+        currentUser={currentUser}
+        onLogout={handleLogout}
         currentPage={
           location.pathname === '/catalog' ? 'catalog' : 
           location.pathname === '/cart' ? 'cart' : 
           location.pathname === '/signup' ? 'signup' : 
+          location.pathname === '/login' ? 'login' : 
           location.pathname === '/payment' ? 'payment' : 
+          location.pathname === '/account' ? 'account' : 
+          location.pathname === '/admin' ? 'admin' : 
           'home'
         }
         onOpenCart={handleOpenCart}
         onNavigate={handleNavigate}
         onGoToLanding={handleGoToHome}
       >
+        {/* หน้าเดียวพังไม่ควรลากทั้งแอปไปด้วย — key ทำให้ boundary รีเซ็ตเองเมื่อเปลี่ยนหน้า */}
+        {/* resetKeys rather than key: keying by pathname threw away the whole
+            subtree on every navigation — form state, scroll position and any
+            in-flight work — to achieve something the boundary can now do by
+            clearing its own error. */}
+        <ErrorBoundary resetKeys={[location.pathname]}>
+        <Suspense fallback={<PageSkeleton />}>
         <Routes>
           {/* 1. Home Page */}
-          <Route 
-            path="/" 
+          <Route
+            path="/"
             element={
-              <HomePage 
+              <HomePage
                 onSelectFit={handleSelectFit}
-                onClaimPromo={handleClaimPromo}
-                onAddToCart={handleAddToCart}
+                // `held` บอกว่าเก็บคูปองไว้ได้จริงไหม ถ้า storage ถูกปิด (โหมดส่วนตัว)
+                // ต้องบอกให้ผู้ใช้กรอกเอง ไม่ใช่สัญญาว่าจะใส่ให้แล้วไม่เกิดอะไรขึ้น
+                onClaimPromo={(held) => showToast(
+                  held
+                    ? t('promo.claimed')
+                    : t('promo.copied'),
+                  'success'
+                )}
+                onAddToCart={addToCart}
                 onQuickView={(prod) => setSelectedProduct(prod)}
-                onExploreWarehouse={() => {
+                onExploreCatalog={() => {
                   navigate('/catalog');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                onSubscribe={handleSubscribe}
+                onSubscribe={(email) => showToast(`Subscribed ${email} to VIP Drop List! 📩`)}
               />
-            } 
+            }
           />
 
           {/* 2. Catalog Grid Page */}
-          <Route 
-            path="/catalog" 
+          <Route
+            path="/catalog"
             element={
-              <CatalogPage 
+              <CatalogPage
                 initialCategory={catalogCategory}
-                onBackToHome={handleGoToHome}
-                onAddToCart={handleAddToCart}
+                onAddToCart={addToCart}
                 onQuickView={(prod) => setSelectedProduct(prod)}
-                onSelectFit={handleSelectFit}
               />
-            } 
+            }
           />
 
-          {/* 3. Shopping Cart Page */}
-          <Route 
-            path="/cart" 
+          {/* 3. Personal Color Lab & Diagnostic Quiz */}
+          <Route
+            path="/personal-color"
+            element={<PersonalColorPage />}
+          />
+
+          {/* 4. Interactive Mix & Match Fashion Studio */}
+          <Route
+            path="/mix-match"
+            element={<MixMatchStudioPage />}
+          />
+
+          {/* 5. High-Fashion Editorial Lookbook */}
+          <Route
+            path="/lookbook"
+            element={<EditorialLookbookPage />}
+          />
+          <Route
+            path="/editorial"
+            element={<EditorialLookbookPage />}
+          />
+
+          {/* 6. Shopping Cart Page */}
+          <Route
+            path="/cart"
             element={
-              <CartPage 
+              <CartPage
                 cartItems={cartItems}
-                onUpdateQty={handleUpdateQty}
-                onRemove={handleRemoveItem}
+                onUpdateQty={updateQty}
+                onRemove={removeItem}
                 onBackToStore={handleGoToHome}
                 onCheckout={handleProceedToPayment}
               />
-            } 
+            }
           />
 
-          {/* 4. Payment / Checkout Page (From Pete) */}
+          {/* 4. Payment / Checkout Page */}
           <Route 
             path="/payment" 
+            element={<PaymentPage />} 
+          />
+
+          {/* 5 & 6. Sign in and register, one page */}
+          <Route path="/login" element={<AccessPage mode="signin" />} />
+          <Route path="/signup" element={<AccessPage mode="register" />} />
+
+          {/* Order history for whoever is asking. Open on purpose: without the
+              browser's guest id the API returns an empty list, so there is
+              nothing here to reach that the caller does not own. */}
+          <Route path="/orders" element={<GuestOrdersPage />} />
+          {/* Where an emailed reset link lands. Open by design: the token in
+              the query string is the only thing that makes it useful. */}
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          {/* Email verification prompt with cooldown resend and status reload */}
+          <Route path="/verify-email" element={<VerifyEmailPage />} />
+
+          {/* 7. User Account Page (Member VIP Lounge) */}
+          <Route
+            path="/account"
             element={
-              <Payment 
-                cartItems={cartItems}
-                onUpdateCart={setCartItems}
-              />
-            } 
+              <RequireAuth>
+                <UserAccount />
+              </RequireAuth>
+            }
           />
 
-          {/* 5. Sign Up Page */}
-          <Route 
-            path="/signup" 
-            element={<SignUpPage onBackToStore={handleGoToHome} />} 
+          {/* 8. Admin Control Center */}
+          <Route
+            path="/admin"
+            element={
+              <RequireRole role="Admin">
+                <AdminPage />
+              </RequireRole>
+            }
           />
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* 9. Branded Legal and Policy Documentation */}
+          <Route path="/legal" element={<LegalPage />} />
+          <Route path="/legal/:topic" element={<LegalPage />} />
+
+          {/* 10. Branded 404 Fallback */}
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
+        </Suspense>
+        </ErrorBoundary>
       </Layout>
 
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <LanguageProvider>
+      <ToastProvider>
+        <StoreModeProvider><AuthProvider>
+          <CartProvider>
+            <AppContent />
+          </CartProvider>
+        </AuthProvider></StoreModeProvider>
+      </ToastProvider>
+    </LanguageProvider>
   );
 }

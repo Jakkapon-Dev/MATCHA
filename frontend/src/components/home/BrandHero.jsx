@@ -1,0 +1,359 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
+import { motion, useReducedMotion } from 'motion/react';
+import { Parallax, Reveal, EASE } from '../motion';
+import { webpSrc } from '../../utils/imageFallback';
+import { useLanguage } from '../../context/LanguageContext.jsx';
+
+export default function BrandHero({ onShopNow }) {
+  const { t } = useLanguage();
+  const navigate = useNavigate();
+  const reduced = useReducedMotion();
+
+  // Studio model references for the four independently shuffled slices.
+  const models = [
+    {
+      id: 'LOOK-01',
+      name: 'MatchA Crew & Lace Skirt',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_crew_001.jpg'
+    },
+    {
+      id: 'LOOK-02',
+      name: 'MatchA Striped Tee & Cargo Trousers',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_striped_tee_001.jpg'
+    },
+    {
+      id: 'LOOK-03',
+      name: 'MatchA Green Hoodie & Terracotta Pants',
+      src: '/images/studio_white_bg/standing_straight/autumn/studio_straight_autumn_matcha_hoodie_terracotta_001.jpg'
+    },
+    {
+      id: 'LOOK-04',
+      name: 'MatchA Minimalist Tee & Wide Pants',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_matcha_minimal_tee_001.jpg'
+    },
+    {
+      id: 'LOOK-05',
+      name: 'Emerald Green Velvet Suit',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_green_suit_001.jpeg'
+    },
+    {
+      id: 'LOOK-06',
+      name: 'Geometric Colorblock Knitwear Set',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_knitwear_set_001.jpeg'
+    },
+    {
+      id: 'LOOK-07',
+      name: 'Charcoal Tailored Suit & Tie',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_tailored_suit_001.jpeg'
+    },
+    {
+      id: 'LOOK-08',
+      name: 'Royal Blue Street Suit',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_royal_blue_suit_001.jpeg'
+    },
+    {
+      id: 'LOOK-09',
+      name: 'Peach Linen Blazer & Slacks',
+      src: '/images/studio_white_bg/standing_straight/spring/studio_straight_spring_wearing_peach_linen_suit_001.jpeg'
+    },
+    {
+      id: 'LOOK-10',
+      name: 'Mint Green Summer Suit & Sneakers',
+      src: '/images/studio_white_bg/standing_straight/summer/studio_straight_summer_wearing_mint_green_suit_001.jpeg'
+    }
+  ];
+
+  // Each array position selects the source look for one quarter of the composite model.
+  const [sliceModels, setSliceModels] = useState([0, 4, 2, 5]);
+
+  // Reshuffle all four slices every 1.3 seconds. The collision check guarantees that
+  // every visible slice changes on each tick, and cleanup prevents a leaked timer.
+  useEffect(() => {
+    if (reduced) return;
+    const interval = setInterval(() => {
+      setSliceModels((prev) => prev.map((currentIdx) => {
+        const nextIdx = Math.floor(Math.random() * models.length);
+        return nextIdx === currentIdx ? (currentIdx + 1) % models.length : nextIdx;
+      }));
+    }, 1300);
+
+    return () => clearInterval(interval);
+  }, [models.length, reduced]);
+
+
+
+  // Manual slice changes use the same collision rule without affecting other slices.
+  const cycleSingleSlice = (sliceIndex) => {
+    setSliceModels((prev) => {
+      const next = [...prev];
+      let randomLook = Math.floor(Math.random() * models.length);
+      if (randomLook === next[sliceIndex]) {
+        randomLook = (next[sliceIndex] + 1) % models.length;
+      }
+      next[sliceIndex] = randomLook;
+      return next;
+    });
+  };
+
+  // Stacked badge words matching the reference design
+  const badgeLines = t('hero.badges');
+
+
+  const handleAction = () => {
+    if (onShopNow) {
+      onShopNow();
+    } else {
+      navigate('/catalog');
+    }
+  };
+
+
+  return (
+    <section
+      className="relative w-full bg-matcha-bg text-matcha-text min-h-svh pt-2 pb-8 sm:pb-10 px-5 sm:px-8 lg:px-12 flex flex-col justify-center gap-2 sm:gap-4 select-none border-b border-matcha-border"
+    >
+      
+      {/* The masthead wipes up from its own baseline the way a magazine title
+          lands, then drifts slowly — it sits furthest back, so it travels least
+          of anything in the hero. The clip-path does its own masking, so no
+          ancestor needs overflow:hidden to hold the wipe. */}
+      <Parallax
+        distance={22}
+        className="w-full text-center z-0 pointer-events-none select-none pt-1 sm:pt-3 -mb-4 sm:-mb-6 md:-mb-8 relative origin-top"
+      >
+        <motion.h1
+          initial={reduced ? { opacity: 0 } : { y: '80%', clipPath: 'inset(0 0 100% 0)' }}
+          animate={reduced ? { opacity: 1 } : { y: '0%', clipPath: 'inset(-10% -5% -15% 0)' }}
+          transition={{ duration: 0.9, ease: EASE }}
+          className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl xl:text-[10.5rem] font-black tracking-tight uppercase leading-none inline-block whitespace-nowrap drop-shadow-sm font-sans"
+        >
+          <span className="text-matcha-primary">MATCH</span>
+          <span className="text-matcha-accent">A</span>
+        </motion.h1>
+      </Parallax>
+
+      {/* 2. Main 3-Column Layout: Cleanly spaced under the lifted MATCHA title */}
+      <div className="relative z-10 max-w-7xl mx-auto w-full grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10 items-center pt-2 pb-6">
+        
+        {/* Left Column: Stacked Black Badge Typography.
+            The side columns are the nearest things in the hero, so they get the
+            largest drift — the gap against the masthead is what reads as depth. */}
+        <Parallax
+          distance={80}
+          className="md:col-span-3 flex flex-col items-center md:items-start justify-center order-2 md:order-1 z-20"
+          innerClassName="flex flex-col items-center md:items-start gap-1"
+        >
+          {badgeLines.map((text, i) => (
+            <Reveal key={i} x={-28} y={0} delay={0.25 + i * 0.07} duration={0.6}>
+              <span
+                className="bg-[#0A0A0A] text-matcha-bg px-3.5 py-1 text-xs sm:text-sm font-bold font-mono uppercase tracking-wider inline-block select-none"
+              >
+                {text}
+              </span>
+            </Reveal>
+          ))}
+        </Parallax>
+
+        {/* Center Column: Extra Large Sliced Model Supporting 10 Outfits with Magazine Overlap.
+            Mid-depth: it drifts more than the masthead behind it and less than
+            the columns flanking it. The shuffle itself is untouched. */}
+        <Parallax
+          distance={48}
+          className="md:col-span-6 flex flex-col items-center justify-center order-1 md:order-2 z-20"
+          innerClassName="w-full flex flex-col items-center gap-3"
+        >
+
+          {/* The composite model is the one thing on this page that shows what
+              MatchA is: four garments from four different looks, swappable
+              panel by panel. It was sitting at card size among six other
+              sections. It is now sized off the viewport so it leads the screen
+              on any display, and the frame, shadow and border came off — the
+              rules between the slices are structure and stay. */}
+          <motion.div
+            initial={reduced ? { opacity: 0 } : { opacity: 0, scale: 0.94, y: 34 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: 0.85, delay: 0.1, ease: EASE }}
+            className="relative h-[42svh] sm:h-[54svh] lg:h-[62svh] aspect-3/4 bg-white overflow-hidden flex flex-col select-none group/card z-20"
+          >
+            
+            {/* Slice 1: Head & Face (Top 25%) */}
+            <div 
+              role="button"
+              tabIndex={0}
+              onClick={() => cycleSingleSlice(0)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cycleSingleSlice(0); } }}
+              aria-label={t('hero.sliceHead')}
+              className="relative w-full h-[25%] overflow-hidden border-b border-matcha-text/15 bg-neutral-100 cursor-pointer group outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-matcha-accent"
+              title={t('hero.sliceHead')}
+            >
+              <img 
+                src={webpSrc(models[sliceModels[0]].src)} data-original-src={models[sliceModels[0]].src} 
+                alt={t('hero.altHead')} 
+                className="absolute inset-x-0 w-full h-[400%] top-0 object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
+              />
+            </div>
+
+            {/* Slice 2: Torso & Apparel (25% - 50%) */}
+            <div 
+              role="button"
+              tabIndex={0}
+              onClick={() => cycleSingleSlice(1)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cycleSingleSlice(1); } }}
+              aria-label={t('hero.sliceTorso')}
+              className="relative w-full h-[25%] overflow-hidden border-b border-matcha-text/15 bg-neutral-100 cursor-pointer group outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-matcha-accent"
+              title={t('hero.sliceTorso')}
+            >
+              <img 
+                src={webpSrc(models[sliceModels[1]].src)} data-original-src={models[sliceModels[1]].src} 
+                alt={t('hero.altTorso')} 
+                className="absolute inset-x-0 w-full h-[400%] -top-full object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
+              />
+            </div>
+
+            {/* Slice 3: Lower Body & Pants/Skirt (50% - 75%) */}
+            <div 
+              role="button"
+              tabIndex={0}
+              onClick={() => cycleSingleSlice(2)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cycleSingleSlice(2); } }}
+              aria-label={t('hero.sliceLower')}
+              className="relative w-full h-[25%] overflow-hidden border-b border-matcha-text/15 bg-neutral-100 cursor-pointer group outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-matcha-accent"
+              title={t('hero.sliceLower')}
+            >
+              <img 
+                src={webpSrc(models[sliceModels[2]].src)} data-original-src={models[sliceModels[2]].src} 
+                alt={t('hero.altLower')} 
+                className="absolute inset-x-0 w-full h-[400%] top-[-200%] object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
+              />
+            </div>
+
+            {/* Slice 4: Sneakers & Studio Floor (75% - 100%) */}
+            <div 
+              role="button"
+              tabIndex={0}
+              onClick={() => cycleSingleSlice(3)}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); cycleSingleSlice(3); } }}
+              aria-label={t('hero.sliceShoes')}
+              className="relative w-full h-[25%] overflow-hidden bg-neutral-100 cursor-pointer group outline-hidden focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-matcha-accent"
+              title={t('hero.sliceShoes')}
+            >
+              <img 
+                src={webpSrc(models[sliceModels[3]].src)} data-original-src={models[sliceModels[3]].src} 
+                alt={t('hero.altShoes')} 
+                className="absolute inset-x-0 w-full h-[400%] top-[-300%] object-cover object-center pointer-events-none transition-all duration-500 group-hover:scale-102"
+              />
+            </div>
+
+          </motion.div>
+
+          {/* Said out loud, because the `title` attributes on each slice need a
+              mouse held still to read and say nothing at all on a phone. */}
+          <Reveal y={12} delay={0.5} duration={0.5}>
+            <p className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-matcha-muted text-center">
+              {t('hero.sliceHint')}
+            </p>
+          </Reveal>
+
+        </Parallax>
+
+        {/* Right Column: Code, Barcode & Action Button */}
+        <Parallax
+          distance={85}
+          className="md:col-span-3 flex flex-col items-center md:items-start justify-center gap-6 order-3 z-20"
+          innerClassName="flex flex-col items-center md:items-start gap-6"
+        >
+
+          {/* Metadata Text */}
+          <Reveal
+            x={28}
+            y={0}
+            delay={0.3}
+            duration={0.6}
+            className="text-center md:text-left font-mono"
+          >
+            <p className="text-[11px] font-bold tracking-wider text-matcha-muted">
+              {t('hero.dropCode')}
+            </p>
+            <p className="text-[11px] font-bold tracking-wider text-matcha-muted mt-0.5">
+              {t('hero.runCode')}
+            </p>
+          </Reveal>
+
+          {/* Action Button: SHOP NEW DROPS / ENTER WEBSITE */}
+          <Reveal x={28} y={0} delay={0.38} duration={0.6} className="w-full sm:w-auto">
+            <button
+              onClick={handleAction}
+              className="w-full sm:w-auto max-w-full px-8 py-4 bg-matcha-accent hover:bg-matcha-accent-hover text-white font-mono text-sm uppercase tracking-[0.15em] transition-colors active:scale-95 cursor-pointer flex items-center justify-center gap-2 group outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-matcha-accent"
+            >
+              <span>{t('hero.shopNow')}</span>
+              <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform" />
+            </button>
+          </Reveal>
+
+          {/* The Colour Lab is the point of the brand and the landing page had
+              no way into it but the nav. */}
+          <Reveal x={28} y={0} delay={0.44} duration={0.6}>
+            <button
+              type="button"
+              onClick={() => navigate('/personal-color')}
+              className="font-mono text-xs uppercase tracking-wider text-[#0A0A0A] hover:text-matcha-accent cursor-pointer transition-colors underline underline-offset-4 decoration-matcha-border hover:decoration-matcha-accent outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+            >
+              {t('hero.findYourColour')}
+            </button>
+          </Reveal>
+
+          {/* Barcode Graphic */}
+          {/* The 45% wash lives on an inner element: Motion animates opacity on
+              the element it owns, which would otherwise overwrite the class. */}
+          <Reveal x={28} y={0} delay={0.46} duration={0.6} className="w-full max-w-[11rem] py-1">
+            <div className="opacity-45">
+            <svg viewBox="0 0 200 40" className="w-full h-8 text-matcha-text fill-current">
+              <rect x="0" y="0" width="3" height="40" />
+              <rect x="5" y="0" width="2" height="40" />
+              <rect x="9" y="0" width="4" height="40" />
+              <rect x="16" y="0" width="1" height="40" />
+              <rect x="19" y="0" width="6" height="40" />
+              <rect x="28" y="0" width="2" height="40" />
+              <rect x="32" y="0" width="3" height="40" />
+              <rect x="38" y="0" width="5" height="40" />
+              <rect x="46" y="0" width="2" height="40" />
+              <rect x="50" y="0" width="4" height="40" />
+              <rect x="57" y="0" width="1" height="40" />
+              <rect x="61" y="0" width="6" height="40" />
+              <rect x="70" y="0" width="2" height="40" />
+              <rect x="75" y="0" width="5" height="40" />
+              <rect x="83" y="0" width="3" height="40" />
+              <rect x="89" y="0" width="2" height="40" />
+              <rect x="94" y="0" width="6" height="40" />
+              <rect x="103" y="0" width="1" height="40" />
+              <rect x="107" y="0" width="4" height="40" />
+              <rect x="114" y="0" width="3" height="40" />
+              <rect x="120" y="0" width="5" height="40" />
+              <rect x="128" y="0" width="2" height="40" />
+              <rect x="133" y="0" width="4" height="40" />
+              <rect x="140" y="0" width="1" height="40" />
+              <rect x="144" y="0" width="6" height="40" />
+              <rect x="153" y="0" width="3" height="40" />
+              <rect x="159" y="0" width="2" height="40" />
+              <rect x="164" y="0" width="5" height="40" />
+              <rect x="172" y="0" width="2" height="40" />
+              <rect x="177" y="0" width="4" height="40" />
+              <rect x="184" y="0" width="1" height="40" />
+              <rect x="188" y="0" width="6" height="40" />
+              <rect x="197" y="0" width="3" height="40" />
+            </svg>
+            <p className="text-[10px] font-mono text-matcha-muted tracking-widest text-center mt-1">
+              8 859012 345678
+            </p>
+            </div>
+          </Reveal>
+
+        </Parallax>
+
+      </div>
+
+    </section>
+  );
+}

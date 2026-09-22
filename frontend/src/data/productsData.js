@@ -1,10 +1,15 @@
+// MatchA Curated Products Master Dataset (60 SKUs)
+// Categorized into Tops, Bottoms, Outerwear, Shoes, and Accessories
+// Sourced and structured with authentic Japanese Streetwear palettes and verified sizing metadata.
+
 export const productsData = [
   {
     "id": "AUT-ACC-001",
     "name": "MatchA Autumn Bags",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระเป๋าสะพายสไตล์เอิร์ธโทน ดีไซน์มินิมอลผสานช่องใส่สัมภาระอเนกประสงค์ เหมาะสำหรับลุคสตรีทและวันเดินทางในฤดูใบไม้ร่วง",
+    "descriptionEn": "A shoulder bag in earth tones with compartments that separate. Made for a day of moving around.",
     "price": 43.99,
-    "originalPrice": 54.99,
+    "originalPrice": 51.5,
     "tag": "New Drop",
     "image": "/images/products/autumn/accessories/bags/color_1_burnt_orange.jpeg",
     "category": "Accessories",
@@ -39,17 +44,45 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 33,
+    "rating": 4.8,
+    "reviewsCount": 93,
     "isFeatured": false,
-    "createdAt": "2026-02-02"
+    "createdAt": "2026-02-02",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุธรรมชาติ/โลหะมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
+      "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
+      "silhouette": "One Size Fits All",
+      "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
+      "careInstructions": [
+        "เช็ดทำความสะอาดด้วยผ้านุ่มแห้ง",
+        "หลีกเลี่ยงการสัมผัสสารเคมี น้ำหอม หรือสเปรย์โดยตรง",
+        "เก็บในถุงผ้ากันฝุ่นในที่แห้งและถ่ายเทสะดวก"
+      ],
+      "sizeGuideType": "accessories",
+      "sizeGuide": {
+        "system": "Dimensions & Proportions",
+        "dimensionText": "กว้าง 36 cm × สูง 28 cm × ลึก 12 cm (สายสะพายปรับได้ 85-130 cm)",
+        "note": "สินค้าหมวด Accessories & Bags เป็นขนาด One Size ออกแบบให้เข้ากับสรีระทั่วไป"
+      }
+    }
   },
   {
     "id": "AUT-ACC-002",
     "name": "MatchA Autumn Scarves",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "ผ้าพันคอเนื้อนุ่มสัมผัสสบาย ถักทอลวดลายเรียบหรู เสริมเลเยอร์ความอบอุ่นและสไตล์มินิมอลสำหรับฤดูใบไม้ร่วง",
+    "descriptionEn": "A soft woven scarf with a quiet pattern. A layer of warmth that does not shout.",
     "price": 57.99,
-    "originalPrice": 72.49,
+    "originalPrice": 66.99,
     "tag": "Limited 2026",
     "image": "/images/products/autumn/accessories/scarves/color_1_burnt_orange.jpeg",
     "category": "Accessories",
@@ -84,17 +117,45 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 42,
+    "rating": 4.7,
+    "reviewsCount": 80,
     "isFeatured": false,
-    "createdAt": "2026-02-03"
+    "createdAt": "2026-02-03",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุธรรมชาติ/โลหะมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
+      "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
+      "silhouette": "One Size Fits All",
+      "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
+      "careInstructions": [
+        "เช็ดทำความสะอาดด้วยผ้านุ่มแห้ง",
+        "หลีกเลี่ยงการสัมผัสสารเคมี น้ำหอม หรือสเปรย์โดยตรง",
+        "เก็บในถุงผ้ากันฝุ่นในที่แห้งและถ่ายเทสะดวก"
+      ],
+      "sizeGuideType": "accessories",
+      "sizeGuide": {
+        "system": "Dimensions & Proportions",
+        "dimensionText": "ขนาดมาตรฐานสากล",
+        "note": "สินค้าหมวด Accessories & Bags เป็นขนาด One Size ออกแบบให้เข้ากับสรีระทั่วไป"
+      }
+    }
   },
   {
     "id": "AUT-BOT-003",
     "name": "MatchA Autumn Chinos",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงชิโน่ขากระบอกตรง ทรง Relaxed สวมใส่สบาย คัตติ้งเนี้ยบในโทนสีธรรมชาติที่ผสมผสานความคลาสสิกกับความทันสมัย",
+    "descriptionEn": "Relaxed chinos in a natural tone, cut straight through the leg. The pair you reach for when nothing else is decided.",
     "price": 81.99,
-    "originalPrice": 102.49,
+    "originalPrice": 108.5,
     "tag": "Essentials",
     "image": "/images/products/autumn/bottoms/chinos/color_1_olive.jpeg",
     "category": "Bottoms",
@@ -138,17 +199,83 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 51,
+    "rating": 4.7,
+    "reviewsCount": 120,
     "isFeatured": false,
-    "createdAt": "2026-02-04"
+    "createdAt": "2026-02-04",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Wide Leg Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "AUT-BOT-004",
     "name": "MatchA Autumn Jeans",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "ยีนส์เดนิมฟอกสีพิเศษ ทรงตรงสไตล์สตรีทวินเทจ สวมใส่สบายและคงทน เข้ากับเสื้อผ้าได้หลากหลายสไตล์",
+    "descriptionEn": "Straight-leg denim in a deep stonewash. Heavy enough to hold its shape, soft enough to wear all day.",
     "price": 70.99,
-    "originalPrice": 88.74,
+    "originalPrice": 95,
     "tag": "Trending",
     "image": "/images/products/autumn/bottoms/jeans/color_1_brown.jpeg",
     "category": "Bottoms",
@@ -192,17 +319,83 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 60,
+    "rating": 4.7,
+    "reviewsCount": 133,
     "isFeatured": true,
-    "createdAt": "2026-02-05"
+    "createdAt": "2026-02-05",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Wide Leg Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "AUT-BOT-005",
     "name": "MatchA Autumn Pants",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงขายาวผ้าทอพรีเมียม สไตล์ Tailored เรียบง่าย ให้ลุคภูมิฐานแต่ผ่อนคลาย เหมาะสำหรับการแมตช์เลเยอร์",
+    "descriptionEn": "Tailored trousers in a premium weave. Formal in line, easy in wear, and built for layering.",
     "price": 74.99,
-    "originalPrice": 93.74,
+    "originalPrice": 86.99,
     "tag": "Popular",
     "image": "/images/products/autumn/bottoms/pants/color_1_burnt_orange.jpeg",
     "category": "Bottoms",
@@ -230,7 +423,7 @@ export const productsData = [
         "image": "/images/products/autumn/bottoms/pants/color_2_olive.jpeg"
       },
       {
-        "color": "Warm Brown",
+        "color": "Brown",
         "colorHex": "#5C4033",
         "image": "/images/products/autumn/bottoms/pants/color_3_warm_brown.jpeg"
       },
@@ -246,17 +439,83 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 69,
+    "rating": 4.7,
+    "reviewsCount": 146,
     "isFeatured": false,
-    "createdAt": "2026-02-06"
+    "createdAt": "2026-02-06",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Wide Leg Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "AUT-BOT-006",
     "name": "MatchA Autumn Skirts",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระโปรงสไตล์โมเดิร์นมินิมอล ทรงพลิ้วไหวในโทนสีอบอุ่นของฤดูกาล เสริมความสง่างามอย่างเป็นธรรมชาติ",
+    "descriptionEn": "A softly falling skirt in the season's warm tones. Quiet cut, no ornament.",
     "price": 68.99,
-    "originalPrice": 86.24,
+    "originalPrice": 78.5,
     "tag": "Best Seller",
     "image": "/images/products/autumn/bottoms/skirts/color_1_brown.jpeg",
     "category": "Bottoms",
@@ -279,7 +538,7 @@ export const productsData = [
         "image": "/images/products/autumn/bottoms/skirts/color_1_brown.jpeg"
       },
       {
-        "color": "Dark Brown",
+        "color": "Brown",
         "colorHex": "#5C4033",
         "image": "/images/products/autumn/bottoms/skirts/color_2_dark_brown.jpeg"
       },
@@ -301,26 +560,98 @@ export const productsData = [
     ],
     "inStock": true,
     "rating": 4.7,
-    "reviewsCount": 78,
+    "reviewsCount": 159,
     "isFeatured": false,
-    "createdAt": "2026-02-07"
+    "createdAt": "2026-02-07",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "AUT-ACC-007",
     "name": "MatchA Autumn Boots",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "รองเท้าบูทหุ้มข้อสไตล์ออทัมน์ ดีไซน์ร่วมสมัย ทรงหัวมน พื้นรองเท้าทนทานรับแรงกระแทกได้ดี เหมาะสำหรับการเดินในเมือง",
+    "descriptionEn": "An ankle boot with a round toe and a sole built for pavement. Contemporary, not rugged.",
     "price": 102.99,
-    "originalPrice": 128.74,
+    "originalPrice": 125.5,
     "tag": "New Drop",
     "image": "/images/products/autumn/shoes/boots/color_1_burnt_orange.jpeg",
-    "category": "Accessories",
+    "category": "Shoes",
     "subCategory": "Boots",
     "season": "Autumn",
     "color": "Burnt Orange",
     "colorHex": "#C05C2B",
     "fit": "Relaxed",
     "sizes": [
-      "OS"
+      "EU 38",
+      "EU 39",
+      "EU 40",
+      "EU 41",
+      "EU 42",
+      "EU 43",
+      "EU 44"
     ],
     "variants": [
       {
@@ -345,27 +676,112 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 87,
+    "rating": 4.6,
+    "reviewsCount": 170,
     "isFeatured": false,
-    "createdAt": "2026-02-08"
+    "createdAt": "2026-02-08",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุสังเคราะห์และหนังมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
+      "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
+      "silhouette": "Footwear Standard Fit",
+      "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
+      "careInstructions": [
+        "ใช้แปรงขนนุ่มปัดฝุ่นและสิ่งสกปรกออกเป็นประจำ",
+        "เช็ดทำความสะอาดด้วยผ้าชุบน้ำหมาดและสบู่อ่อน",
+        "ห้ามซักด้วยเครื่องซักผ้าหรือแช่น้ำ",
+        "ผึ่งลมในที่ร่มจนแห้งสนิท หลีกเลี่ยงความร้อนสูง"
+      ],
+      "sizeGuideType": "shoes",
+      "sizeGuide": {
+        "system": "EU / US / Foot Length (cm)",
+        "headers": [
+          "EU Size",
+          "US Men",
+          "US Women",
+          "ความยาวเท้า (cm)"
+        ],
+        "rows": [
+          {
+            "size": "EU 38",
+            "usMen": "5.5",
+            "usWomen": "7.0",
+            "footLengthCm": "24.0"
+          },
+          {
+            "size": "EU 39",
+            "usMen": "6.5",
+            "usWomen": "8.0",
+            "footLengthCm": "24.5"
+          },
+          {
+            "size": "EU 40",
+            "usMen": "7.5",
+            "usWomen": "9.0",
+            "footLengthCm": "25.0"
+          },
+          {
+            "size": "EU 41",
+            "usMen": "8.0",
+            "usWomen": "9.5",
+            "footLengthCm": "25.5"
+          },
+          {
+            "size": "EU 42",
+            "usMen": "8.5",
+            "usWomen": "10.0",
+            "footLengthCm": "26.0"
+          },
+          {
+            "size": "EU 43",
+            "usMen": "9.5",
+            "usWomen": "11.0",
+            "footLengthCm": "26.5"
+          },
+          {
+            "size": "EU 44",
+            "usMen": "10.5",
+            "usWomen": "12.0",
+            "footLengthCm": "27.0"
+          }
+        ],
+        "measureInstruction": "วางฝ่าเท้าบนกระดาษ ยืนลงน้ำหนักเต็มที่ ขีดเส้นจุดปลายนิ้วที่ยาวที่สุดและส้นเท้า วัดความยาวเป็นเซนติเมตร"
+      }
+    }
   },
   {
     "id": "AUT-ACC-008",
     "name": "MatchA Autumn Loafers",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "รองเท้าโลฟเฟอร์หนังคลาสสิก ตกแต่งสไตล์มินิมอล พื้นนุ่มรองรับสรีระเท้า สวมใส่ง่ายเข้าได้กับทุกลุค",
+    "descriptionEn": "A classic leather loafer with a cushioned bed. Slips on, goes with everything.",
     "price": 61.99,
-    "originalPrice": 77.49,
+    "originalPrice": 73.99,
     "tag": "Limited 2026",
     "image": "/images/products/autumn/shoes/loafers/color_1_burnt_orange.jpeg",
-    "category": "Accessories",
+    "category": "Shoes",
     "subCategory": "Loafers",
     "season": "Autumn",
     "color": "Burnt Orange",
     "colorHex": "#C05C2B",
     "fit": "Relaxed",
     "sizes": [
-      "OS"
+      "EU 38",
+      "EU 39",
+      "EU 40",
+      "EU 41",
+      "EU 42",
+      "EU 43",
+      "EU 44"
     ],
     "variants": [
       {
@@ -390,17 +806,96 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 96,
+    "rating": 4.6,
+    "reviewsCount": 157,
     "isFeatured": true,
-    "createdAt": "2026-02-09"
+    "createdAt": "2026-02-09",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุสังเคราะห์และหนังมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
+      "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
+      "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
+      "silhouette": "Footwear Standard Fit",
+      "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
+      "careInstructions": [
+        "ใช้แปรงขนนุ่มปัดฝุ่นและสิ่งสกปรกออกเป็นประจำ",
+        "เช็ดทำความสะอาดด้วยผ้าชุบน้ำหมาดและสบู่อ่อน",
+        "ห้ามซักด้วยเครื่องซักผ้าหรือแช่น้ำ",
+        "ผึ่งลมในที่ร่มจนแห้งสนิท หลีกเลี่ยงความร้อนสูง"
+      ],
+      "sizeGuideType": "shoes",
+      "sizeGuide": {
+        "system": "EU / US / Foot Length (cm)",
+        "headers": [
+          "EU Size",
+          "US Men",
+          "US Women",
+          "ความยาวเท้า (cm)"
+        ],
+        "rows": [
+          {
+            "size": "EU 38",
+            "usMen": "5.5",
+            "usWomen": "7.0",
+            "footLengthCm": "24.0"
+          },
+          {
+            "size": "EU 39",
+            "usMen": "6.5",
+            "usWomen": "8.0",
+            "footLengthCm": "24.5"
+          },
+          {
+            "size": "EU 40",
+            "usMen": "7.5",
+            "usWomen": "9.0",
+            "footLengthCm": "25.0"
+          },
+          {
+            "size": "EU 41",
+            "usMen": "8.0",
+            "usWomen": "9.5",
+            "footLengthCm": "25.5"
+          },
+          {
+            "size": "EU 42",
+            "usMen": "8.5",
+            "usWomen": "10.0",
+            "footLengthCm": "26.0"
+          },
+          {
+            "size": "EU 43",
+            "usMen": "9.5",
+            "usWomen": "11.0",
+            "footLengthCm": "26.5"
+          },
+          {
+            "size": "EU 44",
+            "usMen": "10.5",
+            "usWomen": "12.0",
+            "footLengthCm": "27.0"
+          }
+        ],
+        "measureInstruction": "วางฝ่าเท้าบนกระดาษ ยืนลงน้ำหนักเต็มที่ ขีดเส้นจุดปลายนิ้วที่ยาวที่สุดและส้นเท้า วัดความยาวเป็นเซนติเมตร"
+      }
+    }
   },
   {
     "id": "AUT-TOP-009",
     "name": "MatchA Autumn Hoodies",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อฮู้ดดี้ทรงโอเวอร์ไซส์ ดีไซน์สตรีทญี่ปุ่น ผ้านุ่มสบายพร้อมกระเป๋าจิงโจ้และเชือกปรับระดับ",
+    "descriptionEn": "An oversized hood in heavy brushed cotton, with a kangaroo pocket and drawcord. Japanese street cut.",
     "price": 65.99,
-    "originalPrice": 82.49,
+    "originalPrice": 87.5,
     "tag": "Essentials",
     "image": "/images/products/autumn/tops/hoodies/color_1_burnt_orange.jpeg",
     "category": "Tops",
@@ -433,23 +928,90 @@ export const productsData = [
         "image": "/images/products/autumn/tops/hoodies/color_3_white.jpeg"
       },
       {
-        "color": "Yellow",
-        "colorHex": "#2D5A27",
+        "color": "Mustard",
+        "colorHex": "#D4A338",
         "image": "/images/products/autumn/tops/hoodies/color_4_yellow.jpeg"
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 105,
+    "rating": 4.7,
+    "reviewsCount": 104,
     "isFeatured": false,
-    "createdAt": "2026-02-10"
+    "createdAt": "2026-02-10",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
+      "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
+      "silhouette": "Oversized Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "AUT-OUT-010",
     "name": "MatchA Autumn Jackets",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อแจ็กเก็ตทรงหลวม คัตติ้งคมชัด เสริมลุคเอาต์ดอร์ด้วยดีเทลกระเป๋าฟังก์ชันและซิปคู่",
+    "descriptionEn": "A loose jacket with a sharp shoulder, twin zips and pockets that hold what you carry.",
     "price": 139.99,
-    "originalPrice": 174.99,
+    "originalPrice": 159.99,
     "tag": "Trending",
     "image": "/images/products/autumn/tops/jackets/color_1_brown.jpeg",
     "category": "Outerwear",
@@ -493,17 +1055,84 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 114,
+    "rating": 4.8,
+    "reviewsCount": 45,
     "isFeatured": false,
-    "createdAt": "2026-02-11"
+    "createdAt": "2026-02-11",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "เปลือกนอกไนลอนรีไซเคิล 100% · ซับในผ้าฝ้าย 100% · เคลือบกันน้ำ DWR ปลอด PFC",
+      "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm — สวมไซซ์ L ทับเสื้อชั้นใน",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "bluesign approved"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "AUT-TOP-011",
     "name": "MatchA Autumn Shirts",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อเชิ้ตแขนยาวผ้าเนื้อละเอียด ทรง Relaxed สวมใส่เดี่ยวหรือเป็นเลเยอร์ตัวนอกได้ตลอดวัน",
+    "descriptionEn": "A long-sleeved shirt in a fine weave, cut relaxed. Wears alone or open over a tee.",
     "price": 63.99,
-    "originalPrice": 79.99,
+    "originalPrice": 78,
     "tag": "Popular",
     "image": "/images/products/autumn/tops/shirts/color_1_brown.jpeg",
     "category": "Tops",
@@ -526,7 +1155,7 @@ export const productsData = [
         "image": "/images/products/autumn/tops/shirts/color_1_brown.jpeg"
       },
       {
-        "color": "Dark Brown",
+        "color": "Brown",
         "colorHex": "#5C4033",
         "image": "/images/products/autumn/tops/shirts/color_2_dark_brown.jpeg"
       },
@@ -547,17 +1176,84 @@ export const productsData = [
       }
     ],
     "inStock": false,
-    "rating": 4.7,
-    "reviewsCount": 123,
+    "rating": 4.8,
+    "reviewsCount": 115,
     "isFeatured": false,
-    "createdAt": "2026-02-12"
+    "createdAt": "2026-02-12",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "AUT-TOP-012",
     "name": "MatchA Autumn Sweaters",
-    "description": "Crafted for the Autumn capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สเวตเตอร์ผ้าถักเนื้อนุ่ม คอกลมทรงโมเดิร์น ให้ความอบอุ่นและมีมิติของเนื้อผ้าที่โดดเด่น",
+    "descriptionEn": "A soft knit crew with visible texture in the yarn. Warm without weight.",
     "price": 92.99,
-    "originalPrice": 116.24,
+    "originalPrice": 109.5,
     "tag": "Best Seller",
     "image": "/images/products/autumn/tops/sweaters/color_1_burnt_orange.jpeg",
     "category": "Tops",
@@ -602,23 +1298,90 @@ export const productsData = [
     ],
     "inStock": true,
     "rating": 4.8,
-    "reviewsCount": 132,
+    "reviewsCount": 102,
     "isFeatured": true,
-    "createdAt": "2026-02-13"
+    "createdAt": "2026-02-13",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
+      "silhouette": "Oversized Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "SPR-ACC-013",
     "name": "MatchA Spring Bags",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระเป๋าสะพายผ้าแคนวาสและหนัง ผสมผสานโทนสีพาสเทลสดใส พกพาง่าย จุของได้จุใจ",
+    "descriptionEn": "A canvas and leather shoulder bag in pastel tones. Light to carry, holds more than it looks.",
     "price": 46.99,
-    "originalPrice": 58.74,
+    "originalPrice": 63.5,
     "tag": "New Drop",
     "image": "/images/products/spring/accessories/bags/color_1_peach.jpeg",
     "category": "Accessories",
     "subCategory": "Bags",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Relaxed",
     "sizes": [
       "OS"
@@ -626,7 +1389,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/accessories/bags/color_1_peach.jpeg"
       },
       {
@@ -646,24 +1409,52 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 141,
+    "rating": 4.5,
+    "reviewsCount": 136,
     "isFeatured": false,
-    "createdAt": "2026-02-14"
+    "createdAt": "2026-02-14",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุธรรมชาติ/โลหะมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
+      "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
+      "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
+      "silhouette": "One Size Fits All",
+      "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
+      "careInstructions": [
+        "เช็ดทำความสะอาดด้วยผ้านุ่มแห้ง",
+        "หลีกเลี่ยงการสัมผัสสารเคมี น้ำหอม หรือสเปรย์โดยตรง",
+        "เก็บในถุงผ้ากันฝุ่นในที่แห้งและถ่ายเทสะดวก"
+      ],
+      "sizeGuideType": "accessories",
+      "sizeGuide": {
+        "system": "Dimensions & Proportions",
+        "dimensionText": "กว้าง 36 cm × สูง 28 cm × ลึก 12 cm (สายสะพายปรับได้ 85-130 cm)",
+        "note": "สินค้าหมวด Accessories & Bags เป็นขนาด One Size ออกแบบให้เข้ากับสรีระทั่วไป"
+      }
+    }
   },
   {
     "id": "SPR-ACC-014",
     "name": "MatchA Spring Scarves",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "ผ้าพันคอบางเบา สีสันอ่อนโยน เหมาะสำหรับวันสบาย ๆ ในฤดูใบไม้ผลิ เสริมลุคละมุนตา",
+    "descriptionEn": "A light scarf in soft colours, for the days that are warm but not yet hot.",
     "price": 60.99,
-    "originalPrice": 76.24,
+    "originalPrice": 70,
     "tag": "Limited 2026",
     "image": "/images/products/spring/accessories/scarves/color_1_peach.jpeg",
     "category": "Accessories",
     "subCategory": "Scarves",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Relaxed",
     "sizes": [
       "OS"
@@ -671,7 +1462,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/accessories/scarves/color_1_peach.jpeg"
       },
       {
@@ -691,24 +1482,52 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 150,
+    "rating": 4.5,
+    "reviewsCount": 149,
     "isFeatured": false,
-    "createdAt": "2026-02-15"
+    "createdAt": "2026-02-15",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุธรรมชาติ/โลหะมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
+      "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
+      "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
+      "silhouette": "One Size Fits All",
+      "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
+      "careInstructions": [
+        "เช็ดทำความสะอาดด้วยผ้านุ่มแห้ง",
+        "หลีกเลี่ยงการสัมผัสสารเคมี น้ำหอม หรือสเปรย์โดยตรง",
+        "เก็บในถุงผ้ากันฝุ่นในที่แห้งและถ่ายเทสะดวก"
+      ],
+      "sizeGuideType": "accessories",
+      "sizeGuide": {
+        "system": "Dimensions & Proportions",
+        "dimensionText": "ขนาดมาตรฐานสากล",
+        "note": "สินค้าหมวด Accessories & Bags เป็นขนาด One Size ออกแบบให้เข้ากับสรีระทั่วไป"
+      }
+    }
   },
   {
     "id": "SPR-BOT-015",
     "name": "MatchA Spring Jeans",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "ยีนส์เดนิมฟอกสีสว่าง ลุคสดใสต้อนรับฤดูใบไม้ผลิ สวมใส่สบายด้วยเนื้อผ้ายืดหยุ่นปานกลาง",
+    "descriptionEn": "Light-wash denim with a little give. Bright enough for the first warm week.",
     "price": 69.99,
-    "originalPrice": 87.49,
+    "originalPrice": 82.5,
     "tag": "Essentials",
     "image": "/images/products/spring/bottoms/jeans/color_1_peach.jpeg",
     "category": "Bottoms",
     "subCategory": "Jeans",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Wide Leg",
     "sizes": [
       "S",
@@ -720,7 +1539,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/bottoms/jeans/color_1_peach.jpeg"
       },
       {
@@ -740,24 +1559,90 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 159,
+    "rating": 4.8,
+    "reviewsCount": 108,
     "isFeatured": false,
-    "createdAt": "2026-02-16"
+    "createdAt": "2026-02-16",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Wide Leg Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "SPR-BOT-016",
     "name": "MatchA Spring Pants",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงผ้าเนื้อเบาระบายอากาศ ทรงกระบอกตรง ใส่สบายคล่องตัวในทุกกิจกรรมประจำวัน",
+    "descriptionEn": "Light woven trousers cut straight, breathable enough for a full day on your feet.",
     "price": 73.99,
-    "originalPrice": 92.49,
+    "originalPrice": 84.99,
     "tag": "Trending",
     "image": "/images/products/spring/bottoms/pants/color_1_peach.jpeg",
     "category": "Bottoms",
     "subCategory": "Pants",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Wide Leg",
     "sizes": [
       "S",
@@ -769,7 +1654,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/bottoms/pants/color_1_peach.jpeg"
       },
       {
@@ -789,24 +1674,90 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 168,
+    "rating": 4.8,
+    "reviewsCount": 95,
     "isFeatured": true,
-    "createdAt": "2026-02-17"
+    "createdAt": "2026-02-17",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Wide Leg Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "SPR-BOT-017",
     "name": "MatchA Spring Shorts",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงขาสั้นลำลอง ทรงพอดีตัว โทนสีพาสเทลสดใส เหมาะกับกิจกรรมกลางแจ้งและวันพักผ่อน",
+    "descriptionEn": "Casual shorts in a pastel tone, cut close but not tight. For outdoors and days off.",
     "price": 57.99,
-    "originalPrice": 72.49,
+    "originalPrice": 66,
     "tag": "Popular",
     "image": "/images/products/spring/bottoms/shorts/color_1_peach.jpeg",
     "category": "Bottoms",
     "subCategory": "Shorts",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Relaxed",
     "sizes": [
       "S",
@@ -818,7 +1769,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/bottoms/shorts/color_1_peach.jpeg"
       },
       {
@@ -839,23 +1790,89 @@ export const productsData = [
     ],
     "inStock": true,
     "rating": 4.8,
-    "reviewsCount": 177,
+    "reviewsCount": 82,
     "isFeatured": false,
-    "createdAt": "2026-02-18"
+    "createdAt": "2026-02-18",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "SPR-BOT-018",
     "name": "MatchA Spring Skirts",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระโปรงทรงเอโทนสว่าง ดีไซน์พลิ้วไหวสดใส ตัดเย็บประณีตขับเน้นความอ่อนหวาน",
+    "descriptionEn": "An A-line skirt in a bright tone, cut to move. Finished with care at the seams.",
     "price": 71.99,
-    "originalPrice": 89.99,
+    "originalPrice": 97.5,
     "tag": "Best Seller",
     "image": "/images/products/spring/bottoms/skirts/color_1_peach.jpeg",
     "category": "Bottoms",
     "subCategory": "Skirts",
     "season": "Spring",
     "color": "Peach",
-    "colorHex": "#2D5A27",
+    "colorHex": "#EDBCA4",
     "fit": "Relaxed",
     "sizes": [
       "S",
@@ -867,7 +1884,7 @@ export const productsData = [
     "variants": [
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/bottoms/skirts/color_1_peach.jpeg"
       },
       {
@@ -887,27 +1904,99 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 186,
+    "rating": 4.7,
+    "reviewsCount": 69,
     "isFeatured": false,
-    "createdAt": "2026-02-19"
+    "createdAt": "2026-02-19",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "SPR-ACC-019",
     "name": "MatchA Spring Loafers",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "รองเท้าโลฟเฟอร์สไตล์ลำลอง โทนสีอ่อนสบายตา สวมใส่ง่าย น้ำหนักเบา ระบายอากาศดี",
+    "descriptionEn": "A casual loafer in a pale tone. Light, breathable, easy to put on.",
     "price": 60.99,
-    "originalPrice": 76.24,
+    "originalPrice": 80.5,
     "tag": "New Drop",
     "image": "/images/products/spring/shoes/loafers/color_1_coral.jpeg",
-    "category": "Accessories",
+    "category": "Shoes",
     "subCategory": "Loafers",
     "season": "Spring",
     "color": "Coral",
     "colorHex": "#FF6F61",
     "fit": "Relaxed",
     "sizes": [
-      "OS"
+      "EU 38",
+      "EU 39",
+      "EU 40",
+      "EU 41",
+      "EU 42",
+      "EU 43",
+      "EU 44"
     ],
     "variants": [
       {
@@ -917,7 +2006,7 @@ export const productsData = [
       },
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/shoes/loafers/color_2_peach.jpeg"
       },
       {
@@ -932,27 +2021,112 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 195,
+    "rating": 4.7,
+    "reviewsCount": 59,
     "isFeatured": false,
-    "createdAt": "2026-02-20"
+    "createdAt": "2026-02-20",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุสังเคราะห์และหนังมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
+      "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
+      "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
+      "silhouette": "Footwear Standard Fit",
+      "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
+      "careInstructions": [
+        "ใช้แปรงขนนุ่มปัดฝุ่นและสิ่งสกปรกออกเป็นประจำ",
+        "เช็ดทำความสะอาดด้วยผ้าชุบน้ำหมาดและสบู่อ่อน",
+        "ห้ามซักด้วยเครื่องซักผ้าหรือแช่น้ำ",
+        "ผึ่งลมในที่ร่มจนแห้งสนิท หลีกเลี่ยงความร้อนสูง"
+      ],
+      "sizeGuideType": "shoes",
+      "sizeGuide": {
+        "system": "EU / US / Foot Length (cm)",
+        "headers": [
+          "EU Size",
+          "US Men",
+          "US Women",
+          "ความยาวเท้า (cm)"
+        ],
+        "rows": [
+          {
+            "size": "EU 38",
+            "usMen": "5.5",
+            "usWomen": "7.0",
+            "footLengthCm": "24.0"
+          },
+          {
+            "size": "EU 39",
+            "usMen": "6.5",
+            "usWomen": "8.0",
+            "footLengthCm": "24.5"
+          },
+          {
+            "size": "EU 40",
+            "usMen": "7.5",
+            "usWomen": "9.0",
+            "footLengthCm": "25.0"
+          },
+          {
+            "size": "EU 41",
+            "usMen": "8.0",
+            "usWomen": "9.5",
+            "footLengthCm": "25.5"
+          },
+          {
+            "size": "EU 42",
+            "usMen": "8.5",
+            "usWomen": "10.0",
+            "footLengthCm": "26.0"
+          },
+          {
+            "size": "EU 43",
+            "usMen": "9.5",
+            "usWomen": "11.0",
+            "footLengthCm": "26.5"
+          },
+          {
+            "size": "EU 44",
+            "usMen": "10.5",
+            "usWomen": "12.0",
+            "footLengthCm": "27.0"
+          }
+        ],
+        "measureInstruction": "วางฝ่าเท้าบนกระดาษ ยืนลงน้ำหนักเต็มที่ ขีดเส้นจุดปลายนิ้วที่ยาวที่สุดและส้นเท้า วัดความยาวเป็นเซนติเมตร"
+      }
+    }
   },
   {
     "id": "SPR-ACC-020",
     "name": "MatchA Spring Sneakers",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สนีกเกอร์ข้อสั้นโทนสีสดใส พื้นยางยึดเกาะดีเยี่ยม นุ่มเบาทุกย่างก้าวสำหรับไลฟ์สไตล์คนเมือง",
+    "descriptionEn": "A low-top sneaker in a bright tone, on a rubber sole with real grip. Built for city walking.",
     "price": 64.99,
-    "originalPrice": 81.24,
+    "originalPrice": 87,
     "tag": "Limited 2026",
     "image": "/images/products/spring/shoes/sneakers/color_1_gold.jpeg",
-    "category": "Accessories",
+    "category": "Shoes",
     "subCategory": "Sneakers",
     "season": "Spring",
     "color": "Gold",
     "colorHex": "#D4AF37",
     "fit": "Relaxed",
     "sizes": [
-      "OS"
+      "EU 38",
+      "EU 39",
+      "EU 40",
+      "EU 41",
+      "EU 42",
+      "EU 43",
+      "EU 44"
     ],
     "variants": [
       {
@@ -962,7 +2136,7 @@ export const productsData = [
       },
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/shoes/sneakers/color_2_peach.jpeg"
       },
       {
@@ -977,17 +2151,96 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 204,
+    "rating": 4.5,
+    "reviewsCount": 35,
     "isFeatured": true,
-    "createdAt": "2026-02-21"
+    "createdAt": "2026-02-21",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุสังเคราะห์และหนังมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
+      "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
+      "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
+      "silhouette": "Footwear Standard Fit",
+      "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
+      "careInstructions": [
+        "ใช้แปรงขนนุ่มปัดฝุ่นและสิ่งสกปรกออกเป็นประจำ",
+        "เช็ดทำความสะอาดด้วยผ้าชุบน้ำหมาดและสบู่อ่อน",
+        "ห้ามซักด้วยเครื่องซักผ้าหรือแช่น้ำ",
+        "ผึ่งลมในที่ร่มจนแห้งสนิท หลีกเลี่ยงความร้อนสูง"
+      ],
+      "sizeGuideType": "shoes",
+      "sizeGuide": {
+        "system": "EU / US / Foot Length (cm)",
+        "headers": [
+          "EU Size",
+          "US Men",
+          "US Women",
+          "ความยาวเท้า (cm)"
+        ],
+        "rows": [
+          {
+            "size": "EU 38",
+            "usMen": "5.5",
+            "usWomen": "7.0",
+            "footLengthCm": "24.0"
+          },
+          {
+            "size": "EU 39",
+            "usMen": "6.5",
+            "usWomen": "8.0",
+            "footLengthCm": "24.5"
+          },
+          {
+            "size": "EU 40",
+            "usMen": "7.5",
+            "usWomen": "9.0",
+            "footLengthCm": "25.0"
+          },
+          {
+            "size": "EU 41",
+            "usMen": "8.0",
+            "usWomen": "9.5",
+            "footLengthCm": "25.5"
+          },
+          {
+            "size": "EU 42",
+            "usMen": "8.5",
+            "usWomen": "10.0",
+            "footLengthCm": "26.0"
+          },
+          {
+            "size": "EU 43",
+            "usMen": "9.5",
+            "usWomen": "11.0",
+            "footLengthCm": "26.5"
+          },
+          {
+            "size": "EU 44",
+            "usMen": "10.5",
+            "usWomen": "12.0",
+            "footLengthCm": "27.0"
+          }
+        ],
+        "measureInstruction": "วางฝ่าเท้าบนกระดาษ ยืนลงน้ำหนักเต็มที่ ขีดเส้นจุดปลายนิ้วที่ยาวที่สุดและส้นเท้า วัดความยาวเป็นเซนติเมตร"
+      }
+    }
   },
   {
     "id": "SPR-TOP-021",
     "name": "MatchA Spring Band Collar Shirts",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อเชิ้ตคอจีนมินิมอล ดีไซน์เรียบเท่ สะอาดตา เข้ากับสภาพอากาศฤดูใบไม้ผลิได้สมบูรณ์แบบ",
+    "descriptionEn": "A band-collar shirt with nothing on it. Clean lines, right for spring air.",
     "price": 58.99,
-    "originalPrice": 73.74,
+    "originalPrice": 71.5,
     "tag": "Essentials",
     "image": "/images/products/spring/tops/band-collar-shirts/color_1_coral.jpeg",
     "category": "Tops",
@@ -1020,23 +2273,90 @@ export const productsData = [
         "image": "/images/products/spring/tops/band-collar-shirts/color_3_cream.jpeg"
       },
       {
-        "color": "Warm Cream",
+        "color": "Cream",
         "colorHex": "#FFFDD0",
         "image": "/images/products/spring/tops/band-collar-shirts/color_4_warm_cream.jpeg"
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 213,
+    "rating": 4.8,
+    "reviewsCount": 88,
     "isFeatured": false,
-    "createdAt": "2026-02-22"
+    "createdAt": "2026-02-22",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "SPR-TOP-022",
     "name": "MatchA Spring Cardigans",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "คาร์ดิแกนผ้าถักบางเบา กระดุมหน้าลายไม้ เสริมความอบอุ่นกำลังดีและลุคน่ารักสดใส",
+    "descriptionEn": "A fine-knit cardigan with wooden buttons. Just enough warmth for a cool morning.",
     "price": 62.99,
-    "originalPrice": 78.74,
+    "originalPrice": 80,
     "tag": "Trending",
     "image": "/images/products/spring/tops/cardigans/color_1_coral.jpeg",
     "category": "Tops",
@@ -1065,7 +2385,7 @@ export const productsData = [
       },
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/tops/cardigans/color_3_peach.jpeg"
       },
       {
@@ -1075,17 +2395,84 @@ export const productsData = [
       }
     ],
     "inStock": false,
-    "rating": 4.8,
-    "reviewsCount": 32,
+    "rating": 4.5,
+    "reviewsCount": 101,
     "isFeatured": false,
-    "createdAt": "2026-02-23"
+    "createdAt": "2026-02-23",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
+      "silhouette": "Vintage Boxy Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "SPR-TOP-023",
     "name": "MatchA Spring Polo Shirts",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อโปโลผ้าปีเก้สัมผัสนุ่ม คอปกเนี้ยบ ทรงสมาร์ทแคชชวลที่ใส่ได้ทั้งวันทำงานและวันพักผ่อน",
+    "descriptionEn": "A soft piqué polo with a crisp collar. Smart enough for work, easy enough for after.",
     "price": 51.99,
-    "originalPrice": 64.99,
+    "originalPrice": 68.99,
     "tag": "Popular",
     "image": "/images/products/spring/tops/polo-shirts/color_1_coral.jpeg",
     "category": "Tops",
@@ -1108,8 +2495,8 @@ export const productsData = [
         "image": "/images/products/spring/tops/polo-shirts/color_1_coral.jpeg"
       },
       {
-        "color": "Soft",
-        "colorHex": "#2D5A27",
+        "color": "Peach",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/tops/polo-shirts/color_2_soft.jpeg"
       },
       {
@@ -1124,17 +2511,84 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 41,
+    "rating": 4.5,
+    "reviewsCount": 114,
     "isFeatured": false,
-    "createdAt": "2026-02-24"
+    "createdAt": "2026-02-24",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
+      "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
+      "silhouette": "Vintage Boxy Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "SPR-TOP-024",
     "name": "MatchA Spring Shirts",
-    "description": "Crafted for the Spring capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อเชิ้ตผ้าคอตตอนเบาสบาย ระบายอากาศได้ดีเยี่ยม ลายเส้นและสีสันโปร่งโล่งสบายตา",
+    "descriptionEn": "A light cotton shirt that breathes, in colours that stay easy on the eye.",
     "price": 55.99,
-    "originalPrice": 69.99,
+    "originalPrice": 75.5,
     "tag": "Best Seller",
     "image": "/images/products/spring/tops/shirts/color_1_coral.jpeg",
     "category": "Tops",
@@ -1163,7 +2617,7 @@ export const productsData = [
       },
       {
         "color": "Peach",
-        "colorHex": "#2D5A27",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/spring/tops/shirts/color_3_peach.jpeg"
       },
       {
@@ -1173,23 +2627,90 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 50,
+    "rating": 4.5,
+    "reviewsCount": 127,
     "isFeatured": true,
-    "createdAt": "2026-02-25"
+    "createdAt": "2026-02-25",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
+      "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "ART-OUT-025",
     "name": "MatchA Artisan Cobalt Coat",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "โค้ตยาวสีน้ำเงินโคบอลต์ คัตติ้งเชิงสถาปัตยกรรมระดับงานฝีมือ สวยเด่นสง่างามทุกมุมมอง",
+    "descriptionEn": "A long cobalt coat cut with an architect's eye. It holds its line from every angle.",
     "price": 139.99,
-    "originalPrice": 174.99,
+    "originalPrice": 170.99,
     "tag": "New Drop",
     "image": "/images/products/standalone/cobalt_coat.jpg",
     "category": "Outerwear",
     "subCategory": "Cobalt Coat",
     "season": "Artisan",
-    "color": "Cobalt Coat",
+    "color": "Cobalt",
     "colorHex": "#1A365D",
     "fit": "Tailored",
     "sizes": [
@@ -1201,97 +2722,269 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Cobalt Coat",
+        "color": "Cobalt",
         "colorHex": "#1A365D",
         "image": "/images/products/standalone/cobalt_coat.jpg"
       }
     ],
     "inStock": true,
     "rating": 4.6,
-    "reviewsCount": 59,
+    "reviewsCount": 117,
     "isFeatured": false,
-    "createdAt": "2026-02-26"
+    "createdAt": "2026-02-26",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "เปลือกนอกไนลอนรีไซเคิล 100% · ซับในผ้าฝ้าย 100% · เคลือบกันน้ำ DWR ปลอด PFC",
+      "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm — สวมไซซ์ L ทับเสื้อชั้นใน",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "bluesign approved"
+      ],
+      "silhouette": "Tailored Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "ART-TOP-026",
     "name": "MatchA Artisan Cognac Boots",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "บูทหนังแท้สีคอนญัก งานเย็บมือประณีต ทรงคลาสสิกเหนือกาลเวลา ยิ่งใส่ยิ่งนุ่มกระชับเท้า",
+    "descriptionEn": "A hand-stitched boot in cognac leather. A classic shape that softens to your foot.",
     "price": 103.99,
-    "originalPrice": 129.99,
+    "originalPrice": 137,
     "tag": "Limited 2026",
     "image": "/images/products/standalone/cognac_boots.jpg",
-    "category": "Tops",
-    "subCategory": "Cognac Boots",
+    "category": "Shoes",
+    "subCategory": "Boots",
     "season": "Artisan",
-    "color": "Cognac Boots",
-    "colorHex": "#2D5A27",
+    "color": "Caramel",
+    "colorHex": "#A0522D",
     "fit": "Relaxed",
     "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
+      "EU 38",
+      "EU 39",
+      "EU 40",
+      "EU 41",
+      "EU 42",
+      "EU 43",
+      "EU 44"
     ],
     "variants": [
       {
-        "color": "Cognac Boots",
-        "colorHex": "#2D5A27",
+        "color": "Caramel",
+        "colorHex": "#A0522D",
         "image": "/images/products/standalone/cognac_boots.jpg"
       }
     ],
     "inStock": true,
     "rating": 4.7,
-    "reviewsCount": 68,
+    "reviewsCount": 32,
     "isFeatured": false,
-    "createdAt": "2026-02-01"
+    "createdAt": "2026-02-01",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุสังเคราะห์และหนังมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
+      "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
+      "silhouette": "Footwear Standard Fit",
+      "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
+      "careInstructions": [
+        "ใช้แปรงขนนุ่มปัดฝุ่นและสิ่งสกปรกออกเป็นประจำ",
+        "เช็ดทำความสะอาดด้วยผ้าชุบน้ำหมาดและสบู่อ่อน",
+        "ห้ามซักด้วยเครื่องซักผ้าหรือแช่น้ำ",
+        "ผึ่งลมในที่ร่มจนแห้งสนิท หลีกเลี่ยงความร้อนสูง"
+      ],
+      "sizeGuideType": "shoes",
+      "sizeGuide": {
+        "system": "EU / US / Foot Length (cm)",
+        "headers": [
+          "EU Size",
+          "US Men",
+          "US Women",
+          "ความยาวเท้า (cm)"
+        ],
+        "rows": [
+          {
+            "size": "EU 38",
+            "usMen": "5.5",
+            "usWomen": "7.0",
+            "footLengthCm": "24.0"
+          },
+          {
+            "size": "EU 39",
+            "usMen": "6.5",
+            "usWomen": "8.0",
+            "footLengthCm": "24.5"
+          },
+          {
+            "size": "EU 40",
+            "usMen": "7.5",
+            "usWomen": "9.0",
+            "footLengthCm": "25.0"
+          },
+          {
+            "size": "EU 41",
+            "usMen": "8.0",
+            "usWomen": "9.5",
+            "footLengthCm": "25.5"
+          },
+          {
+            "size": "EU 42",
+            "usMen": "8.5",
+            "usWomen": "10.0",
+            "footLengthCm": "26.0"
+          },
+          {
+            "size": "EU 43",
+            "usMen": "9.5",
+            "usWomen": "11.0",
+            "footLengthCm": "26.5"
+          },
+          {
+            "size": "EU 44",
+            "usMen": "10.5",
+            "usWomen": "12.0",
+            "footLengthCm": "27.0"
+          }
+        ],
+        "measureInstruction": "วางฝ่าเท้าบนกระดาษ ยืนลงน้ำหนักเต็มที่ ขีดเส้นจุดปลายนิ้วที่ยาวที่สุดและส้นเท้า วัดความยาวเป็นเซนติเมตร"
+      }
+    }
   },
   {
     "id": "ART-TOP-027",
     "name": "MatchA Artisan Coral Bag",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระเป๋าถือทรงมินิมอลสีคอรัล ดีไซน์งานฝีมือโดดเด่นสะดุดตา สายสะพายปรับระดับได้",
+    "descriptionEn": "A minimal coral handbag with a visible hand in the making. Adjustable strap.",
     "price": 42.99,
-    "originalPrice": 53.74,
+    "originalPrice": 55.5,
     "tag": "Essentials",
     "image": "/images/products/standalone/coral_bag.jpg",
-    "category": "Tops",
-    "subCategory": "Coral Bag",
+    "category": "Accessories",
+    "subCategory": "Bags",
     "season": "Artisan",
-    "color": "Coral Bag",
+    "color": "Coral",
     "colorHex": "#FF6F61",
     "fit": "Relaxed",
     "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
+      "OS"
     ],
     "variants": [
       {
-        "color": "Coral Bag",
+        "color": "Coral",
         "colorHex": "#FF6F61",
         "image": "/images/products/standalone/coral_bag.jpg"
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 77,
+    "rating": 4.7,
+    "reviewsCount": 19,
     "isFeatured": false,
-    "createdAt": "2026-02-02"
+    "createdAt": "2026-02-02",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุธรรมชาติ/โลหะมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
+      "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
+      "silhouette": "One Size Fits All",
+      "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
+      "careInstructions": [
+        "เช็ดทำความสะอาดด้วยผ้านุ่มแห้ง",
+        "หลีกเลี่ยงการสัมผัสสารเคมี น้ำหอม หรือสเปรย์โดยตรง",
+        "เก็บในถุงผ้ากันฝุ่นในที่แห้งและถ่ายเทสะดวก"
+      ],
+      "sizeGuideType": "accessories",
+      "sizeGuide": {
+        "system": "Dimensions & Proportions",
+        "dimensionText": "กว้าง 36 cm × สูง 28 cm × ลึก 12 cm (สายสะพายปรับได้ 85-130 cm)",
+        "note": "สินค้าหมวด Accessories & Bags เป็นขนาด One Size ออกแบบให้เข้ากับสรีระทั่วไป"
+      }
+    }
   },
   {
     "id": "ART-TOP-028",
     "name": "MatchA Artisan Coral Blouse",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อเบลาส์สีคอรัลผ้าทอมือ คอปกเอกลักษณ์ พลิ้วไหวหรูหราสะท้อนเสน่ห์ของงานคราฟต์",
+    "descriptionEn": "A hand-woven blouse in coral, with a collar of its own shape. Drapes rather than hangs.",
     "price": 56.99,
-    "originalPrice": 71.24,
+    "originalPrice": 69.99,
     "tag": "Trending",
     "image": "/images/products/standalone/coral_blouse.jpg",
     "category": "Tops",
     "subCategory": "Coral Blouse",
     "season": "Artisan",
-    "color": "Coral Blouse",
+    "color": "Coral",
     "colorHex": "#FF6F61",
     "fit": "Relaxed",
     "sizes": [
@@ -1303,131 +2996,327 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Coral Blouse",
+        "color": "Coral",
         "colorHex": "#FF6F61",
         "image": "/images/products/standalone/coral_blouse.jpg"
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 86,
+    "rating": 4.7,
+    "reviewsCount": 161,
     "isFeatured": true,
-    "createdAt": "2026-02-03"
+    "createdAt": "2026-02-03",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
+      "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "ART-TOP-029",
     "name": "MatchA Artisan Coral Sneakers",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สนีกเกอร์งานคราฟต์สีคอรัล ดีเทลตัดเย็บละเอียดพิเศษ พื้นรองเท้าซัพพอร์ตสรีระอย่างดีเยี่ยม",
+    "descriptionEn": "A coral sneaker made by hand, stitched close, on a sole that supports the arch.",
     "price": 70.99,
-    "originalPrice": 88.74,
+    "originalPrice": 83,
     "tag": "Popular",
     "image": "/images/products/standalone/coral_sneakers.jpg",
-    "category": "Tops",
-    "subCategory": "Coral Sneakers",
+    "category": "Shoes",
+    "subCategory": "Sneakers",
     "season": "Artisan",
-    "color": "Coral Sneakers",
+    "color": "Coral",
     "colorHex": "#FF6F61",
     "fit": "Relaxed",
     "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
+      "EU 38",
+      "EU 39",
+      "EU 40",
+      "EU 41",
+      "EU 42",
+      "EU 43",
+      "EU 44"
     ],
     "variants": [
       {
-        "color": "Coral Sneakers",
+        "color": "Coral",
         "colorHex": "#FF6F61",
         "image": "/images/products/standalone/coral_sneakers.jpg"
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 95,
+    "rating": 4.9,
+    "reviewsCount": 148,
     "isFeatured": false,
-    "createdAt": "2026-02-04"
+    "createdAt": "2026-02-04",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุสังเคราะห์และหนังมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
+      "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
+      "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
+      "silhouette": "Footwear Standard Fit",
+      "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
+      "careInstructions": [
+        "ใช้แปรงขนนุ่มปัดฝุ่นและสิ่งสกปรกออกเป็นประจำ",
+        "เช็ดทำความสะอาดด้วยผ้าชุบน้ำหมาดและสบู่อ่อน",
+        "ห้ามซักด้วยเครื่องซักผ้าหรือแช่น้ำ",
+        "ผึ่งลมในที่ร่มจนแห้งสนิท หลีกเลี่ยงความร้อนสูง"
+      ],
+      "sizeGuideType": "shoes",
+      "sizeGuide": {
+        "system": "EU / US / Foot Length (cm)",
+        "headers": [
+          "EU Size",
+          "US Men",
+          "US Women",
+          "ความยาวเท้า (cm)"
+        ],
+        "rows": [
+          {
+            "size": "EU 38",
+            "usMen": "5.5",
+            "usWomen": "7.0",
+            "footLengthCm": "24.0"
+          },
+          {
+            "size": "EU 39",
+            "usMen": "6.5",
+            "usWomen": "8.0",
+            "footLengthCm": "24.5"
+          },
+          {
+            "size": "EU 40",
+            "usMen": "7.5",
+            "usWomen": "9.0",
+            "footLengthCm": "25.0"
+          },
+          {
+            "size": "EU 41",
+            "usMen": "8.0",
+            "usWomen": "9.5",
+            "footLengthCm": "25.5"
+          },
+          {
+            "size": "EU 42",
+            "usMen": "8.5",
+            "usWomen": "10.0",
+            "footLengthCm": "26.0"
+          },
+          {
+            "size": "EU 43",
+            "usMen": "9.5",
+            "usWomen": "11.0",
+            "footLengthCm": "26.5"
+          },
+          {
+            "size": "EU 44",
+            "usMen": "10.5",
+            "usWomen": "12.0",
+            "footLengthCm": "27.0"
+          }
+        ],
+        "measureInstruction": "วางฝ่าเท้าบนกระดาษ ยืนลงน้ำหนักเต็มที่ ขีดเส้นจุดปลายนิ้วที่ยาวที่สุดและส้นเท้า วัดความยาวเป็นเซนติเมตร"
+      }
+    }
   },
   {
     "id": "ART-TOP-030",
     "name": "MatchA Artisan Cream Bag",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระเป๋าสะพายโทนสีครีม มินิมอลเรียบหรู แมตช์ได้กับทุกลุค พร้อมช่องใส่ของแบบแบ่งสัดส่วน",
+    "descriptionEn": "A cream shoulder bag, plainly cut, with compartments inside. Goes with everything.",
     "price": 39.99,
-    "originalPrice": 49.99,
+    "originalPrice": 45.5,
     "tag": "Best Seller",
     "image": "/images/products/standalone/cream_bag.jpg",
-    "category": "Tops",
-    "subCategory": "Cream Bag",
+    "category": "Accessories",
+    "subCategory": "Bags",
     "season": "Artisan",
-    "color": "Cream Bag",
+    "color": "Cream",
     "colorHex": "#FFFDD0",
     "fit": "Relaxed",
     "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
+      "OS"
     ],
     "variants": [
       {
-        "color": "Cream Bag",
+        "color": "Cream",
         "colorHex": "#FFFDD0",
         "image": "/images/products/standalone/cream_bag.jpg"
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 104,
+    "rating": 4.8,
+    "reviewsCount": 17,
     "isFeatured": false,
-    "createdAt": "2026-02-05"
+    "createdAt": "2026-02-05",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุธรรมชาติ/โลหะมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
+      "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
+      "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
+      "silhouette": "One Size Fits All",
+      "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
+      "careInstructions": [
+        "เช็ดทำความสะอาดด้วยผ้านุ่มแห้ง",
+        "หลีกเลี่ยงการสัมผัสสารเคมี น้ำหอม หรือสเปรย์โดยตรง",
+        "เก็บในถุงผ้ากันฝุ่นในที่แห้งและถ่ายเทสะดวก"
+      ],
+      "sizeGuideType": "accessories",
+      "sizeGuide": {
+        "system": "Dimensions & Proportions",
+        "dimensionText": "กว้าง 36 cm × สูง 28 cm × ลึก 12 cm (สายสะพายปรับได้ 85-130 cm)",
+        "note": "สินค้าหมวด Accessories & Bags เป็นขนาด One Size ออกแบบให้เข้ากับสรีระทั่วไป"
+      }
+    }
   },
   {
     "id": "ART-TOP-031",
     "name": "MatchA Artisan Gold Necklace",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สร้อยคอทองเหลืองชุบทองคำแท้สไตล์อาร์ติซาน เส้นเรียบเก๋ มีเสน่ห์ความหรูหราแบบพอดี",
+    "descriptionEn": "A brass necklace plated in gold. One clean line, nothing added.",
     "price": 53.99,
-    "originalPrice": 67.49,
+    "originalPrice": 62.99,
     "tag": "New Drop",
     "image": "/images/products/standalone/gold_necklace.jpg",
-    "category": "Tops",
-    "subCategory": "Gold Necklace",
+    "category": "Accessories",
+    "subCategory": "Jewelry",
     "season": "Artisan",
-    "color": "Gold Necklace",
+    "color": "Gold",
     "colorHex": "#D4AF37",
     "fit": "Relaxed",
     "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
+      "OS"
     ],
     "variants": [
       {
-        "color": "Gold Necklace",
+        "color": "Gold",
         "colorHex": "#D4AF37",
         "image": "/images/products/standalone/gold_necklace.jpg"
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 113,
+    "rating": 4.8,
+    "reviewsCount": 159,
     "isFeatured": false,
-    "createdAt": "2026-02-06"
+    "createdAt": "2026-02-06",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุธรรมชาติ/โลหะมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
+      "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
+      "silhouette": "One Size Fits All",
+      "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
+      "careInstructions": [
+        "เช็ดทำความสะอาดด้วยผ้านุ่มแห้ง",
+        "หลีกเลี่ยงการสัมผัสสารเคมี น้ำหอม หรือสเปรย์โดยตรง",
+        "เก็บในถุงผ้ากันฝุ่นในที่แห้งและถ่ายเทสะดวก"
+      ],
+      "sizeGuideType": "accessories",
+      "sizeGuide": {
+        "system": "Dimensions & Proportions",
+        "dimensionText": "ความยาวสร้อย 45 cm (+ โซ่ปรับระดับ 5 cm)",
+        "note": "สินค้าหมวด Accessories & Bags เป็นขนาด One Size ออกแบบให้เข้ากับสรีระทั่วไป"
+      }
+    }
   },
   {
     "id": "ART-TOP-032",
     "name": "MatchA Artisan Mustard Sweater",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สเวตเตอร์ผ้าทอเนื้อหนาสีมัสตาร์ด โทนสีอบอุ่นเป็นเอกลักษณ์ สร้างความโดดเด่นในทุกโอกาส",
+    "descriptionEn": "A thick hand-woven sweater in mustard. The warm tone carries the piece.",
     "price": 97.99,
-    "originalPrice": 122.49,
+    "originalPrice": 132,
     "tag": "Limited 2026",
     "image": "/images/products/standalone/mustard_sweater.jpg",
     "category": "Tops",
     "subCategory": "Mustard Sweater",
     "season": "Artisan",
-    "color": "Mustard Sweater",
+    "color": "Mustard",
     "colorHex": "#D4A338",
     "fit": "Oversized",
     "sizes": [
@@ -1439,30 +3328,97 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Mustard Sweater",
+        "color": "Mustard",
         "colorHex": "#D4A338",
         "image": "/images/products/standalone/mustard_sweater.jpg"
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 122,
+    "rating": 4.7,
+    "reviewsCount": 146,
     "isFeatured": true,
-    "createdAt": "2026-02-07"
+    "createdAt": "2026-02-07",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
+      "silhouette": "Oversized Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "ART-TOP-033",
     "name": "MatchA Artisan Peach Skirt",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระโปรงผ้าทอมือสีพีช คัตติ้งละเอียดอ่อน ละมุนทุกการเคลื่อนไหว ดีไซน์เอวสูงเสริมทรวดทรง",
+    "descriptionEn": "A hand-woven skirt in peach with a high waist. Moves softly.",
     "price": 71.99,
-    "originalPrice": 89.99,
+    "originalPrice": 95.5,
     "tag": "Essentials",
     "image": "/images/products/standalone/peach_skirt.jpg",
-    "category": "Tops",
+    "category": "Bottoms",
     "subCategory": "Peach Skirt",
     "season": "Artisan",
-    "color": "Peach Skirt",
-    "colorHex": "#2D5A27",
+    "color": "Peach",
+    "colorHex": "#EDBCA4",
     "fit": "Relaxed",
     "sizes": [
       "S",
@@ -1473,97 +3429,211 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Peach Skirt",
-        "colorHex": "#2D5A27",
+        "color": "Peach",
+        "colorHex": "#EDBCA4",
         "image": "/images/products/standalone/peach_skirt.jpg"
       }
     ],
     "inStock": false,
-    "rating": 4.9,
-    "reviewsCount": 131,
+    "rating": 4.7,
+    "reviewsCount": 133,
     "isFeatured": false,
-    "createdAt": "2026-02-08"
+    "createdAt": "2026-02-08",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "ART-TOP-034",
     "name": "MatchA Artisan Silk Scarf",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "ผ้าพันคอผ้าไหมธรรมชาติพิมพ์ลายสไตล์ญี่ปุ่น ผิวสัมผัสเนียนลื่น อ่อนโยนต่อผิวพรรณ",
+    "descriptionEn": "A natural silk scarf with a Japanese print. Smooth against the skin.",
     "price": 29.99,
-    "originalPrice": 37.49,
+    "originalPrice": 38.99,
     "tag": "Trending",
     "image": "/images/products/standalone/silk_scarf.jpg",
-    "category": "Tops",
-    "subCategory": "Silk Scarf",
+    "category": "Accessories",
+    "subCategory": "Scarves",
     "season": "Artisan",
-    "color": "Silk Scarf",
-    "colorHex": "#2D5A27",
+    "color": "Apricot",
+    "colorHex": "#E38953",
     "fit": "Relaxed",
     "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
+      "OS"
     ],
     "variants": [
       {
-        "color": "Silk Scarf",
-        "colorHex": "#2D5A27",
+        "color": "Apricot",
+        "colorHex": "#E38953",
         "image": "/images/products/standalone/silk_scarf.jpg"
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 140,
+    "rating": 4.7,
+    "reviewsCount": 120,
     "isFeatured": false,
-    "createdAt": "2026-02-09"
+    "createdAt": "2026-02-09",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุธรรมชาติ/โลหะมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
+      "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
+      "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
+      "silhouette": "One Size Fits All",
+      "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
+      "careInstructions": [
+        "เช็ดทำความสะอาดด้วยผ้านุ่มแห้ง",
+        "หลีกเลี่ยงการสัมผัสสารเคมี น้ำหอม หรือสเปรย์โดยตรง",
+        "เก็บในถุงผ้ากันฝุ่นในที่แห้งและถ่ายเทสะดวก"
+      ],
+      "sizeGuideType": "accessories",
+      "sizeGuide": {
+        "system": "Dimensions & Proportions",
+        "dimensionText": "ขนาดมาตรฐานสากล",
+        "note": "สินค้าหมวด Accessories & Bags เป็นขนาด One Size ออกแบบให้เข้ากับสรีระทั่วไป"
+      }
+    }
   },
   {
     "id": "ART-TOP-035",
     "name": "MatchA Artisan Silver Earrings",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "ต่างหูเงินแท้ดีไซน์เรขาคณิต เรียบหรูน้ำหนักเบา สวมใส่สบายไม่ถ่วงหู ไม่ระคายเคือง",
+    "descriptionEn": "Sterling silver earrings in a geometric cut. Light enough to forget you have them on.",
     "price": 54.99,
-    "originalPrice": 68.74,
+    "originalPrice": 67,
     "tag": "Popular",
     "image": "/images/products/standalone/silver_earrings.jpg",
-    "category": "Tops",
-    "subCategory": "Silver Earrings",
+    "category": "Accessories",
+    "subCategory": "Jewelry",
     "season": "Artisan",
-    "color": "Silver Earrings",
+    "color": "Silver",
     "colorHex": "#C0C0C0",
     "fit": "Relaxed",
     "sizes": [
-      "S",
-      "M",
-      "L",
-      "XL",
-      "XXL"
+      "OS"
     ],
     "variants": [
       {
-        "color": "Silver Earrings",
+        "color": "Silver",
         "colorHex": "#C0C0C0",
         "image": "/images/products/standalone/silver_earrings.jpg"
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 149,
+    "rating": 4.7,
+    "reviewsCount": 107,
     "isFeatured": false,
-    "createdAt": "2026-02-10"
+    "createdAt": "2026-02-10",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุธรรมชาติ/โลหะมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
+      "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
+      "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
+      "silhouette": "One Size Fits All",
+      "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
+      "careInstructions": [
+        "เช็ดทำความสะอาดด้วยผ้านุ่มแห้ง",
+        "หลีกเลี่ยงการสัมผัสสารเคมี น้ำหอม หรือสเปรย์โดยตรง",
+        "เก็บในถุงผ้ากันฝุ่นในที่แห้งและถ่ายเทสะดวก"
+      ],
+      "sizeGuideType": "accessories",
+      "sizeGuide": {
+        "system": "Dimensions & Proportions",
+        "dimensionText": "ความยาวสร้อย 45 cm (+ โซ่ปรับระดับ 5 cm)",
+        "note": "สินค้าหมวด Accessories & Bags เป็นขนาด One Size ออกแบบให้เข้ากับสรีระทั่วไป"
+      }
+    }
   },
   {
     "id": "ART-TOP-036",
     "name": "MatchA Artisan Teal Pants",
-    "description": "Crafted for the Artisan capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงเทเลอร์สีเขียวทีล คัตติ้งเนี้ยบ ทรงสวยสง่างาม เพิ่มความมั่นใจในสไตล์ของคุณ",
+    "descriptionEn": "Tailored trousers in teal, cleanly cut and confidently shaped.",
     "price": 78.99,
-    "originalPrice": 98.74,
+    "originalPrice": 93.5,
     "tag": "Best Seller",
     "image": "/images/products/standalone/teal_pants.jpg",
-    "category": "Tops",
+    "category": "Bottoms",
     "subCategory": "Teal Pants",
     "season": "Artisan",
-    "color": "Teal Pants",
+    "color": "Teal",
     "colorHex": "#00796B",
     "fit": "Wide Leg",
     "sizes": [
@@ -1575,23 +3645,89 @@ export const productsData = [
     ],
     "variants": [
       {
-        "color": "Teal Pants",
+        "color": "Teal",
         "colorHex": "#00796B",
         "image": "/images/products/standalone/teal_pants.jpg"
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 158,
+    "rating": 4.9,
+    "reviewsCount": 94,
     "isFeatured": true,
-    "createdAt": "2026-02-11"
+    "createdAt": "2026-02-11",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Wide Leg Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "SUM-ACC-037",
     "name": "MatchA Summer Hats",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "หมวกสานปีกกว้างกันแดด ดีไซน์ธรรมชาติ ช่วยปกป้องรังสียูวี เหมาะสำหรับทริปทะเลและวันแดดจัด",
+    "descriptionEn": "A wide-brimmed woven hat that keeps the sun off. Natural fibre, no logo.",
     "price": 52.99,
-    "originalPrice": 66.24,
+    "originalPrice": 60.5,
     "tag": "New Drop",
     "image": "/images/products/summer/accessories/hats/color_1_fuchsia.jpeg",
     "category": "Accessories",
@@ -1626,17 +3762,45 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 167,
+    "rating": 4.7,
+    "reviewsCount": 148,
     "isFeatured": false,
-    "createdAt": "2026-02-12"
+    "createdAt": "2026-02-12",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุธรรมชาติ/โลหะมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
+      "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
+      "silhouette": "One Size Fits All",
+      "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
+      "careInstructions": [
+        "เช็ดทำความสะอาดด้วยผ้านุ่มแห้ง",
+        "หลีกเลี่ยงการสัมผัสสารเคมี น้ำหอม หรือสเปรย์โดยตรง",
+        "เก็บในถุงผ้ากันฝุ่นในที่แห้งและถ่ายเทสะดวก"
+      ],
+      "sizeGuideType": "accessories",
+      "sizeGuide": {
+        "system": "Dimensions & Proportions",
+        "dimensionText": "รอบศีรษะ 55-60 cm (ยืดหยุ่นตามรูปศีรษะ)",
+        "note": "สินค้าหมวด Accessories & Bags เป็นขนาด One Size ออกแบบให้เข้ากับสรีระทั่วไป"
+      }
+    }
   },
   {
     "id": "SUM-ACC-038",
     "name": "MatchA Summer Sunglasses",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "แว่นตากันแดดทรงคลาสสิก เลนส์กรองแสง UV400 กรอบน้ำหนักเบา สวมใส่สบายตลอดวัน",
+    "descriptionEn": "Classic sunglasses with UV400 lenses in a light frame. Wearable all day.",
     "price": 41.99,
-    "originalPrice": 52.49,
+    "originalPrice": 47,
     "tag": "Limited 2026",
     "image": "/images/products/summer/accessories/sunglasses/color_1_fuchsia.jpeg",
     "category": "Accessories",
@@ -1671,17 +3835,45 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 176,
+    "rating": 4.7,
+    "reviewsCount": 161,
     "isFeatured": false,
-    "createdAt": "2026-02-13"
+    "createdAt": "2026-02-13",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุธรรมชาติ/โลหะมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
+      "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
+      "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
+      "silhouette": "One Size Fits All",
+      "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
+      "careInstructions": [
+        "เช็ดทำความสะอาดด้วยผ้านุ่มแห้ง",
+        "หลีกเลี่ยงการสัมผัสสารเคมี น้ำหอม หรือสเปรย์โดยตรง",
+        "เก็บในถุงผ้ากันฝุ่นในที่แห้งและถ่ายเทสะดวก"
+      ],
+      "sizeGuideType": "accessories",
+      "sizeGuide": {
+        "system": "Dimensions & Proportions",
+        "dimensionText": "ความกว้างเลนส์ 52 mm • สะพานแว่น 19 mm • ขาแว่น 145 mm",
+        "note": "สินค้าหมวด Accessories & Bags เป็นขนาด One Size ออกแบบให้เข้ากับสรีระทั่วไป"
+      }
+    }
   },
   {
     "id": "SUM-BOT-039",
     "name": "MatchA Summer Jeans",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงยีนส์เดนิมฟอกบาง สวมใส่สบายไม่อึดอัดในหน้าร้อน ระบายเหงื่อได้ดีเยี่ยม",
+    "descriptionEn": "Lightly washed denim, thin enough for heat and still denim.",
     "price": 75.99,
-    "originalPrice": 94.99,
+    "originalPrice": 100.99,
     "tag": "Essentials",
     "image": "/images/products/summer/bottoms/jeans/color_1_fuchsia.jpeg",
     "category": "Bottoms",
@@ -1720,17 +3912,83 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 185,
+    "rating": 4.7,
+    "reviewsCount": 19,
     "isFeatured": false,
-    "createdAt": "2026-02-14"
+    "createdAt": "2026-02-14",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Wide Leg Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "SUM-BOT-040",
     "name": "MatchA Summer Linen Pants",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงผ้าลินินแท้ 100% ระบายอากาศยอดเยี่ยม แห้งไว เบาสบาย ทรงหลวมสไตล์รีสอร์ต",
+    "descriptionEn": "Trousers in 100% linen, cut loose. Breathes, dries fast, creases honestly.",
     "price": 79.99,
-    "originalPrice": 99.99,
+    "originalPrice": 107.5,
     "tag": "Trending",
     "image": "/images/products/summer/bottoms/linen-pants/color_1_blue.jpeg",
     "category": "Bottoms",
@@ -1769,17 +4027,83 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 194,
+    "rating": 4.9,
+    "reviewsCount": 150,
     "isFeatured": true,
-    "createdAt": "2026-02-15"
+    "createdAt": "2026-02-15",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Wide Leg Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "SUM-BOT-041",
     "name": "MatchA Summer Shorts",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงขาสั้นผ้าเบา คล่องตัวในทุกกิจกรรมริมหาดและในเมือง มาพร้อมขอบเอวยางยืดปรับได้",
+    "descriptionEn": "Light shorts with an adjustable elastic waist. Beach and city both.",
     "price": 63.99,
-    "originalPrice": 79.99,
+    "originalPrice": 73,
     "tag": "Popular",
     "image": "/images/products/summer/bottoms/shorts/color_1_fuchsia.jpeg",
     "category": "Bottoms",
@@ -1818,17 +4142,83 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 203,
+    "rating": 4.9,
+    "reviewsCount": 163,
     "isFeatured": false,
-    "createdAt": "2026-02-16"
+    "createdAt": "2026-02-16",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "SUM-BOT-042",
     "name": "MatchA Summer Skirts",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระโปรงผ้าเบาพลิ้วไหวรับลมทะเล ดีไซน์สดใสให้ความรู้สึกสดชื่นตลอดฤดูร้อน",
+    "descriptionEn": "A light skirt that catches the sea breeze. Made to feel cool.",
     "price": 62.99,
-    "originalPrice": 78.74,
+    "originalPrice": 71.99,
     "tag": "Best Seller",
     "image": "/images/products/summer/bottoms/skirts/color_1_blue.jpeg",
     "category": "Bottoms",
@@ -1867,27 +4257,99 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 212,
+    "rating": 4.9,
+    "reviewsCount": 21,
     "isFeatured": false,
-    "createdAt": "2026-02-17"
+    "createdAt": "2026-02-17",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "SUM-ACC-043",
     "name": "MatchA Summer Sandals",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "รองเท้าแตะแซนดัลสไตล์สตรีท สายรัดปรับระดับได้ พื้นนุ่มกันลื่น สบายเท้าในทุกก้าว",
+    "descriptionEn": "A street sandal with adjustable straps on a soft, non-slip sole.",
     "price": 43.99,
-    "originalPrice": 54.99,
+    "originalPrice": 59.5,
     "tag": "New Drop",
     "image": "/images/products/summer/shoes/sandals/color_1_blue.jpeg",
-    "category": "Accessories",
+    "category": "Shoes",
     "subCategory": "Sandals",
     "season": "Summer",
     "color": "Blue",
     "colorHex": "#1976D2",
     "fit": "Relaxed",
     "sizes": [
-      "OS"
+      "EU 38",
+      "EU 39",
+      "EU 40",
+      "EU 41",
+      "EU 42",
+      "EU 43",
+      "EU 44"
     ],
     "variants": [
       {
@@ -1912,27 +4374,112 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 31,
+    "rating": 4.7,
+    "reviewsCount": 34,
     "isFeatured": false,
-    "createdAt": "2026-02-18"
+    "createdAt": "2026-02-18",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุสังเคราะห์และหนังมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
+      "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
+      "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
+      "silhouette": "Footwear Standard Fit",
+      "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
+      "careInstructions": [
+        "ใช้แปรงขนนุ่มปัดฝุ่นและสิ่งสกปรกออกเป็นประจำ",
+        "เช็ดทำความสะอาดด้วยผ้าชุบน้ำหมาดและสบู่อ่อน",
+        "ห้ามซักด้วยเครื่องซักผ้าหรือแช่น้ำ",
+        "ผึ่งลมในที่ร่มจนแห้งสนิท หลีกเลี่ยงความร้อนสูง"
+      ],
+      "sizeGuideType": "shoes",
+      "sizeGuide": {
+        "system": "EU / US / Foot Length (cm)",
+        "headers": [
+          "EU Size",
+          "US Men",
+          "US Women",
+          "ความยาวเท้า (cm)"
+        ],
+        "rows": [
+          {
+            "size": "EU 38",
+            "usMen": "5.5",
+            "usWomen": "7.0",
+            "footLengthCm": "24.0"
+          },
+          {
+            "size": "EU 39",
+            "usMen": "6.5",
+            "usWomen": "8.0",
+            "footLengthCm": "24.5"
+          },
+          {
+            "size": "EU 40",
+            "usMen": "7.5",
+            "usWomen": "9.0",
+            "footLengthCm": "25.0"
+          },
+          {
+            "size": "EU 41",
+            "usMen": "8.0",
+            "usWomen": "9.5",
+            "footLengthCm": "25.5"
+          },
+          {
+            "size": "EU 42",
+            "usMen": "8.5",
+            "usWomen": "10.0",
+            "footLengthCm": "26.0"
+          },
+          {
+            "size": "EU 43",
+            "usMen": "9.5",
+            "usWomen": "11.0",
+            "footLengthCm": "26.5"
+          },
+          {
+            "size": "EU 44",
+            "usMen": "10.5",
+            "usWomen": "12.0",
+            "footLengthCm": "27.0"
+          }
+        ],
+        "measureInstruction": "วางฝ่าเท้าบนกระดาษ ยืนลงน้ำหนักเต็มที่ ขีดเส้นจุดปลายนิ้วที่ยาวที่สุดและส้นเท้า วัดความยาวเป็นเซนติเมตร"
+      }
+    }
   },
   {
     "id": "SUM-ACC-044",
     "name": "MatchA Summer Sneakers",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สนีกเกอร์ผ้าตาข่ายระบายอากาศ เบาพิเศษ ป้องกันกลิ่นอับ เหมาะกับสภาพอากาศร้อน",
+    "descriptionEn": "A mesh sneaker that breathes and stays light. Made for hot weather.",
     "price": 70.99,
-    "originalPrice": 88.74,
+    "originalPrice": 81,
     "tag": "Limited 2026",
     "image": "/images/products/summer/shoes/sneakers/color_1_sky.jpeg",
-    "category": "Accessories",
+    "category": "Shoes",
     "subCategory": "Sneakers",
     "season": "Summer",
     "color": "Sky",
     "colorHex": "#64B5F6",
     "fit": "Relaxed",
     "sizes": [
-      "OS"
+      "EU 38",
+      "EU 39",
+      "EU 40",
+      "EU 41",
+      "EU 42",
+      "EU 43",
+      "EU 44"
     ],
     "variants": [
       {
@@ -1957,17 +4504,96 @@ export const productsData = [
       }
     ],
     "inStock": false,
-    "rating": 5,
-    "reviewsCount": 40,
+    "rating": 4.7,
+    "reviewsCount": 47,
     "isFeatured": true,
-    "createdAt": "2026-02-19"
+    "createdAt": "2026-02-19",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุสังเคราะห์และหนังมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
+      "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
+      "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
+      "silhouette": "Footwear Standard Fit",
+      "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
+      "careInstructions": [
+        "ใช้แปรงขนนุ่มปัดฝุ่นและสิ่งสกปรกออกเป็นประจำ",
+        "เช็ดทำความสะอาดด้วยผ้าชุบน้ำหมาดและสบู่อ่อน",
+        "ห้ามซักด้วยเครื่องซักผ้าหรือแช่น้ำ",
+        "ผึ่งลมในที่ร่มจนแห้งสนิท หลีกเลี่ยงความร้อนสูง"
+      ],
+      "sizeGuideType": "shoes",
+      "sizeGuide": {
+        "system": "EU / US / Foot Length (cm)",
+        "headers": [
+          "EU Size",
+          "US Men",
+          "US Women",
+          "ความยาวเท้า (cm)"
+        ],
+        "rows": [
+          {
+            "size": "EU 38",
+            "usMen": "5.5",
+            "usWomen": "7.0",
+            "footLengthCm": "24.0"
+          },
+          {
+            "size": "EU 39",
+            "usMen": "6.5",
+            "usWomen": "8.0",
+            "footLengthCm": "24.5"
+          },
+          {
+            "size": "EU 40",
+            "usMen": "7.5",
+            "usWomen": "9.0",
+            "footLengthCm": "25.0"
+          },
+          {
+            "size": "EU 41",
+            "usMen": "8.0",
+            "usWomen": "9.5",
+            "footLengthCm": "25.5"
+          },
+          {
+            "size": "EU 42",
+            "usMen": "8.5",
+            "usWomen": "10.0",
+            "footLengthCm": "26.0"
+          },
+          {
+            "size": "EU 43",
+            "usMen": "9.5",
+            "usWomen": "11.0",
+            "footLengthCm": "26.5"
+          },
+          {
+            "size": "EU 44",
+            "usMen": "10.5",
+            "usWomen": "12.0",
+            "footLengthCm": "27.0"
+          }
+        ],
+        "measureInstruction": "วางฝ่าเท้าบนกระดาษ ยืนลงน้ำหนักเต็มที่ ขีดเส้นจุดปลายนิ้วที่ยาวที่สุดและส้นเท้า วัดความยาวเป็นเซนติเมตร"
+      }
+    }
   },
   {
     "id": "SUM-TOP-045",
     "name": "MatchA Summer Crop Tops",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อครอปท็อปผ้าคอตตอนสัมผัสนุ่ม สดใส มิกซ์แอนด์แมตช์กับกางเกงเอวสูงได้อย่างลงตัว",
+    "descriptionEn": "A soft cotton crop in a bright tone. Sits well with a high waist.",
     "price": 36.99,
-    "originalPrice": 46.24,
+    "originalPrice": 47.5,
     "tag": "Essentials",
     "image": "/images/products/summer/tops/crop-tops/color_1_lavender.jpeg",
     "category": "Tops",
@@ -2007,16 +4633,83 @@ export const productsData = [
     ],
     "inStock": true,
     "rating": 4.6,
-    "reviewsCount": 49,
+    "reviewsCount": 100,
     "isFeatured": false,
-    "createdAt": "2026-02-20"
+    "createdAt": "2026-02-20",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
+      "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
+      "silhouette": "Oversized Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "SUM-TOP-046",
     "name": "MatchA Summer Shirts",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อเชิ้ตเปิดคอรับลมร้อน สไตล์รีสอร์ต ลายพิมพ์และสีสันโปร่งโล่งสบายตา",
+    "descriptionEn": "An open-collar shirt for hot air, in a resort print that stays calm.",
     "price": 53.99,
-    "originalPrice": 67.49,
+    "originalPrice": 71,
     "tag": "Trending",
     "image": "/images/products/summer/tops/shirts/color_1_blue.jpeg",
     "category": "Tops",
@@ -2056,16 +4749,83 @@ export const productsData = [
     ],
     "inStock": true,
     "rating": 4.7,
-    "reviewsCount": 58,
+    "reviewsCount": 113,
     "isFeatured": false,
-    "createdAt": "2026-02-21"
+    "createdAt": "2026-02-21",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "SUM-TOP-047",
     "name": "MatchA Summer T Shirts",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อยืดคอกลมผ้าฝ้ายระบายอากาศดี เบาสบายตลอดวัน ดีไซน์มินิมอลใส่ง่ายได้ทุกวัน",
+    "descriptionEn": "A cotton crew tee that breathes. Nothing on it but the cut.",
     "price": 57.99,
-    "originalPrice": 72.49,
+    "originalPrice": 78.99,
     "tag": "Popular",
     "image": "/images/products/summer/tops/t-shirts/color_1_blue.jpeg",
     "category": "Tops",
@@ -2104,17 +4864,84 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 67,
+    "rating": 4.7,
+    "reviewsCount": 126,
     "isFeatured": false,
-    "createdAt": "2026-02-22"
+    "createdAt": "2026-02-22",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "SUM-TOP-048",
     "name": "MatchA Summer Tank Tops",
-    "description": "Crafted for the Summer capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อกล้ามทรงสวย คอกลมกว้าง ระบายเหงื่อได้ดีเยี่ยม เหมาะกับกิจกรรมกลางแจ้ง",
+    "descriptionEn": "A wide-neck tank that moves sweat. For heat and for moving in it.",
     "price": 48.99,
-    "originalPrice": 61.24,
+    "originalPrice": 56.5,
     "tag": "Best Seller",
     "image": "/images/products/summer/tops/tank-tops/color_1_fuchsia.jpeg",
     "category": "Tops",
@@ -2153,17 +4980,84 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 76,
+    "rating": 4.7,
+    "reviewsCount": 139,
     "isFeatured": true,
-    "createdAt": "2026-02-23"
+    "createdAt": "2026-02-23",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
+      "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
+      "silhouette": "Oversized Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "WIN-ACC-049",
     "name": "MatchA Winter Beanies",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "หมวกบีนนี่ไหมพรมหนานุ่ม กระชับศีรษะ กักเก็บความอบอุ่นและกันลมหนาวได้ดีเยี่ยม",
+    "descriptionEn": "A thick knit beanie that sits close and keeps the wind out.",
     "price": 29.99,
-    "originalPrice": 37.49,
+    "originalPrice": 34,
     "tag": "New Drop",
     "image": "/images/products/winter/accessories/beanies/color_1_charcoal.jpeg",
     "category": "Accessories",
@@ -2198,17 +5092,45 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 85,
+    "rating": 4.6,
+    "reviewsCount": 109,
     "isFeatured": false,
-    "createdAt": "2026-02-24"
+    "createdAt": "2026-02-24",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุธรรมชาติ/โลหะมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
+      "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
+      "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
+      "silhouette": "One Size Fits All",
+      "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
+      "careInstructions": [
+        "เช็ดทำความสะอาดด้วยผ้านุ่มแห้ง",
+        "หลีกเลี่ยงการสัมผัสสารเคมี น้ำหอม หรือสเปรย์โดยตรง",
+        "เก็บในถุงผ้ากันฝุ่นในที่แห้งและถ่ายเทสะดวก"
+      ],
+      "sizeGuideType": "accessories",
+      "sizeGuide": {
+        "system": "Dimensions & Proportions",
+        "dimensionText": "รอบศีรษะ 55-60 cm (ยืดหยุ่นตามรูปศีรษะ)",
+        "note": "สินค้าหมวด Accessories & Bags เป็นขนาด One Size ออกแบบให้เข้ากับสรีระทั่วไป"
+      }
+    }
   },
   {
     "id": "WIN-ACC-050",
     "name": "MatchA Winter Gloves",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "ถุงมือไหมพรมถักทอแน่นหนา พร้อมปลายนิ้วสัมผัสหน้าจอสมาร์ตโฟน ใช้งานสะดวก",
+    "descriptionEn": "Tightly knitted gloves with touchscreen fingertips, so you can keep them on.",
     "price": 33.99,
-    "originalPrice": 42.49,
+    "originalPrice": 39.5,
     "tag": "Limited 2026",
     "image": "/images/products/winter/accessories/gloves/color_1_crimson.jpeg",
     "category": "Accessories",
@@ -2243,17 +5165,45 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 94,
+    "rating": 4.7,
+    "reviewsCount": 133,
     "isFeatured": false,
-    "createdAt": "2026-02-25"
+    "createdAt": "2026-02-25",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุธรรมชาติ/โลหะมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวฟอกฝาด · อะไหล่ทองเหลืองชุบกันสนิม",
+      "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
+      "modelMeasurements": "ไซซ์เดียว (One Size) — ไม่อ้างอิงสัดส่วนนายแบบ",
+      "certifications": [
+        "Leather Working Group (LWG)"
+      ],
+      "silhouette": "One Size Fits All",
+      "fitDetails": "ขนาดมาตรฐาน (One Size) ออกแบบให้ใช้งานและปรับระดับได้สะดวก",
+      "careInstructions": [
+        "เช็ดทำความสะอาดด้วยผ้านุ่มแห้ง",
+        "หลีกเลี่ยงการสัมผัสสารเคมี น้ำหอม หรือสเปรย์โดยตรง",
+        "เก็บในถุงผ้ากันฝุ่นในที่แห้งและถ่ายเทสะดวก"
+      ],
+      "sizeGuideType": "accessories",
+      "sizeGuide": {
+        "system": "Dimensions & Proportions",
+        "dimensionText": "ความยาวฝ่ามือ 19-22 cm (Free Size ยืดหยุ่น)",
+        "note": "สินค้าหมวด Accessories & Bags เป็นขนาด One Size ออกแบบให้เข้ากับสรีระทั่วไป"
+      }
+    }
   },
   {
     "id": "WIN-BOT-051",
     "name": "MatchA Winter Jeans",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงยีนส์ผ้าเดนิมหนาพิเศษ ทนทาน กักเก็บความอบอุ่นในวันที่อากาศเย็นยะเยือก",
+    "descriptionEn": "Heavy denim that holds warmth and takes wear. For the coldest weeks.",
     "price": 78.99,
-    "originalPrice": 98.74,
+    "originalPrice": 96.99,
     "tag": "Essentials",
     "image": "/images/products/winter/bottoms/jeans/color_1_charcoal.jpeg",
     "category": "Bottoms",
@@ -2292,17 +5242,83 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 103,
+    "rating": 4.8,
+    "reviewsCount": 120,
     "isFeatured": false,
-    "createdAt": "2026-02-26"
+    "createdAt": "2026-02-26",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Wide Leg Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "WIN-BOT-052",
     "name": "MatchA Winter Joggers",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงจ็อกเกอร์บุผ้าฟลีซด้านใน อบอุ่น นุ่มสบาย คล่องตัว เหมาะกับวันพักผ่อนฤดูหนาว",
+    "descriptionEn": "Fleece-lined joggers. Warm, soft, and easy to move in on a slow day.",
     "price": 82.99,
-    "originalPrice": 103.74,
+    "originalPrice": 97,
     "tag": "Trending",
     "image": "/images/products/winter/bottoms/joggers/color_1_charcoal.jpeg",
     "category": "Bottoms",
@@ -2342,16 +5358,82 @@ export const productsData = [
     ],
     "inStock": true,
     "rating": 4.8,
-    "reviewsCount": 112,
+    "reviewsCount": 107,
     "isFeatured": true,
-    "createdAt": "2026-02-01"
+    "createdAt": "2026-02-01",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "WIN-BOT-053",
     "name": "MatchA Winter Pants",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กางเกงสแล็คผ้าทอเนื้อหนากันลม ทรงสมาร์ทเนี้ยบสำหรับฤดูหนาวทั้งทางการและลำลอง",
+    "descriptionEn": "Slacks in a thick wind-resistant weave. Smart enough for the office, easy enough for after.",
     "price": 71.99,
-    "originalPrice": 89.99,
+    "originalPrice": 82.5,
     "tag": "Popular",
     "image": "/images/products/winter/bottoms/pants/color_1_charcoal.jpeg",
     "category": "Bottoms",
@@ -2390,17 +5472,83 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 121,
+    "rating": 4.8,
+    "reviewsCount": 94,
     "isFeatured": false,
-    "createdAt": "2026-02-02"
+    "createdAt": "2026-02-02",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Wide Leg Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "WIN-BOT-054",
     "name": "MatchA Winter Skirts",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "กระโปรงผ้าวูลผสมทรงตรง ลุคอบอุ่นภูมิฐานในฤดูหนาว ตัดเย็บสวยงามเข้ารูปพอดีตัว",
+    "descriptionEn": "A straight wool-blend skirt, cut to fit. Warm and composed.",
     "price": 65.99,
-    "originalPrice": 82.49,
+    "originalPrice": 75.99,
     "tag": "Best Seller",
     "image": "/images/products/winter/bottoms/skirts/color_1_charcoal.jpeg",
     "category": "Bottoms",
@@ -2439,27 +5587,99 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 130,
+    "rating": 4.8,
+    "reviewsCount": 81,
     "isFeatured": false,
-    "createdAt": "2026-02-03"
+    "createdAt": "2026-02-03",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายทวิล 98% · อีลาสเทน 2% · น้ำหนักผ้า 285 gsm",
+      "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบเอว 79 cm · ความยาวขา 81 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_bottom",
+      "sizeGuide": {
+        "system": "Apparel Bottoms (cm)",
+        "headers": [
+          "Size",
+          "รอบเอว (Waist)",
+          "สะโพก (Hip)",
+          "ความยาว (Length)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "waist": "72-76 cm (28-30\")",
+            "hip": "98 cm",
+            "length": "98 cm"
+          },
+          {
+            "size": "M",
+            "waist": "76-80 cm (30-32\")",
+            "hip": "104 cm",
+            "length": "100 cm"
+          },
+          {
+            "size": "L",
+            "waist": "80-86 cm (32-34\")",
+            "hip": "110 cm",
+            "length": "102 cm"
+          },
+          {
+            "size": "XL",
+            "waist": "86-92 cm (34-36\")",
+            "hip": "116 cm",
+            "length": "104 cm"
+          },
+          {
+            "size": "XXL",
+            "waist": "92-98 cm (36-38\")",
+            "hip": "122 cm",
+            "length": "106 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบเอวบริเวณที่สวมกางเกงปกติ และวัดสะโพกบริเวณจุดที่กว้างที่สุด แนบสายวัดแต่ไม่รัดแน่น"
+      }
+    }
   },
   {
     "id": "WIN-ACC-055",
     "name": "MatchA Winter Boots",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "รองเท้าบูทกันหนาวบุซับในนุ่ม พื้นดอกยางลึกกันลื่นบนพื้นเปียก ทนทานต่อทุกสภาพอากาศ",
+    "descriptionEn": "A lined winter boot on a deep-tread sole that grips wet ground.",
     "price": 99.99,
-    "originalPrice": 124.99,
+    "originalPrice": 117,
     "tag": "New Drop",
     "image": "/images/products/winter/shoes/boots/color_1_cobalt.jpeg",
-    "category": "Accessories",
+    "category": "Shoes",
     "subCategory": "Boots",
     "season": "Winter",
     "color": "Cobalt",
     "colorHex": "#1A365D",
     "fit": "Relaxed",
     "sizes": [
-      "OS"
+      "EU 38",
+      "EU 39",
+      "EU 40",
+      "EU 41",
+      "EU 42",
+      "EU 43",
+      "EU 44"
     ],
     "variants": [
       {
@@ -2485,26 +5705,111 @@ export const productsData = [
     ],
     "inStock": false,
     "rating": 4.6,
-    "reviewsCount": 139,
+    "reviewsCount": 68,
     "isFeatured": false,
-    "createdAt": "2026-02-04"
+    "createdAt": "2026-02-04",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุสังเคราะห์และหนังมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
+      "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
+      "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
+      "silhouette": "Footwear Standard Fit",
+      "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
+      "careInstructions": [
+        "ใช้แปรงขนนุ่มปัดฝุ่นและสิ่งสกปรกออกเป็นประจำ",
+        "เช็ดทำความสะอาดด้วยผ้าชุบน้ำหมาดและสบู่อ่อน",
+        "ห้ามซักด้วยเครื่องซักผ้าหรือแช่น้ำ",
+        "ผึ่งลมในที่ร่มจนแห้งสนิท หลีกเลี่ยงความร้อนสูง"
+      ],
+      "sizeGuideType": "shoes",
+      "sizeGuide": {
+        "system": "EU / US / Foot Length (cm)",
+        "headers": [
+          "EU Size",
+          "US Men",
+          "US Women",
+          "ความยาวเท้า (cm)"
+        ],
+        "rows": [
+          {
+            "size": "EU 38",
+            "usMen": "5.5",
+            "usWomen": "7.0",
+            "footLengthCm": "24.0"
+          },
+          {
+            "size": "EU 39",
+            "usMen": "6.5",
+            "usWomen": "8.0",
+            "footLengthCm": "24.5"
+          },
+          {
+            "size": "EU 40",
+            "usMen": "7.5",
+            "usWomen": "9.0",
+            "footLengthCm": "25.0"
+          },
+          {
+            "size": "EU 41",
+            "usMen": "8.0",
+            "usWomen": "9.5",
+            "footLengthCm": "25.5"
+          },
+          {
+            "size": "EU 42",
+            "usMen": "8.5",
+            "usWomen": "10.0",
+            "footLengthCm": "26.0"
+          },
+          {
+            "size": "EU 43",
+            "usMen": "9.5",
+            "usWomen": "11.0",
+            "footLengthCm": "26.5"
+          },
+          {
+            "size": "EU 44",
+            "usMen": "10.5",
+            "usWomen": "12.0",
+            "footLengthCm": "27.0"
+          }
+        ],
+        "measureInstruction": "วางฝ่าเท้าบนกระดาษ ยืนลงน้ำหนักเต็มที่ ขีดเส้นจุดปลายนิ้วที่ยาวที่สุดและส้นเท้า วัดความยาวเป็นเซนติเมตร"
+      }
+    }
   },
   {
     "id": "WIN-ACC-056",
     "name": "MatchA Winter Sneakers",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สนีกเกอร์หุ้มข้อผ้ากันละอองน้ำ ดีไซน์ไฮสตรีทรับลมหนาว ซัพพอร์ตข้อเท้าได้มั่นคง",
+    "descriptionEn": "A water-resistant high-top that supports the ankle. High-street cut, winter build.",
     "price": 73.99,
-    "originalPrice": 92.49,
+    "originalPrice": 84.5,
     "tag": "Limited 2026",
     "image": "/images/products/winter/shoes/sneakers/color_1_charcoal.jpeg",
-    "category": "Accessories",
+    "category": "Shoes",
     "subCategory": "Sneakers",
     "season": "Winter",
     "color": "Charcoal",
     "colorHex": "#2C3539",
     "fit": "Relaxed",
     "sizes": [
-      "OS"
+      "EU 38",
+      "EU 39",
+      "EU 40",
+      "EU 41",
+      "EU 42",
+      "EU 43",
+      "EU 44"
     ],
     "variants": [
       {
@@ -2529,17 +5834,96 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.7,
-    "reviewsCount": 148,
+    "rating": 4.6,
+    "reviewsCount": 55,
     "isFeatured": true,
-    "createdAt": "2026-02-05"
+    "createdAt": "2026-02-05",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "วัสดุสังเคราะห์และหนังมาตรฐาน (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "หนังวัวแท้ชั้นบน · พื้นยางธรรมชาติ · ซับในผ้าฝ้าย",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดโอกายามะ",
+      "modelMeasurements": "นายแบบสวมไซซ์ EU 42 — ความยาวเท้า 26.5 cm",
+      "certifications": [
+        "Leather Working Group (LWG)",
+        "REACH Compliant"
+      ],
+      "silhouette": "Footwear Standard Fit",
+      "fitDetails": "ความกว้างมาตรฐาน (D/B) รองรับรูปเท้าคนเอเชีย แนะนำเลือกตรงไซซ์ปกติ",
+      "careInstructions": [
+        "ใช้แปรงขนนุ่มปัดฝุ่นและสิ่งสกปรกออกเป็นประจำ",
+        "เช็ดทำความสะอาดด้วยผ้าชุบน้ำหมาดและสบู่อ่อน",
+        "ห้ามซักด้วยเครื่องซักผ้าหรือแช่น้ำ",
+        "ผึ่งลมในที่ร่มจนแห้งสนิท หลีกเลี่ยงความร้อนสูง"
+      ],
+      "sizeGuideType": "shoes",
+      "sizeGuide": {
+        "system": "EU / US / Foot Length (cm)",
+        "headers": [
+          "EU Size",
+          "US Men",
+          "US Women",
+          "ความยาวเท้า (cm)"
+        ],
+        "rows": [
+          {
+            "size": "EU 38",
+            "usMen": "5.5",
+            "usWomen": "7.0",
+            "footLengthCm": "24.0"
+          },
+          {
+            "size": "EU 39",
+            "usMen": "6.5",
+            "usWomen": "8.0",
+            "footLengthCm": "24.5"
+          },
+          {
+            "size": "EU 40",
+            "usMen": "7.5",
+            "usWomen": "9.0",
+            "footLengthCm": "25.0"
+          },
+          {
+            "size": "EU 41",
+            "usMen": "8.0",
+            "usWomen": "9.5",
+            "footLengthCm": "25.5"
+          },
+          {
+            "size": "EU 42",
+            "usMen": "8.5",
+            "usWomen": "10.0",
+            "footLengthCm": "26.0"
+          },
+          {
+            "size": "EU 43",
+            "usMen": "9.5",
+            "usWomen": "11.0",
+            "footLengthCm": "26.5"
+          },
+          {
+            "size": "EU 44",
+            "usMen": "10.5",
+            "usWomen": "12.0",
+            "footLengthCm": "27.0"
+          }
+        ],
+        "measureInstruction": "วางฝ่าเท้าบนกระดาษ ยืนลงน้ำหนักเต็มที่ ขีดเส้นจุดปลายนิ้วที่ยาวที่สุดและส้นเท้า วัดความยาวเป็นเซนติเมตร"
+      }
+    }
   },
   {
     "id": "WIN-OUT-057",
     "name": "MatchA Winter Coats",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "โค้ตผ้าวูลตัวยาว คัตติ้งเนี้ยบ ปกคอสูงกันลมหนาวได้อย่างสมบูรณ์แบบ เพิ่มความภูมิฐาน",
+    "descriptionEn": "A long wool coat with a high collar against the wind. Sharply cut.",
     "price": 132.99,
-    "originalPrice": 166.24,
+    "originalPrice": 151,
     "tag": "Essentials",
     "image": "/images/products/winter/tops/coats/color_1_charcoal.jpeg",
     "category": "Outerwear",
@@ -2578,17 +5962,84 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.8,
-    "reviewsCount": 157,
+    "rating": 4.9,
+    "reviewsCount": 74,
     "isFeatured": false,
-    "createdAt": "2026-02-06"
+    "createdAt": "2026-02-06",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "เปลือกนอกไนลอนรีไซเคิล 100% · ซับในผ้าฝ้าย 100% · เคลือบกันน้ำ DWR ปลอด PFC",
+      "countryOfOrigin": "ญี่ปุ่น — จังหวัดวากายามะ",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm — สวมไซซ์ L ทับเสื้อชั้นใน",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "bluesign approved"
+      ],
+      "silhouette": "Tailored Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "WIN-TOP-058",
     "name": "MatchA Winter Hoodies",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "เสื้อฮู้ดผ้าหนานุ่มพิเศษ ทรงโอเวอร์ไซส์ บุซับในกันหนาว อบอุ่นมั่นใจในทุกทริป",
+    "descriptionEn": "An oversized hood in heavy brushed cotton with a warm lining. Made for travelling in.",
     "price": 66.99,
-    "originalPrice": 83.74,
+    "originalPrice": 81.5,
     "tag": "Trending",
     "image": "/images/products/winter/tops/hoodies/color_1_charcoal.jpeg",
     "category": "Tops",
@@ -2627,17 +6078,84 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.9,
-    "reviewsCount": 166,
+    "rating": 4.6,
+    "reviewsCount": 144,
     "isFeatured": false,
-    "createdAt": "2026-02-07"
+    "createdAt": "2026-02-07",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
+      "countryOfOrigin": "ไทย — กรุงเทพมหานคร",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
+      "silhouette": "Oversized Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "WIN-OUT-059",
     "name": "MatchA Winter Jackets",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "แจ็กเก็ตดาวน์น้ำหนักเบา เก็บกักอุณหภูมิร่างกายได้ดีเยี่ยม พกพาสะดวกพร้อมลุยทุกความหนาว",
+    "descriptionEn": "A light down jacket that holds heat and packs down small.",
     "price": 140.99,
-    "originalPrice": 176.24,
+    "originalPrice": 190.99,
     "tag": "Popular",
     "image": "/images/products/winter/tops/jackets/color_1_charcoal.jpeg",
     "category": "Outerwear",
@@ -2676,17 +6194,84 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 5,
-    "reviewsCount": 175,
+    "rating": 4.9,
+    "reviewsCount": 48,
     "isFeatured": false,
-    "createdAt": "2026-02-08"
+    "createdAt": "2026-02-08",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "เปลือกนอกไนลอนรีไซเคิล 100% · ซับในผ้าฝ้าย 100% · เคลือบกันน้ำ DWR ปลอด PFC",
+      "countryOfOrigin": "โปรตุเกส — เมืองปอร์ตู",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm — สวมไซซ์ L ทับเสื้อชั้นใน",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "bluesign approved"
+      ],
+      "silhouette": "Relaxed Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   },
   {
     "id": "WIN-TOP-060",
     "name": "MatchA Winter Sweaters",
-    "description": "Crafted for the Winter capsule with premium heavyweight textiles, precision tailored seams, and signature MatchA earth tones.",
+    "description": "สเวตเตอร์คอกลมไหมพรมเนื้อหนา สัมผัสนุ่มละมุน ลายถักคลาสสิกสร้างลุคฤดูหนาวที่อบอุ่น",
+    "descriptionEn": "A thick crew knit with a classic cable. Soft against the skin.",
     "price": 89.99,
-    "originalPrice": 112.49,
+    "originalPrice": 102,
     "tag": "Best Seller",
     "image": "/images/products/winter/tops/sweaters/color_1_charcoal.jpeg",
     "category": "Tops",
@@ -2725,9 +6310,75 @@ export const productsData = [
       }
     ],
     "inStock": true,
-    "rating": 4.6,
-    "reviewsCount": 184,
+    "rating": 4.7,
+    "reviewsCount": 155,
     "isFeatured": true,
-    "createdAt": "2026-02-09"
+    "createdAt": "2026-02-09",
+    "specs": {
+      "isSampleData": true,
+      "specStatus": "sample_pending",
+      "statusLabel": "ข้อมูลตัวอย่าง รอยืนยันจากร้าน",
+      "statusLabelEn": "Sample Specification - Pending Store Verification",
+      "sampleNotice": "สเปกสินค้าและตารางวัดขนาดนี้เป็นข้อมูลตัวอย่างเพื่อการทดสอบระบบ อยู่ระหว่างรอยืนยันสเปกจริงอย่างเป็นทางการจากทางร้าน",
+      "materialHint": "ผ้าฝ้ายผสมทอพิเศษ (ข้อมูลตัวอย่าง รอยืนยันจากร้าน)",
+      "fabricComposition": "ผ้าฝ้ายคอมบ์ 80% · โพลีเอสเตอร์รีไซเคิล 20% · น้ำหนักผ้า 320 gsm",
+      "countryOfOrigin": "เวียดนาม — นครโฮจิมินห์",
+      "modelMeasurements": "นายแบบสูง 183 cm · รอบอก 94 cm · รอบเอว 78 cm — สวมไซซ์ L",
+      "certifications": [
+        "OEKO-TEX STANDARD 100",
+        "GOTS Organic Cotton"
+      ],
+      "silhouette": "Oversized Cut",
+      "fitDetails": "ทรงเฉพาะตามดีไซน์คอลเลกชัน สวมใส่สบายคล่องตัว",
+      "careInstructions": [
+        "ซักเครื่องด้วยน้ำเย็น โหมดถนอมผ้า (Cold gentle wash)",
+        "แยกซักผ้าสีเข้มและสีสว่าง (Wash with similar colors)",
+        "ห้ามใช้น้ำยาฟอกขาว (Do not bleach)",
+        "ตากในที่ร่ม หลีกเลี่ยงแสงแดดจัด (Line dry in shade)"
+      ],
+      "sizeGuideType": "apparel_top",
+      "sizeGuide": {
+        "system": "Apparel Tops & Outerwear (cm)",
+        "headers": [
+          "Size",
+          "รอบอก (Chest)",
+          "ความยาวเสื้อ (Length)",
+          "ไหล่กว้าง (Shoulder)"
+        ],
+        "rows": [
+          {
+            "size": "S",
+            "chest": "102 cm (40\")",
+            "length": "68 cm",
+            "shoulder": "46 cm"
+          },
+          {
+            "size": "M",
+            "chest": "108 cm (42.5\")",
+            "length": "70 cm",
+            "shoulder": "48 cm"
+          },
+          {
+            "size": "L",
+            "chest": "114 cm (45\")",
+            "length": "72 cm",
+            "shoulder": "50 cm"
+          },
+          {
+            "size": "XL",
+            "chest": "120 cm (47\")",
+            "length": "74 cm",
+            "shoulder": "52 cm"
+          },
+          {
+            "size": "XXL",
+            "chest": "126 cm (49.5\")",
+            "length": "76 cm",
+            "shoulder": "54 cm"
+          }
+        ],
+        "measureInstruction": "วัดรอบอกบริเวณจุดที่กว้างที่สุดใต้รักแร้ และวัดความยาวจากจุดสูงสุดของไหล่ลงมาถึงชายเสื้อ"
+      }
+    }
   }
 ];

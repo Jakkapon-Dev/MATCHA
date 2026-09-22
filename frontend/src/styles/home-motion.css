@@ -1,0 +1,16 @@
+/* Homepage-only motion.
+
+   The entrances, reveals and scroll drift on this page are owned by Motion in
+   src/components/motion — a scroll-linked parallax and a CSS keyframe cannot
+   both write `transform` on the same element, so the CSS versions of those
+   rules were removed rather than left to fight for the property. The site-wide
+   primitives in motion.css still apply to every other page.
+
+   What is left here is the one rule Motion has no say over. */
+
+/* The perks card is rotated by the pointer, and on a touch screen there is no
+   pointer to rotate it back — without this it would stay stuck at whatever
+   angle the last tap left it. */
+@media (hover: none) {
+  .home-page .preserve-3d { transform: none !important; }
+}

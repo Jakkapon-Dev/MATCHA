@@ -1,59 +1,216 @@
-# Dependencies
+# ==============================================================================
+# MatchA — Master .gitignore Configuration
+# Continuously updated for clean repository and deployment security
+# ==============================================================================
+
+# 1. Project Documentation, Internal Specifications & Requirement Docs (Local Only)
+!docs/
+docs/*
+!docs/runbooks/
+!docs/runbooks/*
+*.visual-check.*
+Requirement/
+Requirement/*
+Requirement
+# Local one-off scripts stay out, except the ones the code depends on —
+# same arrangement as backend/scripts below.
+!scripts/
+scripts/*
+!scripts/convert-images.sh
+Alldata.md
+*Alldata*.md
+StepUp-01.md
+*StepUp*.md
+interview.md
+*interview*.md
+*scratch*.js
+*scratch*.ts
+vercel.json
+
+# 2. CI/CD & GitHub Workflows (Explicitly disabled/ignored)
+.github/
+.github/*
+.github-actions/
+*.runner.log
+
+# 3. Dependencies & Package Managers
 node_modules/
 .pnp
 .pnp.js
+package-lock.json.bak
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
 
-# Production build outputs
+# 4. Production Build & Output
 dist/
 dist-ssr/
 build/
+out/
 *.local
+*.tsbuildinfo
 
-# Environment variables
+# 5. Deployment Artifacts & Cloud Caches
+.vercel/
+.vercel
+.turbo/
+.next/
+.nuxt/
+.output/
+.netlify/
+.serverless/
+
+# 6. Environment Variables & Secret Credentials (NEVER COMMIT)
 .env
+.env.*
+!.env.example
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+backend/.env
+backend/.env.*
+!backend/.env.example
+backend/.env.local
+backend/.env.production
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+frontend/.env.local
+frontend/.env.production
+app/backend/.env
+app/backend/.env.*
+!app/backend/.env.example
+app/frontend/.env
+app/frontend/.env.*
+*.pem
+*.key
+*.cert
+*.crt
+*.pfx
+*.p12
 
-# Logs
+# 7. Logs & Runtime Debugging
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
+*.log
+*.log.*
 
-# Editor & OS files
+# 8. Operating System & Editor Files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
+desktop.ini
 .vscode/
+!.vscode/settings.json
 .idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+*.swo
+*.swn
+*.bak
+*.backup
+*.orig
 
-# AI Agent Customizations, Skills & Knowledge Graphs (Do not upload to Git)
+# 9. AI Agent Caches, Knowledge Graphs & Index Directories
 .agents/
 .agents/*
 .claude/
 .claude/*
 .gemini/
 .gemini/*
+.cursor/
+.windsurf/
 graft/
 graft/*
 
-# Backend environment variables (prevent secret key leaks)
-backend/.env
-backend/.env.*
-backend/.env.local
-backend/.env.production
-
-# Vite cache
+# 10. Vite, Bundler & Local Cache Stores
 .vite/
+.cache/
+*.tmp
+*.temp
+*.cache
+.eslintcache
+.stylelintcache
 
-# Test & coverage output
+# 11. Test Results & Coverage Dumps
 coverage/
 *.lcov
+test-output/
+playwright-report/
+test-results/
+blob-report/
+.nyc_output/
+*.dump
+*.dmp
+*.stackdump
 
-# Temp & cache files
-*.log
-*.tmp
-*.cache
-.cache/
+# 12. Temporary Local Data & Generated Exports (Spreadsheets / Dumps)
+*.export.csv
+*.export.json
+MatchA_*_Backup_*.json
+MatchA_*_Report_*.csv
+MatchA_Inventory_*.csv
+MatchA_Orders_*.csv
+MatchA_Revenue_*.csv
+MatchA_VIP_*.csv
+MatchA_Full_Store_Backup_*.json
+
+# 13. Local Auth User Store (contains password hashes — never commit)
+backend/data/users.json
+# The migration writes a dump of the users collection beside it, hashes and
+# all. One line short of this and it would have been committed.
+backend/data/users-mongo-backup-*.json
+backend/data/backup-pre-firebase-*
+# The notification outbox buffers real orders — a customer name and a total
+# per queued entry — while the database is unreachable. Runtime state, and
+# never anything to commit.
+backend/data/notification-outbox.json
+backend/logs/
+
+# Database backup archives & dumps (Never commit credentials or data dumps)
+backups/
+backend/backups/
+*.backup.json
+*.backup.gz
+*.archive
+
+# Runtime media & storage dumps
+backend/storage/media/
+backend/storage/*.json
+backend/storage/products-backup-*.json
+
+# Backend scripts tracking
+!backend/scripts/
+backend/scripts/*
+!backend/scripts/bundle-demo-media.js
+!backend/scripts/seed.js
+!backend/scripts/seedUsers.js
+# Migrations already applied to the live data. Without these the repository
+# cannot reproduce its own database: seeding from seed.js would lose the colour
+# repair and the English descriptions with nothing to redo them. Both are
+# idempotent and write a backup before touching anything.
+!backend/scripts/fixProductColors.mjs
+!backend/scripts/addEnglishDescriptions.mjs
+# The users collection was reshaped by this and the accounts moved off the JSON
+# file. Without it there is no record of how the live collection reached its
+# current form, and no way to redo it. Idempotent, and it writes a backup first.
+!backend/scripts/migrateUsersToMongo.mjs
+!backend/scripts/migrateSizeStock.mjs
+!backend/scripts/migrate-legacy-users-firebase.mjs
+!backend/scripts/backup-mongodb.mjs
+!backend/scripts/restore-mongodb-test.mjs
+
+
+

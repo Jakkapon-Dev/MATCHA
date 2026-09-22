@@ -1,0 +1,558 @@
+[
+  {
+    "id": "SPREAD-01",
+    "vol": "VOL. 04",
+    "issueDate": "AUTUMN / WINTER 2026",
+    "title": "The Ginza Architectural Minimalist",
+    "subtitle": "Warm Earth & Monolithic Silhouettes on Tokyo Skyline",
+    "theme": "URBAN ARCHITECTURAL",
+    "season": "Autumn",
+    "seasonThai": "Autumn Warm (เอิร์ธโทนอบอุ่น)",
+    "location": "Ginza Sky Garden Archive • Tokyo, Japan",
+    "photographer": "Kenzo Takahashi",
+    "stylist": "Aoi Murakami",
+    "leadQuote": "“Garments engineered to breathe with the urban rhythm, dyed with organic matcha pigments.”",
+    "narrative": "สำรวจการตัดเย็บที่ผสมผสานความแม่นยำทางสถาปัตยกรรมเข้ากับความนุ่มนวลของเส้นใยธรรมชาติ โทนสีมัทฉะเอิร์ธและน้ำตาลดินเผาช่วยขับผิวโทนอุ่นให้ดูสุขุม เปล่งประกายท่ามกลางโครงสร้างคอนกรีตสูงเสียดฟ้า",
+    "heroImage": "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_standing_on_skyscraper_roo_001.jpeg",
+    "detailImages": [
+      "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_standing_in_jacket_001.jpeg",
+      "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_standing_on_concrete_stair_001.jpeg"
+    ],
+    "palette": [
+      {
+        "name": "Matcha Forest",
+        "hex": "#2D5A27"
+      },
+      {
+        "name": "Terracotta Rust",
+        "hex": "#BC5A36"
+      },
+      {
+        "name": "Warm Charcoal",
+        "hex": "#2D231E"
+      },
+      {
+        "name": "Natural Ecru",
+        "hex": "#FAF8F5"
+      }
+    ],
+    "hotspots": [
+      {
+        "id": "HS-01-jacket",
+        "x": "40%",
+        "y": "36%",
+        "title": "Holographic Longline Jacket",
+        "category": "Outerwear",
+        "price": 125,
+        "color": "Iridescent Lilac",
+        "productId": "LOOK-01-JACKET",
+        "image": "/images/lookbook_flatlay/01-jacket.png"
+      },
+      {
+        "id": "HS-01-crop",
+        "x": "52%",
+        "y": "40%",
+        "title": "Metallic Silver Bustier Top",
+        "category": "Tops",
+        "price": 44,
+        "color": "Metallic Silver",
+        "productId": "LOOK-01-CROP",
+        "image": "/images/lookbook_flatlay/01-crop.png"
+      },
+      {
+        "id": "HS-01-cargo",
+        "x": "52%",
+        "y": "66%",
+        "title": "Strapped Technical Cargo Pants",
+        "category": "Bottoms",
+        "price": 88,
+        "color": "Black",
+        "productId": "LOOK-01-CARGO",
+        "image": "/images/lookbook_flatlay/01-cargo.png"
+      }
+    ],
+    "shoppableItems": [
+      {
+        "id": "LOOK-01-JACKET",
+        "name": "Holographic Longline Jacket",
+        "price": 125,
+        "category": "Outerwear",
+        "color": "Iridescent Lilac",
+        "image": "/images/lookbook_flatlay/01-jacket.png"
+      },
+      {
+        "id": "LOOK-01-CROP",
+        "name": "Metallic Silver Bustier Top",
+        "price": 44,
+        "category": "Tops",
+        "color": "Metallic Silver",
+        "image": "/images/lookbook_flatlay/01-crop.png"
+      },
+      {
+        "id": "LOOK-01-CARGO",
+        "name": "Strapped Technical Cargo Pants",
+        "price": 88,
+        "category": "Bottoms",
+        "color": "Black",
+        "image": "/images/lookbook_flatlay/01-cargo.png"
+      }
+    ]
+  },
+  {
+    "id": "SPREAD-02",
+    "vol": "VOL. 04",
+    "issueDate": "SPRING CAPSULE 2026",
+    "title": "Concrete Botanical Bloom",
+    "subtitle": "Tailored Linen Lapels in the Heart of Shinjuku",
+    "theme": "CONTEMPORARY TAILORED",
+    "season": "Spring",
+    "seasonThai": "Spring Warm (สีสว่างสดใส)",
+    "location": "Shinjuku Glass Pavilion • Tokyo, Japan",
+    "photographer": "Elena Rostova",
+    "stylist": "Sora Tanaka",
+    "leadQuote": "“Lightness is not the absence of weight, but the perfection of balance.”",
+    "narrative": "สัมผัสการพลิกโฉมเบลเซอร์แบบดั้งเดิมด้วยผ้าลินินเนื้อบางเบาโทนพีชคอรัลและเขียวใบชาอ่อน ความสมดุลระหว่างโครงทรงเรขาคณิตและเส้นใยธรรมชาติ ออกแบบมาเพื่อขับผิวกลุ่ม Spring ให้ดูสดชื่นเป็นธรรมชาติ",
+    "heroImage": "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_adjusting_linen_blazer_001.jpeg",
+    "detailImages": [
+      "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_adjusting_sunglasses_001.jpeg",
+      "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_wearing_oversized_denim_ja_001.jpeg"
+    ],
+    "palette": [
+      {
+        "name": "Peach Blossom",
+        "hex": "#FF7F50"
+      },
+      {
+        "name": "Matcha Sage",
+        "hex": "#8F9779"
+      },
+      {
+        "name": "Warm Cream",
+        "hex": "#FFFDD0"
+      },
+      {
+        "name": "Soft Denim",
+        "hex": "#4A6B82"
+      }
+    ],
+    "hotspots": [
+      {
+        "id": "HS-02-blazer",
+        "x": "62%",
+        "y": "42%",
+        "title": "Ivory Linen Tailored Blazer",
+        "category": "Outerwear",
+        "price": 110,
+        "color": "Warm Ivory",
+        "productId": "LOOK-02-BLAZER",
+        "image": "/images/lookbook_flatlay/02-blazer.png"
+      },
+      {
+        "id": "HS-02-shirt",
+        "x": "49%",
+        "y": "48%",
+        "title": "Relaxed Linen Shirt",
+        "category": "Tops",
+        "price": 38,
+        "color": "Warm Ivory",
+        "productId": "LOOK-02-SHIRT",
+        "image": "/images/lookbook_flatlay/02-shirt.png"
+      },
+      {
+        "id": "HS-02-trousers",
+        "x": "53%",
+        "y": "70%",
+        "title": "Straight Linen Trousers",
+        "category": "Bottoms",
+        "price": 82,
+        "color": "Warm Ivory",
+        "productId": "LOOK-02-TROUSERS",
+        "image": "/images/lookbook_flatlay/02-trousers.png"
+      }
+    ],
+    "shoppableItems": [
+      {
+        "id": "LOOK-02-BLAZER",
+        "name": "Ivory Linen Tailored Blazer",
+        "price": 110,
+        "category": "Outerwear",
+        "color": "Warm Ivory",
+        "image": "/images/lookbook_flatlay/02-blazer.png"
+      },
+      {
+        "id": "LOOK-02-SHIRT",
+        "name": "Relaxed Linen Shirt",
+        "price": 38,
+        "category": "Tops",
+        "color": "Warm Ivory",
+        "image": "/images/lookbook_flatlay/02-shirt.png"
+      },
+      {
+        "id": "LOOK-02-TROUSERS",
+        "name": "Straight Linen Trousers",
+        "price": 82,
+        "category": "Bottoms",
+        "color": "Warm Ivory",
+        "image": "/images/lookbook_flatlay/02-trousers.png"
+      }
+    ]
+  },
+  {
+    "id": "SPREAD-03",
+    "vol": "VOL. 04",
+    "issueDate": "HIGH SUMMER 2026",
+    "title": "Pacific Driftwood & Coastal Linen",
+    "subtitle": "Sun-Drenched Pastel Breezes and Unrestricted Ease",
+    "theme": "COASTAL RESORT",
+    "season": "Summer",
+    "seasonThai": "Summer Cool (เฉดสีพาสเทลโทนเย็น)",
+    "location": "Enoshima Coastline • Kanagawa, Japan",
+    "photographer": "Hiroshi Noma",
+    "stylist": "Chloe Bennett",
+    "leadQuote": "“When sea breeze meets washed indigo, effortless elegance takes form.”",
+    "narrative": "แรงบันดาลใจจากขอบฟ้าและคลื่นทะเลชายฝั่งเอโนชิมะ เสื้อเชิ้ตผ้าโปร่งระบายอากาศคู่กางเกงลินินขาสั้น เสริมอันเดอร์โทนผิวกลุ่ม Summer ให้ดูผุดผ่อง นุ่มนวล และน่าค้นหาในทุกมุมมอง",
+    "heroImage": "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_leaning_against_driftwood_001.jpeg",
+    "detailImages": [
+      "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_walking_across_glass_bridge_001.jpeg",
+      "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_looking_at_horizon_001.jpeg"
+    ],
+    "palette": [
+      {
+        "name": "Sky Blue",
+        "hex": "#87CEEB"
+      },
+      {
+        "name": "Lavender Mist",
+        "hex": "#E6E6FA"
+      },
+      {
+        "name": "Muted Mint",
+        "hex": "#98FF98"
+      },
+      {
+        "name": "Bleached Sand",
+        "hex": "#F4F1EA"
+      }
+    ],
+    "hotspots": [
+      {
+        "id": "HS-03-cape",
+        "x": "38%",
+        "y": "43%",
+        "title": "White Draped Cape Blazer",
+        "category": "Outerwear",
+        "price": 64,
+        "color": "White",
+        "productId": "LOOK-03-CAPE",
+        "image": "/images/lookbook_flatlay/03-cape.png"
+      },
+      {
+        "id": "HS-03-camisole",
+        "x": "54%",
+        "y": "44%",
+        "title": "White V-Neck Camisole",
+        "category": "Tops",
+        "price": 34,
+        "color": "White",
+        "productId": "LOOK-03-CAMISOLE",
+        "image": "/images/lookbook_flatlay/03-camisole.png"
+      },
+      {
+        "id": "HS-03-trousers",
+        "x": "56%",
+        "y": "65%",
+        "title": "Ivory Ankle Trousers",
+        "category": "Bottoms",
+        "price": 54,
+        "color": "Ivory Cream",
+        "productId": "LOOK-03-TROUSERS",
+        "image": "/images/lookbook_flatlay/03-trousers.png"
+      }
+    ],
+    "shoppableItems": [
+      {
+        "id": "LOOK-03-CAPE",
+        "name": "White Draped Cape Blazer",
+        "price": 64,
+        "category": "Outerwear",
+        "color": "White",
+        "image": "/images/lookbook_flatlay/03-cape.png"
+      },
+      {
+        "id": "LOOK-03-CAMISOLE",
+        "name": "White V-Neck Camisole",
+        "price": 34,
+        "category": "Tops",
+        "color": "White",
+        "image": "/images/lookbook_flatlay/03-camisole.png"
+      },
+      {
+        "id": "LOOK-03-TROUSERS",
+        "name": "Ivory Ankle Trousers",
+        "price": 54,
+        "category": "Bottoms",
+        "color": "Ivory Cream",
+        "image": "/images/lookbook_flatlay/03-trousers.png"
+      }
+    ]
+  },
+  {
+    "id": "SPREAD-04",
+    "vol": "VOL. 04",
+    "issueDate": "CYBER CAPSULE 2026",
+    "title": "Obsidian Cyber Monolith",
+    "subtitle": "High-Contrast Technical Outerwear & Deep Cobalt",
+    "theme": "CYBER TECHWEAR",
+    "season": "Winter",
+    "seasonThai": "Winter Cool (สีเข้มคมชัด คอนทราสต์สูง)",
+    "location": "Odaiba Monolith Plaza • Tokyo, Japan",
+    "photographer": "Daiki Sato",
+    "stylist": "Ren Kuroda",
+    "leadQuote": "“Precision cuts for an era where fashion becomes functional armor.”",
+    "narrative": "โครงสร้างเสื้อโค้ตหนาพิเศษกันละอองน้ำ ผสานกับกางเกงคาร์โก้เทคนิคัลสีดำชาร์โคล โทนสีคอนทราสต์ชัดเจนออกแบบเฉพาะสำหรับผิวกลุ่ม Winter ที่ต้องการความโดดเด่น คมคาย และทรงพลังในทุกสภาพอากาศ",
+    "heroImage": "/images/location_lifestyle/cyber_techwear/autumn/location_cyber_techwear_autumn_standing_between_mirrored_001.jpeg",
+    "detailImages": [
+      "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_standing_between_concrete_001.jpeg",
+      "/images/location_lifestyle/cyber_techwear/spring/location_cyber_techwear_spring_sitting_against_mirror_001.jpeg"
+    ],
+    "palette": [
+      {
+        "name": "Pure Obsidian",
+        "hex": "#111111"
+      },
+      {
+        "name": "Deep Cobalt",
+        "hex": "#1A365D"
+      },
+      {
+        "name": "Ice White",
+        "hex": "#FFFFFF"
+      },
+      {
+        "name": "Slate Steel",
+        "hex": "#708090"
+      }
+    ],
+    "hotspots": [
+      {
+        "id": "HS-04-blazer",
+        "x": "52%",
+        "y": "39%",
+        "title": "Copper Sequin Tailored Blazer",
+        "category": "Outerwear",
+        "price": 145,
+        "color": "Copper Bronze",
+        "productId": "LOOK-04-BLAZER",
+        "image": "/images/lookbook_flatlay/04-blazer.png"
+      },
+      {
+        "id": "HS-04-trousers",
+        "x": "55%",
+        "y": "70%",
+        "title": "Copper Sequin Wide-Leg Trousers",
+        "category": "Bottoms",
+        "price": 96,
+        "color": "Copper Bronze",
+        "productId": "LOOK-04-TROUSERS",
+        "image": "/images/lookbook_flatlay/04-trousers.png"
+      }
+    ],
+    "shoppableItems": [
+      {
+        "id": "LOOK-04-BLAZER",
+        "name": "Copper Sequin Tailored Blazer",
+        "price": 145,
+        "category": "Outerwear",
+        "color": "Copper Bronze",
+        "image": "/images/lookbook_flatlay/04-blazer.png"
+      },
+      {
+        "id": "LOOK-04-TROUSERS",
+        "name": "Copper Sequin Wide-Leg Trousers",
+        "price": 96,
+        "category": "Bottoms",
+        "color": "Copper Bronze",
+        "image": "/images/lookbook_flatlay/04-trousers.png"
+      }
+    ]
+  },
+  {
+    "id": "SPREAD-05",
+    "vol": "VOL. 04",
+    "issueDate": "INDUSTRIAL CAPSULE 2026",
+    "title": "Warm Basalt & Rusted Texture",
+    "subtitle": "Heavy Mineral Fleece in Industrial Heritage",
+    "theme": "URBAN CASUAL",
+    "season": "Autumn",
+    "seasonThai": "Autumn Warm (เอิร์ธโทนอบอุ่น)",
+    "location": "Yokohama Industrial Yard • Kanagawa, Japan",
+    "photographer": "Kenzo Takahashi",
+    "stylist": "Aoi Murakami",
+    "leadQuote": "“Heavyweight textures tell the story of time and craftsmanship.”",
+    "narrative": "ฮู้ดดี้ผ้าฟลีซหนาพิเศษย้อมสีแร่ธาตุธรรมชาติ สวมทับกับกางเกงยีนส์ขากว้าง ความดิบเท่ที่เข้ากันได้ดีกับสีสนิมและคอนกรีตเก่า สะท้อนสไตล์สตรีทแวร์ญี่ปุ่นที่ใส่ได้ทุกวัน",
+    "heroImage": "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_standing_among_basalt_columns_001.jpeg",
+    "detailImages": [
+      "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_standing_near_rusted_gears_001.jpeg",
+      "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_sitting_on_rattan_chair_001.jpeg"
+    ],
+    "palette": [
+      {
+        "name": "Burnt Ochre",
+        "hex": "#C05C2B"
+      },
+      {
+        "name": "Basalt Grey",
+        "hex": "#3E424B"
+      },
+      {
+        "name": "Mustard Clay",
+        "hex": "#D4A338"
+      },
+      {
+        "name": "Matcha Moss",
+        "hex": "#556B2F"
+      }
+    ],
+    "hotspots": [
+      {
+        "id": "HS-05-sweater",
+        "x": "51%",
+        "y": "42%",
+        "title": "Charcoal Cable-Knit Sweater",
+        "category": "Tops",
+        "price": 110,
+        "color": "Charcoal Marl",
+        "productId": "LOOK-05-SWEATER",
+        "image": "/images/lookbook_flatlay/05-sweater.png"
+      },
+      {
+        "id": "HS-05-cargo",
+        "x": "55%",
+        "y": "67%",
+        "title": "Washed Tapered Cargo Pants",
+        "category": "Bottoms",
+        "price": 92,
+        "color": "Dark Brown Charcoal",
+        "productId": "LOOK-05-CARGO",
+        "image": "/images/lookbook_flatlay/05-cargo.png"
+      }
+    ],
+    "shoppableItems": [
+      {
+        "id": "LOOK-05-SWEATER",
+        "name": "Charcoal Cable-Knit Sweater",
+        "price": 110,
+        "category": "Tops",
+        "color": "Charcoal Marl",
+        "image": "/images/lookbook_flatlay/05-sweater.png"
+      },
+      {
+        "id": "LOOK-05-CARGO",
+        "name": "Washed Tapered Cargo Pants",
+        "price": 92,
+        "category": "Bottoms",
+        "color": "Dark Brown Charcoal",
+        "image": "/images/lookbook_flatlay/05-cargo.png"
+      }
+    ]
+  },
+  {
+    "id": "SPREAD-06",
+    "vol": "VOL. 04",
+    "issueDate": "SPRING CAPSULE 2026",
+    "title": "Glass Pavilion & Pastel Layers",
+    "subtitle": "Transparent Reflections in Urban Daylight",
+    "theme": "CONTEMPORARY TAILORED",
+    "season": "Spring",
+    "seasonThai": "Spring Warm (สีสว่างสดใส)",
+    "location": "Omotesando Design Plaza • Tokyo, Japan",
+    "photographer": "Elena Rostova",
+    "stylist": "Sora Tanaka",
+    "leadQuote": "“Fashion is a dialogue between architecture and human movement.”",
+    "narrative": "การจับคู่สีพีชคอรัลและเขียวมัทฉะอ่อนบนโครงสร้างกระจกใส เน้นความโปร่งโล่งสบายตาและพลังบวกที่ขับให้ใบหน้าดูสว่างมีออร่าในวันแดดอ่อนของฤดูใบไม้ผลิ",
+    "heroImage": "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_leaning_against_glass_wall_001.jpeg",
+    "detailImages": [
+      "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_leaning_against_glass_railing_001.jpeg",
+      "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_stepping_down_concrete_stair_001.jpeg"
+    ],
+    "palette": [
+      {
+        "name": "Peach Sorbet",
+        "hex": "#FFA07A"
+      },
+      {
+        "name": "Sage Leaf",
+        "hex": "#9CAF88"
+      },
+      {
+        "name": "Ivory Bone",
+        "hex": "#FFFFF0"
+      },
+      {
+        "name": "Soft Slate",
+        "hex": "#8F9CA7"
+      }
+    ],
+    "hotspots": [
+      {
+        "id": "HS-06-vest",
+        "x": "50%",
+        "y": "42%",
+        "title": "Orange Utility Vest",
+        "category": "Outerwear",
+        "price": 78,
+        "color": "Signal Orange",
+        "productId": "LOOK-06-VEST",
+        "image": "/images/lookbook_flatlay/06-vest.png"
+      },
+      {
+        "id": "HS-06-shirt",
+        "x": "35%",
+        "y": "42%",
+        "title": "Black Crew-Neck T-Shirt",
+        "category": "Tops",
+        "price": 28,
+        "color": "Black",
+        "productId": "LOOK-06-SHIRT",
+        "image": "/images/lookbook_flatlay/06-shirt.png"
+      },
+      {
+        "id": "HS-06-shorts",
+        "x": "52%",
+        "y": "60%",
+        "title": "Technical Cargo Shorts",
+        "category": "Bottoms",
+        "price": 84,
+        "color": "Black",
+        "productId": "LOOK-06-SHORTS",
+        "image": "/images/lookbook_flatlay/06-shorts.png"
+      }
+    ],
+    "shoppableItems": [
+      {
+        "id": "LOOK-06-VEST",
+        "name": "Orange Utility Vest",
+        "price": 78,
+        "category": "Outerwear",
+        "color": "Signal Orange",
+        "image": "/images/lookbook_flatlay/06-vest.png"
+      },
+      {
+        "id": "LOOK-06-SHIRT",
+        "name": "Black Crew-Neck T-Shirt",
+        "price": 28,
+        "category": "Tops",
+        "color": "Black",
+        "image": "/images/lookbook_flatlay/06-shirt.png"
+      },
+      {
+        "id": "LOOK-06-SHORTS",
+        "name": "Technical Cargo Shorts",
+        "price": 84,
+        "category": "Bottoms",
+        "color": "Black",
+        "image": "/images/lookbook_flatlay/06-shorts.png"
+      }
+    ]
+  }
+]
