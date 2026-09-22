@@ -15,6 +15,7 @@ const PaymentPage = React.lazy(() => import('./pages/PaymentPage.jsx'));
 const UserAccount = React.lazy(() => import('./pages/UserAccount.jsx'));
 const GuestOrdersPage = React.lazy(() => import('./pages/GuestOrdersPage.jsx'));
 const ResetPasswordPage = React.lazy(() => import('./pages/ResetPasswordPage.jsx'));
+const ForgotPasswordPage = React.lazy(() => import('./pages/ForgotPasswordPage.jsx'));
 const VerifyEmailPage = React.lazy(() => import('./pages/VerifyEmailPage.jsx'));
 const AdminPage = React.lazy(() => import('./pages/AdminPage.jsx'));
 const PersonalColorPage = React.lazy(() => import('./pages/PersonalColorPage.jsx'));
@@ -72,6 +73,7 @@ const TITLE_KEYS = [
   ['/account', 'titles.account'],
   ['/orders', 'titles.orders'],
   ['/reset-password', 'titles.resetPassword'],
+  ['/forgot-password', 'titles.forgotPassword'],
   ['/verify-email', 'verifyEmail.title'],
   ['/admin', 'titles.admin'],
   ['/login', 'titles.login'],
@@ -264,7 +266,7 @@ function AppContent() {
           location.pathname === '/catalog' ? 'catalog' : 
           location.pathname === '/cart' ? 'cart' : 
           location.pathname === '/signup' ? 'signup' : 
-          location.pathname === '/login' ? 'login' : 
+          location.pathname === '/login' || location.pathname === '/forgot-password' ? 'login' :
           location.pathname === '/payment' ? 'payment' : 
           location.pathname === '/account' ? 'account' : 
           location.pathname === '/admin' ? 'admin' : 
@@ -364,6 +366,7 @@ function AppContent() {
           {/* 5 & 6. Sign in and register, one page */}
           <Route path="/login" element={<AccessPage mode="signin" />} />
           <Route path="/signup" element={<AccessPage mode="register" />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
 
           {/* Order history for whoever is asking. Open on purpose: without the
               browser's guest id the API returns an empty list, so there is

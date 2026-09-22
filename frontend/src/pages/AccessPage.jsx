@@ -6,10 +6,9 @@ import { EASE } from '../components/motion';
 import AtelierPanel from '../components/auth/AtelierPanel';
 import { api, apiErrorText, isNetworkErrorKey } from '../services/api';
 import { useAuth } from '../context/AuthContext.jsx';
-import { useToast } from '../context/ToastContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import { passwordStrength } from '../features/auth/passwordStrength';
-import { signInWithGoogle, signUpWithEmail, sendFirebasePasswordReset } from '../services/firebaseAuth';
+import { signInWithGoogle, signUpWithEmail } from '../services/firebaseAuth';
 
 /* Signing in and signing up, on one page.
 
@@ -54,7 +53,6 @@ const validatePasswordPolicy = (password) => {
 export default function AccessPage({ mode: initialMode = 'signin', onLoginSuccess }) {
   const navigate = useNavigate();
   const { login } = useAuth();
-  const { showToast } = useToast();
   const { t, lang } = useLanguage();
   const reduced = useReducedMotion();
 
@@ -85,27 +83,13 @@ export default function AccessPage({ mode: initialMode = 'signin', onLoginSucces
      so this endpoint cannot be used to find out who shops here, and showing a
      different message for a failure would give away exactly what the server
      was careful not to. */
-  const requestReset = async () => {
+  const requestReset = () => {
     const address = form.email.trim();
     if (!address) {
       setError(t('access.forgotNeedsEmail'));
       return;
     }
-    setBusy(true);
-    setError('');
-    try {
-      await sendFirebasePasswordReset(address);
-      showToast(t('access.forgotSent'), 'info');
-    } catch (err) {
-      if (err?.code === 'auth/too-many-requests') {
-        setError(t('access.tooManyRequests'));
-      } else {
-        // Under email enumeration protection, keep neutral answer
-        showToast(t('access.forgotSent'), 'info');
-      }
-    } finally {
-      setBusy(false);
-    }
+    navigate(`/forgot-password?email=${encodeURIComponent(address)}`);
   };
 
 
