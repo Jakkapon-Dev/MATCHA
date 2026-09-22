@@ -6,15 +6,22 @@ import userStore from '../services/userStore.js';
 import { User } from '../services/userStore.js';
 import { requireAuth, requireRole, getJwtSecret } from '../middleware/auth.js';
 import { sendPasswordReset } from '../services/email.js';
+import { createMongoRateLimitStore } from '../services/rateLimitStore.js';
 
 const router = express.Router();
 
-// Rate limiter for authentication attempts to prevent brute-force attacks
+/* Rate limiter for authentication attempts, to slow brute-force guessing.
+ *
+ * The store is Mongo-backed so the count is shared across instances: the
+ * default in-memory store gave each instance its own counter, and the API runs
+ * more than one, so the limit was never actually reached. See rateLimitStore.js.
+ */
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: process.env.NODE_ENV === 'test' ? 1000 : 30,
   standardHeaders: true,
   legacyHeaders: false,
+  store: createMongoRateLimitStore({ prefix: 'auth' }),
   message: {
     success: false,
     message: 'มีการพยายามเข้าสู่ระบบถี่เกินไป กรุณารอสักครู่แล้วลองใหม่อีกครั้ง'
@@ -360,6 +367,7 @@ const resetLimiter = rateLimit({
   max: process.env.NODE_ENV === 'test' ? 1000 : 5,
   standardHeaders: true,
   legacyHeaders: false,
+  store: createMongoRateLimitStore({ prefix: 'reset' }),
   message: {
     success: false,
     message: 'ขอตั้งรหัสผ่านใหม่ถี่เกินไป กรุณารอสักครู่แล้วลองใหม่อีกครั้ง'
