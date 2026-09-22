@@ -95,10 +95,14 @@ export default function PaymentPage() {
   // โหมดเดโมมีขั้นตอนของตัวเองและล้างตะกร้าทันทีที่ออเดอร์ถูกบันทึก
   // ถ้าปล่อยให้ guard นี้ทำงานด้วย หน้ายืนยันจะถูกเด้งทิ้งก่อนผู้ซื้อได้เห็นเลขออเดอร์
   useEffect(() => {
-    if (cartItems.length === 0 && !showSuccessModal) {
+    // A completed order clears the cart before the receipt actions render.
+    // Keep the checkout route alive long enough for "View your orders" to
+    // navigate away; otherwise this guard wins the same tick and sends the
+    // customer back to an empty cart.
+    if (cartItems.length === 0 && !showSuccessModal && !createdOrder) {
       navigate('/cart');
     }
-  }, [cartItems, showSuccessModal, navigate]);
+  }, [cartItems, showSuccessModal, createdOrder, navigate]);
 
   useEffect(() => {
     const pending = takePendingCoupon();
