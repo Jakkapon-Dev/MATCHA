@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import productsData from '../data/products.js';
-import Product from '../models/Product.js';
+import Product, { ONE_SIZE } from '../models/Product.js';
 
 // Standard Display Names for Categories
 export const CATEGORY_NAMES = {
@@ -385,16 +385,42 @@ export async function updateProduct(req, res) {
        product holding 50 returned success and left it at 50, so every restock
        an administrator performed was lost on the next reload. */
     normaliseStock(updates);
+
     if (mongoose.connection.readyState === 1) {
       const isOid = mongoose.Types.ObjectId.isValid(id);
+      const selector = {
+        $or: [
+          { id: id },
+          { sku: id.toUpperCase() },
+          ...(isOid ? [{ _id: id }] : [])
+        ]
+      };
+
+      /* A migrated product's stock lives in `sizeStock`; `stock` is only the
+         sum of it, kept in step by a pre-validate hook. findOneAndUpdate does
+         not run that hook, so writing `stock` here set a total that no size
+         bucket agreed with: the admin table showed the new number, orders kept
+         drawing on the old per-size figures, and the next full save recomputed
+         the total back down. Four production rows drifted this way
+         (LOOK-01-CARGO, LOOK-05-CARGO, LOOK-06-SHIRT, LOOK-06-VEST: total 12
+         against 50 in the buckets).
+
+         Restocking a migrated product has to name a size, which is what
+         PATCH /api/products/:id/restock is for. */
+      if (updates.stock !== undefined) {
+        const current = await Product.findOne(selector, 'sizeStock').lean();
+        if (Array.isArray(current?.sizeStock) && current.sizeStock.length > 0) {
+          return res.status(400).json({
+            success: false,
+            code: 'SIZE_STOCK_REQUIRED',
+            message: 'This product tracks stock per size. Use the per-size restock endpoint instead of setting a total.',
+            sizes: current.sizeStock.map(row => row.size)
+          });
+        }
+      }
+
       const updated = await Product.findOneAndUpdate(
-        {
-          $or: [
-            { id: id },
-            { sku: id.toUpperCase() },
-            ...(isOid ? [{ _id: id }] : [])
-          ]
-        },
+        selector,
         { $set: updates },
         { new: true }
       );
@@ -405,6 +431,126 @@ export async function updateProduct(req, res) {
     res.status(404).json({ success: false, message: 'Product not found' });
   } catch (err) {
     console.error(`Error updating product ${req.params.id}:`, err);
+    res.status(400).json({ success: false, message: err.message });
+  }
+}
+
+/**
+ * PATCH /api/products/:id/restock
+ * Adjust stock (Admin Protected)
+ *
+ * Takes a signed `delta` and, for a product that tracks stock per size, the
+ * `size` the delta applies to. The adjustment is a single conditional
+ * findOneAndUpdate on the size bucket, the same shape order placement uses, so
+ * a restock racing an order cannot drive a bucket below zero and cannot lose
+ * either write. `stock` moves by the same amount in the same operation, which
+ * is what keeps the derived total agreeing with the buckets it sums.
+ */
+export async function restockProduct(req, res) {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ success: false, message: 'Database unavailable; changes were not saved' });
+  }
+  try {
+    const { id } = req.params;
+    const raw = req.body?.delta !== undefined ? req.body.delta : req.body?.quantity;
+    const delta = Number(raw);
+    if (!Number.isInteger(delta) || delta === 0) {
+      return res.status(400).json({ success: false, message: 'Restock amount must be a non-zero whole number' });
+    }
+
+    const isOid = mongoose.Types.ObjectId.isValid(id);
+    const selector = {
+      $or: [
+        { id: id },
+        { sku: id.toUpperCase() },
+        ...(isOid ? [{ _id: id }] : [])
+      ]
+    };
+
+    const product = await Product.findOne(selector, 'sizeStock stock').lean();
+    if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
+
+    /* `stock` and `inStock` are both derived, and both are settled from the
+       document the write actually produced rather than from the one read a
+       moment earlier — an order placed in between would make a guess from the
+       stale figures wrong, and a product wrongly marked out of stock vanishes
+       from the shop.
+
+       The $inc above moves the total by the same delta as the bucket, so a
+       product whose figures already agreed still agrees afterwards. This also
+       repairs one that did not: the buckets win, because they are what order
+       placement decrements under a condition that refuses to go below zero, so
+       they are the only figure that has ever reflected the shelf. */
+    const settleDerived = async (doc) => {
+      const plain = doc.toObject ? doc.toObject() : { ...doc };
+      const buckets = Array.isArray(plain.sizeStock) ? plain.sizeStock : [];
+      const total = buckets.length
+        ? buckets.reduce((sum, row) => sum + (Number(row.stock) || 0), 0)
+        : Math.max(0, Number(plain.stock) || 0);
+      const inStock = total > 0;
+      if (plain.stock === total && plain.inStock === inStock) return plain;
+      await Product.updateOne({ _id: plain._id }, { $set: { stock: total, inStock } });
+      return { ...plain, stock: total, inStock };
+    };
+
+    const buckets = Array.isArray(product.sizeStock) ? product.sizeStock : [];
+
+    // Not migrated: there is only a total, and it is the authoritative figure.
+    if (buckets.length === 0) {
+      const updated = await Product.findOneAndUpdate(
+        { ...selector, ...(delta < 0 ? { stock: { $gte: -delta } } : {}) },
+        { $inc: { stock: delta } },
+        { new: true }
+      );
+      if (!updated) {
+        return res.status(409).json({ success: false, message: 'Not enough stock to remove that many units' });
+      }
+      return res.json({ success: true, data: await settleDerived(updated) });
+    }
+
+    /* A garment sold without sizes keeps everything in the single ONE bucket,
+       so there is nothing to choose and asking would be a question with one
+       answer. Naming it explicitly still works. */
+    const onlyOneSize = buckets.length === 1 && buckets[0].size === ONE_SIZE;
+    const requested = typeof req.body?.size === 'string' ? req.body.size.trim() : '';
+    const size = requested || (onlyOneSize ? ONE_SIZE : '');
+    if (!size) {
+      return res.status(400).json({
+        success: false,
+        code: 'SIZE_REQUIRED',
+        message: 'This product tracks stock per size. Choose the size to restock.',
+        sizes: buckets.map(row => row.size)
+      });
+    }
+    const bucket = buckets.find(row => row.size === size);
+    if (!bucket) {
+      return res.status(400).json({
+        success: false,
+        code: 'UNKNOWN_SIZE',
+        message: `Product does not stock size "${size}"`,
+        sizes: buckets.map(row => row.size)
+      });
+    }
+
+    const updated = await Product.findOneAndUpdate(
+      {
+        ...selector,
+        sizeStock: { $elemMatch: { size, stock: { $gte: delta < 0 ? -delta : 0 } } }
+      },
+      { $inc: { 'sizeStock.$[bucket].stock': delta, stock: delta } },
+      { new: true, arrayFilters: [{ 'bucket.size': size }] }
+    );
+
+    if (!updated) {
+      return res.status(409).json({
+        success: false,
+        message: `Size ${size} does not hold ${-delta} units to remove`
+      });
+    }
+
+    return res.json({ success: true, data: await settleDerived(updated) });
+  } catch (err) {
+    console.error(`Error restocking product ${req.params.id}:`, err);
     res.status(400).json({ success: false, message: err.message });
   }
 }
@@ -441,6 +587,7 @@ export default {
   getProductById,
   createProduct,
   updateProduct,
+  restockProduct,
   deleteProduct,
   CATEGORY_NAMES
 };

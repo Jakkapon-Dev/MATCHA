@@ -163,6 +163,9 @@ export const api = {
     const query = new URLSearchParams(params).toString();
     return fetchWithFallback(`/admin/orders${query ? `?${query}` : ''}`, { signal: AbortSignal.timeout(15000) });
   },
+  /* Whole-collection dashboard figures. The tables are paginated at 25 rows,
+     so anything totalled from them describes one page, not the shop. */
+  getAdminStats: () => fetchWithFallback('/admin/stats', { signal: AbortSignal.timeout(15000) }),
   getAdminNotifications: () => fetchWithFallback('/admin/notifications', { signal: AbortSignal.timeout(10000) }),
   markNotificationRead: (id) => fetchWithFallback(`/admin/notifications/${id}/read`, { method: 'PATCH' }),
   markAllNotificationsRead: () => fetchWithFallback('/admin/notifications/read-all', { method: 'PATCH' }),
@@ -189,6 +192,16 @@ export const api = {
     return fetchWithFallback(`/products/${id}`, {
       method: 'PUT',
       body: JSON.stringify(updateData)
+    });
+  },
+
+  /* Restocking goes through its own endpoint because a migrated product's
+     stock lives per size: PUT /products/:id can only set a total, and a total
+     that no size bucket agrees with is worse than no change at all. */
+  restockProduct: async (id, { delta, size } = {}) => {
+    return fetchWithFallback(`/products/${encodeURIComponent(id)}/restock`, {
+      method: 'PATCH',
+      body: JSON.stringify(size ? { delta, size } : { delta })
     });
   },
 
@@ -236,6 +249,14 @@ export const api = {
 
   getOrderById: async (id) => {
     return fetchWithFallback(`/orders/${id}`);
+  },
+
+  /* Abandoning a checkout has to say so. The order took its stock off the
+     shelf before Stripe was ever asked for money, so walking away silently
+     leaves real inventory held by an unpaid order until the server's
+     reservation window runs out. */
+  cancelOrder: async (orderId) => {
+    return fetchWithFallback(`/orders/${encodeURIComponent(orderId)}/cancel`, { method: 'POST' });
   },
 
   createPaymentIntent: async (orderId) => {

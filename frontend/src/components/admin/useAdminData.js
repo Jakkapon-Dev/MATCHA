@@ -10,6 +10,9 @@ export default function useAdminData(userId) {
   const [inventory, setInventory] = useState([]);
   const [orders, setOrders] = useState([]);
   const [members, setMembers] = useState([]);
+  // Whole-collection figures for the dashboard, counted by the database rather
+  // than summed from the 25 rows the tables happen to be showing.
+  const [stats, setStats] = useState(null);
   const [status, setStatus] = useState({ inventory: 'loading', orders: 'loading', members: 'loading' });
   const [errors, setErrors] = useState({});
   const [pagination, setPagination] = useState({
@@ -28,10 +31,19 @@ export default function useAdminData(userId) {
   const queryStateRef = useRef(queryState);
   queryStateRef.current = queryState;
 
-  const generation = useRef(0);
+  /* One counter per resource, not one shared by all three.
+
+     refresh() fires inventory, orders and members at the same time. With a
+     single counter each call bumped it, so by the time the first response
+     came back the counter had already moved twice and that response was
+     discarded as stale — the Inventory and Orders tables stayed empty until
+     something refetched them on their own. A request may only be superseded
+     by a later request for the *same* resource. */
+  const generations = useRef({ inventory: 0, orders: 0, members: 0 });
 
   const fetchResource = useCallback(async (resource, params = {}) => {
-    const current = ++generation.current;
+    if (generations.current[resource] === undefined) generations.current[resource] = 0;
+    const current = ++generations.current[resource];
     setStatus(previous => ({ ...previous, [resource]: 'loading' }));
     setErrors(previous => ({ ...previous, [resource]: null }));
 
@@ -77,7 +89,7 @@ export default function useAdminData(userId) {
     try {
       const result = await fetchData(apiParams);
       if (!result?.success || !Array.isArray(result.data)) throw new Error('Invalid server response');
-      if (current !== generation.current) return;
+      if (current !== generations.current[resource]) return;
 
       setData(result.data.map(normalize));
       if (result.pagination) {
@@ -97,7 +109,7 @@ export default function useAdminData(userId) {
       }
       setStatus(previous => ({ ...previous, [resource]: 'ready' }));
     } catch (error) {
-      if (current !== generation.current) return;
+      if (current !== generations.current[resource]) return;
       setData([]);
       setErrors(previous => ({ ...previous, [resource]: apiErrorText(error, t) }));
       setStatus(previous => ({ ...previous, [resource]: 'error' }));
@@ -109,18 +121,38 @@ export default function useAdminData(userId) {
     return fetchResource(resource, { ...currentParams, ...extraParams, page: newPage });
   }, [fetchResource]);
 
+  const statsGeneration = useRef(0);
+
+  const fetchStats = useCallback(async () => {
+    const current = ++statsGeneration.current;
+    try {
+      const result = await api.getAdminStats();
+      if (current !== statsGeneration.current) return;
+      if (result?.success && result.data) setStats(result.data);
+    } catch {
+      // The dashboard falls back to per-page totals; a failed aggregate must
+      // not take the tables down with it.
+      if (current === statsGeneration.current) setStats(null);
+    }
+  }, []);
+
   const refresh = useCallback(async (filters = {}) => {
     await Promise.all([
+      fetchStats(),
       fetchResource('inventory', { ...queryStateRef.current.inventory, ...filters.inventory }),
       fetchResource('orders', { ...queryStateRef.current.orders, ...filters.orders }),
       fetchResource('members', { ...queryStateRef.current.members, ...filters.members })
     ]);
-  }, [fetchResource]);
+  }, [fetchResource, fetchStats]);
 
   useEffect(() => {
     setInventory([]); setOrders([]); setMembers([]);
     refresh();
-    return () => { generation.current++; };
+    return () => {
+      // Unmount or a change of admin: every resource in flight is abandoned.
+      for (const key of Object.keys(generations.current)) generations.current[key]++;
+      statsGeneration.current++;
+    };
   }, [refresh, userId]);
 
   return {
@@ -130,6 +162,8 @@ export default function useAdminData(userId) {
     setOrders,
     members,
     setMembers,
+    stats,
+    fetchStats,
     status,
     errors,
     refresh,

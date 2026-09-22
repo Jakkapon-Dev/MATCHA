@@ -5,7 +5,7 @@ import rateLimit from 'express-rate-limit';
 import Order from '../models/Order.js';
 import { stripe } from '../config/stripe.js';
 import { usdToThb, usdToThbSatang } from '../config/currency.js';
-import { ownsOrder } from './orderRoutes.js';
+import { ownsOrder, RESERVATION_WINDOW_MS, RESERVED_PAYMENT_METHODS } from './orderRoutes.js';
 
 const router = express.Router();
 const STRIPE_PAYMENT_METHODS = new Set(['visa', 'mastercard', 'qr']);
@@ -56,6 +56,16 @@ router.post('/create-intent', paymentLimiter, async (req, res) => {
     if (order.paymentStatus === 'paid') {
       return res.status(409).json({ success: false, message: 'ออเดอร์นี้ชำระเงินแล้ว' });
     }
+    /* The goods this order was holding have already gone back on sale, so
+       there is nothing left to pay for. Taking money here would sell stock
+       that another shopper may since have bought. */
+    if (order.reservationReleasedAt) {
+      return res.status(409).json({
+        success: false,
+        code: 'RESERVATION_EXPIRED',
+        message: 'ออเดอร์นี้หมดเวลาชำระเงินแล้ว กรุณาสั่งซื้อใหม่อีกครั้ง'
+      });
+    }
 
     const expected = expectedPayment(order);
     let intent = null;
@@ -95,6 +105,12 @@ router.post('/create-intent', paymentLimiter, async (req, res) => {
     order.paymentAmount = expected.amount;
     order.paymentCurrency = expected.currency;
     order.paymentError = null;
+    /* Starting (or restarting) payment restarts the clock. A customer who
+       comes back to an order and tries again deserves the full window rather
+       than whatever is left of the one they abandoned. */
+    if (RESERVED_PAYMENT_METHODS.has(order.paymentMethod)) {
+      order.reservationExpiresAt = new Date(Date.now() + RESERVATION_WINDOW_MS);
+    }
     await order.save();
 
     return res.json({

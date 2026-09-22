@@ -2,7 +2,16 @@ const titleCase = value => value ? value[0].toUpperCase() + value.slice(1) : 'Un
 
 export function normalizeProduct(product) {
   const stock = product.quantity ?? product.stock ?? 0;
-  return { ...product, id: product.id || product._id, stock,
+  /* Kept as its own field so the inventory table can offer the sizes that
+     actually exist. A product with buckets can only be restocked per size —
+     `stock` is the sum of them, not somewhere you can put units. */
+  const sizeStock = Array.isArray(product.sizeStock)
+    ? product.sizeStock.map(row => ({ size: row.size, stock: Number(row.stock) || 0 }))
+    : [];
+  /* A garment sold without sizes keeps everything in the single ONE bucket.
+     There is nothing to choose there, so the row does not ask. */
+  const needsSizeChoice = sizeStock.length > 1 || (sizeStock.length === 1 && sizeStock[0].size !== 'ONE');
+  return { ...product, id: product.id || product._id, stock, sizeStock, needsSizeChoice,
     status: stock === 0 ? 'Out of Stock' : stock <= 10 ? 'Low Stock' : 'In Stock' };
 }
 
