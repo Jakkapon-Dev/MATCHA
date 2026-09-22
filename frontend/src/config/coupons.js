@@ -36,6 +36,19 @@ export function discountFor(coupon, subtotal) {
   return Math.round(subtotal * (coupon.discount / 100) * 100) / 100;
 }
 
+// Mix & Match marks each piece of a complete outfit. Keep this calculation
+// beside the coupon calculation so checkout can show exactly what the server
+// will charge when both discounts are present.
+export const BUNDLE_DISCOUNT_RATE = 0.12;
+
+export function bundleDiscountFor(items = []) {
+  const amount = items.reduce((sum, item) => {
+    if (!item?.isBundleItem) return sum;
+    return sum + (Number(item.price) || 0) * (Number(item.quantity) || 1) * BUNDLE_DISCOUNT_RATE;
+  }, 0);
+  return Math.round(amount * 100) / 100;
+}
+
 /* คูปองที่หน้าโปรโมชันรับไว้ รอให้หน้าชำระเงินมาหยิบไปใช้
  *
  * เก็บแค่ "รหัส" ตัวเดียว ไม่เก็บส่วนลดหรือชนิดคูปอง เพราะค่าใน localStorage

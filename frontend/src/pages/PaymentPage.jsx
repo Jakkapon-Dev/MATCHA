@@ -12,7 +12,7 @@ import OrderSuccessModal from '../components/payment/OrderSuccessModal';
 import { api, apiErrorText } from '../services/api';
 import { useStoreMode } from '../context/StoreModeContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, shippingCostFor } from '../config/shipping';
-import { couponFor, discountFor, normaliseCode, FEATURED_CODES, takePendingCoupon } from '../config/coupons';
+import { bundleDiscountFor, couponFor, discountFor, normaliseCode, FEATURED_CODES, takePendingCoupon } from '../config/coupons';
 import PreviewNote from '../components/ui/PreviewNote';
 import { stripePromise } from '../lib/stripe';
 import { QrCode, Truck, Shield, AlertTriangle, RotateCcw } from 'lucide-react';
@@ -117,7 +117,7 @@ export default function PaymentPage() {
     freeShippingCoupon: appliedCoupon?.type === 'free_shipping'
   });
 
-  const discount = discountFor(appliedCoupon, subtotal);
+  const discount = Math.round((discountFor(appliedCoupon, subtotal) + bundleDiscountFor(cartItems)) * 100) / 100;
 
   const total = Math.max(0, subtotal + shippingCost - discount);
 
@@ -202,7 +202,8 @@ export default function PaymentPage() {
           quantity: Number(item.quantity) || 1,
           size: item.size || '',
           color: item.color || 'Default',
-          image: item.image || ''
+          image: item.image || '',
+          isBundleItem: Boolean(item.isBundleItem)
         })),
         couponCode: appliedCoupon?.code || null,
         paymentMethod: selectedPayment,

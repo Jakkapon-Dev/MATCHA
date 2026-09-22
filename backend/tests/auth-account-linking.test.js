@@ -179,7 +179,7 @@ test('a year of history survives the link untouched', async (t) => {
  * decision rather than a side effect. Suggested: only take the provider photo
  * when `avatarUrl` is empty.
  */
-test('an uploaded avatar survives a Google sign-in', { todo: 'the link overwrites avatarUrl with the Google photo' }, async (t) => {
+test('an uploaded avatar survives a Google sign-in', async (t) => {
   t.after(stubIdentity(googleIdentity()));
   t.after(() => mock.restoreAll());
 
