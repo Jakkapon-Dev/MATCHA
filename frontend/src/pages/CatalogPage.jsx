@@ -240,7 +240,11 @@ export default function CatalogPage({
                 key={name}
                 type="button"
                 onClick={() => setSelectedCategory(name)}
-                className={`font-mono text-xs uppercase tracking-wider cursor-pointer transition-colors ${
+                /* min-h-11 is 44px: the row is 12px of type, and on a phone a
+                   12px-tall target between two other 12px-tall targets is a
+                   coin toss. The padding grows the tap area without moving the
+                   type or the accent underline. */
+                className={`inline-flex items-center min-h-11 font-mono text-xs uppercase tracking-wider cursor-pointer transition-colors ${
                   active
                     ? 'text-[#0A0A0A] font-bold underline underline-offset-[6px] decoration-2 decoration-matcha-accent'
                     : 'text-matcha-muted hover:text-[#0A0A0A]'
