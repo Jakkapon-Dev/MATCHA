@@ -154,18 +154,32 @@ async function fetchWithFallback(endpoint, options = {}) {
   }
 }
 
+/* A caller's own abort signal, combined with the request timeout.
+
+   The admin console cancels a request when it fires a newer one for the same
+   resource, so both signals have to be able to end the same fetch: whichever
+   trips first wins. AbortSignal.any is what composes them; where it is
+   missing the caller's signal is kept, because being able to cancel matters
+   more than the ceiling — a request nobody is waiting for any more should
+   stop, and the server-side limiters are what actually protect the API. */
+function requestSignal(signal, ms = 15000) {
+  const timeout = AbortSignal.timeout(ms);
+  if (!signal) return timeout;
+  return typeof AbortSignal.any === 'function' ? AbortSignal.any([signal, timeout]) : signal;
+}
+
 export const api = {
-  getAdminProducts: (params = {}) => {
+  getAdminProducts: (params = {}, { signal } = {}) => {
     const query = new URLSearchParams(params).toString();
-    return fetchWithFallback(`/admin/products${query ? `?${query}` : ''}`, { signal: AbortSignal.timeout(15000) });
+    return fetchWithFallback(`/admin/products${query ? `?${query}` : ''}`, { signal: requestSignal(signal) });
   },
-  getAdminOrders: (params = {}) => {
+  getAdminOrders: (params = {}, { signal } = {}) => {
     const query = new URLSearchParams(params).toString();
-    return fetchWithFallback(`/admin/orders${query ? `?${query}` : ''}`, { signal: AbortSignal.timeout(15000) });
+    return fetchWithFallback(`/admin/orders${query ? `?${query}` : ''}`, { signal: requestSignal(signal) });
   },
   /* Whole-collection dashboard figures. The tables are paginated at 25 rows,
      so anything totalled from them describes one page, not the shop. */
-  getAdminStats: () => fetchWithFallback('/admin/stats', { signal: AbortSignal.timeout(15000) }),
+  getAdminStats: ({ signal } = {}) => fetchWithFallback('/admin/stats', { signal: requestSignal(signal) }),
   getAdminNotifications: () => fetchWithFallback('/admin/notifications', { signal: AbortSignal.timeout(10000) }),
   markNotificationRead: (id) => fetchWithFallback(`/admin/notifications/${id}/read`, { method: 'PATCH' }),
   markAllNotificationsRead: () => fetchWithFallback('/admin/notifications/read-all', { method: 'PATCH' }),
@@ -304,9 +318,9 @@ export const api = {
   },
 
   // Users CRUD
-  getUsers: async (params = {}) => {
+  getUsers: async (params = {}, { signal } = {}) => {
     const query = new URLSearchParams(params).toString();
-    return fetchWithFallback(`/users${query ? `?${query}` : ''}`, { signal: AbortSignal.timeout(15000) });
+    return fetchWithFallback(`/users${query ? `?${query}` : ''}`, { signal: requestSignal(signal) });
   },
 
   login: async (email, password) => {
