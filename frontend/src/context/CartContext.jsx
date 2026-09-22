@@ -43,6 +43,24 @@ export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState(() => loadInitialCart(storageKey));
   const { showToast } = useToast();
 
+  /* Which key the items in state were actually read from.
+
+     The store mode arrives from the API a moment after the first render, and
+     until it does StoreModeContext reports demo — so this provider mounts
+     against `matcha_demo_cart` and then flips to `matcha_cart`. The initialiser
+     above runs once and never re-reads, so without this the flip left an empty
+     cart in state and the save effect below wrote that emptiness straight over
+     the shopper's stored bag. Every reload, every return visit and every trip
+     back from Stripe cleared the bag. Reading the new key, and refusing to save
+     to a key that has not been read yet, is what keeps it. */
+  const [loadedKey, setLoadedKey] = useState(storageKey);
+
+  useEffect(() => {
+    if (loadedKey === storageKey) return;
+    setCartItems(loadInitialCart(storageKey));
+    setLoadedKey(storageKey);
+  }, [storageKey, loadedKey]);
+
   /* The current items, readable from a callback without putting them in its
      dependencies. These callbacks go out through context, so rebuilding them on
      every cart change would re-render every consumer; the ref keeps them stable
@@ -52,12 +70,14 @@ export function CartProvider({ children }) {
 
   // Sync cart items to localStorage on any change
   useEffect(() => {
+    // Never write to a key whose contents have not been read yet.
+    if (loadedKey !== storageKey) return;
     try {
       localStorage.setItem(storageKey, JSON.stringify(cartItems));
     } catch (err) {
       console.error('Failed to save cart to localStorage:', err);
     }
-  }, [cartItems, storageKey]);
+  }, [cartItems, storageKey, loadedKey]);
 
   const addToCart = useCallback((product, customQty) => {
     const amount = customQty || product.quantity || 1;
