@@ -2,7 +2,7 @@ import React from 'react';
 import AdminDataState from './AdminDataState';
 
 export default function AnalyticsTab({ status, errors, totalRevenue, monthlyData }) {
-  return (<AdminDataState resources={["orders"]} status={status} errors={errors}>
+  return (<AdminDataState resources={["stats"]} status={status} errors={errors}>
             <div className="space-y-6 animate-fade-in">
               
               <div className="p-6 rounded-2xl bg-white border border-matcha-border shadow-sm">

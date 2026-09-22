@@ -35,16 +35,3 @@ export function normalizeMember(user) {
     tier: user.tier || 'Regular Member', totalSpent: user.totalSpent ?? 0,
     orders: user.ordersCount ?? 0, joined: user.createdAt?.split('T')[0] || '' };
 }
-
-export function monthlyRevenue(orders) {
-  const months = new Map();
-  for (const order of orders) {
-    if (!order.date || order.status === 'Cancelled') continue;
-    const month = order.date.slice(0, 7);
-    const entry = months.get(month) || { month, revenue: 0, orders: 0 };
-    entry.orders++;
-    if (order.paymentStatus === 'Paid') entry.revenue += order.total;
-    months.set(month, entry);
-  }
-  return [...months.values()].sort((a, b) => a.month.localeCompare(b.month));
-}
