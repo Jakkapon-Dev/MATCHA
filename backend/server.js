@@ -28,6 +28,7 @@ import {
 } from './services/mongoSafetyGuard.js';
 
 import { isDemo } from './config/storeMode.js';
+import { getFrontendUrl } from './config/frontendUrl.js';
 import { init as initUserStore } from './services/userStore.js';
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/userRoutes.js';
@@ -210,7 +211,7 @@ app.get('/', (req, res) => {
   res.json({
     app: 'MatchA API Server',
     status: 'online',
-    frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173',
+    frontendUrl: getFrontendUrl(),
     message: 'Backend API is running.',
     endpoints: [
       '/api/health',

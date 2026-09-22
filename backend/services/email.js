@@ -19,6 +19,8 @@
  *   the reason and the order number, which is enough to find it again.
  */
 
+import { getFrontendUrl } from '../config/frontendUrl.js';
+
 /* Read when a message is sent, not when this module is imported.
 
    Every other setting here is read per call, and this one being fixed at import
@@ -183,7 +185,7 @@ function render(order, copy) {
 
   const name = [order.customer?.firstName, order.customer?.lastName].filter(Boolean).join(' ').trim() || '—';
   const ref = order.orderNumber || order.orderId || '—';
-  const shopUrl = (process.env.FRONTEND_URL || '').replace(/\/+$/, '');
+  const shopUrl = getFrontendUrl();
 
   const text = [
     copy.greeting(name),

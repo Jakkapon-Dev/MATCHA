@@ -6,6 +6,7 @@ import userStore from '../services/userStore.js';
 import { User } from '../services/userStore.js';
 import { requireAuth, requireRole, getJwtSecret } from '../middleware/auth.js';
 import { sendPasswordReset } from '../services/email.js';
+import { getFrontendUrl } from '../config/frontendUrl.js';
 
 const router = express.Router();
 
@@ -397,7 +398,7 @@ router.post('/forgot-password', resetLimiter, async (req, res) => {
     const issued = await userStore.issuePasswordReset(user._id, { ttlMinutes: RESET_TTL_MINUTES });
     if (!issued) return answer();
 
-    const base = (process.env.FRONTEND_URL || '').replace(/\/+$/, '');
+    const base = getFrontendUrl();
     const resetUrl = `${base}/reset-password?token=${encodeURIComponent(issued.token)}`;
 
     /* Not awaited, for the same reason the order confirmation is not: the
