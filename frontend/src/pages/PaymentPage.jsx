@@ -12,7 +12,7 @@ import OrderSuccessModal from '../components/payment/OrderSuccessModal';
 import { api, apiErrorText } from '../services/api';
 import { useStoreMode } from '../context/StoreModeContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, shippingCostFor } from '../config/shipping';
-import { couponFor, discountFor, normaliseCode, FEATURED_CODES, takePendingCoupon } from '../config/coupons';
+import { bundleDiscountFor, couponFor, discountFor, normaliseCode, FEATURED_CODES, takePendingCoupon } from '../config/coupons';
 import PreviewNote from '../components/ui/PreviewNote';
 import { stripePromise } from '../lib/stripe';
 import { QrCode, Truck, Shield, AlertTriangle, RotateCcw } from 'lucide-react';
@@ -95,10 +95,14 @@ export default function PaymentPage() {
   // โหมดเดโมมีขั้นตอนของตัวเองและล้างตะกร้าทันทีที่ออเดอร์ถูกบันทึก
   // ถ้าปล่อยให้ guard นี้ทำงานด้วย หน้ายืนยันจะถูกเด้งทิ้งก่อนผู้ซื้อได้เห็นเลขออเดอร์
   useEffect(() => {
-    if (cartItems.length === 0 && !showSuccessModal) {
+    // A completed order clears the cart before the receipt actions render.
+    // Keep the checkout route alive long enough for "View your orders" to
+    // navigate away; otherwise this guard wins the same tick and sends the
+    // customer back to an empty cart.
+    if (cartItems.length === 0 && !showSuccessModal && !createdOrder) {
       navigate('/cart');
     }
-  }, [cartItems, showSuccessModal, navigate]);
+  }, [cartItems, showSuccessModal, createdOrder, navigate]);
 
   useEffect(() => {
     const pending = takePendingCoupon();
@@ -117,14 +121,7 @@ export default function PaymentPage() {
     freeShippingCoupon: appliedCoupon?.type === 'free_shipping'
   });
 
-  const couponDiscount = discountFor(appliedCoupon, subtotal);
-  const bundleDiscount = cartItems.reduce((sum, item) => {
-    if (!item.isBundleItem) return sum;
-    const price = Number(item.price) || 0;
-    const quantity = Number(item.quantity) || 1;
-    return sum + price * quantity * 0.12;
-  }, 0);
-  const discount = Math.round((couponDiscount + bundleDiscount) * 100) / 100;
+  const discount = Math.round((discountFor(appliedCoupon, subtotal) + bundleDiscountFor(cartItems)) * 100) / 100;
 
   const total = Math.max(0, subtotal + shippingCost - discount);
 
@@ -210,7 +207,7 @@ export default function PaymentPage() {
           size: item.size || '',
           color: item.color || 'Default',
           image: item.image || '',
-          isBundleItem: Boolean(item.isBundleItem),
+          isBundleItem: Boolean(item.isBundleItem)
         })),
         couponCode: appliedCoupon?.code || null,
         paymentMethod: selectedPayment,

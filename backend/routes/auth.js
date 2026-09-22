@@ -6,7 +6,6 @@ import userStore from '../services/userStore.js';
 import { User } from '../services/userStore.js';
 import { requireAuth, requireRole, getJwtSecret } from '../middleware/auth.js';
 import { sendPasswordReset } from '../services/email.js';
-import { getFrontendUrl } from '../config/frontendUrl.js';
 
 const router = express.Router();
 
@@ -45,8 +44,8 @@ export const signToken = (user) =>
     {
       id: user._id,
       role: user.role,
-      email: user.email,
-      emailVerified: Boolean(user.emailVerified),
+      email: String(user.email || '').trim().toLowerCase(),
+      emailVerified: Boolean(user.emailVerified)
     },
     getJwtSecret(),
     {
@@ -250,7 +249,9 @@ router.post('/firebase', authLimiter, async (req, res) => {
                 $set: {
                   firebaseUid: identity.localId,
                   emailVerified: Boolean(identity.emailVerified || user.emailVerified),
-                  ...(identity.photoUrl && !user.avatarUrl ? { avatarUrl: identity.photoUrl } : {}),
+                  // A user-selected avatar is authoritative. Only seed the
+                  // provider photo when the account has no avatar yet.
+                  ...(!user.avatarUrl && identity.photoUrl ? { avatarUrl: identity.photoUrl } : {}),
                 },
                 $addToSet: { authProviders: providerName },
               },
@@ -271,7 +272,9 @@ router.post('/firebase', authLimiter, async (req, res) => {
           $set: {
             firebaseUid: identity.localId,
             emailVerified: Boolean(identity.emailVerified || user.emailVerified),
-            ...(identity.photoUrl && !user.avatarUrl ? { avatarUrl: identity.photoUrl } : {}),
+            // Do not replace an avatar uploaded in the account settings when
+            // the user signs in with Google again.
+            ...(!user.avatarUrl && identity.photoUrl ? { avatarUrl: identity.photoUrl } : {}),
           },
           $addToSet: { authProviders: providerName },
         },
@@ -398,7 +401,7 @@ router.post('/forgot-password', resetLimiter, async (req, res) => {
     const issued = await userStore.issuePasswordReset(user._id, { ttlMinutes: RESET_TTL_MINUTES });
     if (!issued) return answer();
 
-    const base = getFrontendUrl();
+    const base = (process.env.FRONTEND_URL || '').replace(/\/+$/, '');
     const resetUrl = `${base}/reset-password?token=${encodeURIComponent(issued.token)}`;
 
     /* Not awaited, for the same reason the order confirmation is not: the

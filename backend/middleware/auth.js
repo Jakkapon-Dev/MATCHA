@@ -46,11 +46,8 @@ export async function requireAuth(req, res, next) {
        only reject, silently, on every single request. The two stores disagreed
        on what a user id was, and that disagreement is what detached carts,
        orders and uploaded media from their owners. There is one store now. */
-    let user = await findById(userId);
+    const user = await findById(userId);
 
-    // A valid signature is not proof that the account still exists. The
-    // database lookup is the revocation check, so never authorise from stale
-    // role/email claims when the member has been deleted (or is unavailable).
     if (!user) {
       return res.status(401).json({ success: false, message: 'User not found' });
     }

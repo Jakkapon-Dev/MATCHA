@@ -167,6 +167,7 @@ test('signing in with the right password returns a usable session', async (t) =>
   const claims = jwt.verify(body.token, getJwtSecret());
   assert.equal(claims.id, 'u_member');
   assert.equal(claims.role, 'Member');
+  assert.equal(claims.email, MEMBER().email, 'the session carries the normalized address used for legacy order ownership');
   assert.equal(body.data.passwordHash, undefined);
 });
 
@@ -259,6 +260,9 @@ test('while the account exists, the database decides the role, not the token', a
   assert.equal(res.status, 403, 'the demotion takes effect immediately');
 });
 
+/* The database is the revocation list. Removing an account must end its
+ * sessions immediately; a still-valid signature is not permission to recreate
+ * the deleted identity from stale claims. */
 test('a token for an account that no longer exists is refused', async (t) => {
   t.after(() => mock.restoreAll());
   const state = mongoose.connection.readyState;
@@ -271,6 +275,11 @@ test('a token for an account that no longer exists is refused', async (t) => {
   const orphanAdminToken = jwt.sign({ id: 'u_deleted', role: 'Admin' }, getJwtSecret());
   const res = await get('/auth/admin/check', { Authorization: `Bearer ${orphanAdminToken}` });
   assert.equal(res.status, 401);
+});
+
+test('signToken normalizes the email claim', () => {
+  const claims = jwt.verify(signToken({ ...MEMBER(), email: ' Member@Example.COM ' }), getJwtSecret());
+  assert.equal(claims.email, 'member@example.com');
 });
 
 /* Signing out is a client-side act: the browser drops the token. There is no
@@ -405,7 +414,10 @@ test('the last sign-in method cannot be removed', async (t) => {
   t.after(() => mock.restoreAll());
 
   const row = MEMBER();
-  withDatabase(t, row);
+  mock.method(User, 'findById', () => ({
+    select: () => ({ lean: async () => row }),
+    lean: async () => row
+  }));
   let wrote = false;
   mock.method(User, 'findByIdAndUpdate', () => { wrote = true; return { lean: async () => ({}) }; });
 

@@ -167,7 +167,7 @@ test('a year of history survives the link untouched', async (t) => {
   assert.deepEqual(row.createdAt, ESTABLISHED.createdAt, 'the join date is not reset to today');
 });
 
-/* Regression coverage: the link must not overwrite a member's chosen avatar.
+/* FOUND, NOT FIXED — the one thing the link does overwrite.
  *
  *   ...(identity.photoUrl ? { avatarUrl: identity.photoUrl } : {})
  *
@@ -314,8 +314,10 @@ test('the token issued by a link is for the original account, and outlives the r
   assert.ok(claims.exp - claims.iat >= 3600, 'and it is longer than one hour');
 });
 
-/* The JWT carries the identity fields protected routes need. */
-test('the session token carries the identity fields protected routes need', async (t) => {
+/* The JWT carries only the identity fields needed before the account lookup.
+   Email is included for ownership of orders written before userId was stored;
+   it is not trusted for account existence or role, which still come from DB. */
+test('the session token carries no more than it needs', async (t) => {
   t.after(stubIdentity(googleIdentity()));
   t.after(() => mock.restoreAll());
 
@@ -324,22 +326,10 @@ test('the session token carries the identity fields protected routes need', asyn
   const claims = jwt.verify(body.token, getJwtSecret());
 
   assert.deepEqual(Object.keys(claims).sort(), ['email', 'emailVerified', 'exp', 'iat', 'id', 'role']);
+  assert.equal(claims.email, ESTABLISHED.email);
 });
 
-/* Regression coverage for legacy order ownership by email.
- *
- * orderRoutes.js matches a member to their orders by account id, and falls
- * back to the email on the order for rows written before userId was stored:
- *
- *   ownsOrder()    (viewer.email && order.customer?.email && ...)
- *   GET /orders    if (authUser.email) conditions.push({ 'customer.email': ... })
- *
- * `authUser.email` is used by the fallback. Every order with
- * userId: null — which the Order model's own comment says was all thirteen in
- * production — is invisible to the member who placed it, and uncancellable by
- * them. The token includes the email claim so this fallback remains usable.
- */
-test('a member token carries email for legacy order ownership fallback', () => {
+test('a member token identifies orders that predate userId being stored', () => {
   const claims = jwt.decode(signToken({ _id: 'u_1', role: 'Member', email: ESTABLISHED.email, emailVerified: true }));
   assert.equal(claims.email, ESTABLISHED.email);
 });

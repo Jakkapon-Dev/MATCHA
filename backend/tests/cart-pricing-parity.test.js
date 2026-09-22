@@ -31,6 +31,7 @@ import {
   COUPONS as CLIENT_COUPONS,
   normaliseCode as clientNormalise,
   discountFor as clientDiscountFor,
+  bundleDiscountFor as clientBundleDiscountFor,
   couponFor as clientCouponFor
 } from '../../frontend/src/config/coupons.js';
 
@@ -81,13 +82,7 @@ function checkoutTotals(cart, { couponCode = null, shippingOption = 'standard' }
   const shippingCost = shippingCostFor(subtotal, shippingOption, {
     freeShippingCoupon: applied?.type === 'free_shipping'
   });
-  const couponDiscount = clientDiscountFor(applied, subtotal);
-  const bundleDiscount = cart.reduce((sum, item) => (
-    item.isBundleItem
-      ? sum + item.price * (item.quantity || 1) * BUNDLE_DISCOUNT_RATE
-      : sum
-  ), 0);
-  const discount = round(couponDiscount + bundleDiscount);
+  const discount = round(clientDiscountFor(applied, subtotal) + clientBundleDiscountFor(cart));
   const total = Math.max(0, subtotal + shippingCost - discount);
   return { subtotal, shippingCost, discount, total };
 }
@@ -192,9 +187,6 @@ test('the server does apply 12% to a complete outfit', () => {
   assert.equal(charged.total, round(gross - gross * 0.12));
 });
 
-/* Mix & Match advertises this discount in the cart and checkout. Keep this
-   parity test beside the server calculation so a future pricing change cannot
-   silently make the displayed total diverge from the charged total. */
 test('a complete outfit is charged what the checkout screen shows', () => {
   const outfit = [
     item(92.99, 1, { isBundleItem: true }),
