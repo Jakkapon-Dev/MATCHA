@@ -259,26 +259,7 @@ test('while the account exists, the database decides the role, not the token', a
   assert.equal(res.status, 403, 'the demotion takes effect immediately');
 });
 
-/* FOUND, NOT FIXED — requireAuth falls back to the token when the account
- * cannot be read.
- *
- *   let user = await findById(userId);
- *   if (!user && (payload.role || payload.email)) {
- *     user = { _id: userId, id: userId, email: payload.email, role: payload.role };
- *   }
- *
- * userStore.findById returns null both when the account is gone and whenever
- * Mongo is not connected. So a signed token for a deleted account keeps
- * working until it expires — with whatever role it was minted with — and
- * during a database outage every request is authorised purely from its own
- * claims. An administrator who has been removed keeps Admin for the remaining
- * life of their token (JWT_EXPIRES_IN, default 7d).
- *
- * It needs the signing secret to forge, so this is not an open door; it is
- * stale privilege that cannot be revoked. The data-deletion workflow in
- * particular assumes removing the account ends the session, and it does not.
- */
-test('a token for an account that no longer exists is refused', { todo: 'requireAuth falls back to the token payload when the lookup returns nothing' }, async (t) => {
+test('a token for an account that no longer exists is refused', async (t) => {
   t.after(() => mock.restoreAll());
   const state = mongoose.connection.readyState;
   mongoose.connection.readyState = 1;
@@ -290,15 +271,6 @@ test('a token for an account that no longer exists is refused', { todo: 'require
   const orphanAdminToken = jwt.sign({ id: 'u_deleted', role: 'Admin' }, getJwtSecret());
   const res = await get('/auth/admin/check', { Authorization: `Bearer ${orphanAdminToken}` });
   assert.equal(res.status, 401);
-});
-
-/* The same fallback, seen from the verified-email guard. The synthetic user it
-   builds carries no emailVerified field at all, and both guards block only on
-   an explicit `=== false`, so undefined sails through. */
-test('the token fallback carries no verification state', () => {
-  const fallback = { _id: 'u_x', id: 'u_x', email: 'x@example.com', role: 'Member' };
-  assert.equal(fallback.emailVerified, undefined);
-  assert.equal(fallback.emailVerified === false, false, 'so requireVerifiedEmail lets it past');
 });
 
 /* Signing out is a client-side act: the browser drops the token. There is no
@@ -380,10 +352,7 @@ test('a member can sync the providers their own Firebase account carries', async
   t.after(() => mock.restoreAll());
 
   const row = MEMBER();
-  mock.method(User, 'findById', () => ({
-    select: () => ({ lean: async () => row }),
-    lean: async () => row
-  }));
+  withDatabase(t, row);
   mock.method(User, 'findByIdAndUpdate', (_id, update) => {
     Object.assign(row, update.$set || {});
     return { lean: async () => ({ ...row }) };
@@ -409,10 +378,7 @@ test('a member cannot point their account at somebody else’s Firebase identity
   t.after(() => mock.restoreAll());
 
   const row = MEMBER();
-  mock.method(User, 'findById', () => ({
-    select: () => ({ lean: async () => row }),
-    lean: async () => row
-  }));
+  withDatabase(t, row);
   let repointed = false;
   mock.method(User, 'findByIdAndUpdate', () => { repointed = true; return { lean: async () => ({}) }; });
 
@@ -439,10 +405,7 @@ test('the last sign-in method cannot be removed', async (t) => {
   t.after(() => mock.restoreAll());
 
   const row = MEMBER();
-  mock.method(User, 'findById', () => ({
-    select: () => ({ lean: async () => row }),
-    lean: async () => row
-  }));
+  withDatabase(t, row);
   let wrote = false;
   mock.method(User, 'findByIdAndUpdate', () => { wrote = true; return { lean: async () => ({}) }; });
 

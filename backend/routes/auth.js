@@ -41,7 +41,12 @@ export const safeUser = (u) => {
 
 export const signToken = (user) =>
   jwt.sign(
-    { id: user._id, role: user.role, emailVerified: Boolean(user.emailVerified) },
+    {
+      id: user._id,
+      role: user.role,
+      email: user.email,
+      emailVerified: Boolean(user.emailVerified),
+    },
     getJwtSecret(),
     {
       expiresIn: process.env.JWT_EXPIRES_IN || '7d',
@@ -244,7 +249,7 @@ router.post('/firebase', authLimiter, async (req, res) => {
                 $set: {
                   firebaseUid: identity.localId,
                   emailVerified: Boolean(identity.emailVerified || user.emailVerified),
-                  ...(identity.photoUrl ? { avatarUrl: identity.photoUrl } : {}),
+                  ...(identity.photoUrl && !user.avatarUrl ? { avatarUrl: identity.photoUrl } : {}),
                 },
                 $addToSet: { authProviders: providerName },
               },
@@ -265,7 +270,7 @@ router.post('/firebase', authLimiter, async (req, res) => {
           $set: {
             firebaseUid: identity.localId,
             emailVerified: Boolean(identity.emailVerified || user.emailVerified),
-            ...(identity.photoUrl ? { avatarUrl: identity.photoUrl } : {}),
+            ...(identity.photoUrl && !user.avatarUrl ? { avatarUrl: identity.photoUrl } : {}),
           },
           $addToSet: { authProviders: providerName },
         },

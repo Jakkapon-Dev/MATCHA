@@ -117,7 +117,14 @@ export default function PaymentPage() {
     freeShippingCoupon: appliedCoupon?.type === 'free_shipping'
   });
 
-  const discount = discountFor(appliedCoupon, subtotal);
+  const couponDiscount = discountFor(appliedCoupon, subtotal);
+  const bundleDiscount = cartItems.reduce((sum, item) => {
+    if (!item.isBundleItem) return sum;
+    const price = Number(item.price) || 0;
+    const quantity = Number(item.quantity) || 1;
+    return sum + price * quantity * 0.12;
+  }, 0);
+  const discount = Math.round((couponDiscount + bundleDiscount) * 100) / 100;
 
   const total = Math.max(0, subtotal + shippingCost - discount);
 
@@ -202,7 +209,8 @@ export default function PaymentPage() {
           quantity: Number(item.quantity) || 1,
           size: item.size || '',
           color: item.color || 'Default',
-          image: item.image || ''
+          image: item.image || '',
+          isBundleItem: Boolean(item.isBundleItem),
         })),
         couponCode: appliedCoupon?.code || null,
         paymentMethod: selectedPayment,

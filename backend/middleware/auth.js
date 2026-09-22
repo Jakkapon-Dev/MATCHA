@@ -48,11 +48,9 @@ export async function requireAuth(req, res, next) {
        orders and uploaded media from their owners. There is one store now. */
     let user = await findById(userId);
 
-    // 1.3 ถ้ายังไม่พบแต่ Token ผ่านการยืนยันลายเซ็นแล้ว ให้ใช้ identity จาก Payload
-    if (!user && (payload.role || payload.email)) {
-      user = { _id: userId, id: userId, email: payload.email, role: payload.role };
-    }
-    
+    // A valid signature is not proof that the account still exists. The
+    // database lookup is the revocation check, so never authorise from stale
+    // role/email claims when the member has been deleted (or is unavailable).
     if (!user) {
       return res.status(401).json({ success: false, message: 'User not found' });
     }

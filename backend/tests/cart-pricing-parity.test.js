@@ -81,7 +81,13 @@ function checkoutTotals(cart, { couponCode = null, shippingOption = 'standard' }
   const shippingCost = shippingCostFor(subtotal, shippingOption, {
     freeShippingCoupon: applied?.type === 'free_shipping'
   });
-  const discount = clientDiscountFor(applied, subtotal);
+  const couponDiscount = clientDiscountFor(applied, subtotal);
+  const bundleDiscount = cart.reduce((sum, item) => (
+    item.isBundleItem
+      ? sum + item.price * (item.quantity || 1) * BUNDLE_DISCOUNT_RATE
+      : sum
+  ), 0);
+  const discount = round(couponDiscount + bundleDiscount);
   const total = Math.max(0, subtotal + shippingCost - discount);
   return { subtotal, shippingCost, discount, total };
 }
@@ -186,21 +192,10 @@ test('the server does apply 12% to a complete outfit', () => {
   assert.equal(charged.total, round(gross - gross * 0.12));
 });
 
-/* FOUND, NOT FIXED — the checkout screen does not know about it.
- *
- * pages/PaymentPage.jsx computes `discount` from the coupon alone, so a cart
- * of bundle items shows its full price at checkout while the server charges
- * 12% less. The cart page, which does subtract the saving, shows a third
- * figure — so the price appears to go UP between the cart and checkout, and
- * then the customer is charged something lower than either.
- *
- * Worse, it is moot in production: PaymentPage's order payload maps each line
- * to { productId, name, quantity, size, color, image } and drops
- * `isBundleItem` on the way, so the server never sees the flag and the
- * discount it is willing to give is never claimed. The advertised
- * "12% OFF THE COMPLETE OUTFIT" is not applied to any real order.
- */
-test('a complete outfit is charged what the checkout screen shows', { todo: 'PaymentPage ignores isBundleItem, and drops the flag from the order payload' }, () => {
+/* Mix & Match advertises this discount in the cart and checkout. Keep this
+   parity test beside the server calculation so a future pricing change cannot
+   silently make the displayed total diverge from the charged total. */
+test('a complete outfit is charged what the checkout screen shows', () => {
   const outfit = [
     item(92.99, 1, { isBundleItem: true }),
     item(73.99, 1, { isBundleItem: true }),

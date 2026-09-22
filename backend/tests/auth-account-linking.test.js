@@ -167,7 +167,7 @@ test('a year of history survives the link untouched', async (t) => {
   assert.deepEqual(row.createdAt, ESTABLISHED.createdAt, 'the join date is not reset to today');
 });
 
-/* FOUND, NOT FIXED — the one thing the link does overwrite.
+/* Regression coverage: the link must not overwrite a member's chosen avatar.
  *
  *   ...(identity.photoUrl ? { avatarUrl: identity.photoUrl } : {})
  *
@@ -179,7 +179,7 @@ test('a year of history survives the link untouched', async (t) => {
  * decision rather than a side effect. Suggested: only take the provider photo
  * when `avatarUrl` is empty.
  */
-test('an uploaded avatar survives a Google sign-in', { todo: 'the link overwrites avatarUrl with the Google photo' }, async (t) => {
+test('an uploaded avatar survives a Google sign-in', async (t) => {
   t.after(stubIdentity(googleIdentity()));
   t.after(() => mock.restoreAll());
 
@@ -314,10 +314,8 @@ test('the token issued by a link is for the original account, and outlives the r
   assert.ok(claims.exp - claims.iat >= 3600, 'and it is longer than one hour');
 });
 
-/* The JWT deliberately carries an id, a role and a verification flag, and
-   nothing else. Worth pinning: two places in orderRoutes.js branch on
-   `authUser.email`, which this token has never had — see the todo below. */
-test('the session token carries no more than it needs', async (t) => {
+/* The JWT carries the identity fields protected routes need. */
+test('the session token carries the identity fields protected routes need', async (t) => {
   t.after(stubIdentity(googleIdentity()));
   t.after(() => mock.restoreAll());
 
@@ -325,10 +323,10 @@ test('the session token carries no more than it needs', async (t) => {
   const body = await (await signInWithFirebase('nok-google-token')).json();
   const claims = jwt.verify(body.token, getJwtSecret());
 
-  assert.deepEqual(Object.keys(claims).sort(), ['emailVerified', 'exp', 'iat', 'id', 'role']);
+  assert.deepEqual(Object.keys(claims).sort(), ['email', 'emailVerified', 'exp', 'iat', 'id', 'role']);
 });
 
-/* FOUND, NOT FIXED — recorded so it is not lost.
+/* Regression coverage for legacy order ownership by email.
  *
  * orderRoutes.js matches a member to their orders by account id, and falls
  * back to the email on the order for rows written before userId was stored:
@@ -336,13 +334,12 @@ test('the session token carries no more than it needs', async (t) => {
  *   ownsOrder()    (viewer.email && order.customer?.email && ...)
  *   GET /orders    if (authUser.email) conditions.push({ 'customer.email': ... })
  *
- * signToken() has never put an email in the token, so `authUser.email` is
- * always undefined and neither fallback can fire. Every order with
+ * `authUser.email` is used by the fallback. Every order with
  * userId: null — which the Order model's own comment says was all thirteen in
  * production — is invisible to the member who placed it, and uncancellable by
- * them. The fix is one field in signToken; this records the case until then.
+ * them. The token includes the email claim so this fallback remains usable.
  */
-test('a member can see an order that predates userId being stored', { todo: 'signToken carries no email claim, so the fallback in orderRoutes can never match' }, () => {
+test('a member token carries email for legacy order ownership fallback', () => {
   const claims = jwt.decode(signToken({ _id: 'u_1', role: 'Member', email: ESTABLISHED.email, emailVerified: true }));
   assert.equal(claims.email, ESTABLISHED.email);
 });

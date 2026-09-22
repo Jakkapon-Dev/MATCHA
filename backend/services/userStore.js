@@ -116,8 +116,8 @@ export async function findByEmail(email) {
    issued while the connection is down does not fail — Mongoose buffers it and
    throws ten seconds later, so each request hung for ten seconds and then came
    back 401, hiding a database outage behind what looks like a rejected login.
-   requireAuth already falls back to the identity inside the verified token, and
-   returning null lets it.
+   requireAuth treats a missing lookup as unauthorised, so an outage fails
+   closed rather than trusting stale claims from a signed token.
 
    findByEmail deliberately has no such guard: register asks it whether an
    address is taken, and answering "no" when the question could not be asked
@@ -128,7 +128,7 @@ export async function findById(id) {
   try {
     return await User.findById(String(id)).lean();
   } catch (err) {
-    console.warn('[auth] User lookup failed, falling back to the token:', err.message);
+    console.warn('[auth] User lookup failed:', err.message);
     return null;
   }
 }
