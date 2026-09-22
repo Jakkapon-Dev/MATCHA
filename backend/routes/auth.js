@@ -41,7 +41,12 @@ export const safeUser = (u) => {
 
 export const signToken = (user) =>
   jwt.sign(
-    { id: user._id, role: user.role, emailVerified: Boolean(user.emailVerified) },
+    {
+      id: user._id,
+      role: user.role,
+      email: String(user.email || '').trim().toLowerCase(),
+      emailVerified: Boolean(user.emailVerified)
+    },
     getJwtSecret(),
     {
       expiresIn: process.env.JWT_EXPIRES_IN || '7d',

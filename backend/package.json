@@ -10,7 +10,8 @@
     "start": "node server.js",
     "dev": "node --watch server.js",
     "seed": "node scripts/seed.js",
-    "seed:users": "node scripts/seedUsers.js"
+    "seed:users": "node scripts/seedUsers.js",
+    "repair:stock-totals": "node scripts/repairStockTotals.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

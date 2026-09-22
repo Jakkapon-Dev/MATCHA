@@ -46,12 +46,7 @@ export async function requireAuth(req, res, next) {
        only reject, silently, on every single request. The two stores disagreed
        on what a user id was, and that disagreement is what detached carts,
        orders and uploaded media from their owners. There is one store now. */
-    let user = await findById(userId);
-
-    // 1.3 ถ้ายังไม่พบแต่ Token ผ่านการยืนยันลายเซ็นแล้ว ให้ใช้ identity จาก Payload
-    if (!user && (payload.role || payload.email)) {
-      user = { _id: userId, id: userId, email: payload.email, role: payload.role };
-    }
+    const user = await findById(userId);
     
     if (!user) {
       return res.status(401).json({ success: false, message: 'User not found' });
