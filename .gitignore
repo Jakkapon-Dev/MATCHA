@@ -173,6 +173,10 @@ backend/data/users.json
 # all. One line short of this and it would have been committed.
 backend/data/users-mongo-backup-*.json
 backend/data/backup-pre-firebase-*
+# The notification outbox buffers real orders — a customer name and a total
+# per queued entry — while the database is unreachable. Runtime state, and
+# never anything to commit.
+backend/data/notification-outbox.json
 backend/logs/
 
 # Database backup archives & dumps (Never commit credentials or data dumps)

@@ -38,6 +38,7 @@ import mediaRoutes from './routes/mediaRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import { startNotificationWorker, ensureNotificationIndexes } from './services/notificationService.js';
 import errorHandler from './middleware/errorHandler.js';
 
 // Process-level Safety Guards to prevent unexpected crashes
@@ -336,6 +337,11 @@ if (isMain && mongoUriToConnect) {
       } catch (err) {
         console.error('[auth] Admin seed skipped:', err.message);
       }
+      /* The unique index first, then the worker that depends on it: the queue
+         replays into a collection whose one-per-order rule has to already be
+         in force. */
+      await ensureNotificationIndexes();
+      startNotificationWorker();
     })
     .catch(err => console.error('❌ [MongoDB] Connection error:', err.message));
 }
