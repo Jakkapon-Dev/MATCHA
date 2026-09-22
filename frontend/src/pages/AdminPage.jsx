@@ -4,7 +4,7 @@ import AnalyticsTab from '../components/admin/AnalyticsTab';
 import OrdersTab from '../components/admin/OrdersTab';
 import InventoryTab from '../components/admin/InventoryTab';
 import DashboardTab from '../components/admin/DashboardTab';
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import { apiErrorText } from '../services/api';
