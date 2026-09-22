@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { RotateCcw } from 'lucide-react';
+import { ArrowRight, RotateCcw } from 'lucide-react';
 import useChangeMotion from '../hooks/useChangeMotion';
 import { api } from '../services/api';
 import ProductCardSkeleton from '../components/ui/ProductCardSkeleton';
 import EmptyState from '../components/ui/EmptyState';
 import CatalogPagination from '../components/catalog/CatalogPagination';
-import DyeIndex from '../components/catalog/DyeIndex';
 import DyeTile from '../components/catalog/DyeTile';
-import { buildDyeIndex, variantForDye } from '../utils/dye';
+import { buildDyeIndex, variantForDye, wash } from '../utils/dye';
 
 const SORTS = [
   { value: 'featured', label: 'Featured' },
@@ -163,6 +162,12 @@ export default function CatalogPage({
   const startIndex = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
   const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
 
+  const featuredProduct = pageItems[0] || products[0];
+  const featuredVariant = featuredProduct
+    ? variantForDye(featuredProduct, selectedDye)
+    : null;
+  const featuredHex = featuredVariant?.colorHex || '#31543a';
+
   const refineCount =
     (selectedSeason !== 'ALL' ? 1 : 0) +
     (selectedFit !== 'ALL' ? 1 : 0) +
@@ -186,13 +191,15 @@ export default function CatalogPage({
      overlay: left open it covers the grid it was used to narrow. Dismiss it
      the way every other popover on the web dismisses. */
   const refineRef = useRef(null);
+  const colourRef = useRef(null);
   useEffect(() => {
     const dismiss = (event) => {
-      const panel = refineRef.current;
-      if (!panel?.open) return;
       if (event.type === 'keydown' && event.key !== 'Escape') return;
-      if (event.type === 'pointerdown' && panel.contains(event.target)) return;
-      panel.open = false;
+      [refineRef.current, colourRef.current].forEach((panel) => {
+        if (!panel?.open) return;
+        if (event.type === 'pointerdown' && panel.contains(event.target)) return;
+        panel.open = false;
+      });
     };
     document.addEventListener('pointerdown', dismiss);
     document.addEventListener('keydown', dismiss);
@@ -209,19 +216,116 @@ export default function CatalogPage({
   );
 
   return (
-    <div className="w-full bg-matcha-bg min-h-screen py-10 sm:py-14 px-5 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="w-full bg-[#eeede7] min-h-screen pb-14">
+      <section
+        className="relative min-h-[42rem] lg:min-h-[39rem] overflow-hidden border-b border-[#0a0a0a]"
+        style={{ '--catalog-dye': wash(featuredHex, 0.22) }}
+      >
+        <div className="absolute inset-0 bg-[var(--catalog-dye)] transition-colors duration-500" />
+        <img
+          src="/images/catalog/styling-desk-wash.png"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-y-0 left-[28%] hidden w-[54%] object-cover opacity-45 mix-blend-multiply lg:block"
+        />
 
-        <header className="mb-8">
-          <h1 className="text-4xl sm:text-6xl font-black uppercase text-[#0A0A0A] tracking-tight leading-none">
-            Artisan Apparel
-          </h1>
+        <div className="relative mx-auto grid min-h-[42rem] max-w-[94rem] grid-cols-1 lg:min-h-[39rem] lg:grid-cols-[minmax(22rem,0.9fr)_minmax(28rem,1.25fr)_minmax(17rem,0.55fr)]">
+          <div className="z-10 flex flex-col justify-between px-5 pb-8 pt-12 sm:px-8 lg:py-12">
+            <div>
+              <h1 className="max-w-[8ch] text-[clamp(4.2rem,7.2vw,6.6rem)] font-black uppercase leading-[0.78] tracking-[-0.035em] text-[#0a0a0a]">
+                Find your colour in motion
+              </h1>
+              <p className="mt-7 max-w-md text-lg leading-relaxed text-[#263328]">
+                เลือกเฉดที่สะท้อนตัวคุณ แล้วดูสีเดียวกันเคลื่อนไปกับเสื้อผ้า ลุค และความมั่นใจของคุณ
+              </p>
+            </div>
+
+            {!loading && dyes.length > 0 && (
+              <div className="mt-10">
+                <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-[#263328]">
+                  Choose a dye · {dyes.length} colours
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  {dyes.slice(0, 7).map((dye) => {
+                    const active = selectedDye === dye.name;
+                    return (
+                      <button
+                        key={dye.name}
+                        type="button"
+                        onClick={() => setSelectedDye(active ? 'ALL' : dye.name)}
+                        aria-pressed={active}
+                        className="group w-12 text-left outline-hidden focus-visible:ring-2 focus-visible:ring-[#0a0a0a] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--catalog-dye)]"
+                      >
+                        <span
+                          className={`block h-8 w-12 border border-black/15 transition-transform duration-200 ${active ? '-translate-y-1' : 'group-hover:-translate-y-0.5'}`}
+                          style={{ backgroundColor: dye.hex }}
+                        />
+                        <span className="mt-1 block truncate font-mono text-[9px] uppercase text-[#263328]">
+                          {dye.name}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <div className="relative min-h-[24rem] lg:min-h-0">
+            {featuredProduct && (
+              <img
+                src={featuredVariant?.image || featuredProduct.image}
+                alt={`${featuredProduct.name} in ${featuredVariant?.color || featuredProduct.color || 'featured colour'}`}
+                className="absolute inset-0 h-full w-full object-contain object-center mix-blend-multiply transition-[opacity,transform] duration-500 motion-safe:animate-fade-in"
+              />
+            )}
+          </div>
+
+          <aside className="z-10 flex flex-col justify-between bg-[#101210] px-6 py-8 text-[#f5f3eb] lg:px-8 lg:py-10">
+            <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#c8cec4]">
+              {selectedDye === 'ALL' ? 'The archive edit' : `${selectedDye} edit`}
+            </div>
+            {featuredProduct ? (
+              <div className="py-10 lg:py-0">
+                <h2 className="text-4xl font-black uppercase leading-[0.9] tracking-[-0.03em] !text-[#f5f3eb]">
+                  {featuredProduct.name}
+                </h2>
+                <p className="mt-4 font-mono text-2xl tabular-nums">
+                  ${priceOf(featuredProduct).toFixed(2)}
+                </p>
+                <p className="mt-5 text-sm leading-relaxed text-[#c8cec4]">
+                  {featuredVariant?.color || featuredProduct.color} · {featuredProduct.fit || 'Signature fit'}
+                </p>
+                <button
+                  type="button"
+                  onClick={() => onQuickView?.({ ...featuredProduct, initialVariant: featuredVariant, activeImage: featuredVariant?.image })}
+                  className="mt-8 flex w-full items-center justify-between bg-matcha-accent px-5 py-4 font-mono text-xs font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#a81717] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+                >
+                  View this piece <ArrowRight size={16} />
+                </button>
+              </div>
+            ) : (
+              <p className="py-12 font-mono text-sm text-[#c8cec4]">Opening the archive…</p>
+            )}
+            <p className="max-w-[18ch] font-mono text-[11px] uppercase leading-relaxed tracking-[0.16em] text-[#c8cec4]">
+              Your colour. Your movement.
+            </p>
+          </aside>
+        </div>
+      </section>
+
+      <div className="max-w-7xl mx-auto px-5 pt-12 sm:px-6 lg:px-8">
+
+        <header className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+          <h2 className="text-4xl sm:text-6xl font-black uppercase text-[#0A0A0A] tracking-[-0.035em] leading-none">
+            Shop the archive
+          </h2>
           {/* The archive described by its own contents, in a sentence, instead
               of a tracked-out label stack above the title. Once a filter is on,
               the sentence describes the result rather than the archive: the dye
               count is taken before the dye filter, so pairing it with a
               narrowed total would be two different numbers in one breath. */}
-          <p className="mt-3 font-mono text-xs text-matcha-muted">
+          <p className="font-mono text-xs text-matcha-muted">
             {loading
               ? 'Opening the archive'
               : hasFilters
@@ -334,6 +438,58 @@ export default function CatalogPage({
               </div>
             </details>
 
+            <details ref={colourRef} className="relative">
+              <summary className="flex list-none cursor-pointer items-center gap-2 font-mono text-xs uppercase tracking-wider text-[#0A0A0A] marker:hidden outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]">
+                <span
+                  aria-hidden="true"
+                  className="h-2.5 w-2.5 rounded-full border border-black/15"
+                  style={{
+                    backgroundColor: selectedDye === 'ALL'
+                      ? '#0A0A0A'
+                      : dyes.find((dye) => dye.name === selectedDye)?.hex || '#0A0A0A',
+                  }}
+                />
+                Colour · {selectedDye === 'ALL' ? 'All' : selectedDye}
+              </summary>
+              <div className="absolute right-0 z-30 mt-3 w-[min(22rem,calc(100vw-2.5rem))] border border-[#0A0A0A] bg-[#eeede7] p-4 shadow-[0_14px_35px_rgba(0,0,0,0.16)]">
+                <div className="mb-4 flex items-baseline justify-between border-b border-matcha-border pb-3">
+                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#0A0A0A]">Choose a colour</p>
+                  <button
+                    type="button"
+                    onClick={() => setSelectedDye('ALL')}
+                    className="font-mono text-[10px] uppercase text-matcha-accent hover:underline"
+                  >
+                    Clear
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-1 sm:grid-cols-3">
+                  {dyes.map((dye) => {
+                    const active = selectedDye === dye.name;
+                    return (
+                      <button
+                        key={dye.name}
+                        type="button"
+                        onClick={() => {
+                          setSelectedDye(active ? 'ALL' : dye.name);
+                          if (colourRef.current) colourRef.current.open = false;
+                        }}
+                        aria-pressed={active}
+                        className={`flex min-w-0 items-center gap-2 px-2 py-2 text-left transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-inset ${active ? 'bg-[#0A0A0A] text-white' : 'hover:bg-white'}`}
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="h-4 w-4 shrink-0 rounded-full border border-black/15"
+                          style={{ backgroundColor: dye.hex }}
+                        />
+                        <span className="min-w-0 flex-1 truncate font-mono text-[10px] uppercase">{dye.name}</span>
+                        <span className={`font-mono text-[9px] tabular-nums ${active ? 'text-white/60' : 'text-matcha-muted'}`}>{dye.count}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            </details>
+
             <label className="flex items-center gap-2">
               <span className="sr-only">Sort by</span>
               <select
@@ -360,33 +516,10 @@ export default function CatalogPage({
           </div>
         </div>
 
-        {/* The strip sits above the row; the rail sits inside it. Neither is
-            rendered with nothing to show — an index of no colours is a column
-            of empty boxes, and the empty state already explains itself. */}
-        {!loading && !error && dyes.length > 0 && (
-          <DyeIndex
-            variant="strip"
-            dyes={dyes}
-            selected={selectedDye}
-            onSelect={(name) => setSelectedDye((current) => (current === name ? 'ALL' : name))}
-            total={matchesEverythingButDye.length}
-          />
-        )}
-
-        <div className="flex gap-8 items-start">
-          {!loading && !error && dyes.length > 0 && (
-            <DyeIndex
-              variant="rail"
-              dyes={dyes}
-              selected={selectedDye}
-              onSelect={(name) => setSelectedDye((current) => (current === name ? 'ALL' : name))}
-              total={matchesEverythingButDye.length}
-            />
-          )}
-
-          <div className="flex-1 min-w-0">
+        <div>
+          <div className="min-w-0">
             {loading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)}
               </div>
             ) : error ? (
@@ -402,7 +535,7 @@ export default function CatalogPage({
               <>
                 <div
                   ref={gridMotionRef}
-                  className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-8"
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
                 >
                   {pageItems.map((product) => (
                     <DyeTile

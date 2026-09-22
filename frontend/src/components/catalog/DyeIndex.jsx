@@ -112,10 +112,9 @@ export default function DyeIndex({ dyes, selected, onSelect, total, variant = 'r
   }
 
   return (
-    /* Below lg the column would eat the grid, so the same bands lie on their
-       side as a scroller. Same data, same order, same solid colour. */
+    /* On compact screens the index becomes a quiet horizontal ledger. */
     <nav aria-label="Filter by dye" className="lg:hidden -mx-4 px-4 mb-6">
-        <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1">
+        <div className="flex gap-1 overflow-x-auto scrollbar-none border-y border-matcha-border py-2">
           {[all, ...dyes].map((dye) => {
             const active = selected === dye.name;
             const solid = dye.hex;
@@ -125,12 +124,12 @@ export default function DyeIndex({ dyes, selected, onSelect, total, variant = 'r
                 type="button"
                 onClick={() => onSelect(dye.name)}
                 aria-pressed={active}
-                className={`shrink-0 cursor-pointer transition-all outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-offset-2 focus-visible:ring-offset-matcha-bg ${
-                  active ? 'ring-2 ring-[#0A0A0A] ring-offset-2 ring-offset-matcha-bg' : ''
+                className={`flex shrink-0 items-center gap-2 px-2.5 py-2 cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-inset ${
+                  active ? 'bg-[#0A0A0A] text-white' : 'text-[#0A0A0A] hover:bg-white/70'
                 }`}
               >
                 <span
-                  className="block h-8 w-16"
+                  className="block h-3 w-3 shrink-0 rounded-full"
                   style={
                     dye.name === 'ALL'
                       ? { backgroundImage: dye.stripes }
@@ -140,11 +139,11 @@ export default function DyeIndex({ dyes, selected, onSelect, total, variant = 'r
                         }
                   }
                 />
-                <span
-                  className="mt-1 block font-mono text-[10px] uppercase text-[#0A0A0A] text-center truncate w-16"
-                  style={{ color: '#0A0A0A' }}
-                >
+                <span className="block max-w-20 truncate font-mono text-[10px] uppercase">
                   {dye.name === 'ALL' ? 'All' : dye.name}
+                </span>
+                <span className={`font-mono text-[9px] tabular-nums ${active ? 'text-white/60' : 'text-matcha-muted'}`}>
+                  {dye.name === 'ALL' ? total : dye.count}
                 </span>
               </button>
             );
