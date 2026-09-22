@@ -172,6 +172,9 @@ export default function AdminPage() {
   const lowStockCount = stats?.lowStockCount ?? 0;
   const vipMembersCount = stats?.vipMembers ?? 0;
   const totalOrdersCount = stats?.totalOrders ?? 0;
+  // The paid orders behind totalRevenue — the average order value divides by
+  // these, not by every order including the ones still awaiting payment.
+  const paidOrdersCount = stats?.paidOrders ?? 0;
   const totalProductsCount = stats?.totalProducts ?? 0;
 
   const categoryDistribution = useMemo(() => {
@@ -673,7 +676,7 @@ export default function AdminPage() {
           </div>
           {activeTab === 'media' && <MediaManager />}
           {activeTab === 'dashboard' && (
-            <DashboardTab status={status} errors={errors} totalRevenue={totalRevenue} orders={orders} totalOrdersCount={totalOrdersCount} totalStockUnits={totalStockUnits} totalProductsCount={totalProductsCount} vipMembersCount={vipMembersCount} lowStockCount={lowStockCount} monthlyData={monthlyData} categoryDistribution={categoryDistribution} setActiveTab={setActiveTab} />
+            <DashboardTab status={status} errors={errors} totalRevenue={totalRevenue} orders={orders} totalOrdersCount={totalOrdersCount} paidOrdersCount={paidOrdersCount} totalStockUnits={totalStockUnits} totalProductsCount={totalProductsCount} vipMembersCount={vipMembersCount} lowStockCount={lowStockCount} monthlyData={monthlyData} categoryDistribution={categoryDistribution} setActiveTab={setActiveTab} />
           )}
 
           {/* ========================================================================= */}

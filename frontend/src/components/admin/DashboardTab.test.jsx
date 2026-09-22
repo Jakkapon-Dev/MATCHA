@@ -38,6 +38,7 @@ const STATS = {
   lowStockCount: 7,
   categories: { Tops: 30, Outerwear: 45 },
   totalOrders: 13,
+  paidOrders: 9,
   paidRevenue: 2700,
   monthly: [{ month: '2026-08', orders: 4, revenue: 800 }],
   totalMembers: 41,
@@ -62,6 +63,7 @@ const dashboardProps = (overrides = {}) => ({
   totalRevenue: STATS.paidRevenue,
   orders: [],
   totalOrdersCount: STATS.totalOrders,
+  paidOrdersCount: STATS.paidOrders,
   totalStockUnits: STATS.totalStockUnits,
   totalProductsCount: STATS.totalProducts,
   vipMembersCount: STATS.vipMembers,
@@ -152,6 +154,18 @@ describe('loading and error state', () => {
     expect(screen.getByText(/3200/)).toBeTruthy();
     expect(screen.getByText(/Across 75 garment lines/)).toBeTruthy();
     expect(screen.getByText(/7 Low stock alerts/)).toBeTruthy();
+  });
+
+  test('the average order value divides paid revenue by paid orders, not all orders', () => {
+    // $2700 over 9 paid orders is $300 — not $2700/13 = $207.69, which would
+    // fold in the four orders that have not been paid for.
+    render(<DashboardTab {...dashboardProps()} />);
+    const avgs = screen.getAllByText(/Avg\. Paid Order/);
+    expect(avgs.length).toBeGreaterThan(0);
+    for (const avg of avgs) {
+      expect(avg.textContent).toMatch(/\$300\.00/);
+      expect(avg.textContent).not.toMatch(/207\.69/);
+    }
   });
 
   test('a failed aggregate does not take the tables down with it', async () => {
