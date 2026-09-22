@@ -133,6 +133,30 @@ const orderSchema = new Schema(
       default: null
     },
 
+    /* When this order's stock reservation runs out.
+     *
+     * Placing an order takes the stock off the shelf before Stripe is ever
+     * asked for money. That is the right order of operations — it is the only
+     * way two shoppers cannot both buy the last M — but it means a declined
+     * card, a closed tab or an abandoned PromptPay QR left an `unpaid` order
+     * holding goods with nothing that would ever give them back.
+     *
+     * Only orders that have an online payment step to complete get a deadline.
+     * Cash on delivery has nothing to wait for, so it is left null and never
+     * swept. It is cleared the moment payment is confirmed.
+     */
+    reservationExpiresAt: {
+      type: Date,
+      default: null
+    },
+
+    /* Set when the sweeper (or an explicit abandon) put this order's stock
+       back, so nothing can return the same units twice. */
+    reservationReleasedAt: {
+      type: Date,
+      default: null
+    },
+
     /* Which language to write to this customer in.
        Taken from the site at the moment of checkout rather than guessed later
        from the address or the country, both of which are wrong often enough to
@@ -167,6 +191,8 @@ orderSchema.pre('validate', function recomputeTotal(next) {
 orderSchema.index({ userId: 1, createdAt: -1 });
 orderSchema.index({ guestId: 1, createdAt: -1 });
 orderSchema.index({ status: 1 });
+// The sweeper's query: pending, unpaid and past its deadline.
+orderSchema.index({ reservationExpiresAt: 1, status: 1, paymentStatus: 1 });
 orderSchema.index({ stripePaymentIntentId: 1 }, { unique: true, sparse: true });
 
 const Order = mongoose.models.Order || model('Order', orderSchema);

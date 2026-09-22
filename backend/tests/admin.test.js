@@ -151,6 +151,11 @@ test('stock updates return persisted products and missing products are not repor
      and strict mode drops it, so that $set reached the database and changed
      nothing while the route answered success. The test was green and the
      feature did not work. */
+  /* Before writing a total, the controller checks whether this product keeps
+     its stock per size — a total is meaningless for one that does, and setting
+     it anyway is what left four production rows disagreeing with their own
+     size buckets. This one does not, so the total is its real figure. */
+  t.mock.method(Product, 'findOne', () => ({ lean: async () => ({ id: 'p_real', sizeStock: [] }) }));
   t.mock.method(Product, 'findOneAndUpdate', async (filter, update) => {
     assert.equal(filter.$or[0].id, 'p_real');
     assert.deepEqual(update, { $set: { stock: 0 } });

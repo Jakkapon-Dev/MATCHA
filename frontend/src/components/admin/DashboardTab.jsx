@@ -2,7 +2,11 @@ import React from 'react';
 import { Package, ShoppingBag, DollarSign, Users, ChevronRight, AlertTriangle, ArrowUpRight, Activity } from 'lucide-react';
 import AdminDataState from './AdminDataState';
 
-export default function DashboardTab({ status, errors, totalRevenue, orders, totalStockUnits, inventory, vipMembersCount, lowStockCount, monthlyData, categoryDistribution, setActiveTab }) {
+/* `orders` and `inventory` are the current page of each table and are only
+   used for the recent-orders list. Every headline figure comes in already
+   counted across the whole collection — totalling the paginated arrays here
+   reported on 25 rows out of 75. */
+export default function DashboardTab({ status, errors, totalRevenue, orders, totalOrdersCount, totalStockUnits, totalProductsCount, vipMembersCount, lowStockCount, monthlyData, categoryDistribution, setActiveTab }) {
   return (<AdminDataState resources={["inventory","orders","members"]} status={status} errors={errors}>
             <div className="space-y-8 animate-fade-in">
               
@@ -38,10 +42,10 @@ export default function DashboardTab({ status, errors, totalRevenue, orders, tot
                   </div>
                   <div className="mt-3">
                     <div className="text-2xl sm:text-3xl font-black text-matcha-text font-mono">
-                      {orders.length} <span className="text-xs font-normal text-matcha-muted">orders</span>
+                      {totalOrdersCount} <span className="text-xs font-normal text-matcha-muted">orders</span>
                     </div>
                     <div className="text-[11px] font-mono text-matcha-muted mt-1">
-                      Avg. Value: ${(totalRevenue / (orders.length || 1)).toFixed(2)}
+                      Avg. Value: ${(totalRevenue / (totalOrdersCount || 1)).toFixed(2)}
                     </div>
                   </div>
                 </div>
@@ -59,7 +63,7 @@ export default function DashboardTab({ status, errors, totalRevenue, orders, tot
                       {totalStockUnits} <span className="text-xs font-normal text-matcha-muted">units</span>
                     </div>
                     <div className="text-[11px] font-mono text-matcha-muted mt-1">
-                      Across {inventory.length} garment lines
+                      Across {totalProductsCount} garment lines
                     </div>
                   </div>
                 </div>
@@ -162,7 +166,7 @@ export default function DashboardTab({ status, errors, totalRevenue, orders, tot
 
                   <div className="p-3 rounded-xl bg-matcha-bg border border-matcha-border mt-6 text-xs font-mono flex items-center justify-between">
                     <span className="text-matcha-muted">Total Catalog</span>
-                    <strong className="text-matcha-primary">{inventory.length} Models</strong>
+                    <strong className="text-matcha-primary">{totalProductsCount} Models</strong>
                   </div>
                 </div>
 

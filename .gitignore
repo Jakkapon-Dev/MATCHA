@@ -208,6 +208,10 @@ backend/scripts/*
 # current form, and no way to redo it. Idempotent, and it writes a backup first.
 !backend/scripts/migrateUsersToMongo.mjs
 !backend/scripts/migrateSizeStock.mjs
+# Repairs the totals that findOneAndUpdate restocks knocked out of step with
+# their size buckets. Idempotent, dry run by default, and the only record of
+# how the live rows were brought back into agreement.
+!backend/scripts/repairStockTotals.mjs
 !backend/scripts/migrate-legacy-users-firebase.mjs
 !backend/scripts/backup-mongodb.mjs
 !backend/scripts/restore-mongodb-test.mjs

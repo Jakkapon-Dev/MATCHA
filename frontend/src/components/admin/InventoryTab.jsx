@@ -4,7 +4,7 @@ import AdminDataState from './AdminDataState';
 import { webpSrc } from '../../utils/imageFallback';
 import AdminPagination from './AdminPagination';
 
-export default function InventoryTab({ status, errors, setInventoryCategoryFilter, inventoryCategoryFilter, inventoryStatusFilter, setInventoryStatusFilter, filteredInventory, restockAmounts, handleRestockInputChange, handleRestockSubmit, saving, isDemo, handleDeleteProduct, pagination, onPageChange }) {
+export default function InventoryTab({ status, errors, setInventoryCategoryFilter, inventoryCategoryFilter, inventoryStatusFilter, setInventoryStatusFilter, filteredInventory, restockAmounts, restockSizes, handleRestockSizeChange, handleRestockInputChange, handleRestockSubmit, saving, isDemo, handleDeleteProduct, pagination, onPageChange }) {
   return (<AdminDataState resources={["inventory"]} status={status} errors={errors}>
             <div className="space-y-6 animate-fade-in">
               
@@ -98,6 +98,23 @@ export default function InventoryTab({ status, errors, setInventoryCategoryFilte
                           <td className="p-4 text-right">
                             <div className="flex items-center justify-end gap-2">
                               <div className="flex items-center gap-1.5 bg-matcha-bg p-1 rounded-xl border border-matcha-border">
+                                {/* A garment with size buckets has no total to
+                                    add to — the units have to land in a size.
+                                    One sold without sizes has a single ONE
+                                    bucket and nothing to ask about. */}
+                                {item.needsSizeChoice && (
+                                  <select
+                                    aria-label={`Size to restock for ${item.name}`}
+                                    value={restockSizes?.[item.id] || ''}
+                                    onChange={(e) => handleRestockSizeChange(item.id, e.target.value)}
+                                    className="px-1.5 py-1 font-mono text-xs font-bold border border-matcha-border rounded-lg bg-white text-matcha-text outline-none focus:border-matcha-primary focus:ring-1 focus:ring-matcha-primary cursor-pointer"
+                                  >
+                                    <option value="">Size</option>
+                                    {item.sizeStock.map(row => (
+                                      <option key={row.size} value={row.size}>{row.size} ({row.stock})</option>
+                                    ))}
+                                  </select>
+                                )}
                                 <input
                                   type="text"
                                   inputMode="numeric"
@@ -113,7 +130,7 @@ export default function InventoryTab({ status, errors, setInventoryCategoryFilte
                                 <button
                                   type="button"
                                   onClick={() => handleRestockSubmit(item.id)}
-                                  disabled={saving || isDemo || !Number.isFinite(parseInt(restockAmounts[item.id], 10)) || parseInt(restockAmounts[item.id], 10) === 0}
+                                  disabled={saving || isDemo || !Number.isFinite(parseInt(restockAmounts[item.id], 10)) || parseInt(restockAmounts[item.id], 10) === 0 || (item.needsSizeChoice && !restockSizes?.[item.id])}
                                   className="px-3 py-1 rounded-lg border border-matcha-primary bg-white hover:bg-matcha-primary hover:text-white text-matcha-primary font-mono text-xs font-bold transition-all cursor-pointer shadow-2xs active:scale-95 disabled:opacity-40 disabled:border-matcha-border disabled:text-[#888888] disabled:cursor-not-allowed"
                                 >
                                   Add

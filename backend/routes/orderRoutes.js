@@ -98,6 +98,18 @@ export function stockKeyFor(product, requestedSize) {
   return wanted;
 }
 
+/* How long an order may hold stock while its payment is still outstanding.
+   Long enough for a customer to find their card or their banking app, short
+   enough that an abandoned checkout does not keep the last M off sale for the
+   rest of the day. */
+export const RESERVATION_WINDOW_MS = Math.max(
+  60 * 1000,
+  (Number(process.env.ORDER_RESERVATION_MINUTES) || 30) * 60 * 1000
+);
+
+// Only these have an online payment step that can be abandoned.
+export const RESERVED_PAYMENT_METHODS = new Set(['visa', 'mastercard', 'qr']);
+
 /* Take the stock before the order is written, all of it or none of it.
 
    Each line is decremented by a single findOneAndUpdate carrying its own
@@ -164,7 +176,7 @@ async function reserveStock(validatedItems, productCache, session) {
    customer cancelling. Stock that cannot be returned is logged rather than
    thrown, because the alternative is an order stuck open over a garment that
    no longer exists. */
-async function releaseStock(items, session) {
+export async function releaseStock(items, session) {
   const back = new Map();
   for (const item of items || []) {
     const key = `${item.productId}::${item.size || ONE_SIZE}`;
@@ -362,6 +374,15 @@ router.post('/', orderLimiter, async (req, res) => {
       total,
       status: 'pending',
       paymentStatus,
+      /* The stock is taken off the shelf below, before Stripe has been asked
+         for anything. A card that gets declined, a tab that gets closed or a
+         PromptPay QR nobody scans would otherwise leave those units held by an
+         unpaid order for good. The deadline is what the sweeper in
+         services/reservationSweeper.js acts on; cash on delivery has no
+         payment step to wait for and gets none. */
+      reservationExpiresAt: RESERVED_PAYMENT_METHODS.has(safePaymentMethod)
+        ? new Date(Date.now() + RESERVATION_WINDOW_MS)
+        : null,
       locale: locale === 'en' ? 'en' : 'th'
     };
 
@@ -723,7 +744,7 @@ router.post('/:id/cancel', orderLimiter, async (req, res) => {
            would have released the stock a second time does nothing. */
         const updated = await Order.findOneAndUpdate(
           { _id: order._id, status: 'pending' },
-          { $set: { status: 'cancelled' } },
+          { $set: { status: 'cancelled', reservationExpiresAt: null, reservationReleasedAt: new Date() } },
           { new: true, session }
         );
         if (!updated) {

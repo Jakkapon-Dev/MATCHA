@@ -80,6 +80,10 @@ export default function PaymentPage() {
   const [orderError, setOrderError] = useState(null);
   const [qrDisplay, setQrDisplay] = useState(null); // { imageUrl, amountThb } while a PromptPay QR is up
   const qrCancelRef = useRef(false);
+  /* The order that is currently holding stock while its payment is still
+     outstanding. Kept so an abandoned checkout can put the goods back
+     immediately instead of waiting out the server's reservation window. */
+  const pendingOrderRef = useRef(null);
   const [checkoutRequestId] = useState(() => `req-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`);
 
   // โหมดเดโมมีขั้นตอนของตัวเองและล้างตะกร้าทันทีที่ออเดอร์ถูกบันทึก
@@ -143,6 +147,14 @@ export default function PaymentPage() {
     qrCancelRef.current = true;
     setQrDisplay(null);
     setIsProcessing(false);
+    /* The order this QR belongs to took its stock off the shelf when it was
+       created. Cancelling releases it now; if this call never lands, the
+       server's reservation sweeper releases it when the window runs out. */
+    const abandoned = pendingOrderRef.current;
+    if (abandoned) {
+      pendingOrderRef.current = null;
+      api.cancelOrder(abandoned).catch(() => {});
+    }
   };
 
   // รอ paymentStatus จาก webhook จริง แทนที่จะเชื่อผลจาก Stripe.js ฝั่ง browser ตรงๆ
@@ -186,8 +198,12 @@ export default function PaymentPage() {
       }
       let order = res.data;
       const orderId = order.orderId || order._id;
+      // Stock is now reserved against this order until it is paid or released.
+      pendingOrderRef.current = orderId;
 
       const finishSuccess = (finalOrder) => {
+        // Paid, or at least in the shop's hands: no longer ours to release.
+        pendingOrderRef.current = null;
         setCreatedOrder(finalOrder);
         showToast(
           finalOrder.paymentStatus === 'paid'

@@ -39,7 +39,11 @@ router.post('/', async (req, res) => {
   }
 
   try {
-    if (event.type === 'payment_intent.succeeded' || event.type === 'payment_intent.payment_failed') {
+    if (
+      event.type === 'payment_intent.succeeded'
+      || event.type === 'payment_intent.payment_failed'
+      || event.type === 'payment_intent.canceled'
+    ) {
       const intent = event.data.object;
       const order = await Order.findOne({ stripePaymentIntentId: intent.id });
 
@@ -55,11 +59,27 @@ router.post('/', async (req, res) => {
       if (event.type === 'payment_intent.succeeded' && order.paymentStatus !== 'paid') {
         order.paymentStatus = 'paid';
         order.paymentError = null;
+        /* Paid orders hold their stock for good — there is nothing left to
+           abandon, so the sweeper must stop looking at this one. */
+        order.reservationExpiresAt = null;
         await order.save();
       }
       if (event.type === 'payment_intent.payment_failed' && order.paymentStatus !== 'paid') {
         order.paymentError = intent.last_payment_error?.message || 'Payment failed';
+        /* The stock stays reserved for now: a declined card is very often
+           retried on the spot with another one, and taking the goods away
+           mid-checkout would turn a retry into an out-of-stock. The deadline
+           already on the order is what eventually gives them back. */
         await order.save();
+      }
+      /* An intent Stripe or we cancelled is a checkout that will not finish.
+         Waiting out the rest of the window would keep real inventory off sale
+         for no reason, so the goods go back now. */
+      if (event.type === 'payment_intent.canceled' && order.paymentStatus !== 'paid') {
+        const { expireOrder } = await import('../services/reservationSweeper.js');
+        await expireOrder(order.toObject()).catch(error => {
+          console.error(`[stripe] could not release stock for cancelled intent ${intent.id}: ${error.message}`);
+        });
       }
     }
 

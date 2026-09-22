@@ -41,6 +41,7 @@ import notificationRoutes from './routes/notificationRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
 import stripeWebhook from './routes/stripeWebhook.js';
 import { startNotificationWorker, ensureNotificationIndexes } from './services/notificationService.js';
+import { startReservationSweeper } from './services/reservationSweeper.js';
 import errorHandler from './middleware/errorHandler.js';
 
 // Process-level Safety Guards to prevent unexpected crashes
@@ -350,6 +351,9 @@ if (isMain && mongoUriToConnect) {
          in force. */
       await ensureNotificationIndexes();
       startNotificationWorker();
+      /* Abandoned checkouts hold stock until something gives it back. Nothing
+         did before this. */
+      startReservationSweeper();
     })
     .catch(err => console.error('❌ [MongoDB] Connection error:', err.message));
 }

@@ -32,6 +32,7 @@ router.get('/products/:id', catalogLimiter, productController.getProductById);
 // Protected Admin Garment Management Endpoints
 router.post('/products', authRequired, adminOnly, productController.createProduct);
 router.put('/products/:id', authRequired, adminOnly, productController.updateProduct);
+router.patch('/products/:id/restock', authRequired, adminOnly, productController.restockProduct);
 router.delete('/products/:id', authRequired, adminOnly, productController.deleteProduct);
 
 export default router;

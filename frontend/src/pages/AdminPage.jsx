@@ -33,6 +33,7 @@ export default function AdminPage() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedOrderForModal, setSelectedOrderForModal] = useState(null);
   const [restockAmounts, setRestockAmounts] = useState({});
+  const [restockSizes, setRestockSizes] = useState({});
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
 
   const [notifications, setNotifications] = useState([]);
@@ -85,6 +86,7 @@ export default function AdminPage() {
     inventory, setInventory,
     orders, setOrders,
     members, setMembers,
+    stats,
     status, errors, refresh, pagination, changePage, fetchResource
   } = useAdminData(currentUser?.id || currentUser?._id);
   const [saving, setSaving] = useState(false);
@@ -99,7 +101,14 @@ export default function AdminPage() {
     catch (error) { setMutationNotice({ error: true, text: apiErrorText(error, t) || t('errors.saveFailed') }); return false; }
     finally { savingRef.current = false; setSaving(false); }
   };
-  const monthlyData = useMemo(() => monthlyRevenue(orders), [orders]);
+  /* Every dashboard figure below prefers the server's whole-collection
+     aggregate and only falls back to counting the loaded rows when that
+     request failed. The tables hold at most 25 rows out of 75 garments, so a
+     figure summed from them is a figure about one page. */
+  const monthlyData = useMemo(
+    () => (stats?.monthly ? stats.monthly : monthlyRevenue(orders)),
+    [stats, orders]
+  );
   // Global & Tab Filter States
   const [globalSearch, setGlobalSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -154,23 +163,29 @@ export default function AdminPage() {
 
   // KPI Calculations
   const totalRevenue = useMemo(() => {
+    if (stats) return stats.paidRevenue;
     return orders.reduce((sum, ord) => sum + (ord.status !== 'Cancelled' && ord.paymentStatus === 'Paid' ? ord.total : 0), 0);
-  }, [orders]);
+  }, [stats, orders]);
 
   const totalStockUnits = useMemo(() => {
+    if (stats) return stats.totalStockUnits;
     return inventory.reduce((sum, item) => sum + item.stock, 0);
-  }, [inventory]);
+  }, [stats, inventory]);
 
   const lowStockCount = useMemo(() => {
+    if (stats) return stats.lowStockCount;
     return inventory.filter(item => item.stock <= 10).length;
-  }, [inventory]);
+  }, [stats, inventory]);
 
   const vipMembersCount = useMemo(() => {
+    if (stats) return stats.vipMembers;
     return members.filter(m => m.tier.includes('VIP')).length;
-  }, [members]);
+  }, [stats, members]);
+
+  const totalOrdersCount = stats ? stats.totalOrders : orders.length;
+  const totalProductsCount = stats ? stats.totalProducts : inventory.length;
 
   const categoryDistribution = useMemo(() => {
-    const total = inventory.length;
     const counts = {
       Tops: 0,
       Bottoms: 0,
@@ -179,11 +194,19 @@ export default function AdminPage() {
       Accessories: 0
     };
 
-    inventory.forEach(item => {
-      if (item.category && counts[item.category] !== undefined) {
-        counts[item.category]++;
+    if (stats?.categories) {
+      for (const [name, count] of Object.entries(stats.categories)) {
+        if (counts[name] !== undefined) counts[name] = count;
       }
-    });
+    } else {
+      inventory.forEach(item => {
+        if (item.category && counts[item.category] !== undefined) {
+          counts[item.category]++;
+        }
+      });
+    }
+
+    const total = stats ? stats.totalProducts : inventory.length;
 
     return [
       {
@@ -217,7 +240,7 @@ export default function AdminPage() {
         color: '#D4A338'
       }
     ];
-  }, [inventory]);
+  }, [stats, inventory]);
 
   // Server-side filtered datasets (server filters and paginates directly)
   const filteredInventory = inventory;
@@ -233,15 +256,22 @@ export default function AdminPage() {
     showToast('Product saved', 'success');
   });
 
-  const handleRestock = (id, amount) => runMutation(async () => {
+  /* Restocking sends the change, not a new total, and names a size when the
+     garment has any.
+
+     It used to compute `stock + amount` and PUT that as the whole product's
+     total. For the 75 garments that track stock per size that total is only
+     the sum of the size buckets: the number moved on screen, no bucket moved
+     with it, orders kept drawing on the old per-size figures and the next full
+     save recomputed the total straight back down. */
+  const handleRestock = (id, amount, size) => runMutation(async () => {
     if (isDemo) throw new Error('Demo session: changes are disabled');
     const item = inventory.find(product => product.id === id);
     if (!item) return;
-    const quantity = Math.max(0, item.stock + amount);
-    const result = await api.updateProduct(id, { quantity });
-    if (!result?.success || !result.data) throw new Error('Stock was not saved');
+    const result = await api.restockProduct(id, { delta: amount, size: size || undefined });
+    if (!result?.success || !result.data) throw new Error(result?.message || 'Stock was not saved');
     setInventory(previous => previous.map(product => product.id === id ? normalizeProduct(result.data) : product));
-    showToast('Stock saved', 'success');
+    showToast(size ? `Stock saved (size ${size})` : 'Stock saved', 'success');
   });
 
   /* A leading minus survives, so stock can still be taken away. The buttons
@@ -254,10 +284,24 @@ export default function AdminPage() {
     setRestockAmounts(prev => ({ ...prev, [id]: digits ? sign + digits : sign }));
   };
 
+  /* Which size each row's adjustment applies to. A garment with size buckets
+     has no meaningful "total" to add to, so the row cannot be submitted until
+     one is picked. */
+  const handleRestockSizeChange = (id, size) => {
+    setRestockSizes(prev => ({ ...prev, [id]: size }));
+  };
+
   const handleRestockSubmit = async (id) => {
     const amount = parseInt(restockAmounts[id], 10);
     if (!Number.isFinite(amount) || amount === 0) return;
-    if (await handleRestock(id, amount)) setRestockAmounts(prev => ({ ...prev, [id]: '' }));
+    const item = inventory.find(product => product.id === id);
+    const needsSize = Boolean(item?.needsSizeChoice);
+    const size = needsSize ? restockSizes[id] : '';
+    if (needsSize && !size) {
+      showToast('Choose which size to restock', 'error');
+      return;
+    }
+    if (await handleRestock(id, amount, size)) setRestockAmounts(prev => ({ ...prev, [id]: '' }));
   };
 
   const handleDeleteProduct = id => runMutation(async () => {
@@ -648,7 +692,7 @@ export default function AdminPage() {
           </div>
           {activeTab === 'media' && <MediaManager />}
           {activeTab === 'dashboard' && (
-            <DashboardTab status={status} errors={errors} totalRevenue={totalRevenue} orders={orders} totalStockUnits={totalStockUnits} inventory={inventory} vipMembersCount={vipMembersCount} lowStockCount={lowStockCount} monthlyData={monthlyData} categoryDistribution={categoryDistribution} setActiveTab={setActiveTab} />
+            <DashboardTab status={status} errors={errors} totalRevenue={totalRevenue} orders={orders} totalOrdersCount={totalOrdersCount} totalStockUnits={totalStockUnits} totalProductsCount={totalProductsCount} vipMembersCount={vipMembersCount} lowStockCount={lowStockCount} monthlyData={monthlyData} categoryDistribution={categoryDistribution} setActiveTab={setActiveTab} />
           )}
 
           {/* ========================================================================= */}
@@ -664,6 +708,8 @@ export default function AdminPage() {
               setInventoryStatusFilter={handleInventoryStatusChange}
               filteredInventory={filteredInventory}
               restockAmounts={restockAmounts}
+              restockSizes={restockSizes}
+              handleRestockSizeChange={handleRestockSizeChange}
               handleRestockInputChange={handleRestockInputChange}
               handleRestockSubmit={handleRestockSubmit}
               saving={saving}
