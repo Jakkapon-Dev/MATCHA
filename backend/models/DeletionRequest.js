@@ -4,8 +4,7 @@ const deletionRequestSchema = new mongoose.Schema(
   {
     userId: {
       type: String,
-      required: true,
-      index: true
+      required: true
     },
     email: {
       type: String,

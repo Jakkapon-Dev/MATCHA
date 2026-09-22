@@ -178,6 +178,17 @@ FRONTEND_URL="http://localhost:5173"
 ADMIN_SEED_PASSWORD="your-admin-password"
 ```
 
+### เปิดใช้งานอีเมลจริงบน Render
+
+ระบบส่งอีเมลยืนยันคำสั่งซื้อและลิงก์ตั้งรหัสผ่านผ่าน Resend โดยไม่เก็บคีย์ไว้ในโค้ด:
+
+1. สร้าง API key ใน Resend แล้วคัดลอกไว้ชั่วคราว (ห้ามใส่ใน Git หรือ `VITE_` variable)
+2. ใน Render → **MATCHA → Environment** เพิ่มตัวแปร `RESEND_API_KEY` เป็น API key นั้น
+3. เพิ่ม `EMAIL_FROM` เป็นอีเมลจากโดเมนที่ยืนยันแล้วใน Resend เช่น `orders@your-domain.com`
+4. กด **Save, rebuild, and deploy** แล้วสั่งซื้อทดสอบหนึ่งรายการ
+
+ถ้ายังไม่ตั้งค่าสองตัวแปรนี้ ระบบจะยังรับออเดอร์ได้ตามปกติ แต่จะข้ามการส่งอีเมลและแจ้งเตือนใน log เท่านั้น
+
 สำหรับ `frontend/` (คัดลอก `frontend/.env.example` ไปเป็น `frontend/.env` เพื่อชี้ไปยัง Production Cloud Backend):
 ```env
 # frontend/.env

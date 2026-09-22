@@ -47,7 +47,7 @@ export async function requireAuth(req, res, next) {
        on what a user id was, and that disagreement is what detached carts,
        orders and uploaded media from their owners. There is one store now. */
     const user = await findById(userId);
-    
+
     if (!user) {
       return res.status(401).json({ success: false, message: 'User not found' });
     }
