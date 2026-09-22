@@ -718,12 +718,14 @@ export const translations = {
       explore: 'Explore Fit',
       bannerAlt: 'MatchA Choose Your Fit',
       items: {
-        'FIT-01': { category: 'Tanks & Polos', count: '34 Items' },
-        'FIT-02': { category: 'Oversized Tees', count: '82 Tees' },
-        'FIT-03': { category: 'Baggy Denim', count: '58 Fits' },
-        'FIT-04': { category: 'Statement Sweats', count: '46 Looks' },
-        'FIT-05': { category: 'Tailored Suits', count: '29 Tailored' },
-        'FIT-06': { category: 'Utility Outerwear', count: '64 Bottoms' },
+        // `unit` is the noun only. The number in front of it is the live count
+        // for the card's catalogCategory, not a figure written down here.
+        'FIT-01': { category: 'Tanks & Polos', unit: 'Tops' },
+        'FIT-02': { category: 'Oversized Tees', unit: 'Tops' },
+        'FIT-03': { category: 'Baggy Denim', unit: 'Bottoms' },
+        'FIT-04': { category: 'Statement Sweats', unit: 'Tops' },
+        'FIT-05': { category: 'Tailored Suits', unit: 'Bottoms' },
+        'FIT-06': { category: 'Utility Outerwear', unit: 'Outerwear' },
       },
     },
 
@@ -1562,12 +1564,13 @@ export const translations = {
       explore: 'ดูทรงนี้',
       bannerAlt: 'MatchA เลือกทรงที่ใช่สำหรับคุณ',
       items: {
-        'FIT-01': { category: 'เสื้อกล้ามและเสื้อคอปก', count: '34 ตัว' },
-        'FIT-02': { category: 'เสื้อยืดทรงหลวม', count: '82 ตัว' },
-        'FIT-03': { category: 'กางเกงยีนส์ทรงหลวม', count: '58 ตัว' },
-        'FIT-04': { category: 'เสื้อแขนยาวลายเด่น', count: '46 ตัว' },
-        'FIT-05': { category: 'ชุดสูทตัดพิเศษ', count: '29 ชุด' },
-        'FIT-06': { category: 'เสื้อคลุมใส่ได้ทุกวัน', count: '64 ตัว' },
+        // `unit` คือคำนามอย่างเดียว ตัวเลขข้างหน้ามาจากจำนวนจริงของหมวดนั้น
+        'FIT-01': { category: 'เสื้อกล้ามและเสื้อคอปก', unit: 'ตัว' },
+        'FIT-02': { category: 'เสื้อยืดทรงหลวม', unit: 'ตัว' },
+        'FIT-03': { category: 'กางเกงยีนส์ทรงหลวม', unit: 'ตัว' },
+        'FIT-04': { category: 'เสื้อแขนยาวลายเด่น', unit: 'ตัว' },
+        'FIT-05': { category: 'ชุดสูทตัดพิเศษ', unit: 'ชุด' },
+        'FIT-06': { category: 'เสื้อคลุมใส่ได้ทุกวัน', unit: 'ตัว' },
       },
     },
 

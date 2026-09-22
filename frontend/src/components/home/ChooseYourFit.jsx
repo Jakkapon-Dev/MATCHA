@@ -1,11 +1,36 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Parallax, Reveal } from '../motion';
 import { webpSrc, handleImageError } from '../../utils/imageFallback';
 import { useLanguage } from '../../context/LanguageContext.jsx';
+import { api } from '../../services/api';
 
 export default function ChooseYourFit({ onSelectFit }) {
   const { t } = useLanguage();
+
+  /* How many garments each card actually opens.
+
+     These counts used to be written into the translations as finished strings
+     — "82 Tees", "64 Bottoms" — and they were invented. The shop holds 75
+     pieces in total; the six cards between them claimed 313, and the one
+     labelled Utility Outerwear counted its stock in "Bottoms". A shopper who
+     clicked through found neither the number nor the unit they were promised.
+
+     The catalogue already publishes the real figure per category, so the cards
+     ask for it. Until the answer arrives no number is shown at all: an empty
+     space is honest, a stale guess is not. */
+  const [counts, setCounts] = useState(null);
+
+  useEffect(() => {
+    let active = true;
+    api.getCategories()
+      .then(rows => {
+        if (!active || !Array.isArray(rows)) return;
+        setCounts(Object.fromEntries(rows.map(row => [row.id, row.count])));
+      })
+      .catch(() => { /* the cards still work; they simply go without a count */ });
+    return () => { active = false; };
+  }, []);
   // Hover state controls the raised card and its overlay; selection is delegated to
   // the parent so it can translate a fit card into catalog navigation/filtering.
   const [hoveredCard, setHoveredCard] = useState(null);
@@ -105,6 +130,8 @@ export default function ChooseYourFit({ onSelectFit }) {
           // Only one card can receive the elevated hover treatment at a time.
           const isHovered = hoveredCard === item.id;
           const copy = t(`fit.items.${item.code}`);
+          const count = counts?.[item.catalogCategory];
+          const countLabel = count === undefined ? '' : `${count} ${copy.unit}`;
 
           return (
             // การ์ดสลับกันเลื่อนเร็ว/ช้า ใบคี่กับใบคู่จึงแยกชั้นความลึกออกจากกัน
@@ -135,7 +162,7 @@ export default function ChooseYourFit({ onSelectFit }) {
                   onSelectFit && onSelectFit(item);
                 }
               }}
-              aria-label={`${copy.category} - ${copy.count}`}
+              aria-label={countLabel ? `${copy.category} - ${countLabel}` : copy.category}
               className={`relative w-full h-full cursor-pointer transition-all duration-300 transform ${
                 isHovered
                   ? "scale-105 -translate-y-1.5 ring-2 ring-matcha-accent"
@@ -156,7 +183,7 @@ export default function ChooseYourFit({ onSelectFit }) {
                 }`}
               >
                 <span className="text-[10px] sm:text-xs font-mono text-matcha-secondary tracking-wider uppercase font-bold">
-                  {copy.count}
+                  {countLabel}
                 </span>
                 <h4 className="text-xs sm:text-base font-extrabold text-matcha-bg uppercase tracking-tight mt-1 leading-tight">
                   {copy.category}
