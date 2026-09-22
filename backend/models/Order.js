@@ -113,6 +113,25 @@ const orderSchema = new Schema(
       enum: ['unpaid', 'paid', 'refunded'],
       default: 'unpaid'
     },
+    stripePaymentIntentId: {
+      type: String,
+      default: null
+    },
+    paymentAmount: {
+      type: Number,
+      default: null,
+      min: 0
+    },
+    paymentCurrency: {
+      type: String,
+      default: null,
+      lowercase: true,
+      trim: true
+    },
+    paymentError: {
+      type: String,
+      default: null
+    },
 
     /* Which language to write to this customer in.
        Taken from the site at the moment of checkout rather than guessed later
@@ -148,6 +167,7 @@ orderSchema.pre('validate', function recomputeTotal(next) {
 orderSchema.index({ userId: 1, createdAt: -1 });
 orderSchema.index({ guestId: 1, createdAt: -1 });
 orderSchema.index({ status: 1 });
+orderSchema.index({ stripePaymentIntentId: 1 }, { unique: true, sparse: true });
 
 const Order = mongoose.models.Order || model('Order', orderSchema);
 

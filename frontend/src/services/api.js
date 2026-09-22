@@ -238,6 +238,13 @@ export const api = {
     return fetchWithFallback(`/orders/${id}`);
   },
 
+  createPaymentIntent: async (orderId) => {
+    return fetchWithFallback('/payments/create-intent', {
+      method: 'POST',
+      body: JSON.stringify({ orderId })
+    });
+  },
+
   // Cart CRUD — เจ้าของตะกร้ามาจาก token หรือ X-Guest-Id ไม่ใช่จากพารามิเตอร์
   // Hand the pre-sign-in basket over to the account (US-35).
   mergeGuestCart: async () => {

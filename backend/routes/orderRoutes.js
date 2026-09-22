@@ -70,7 +70,7 @@ const extractAuthUser = (req) => {
    guessing at, so holding one is never enough on its own. An administrator
    qualifies, as does the account the order belongs to, the email on it, or
    the browser that placed it as a guest. */
-function ownsOrder(req, order) {
+export function ownsOrder(req, order) {
   const viewer = extractAuthUser(req);
   const callerGuestId = String(req.headers['x-guest-id'] || '').trim();
   return (viewer && (
