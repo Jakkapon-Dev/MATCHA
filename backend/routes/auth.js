@@ -249,7 +249,9 @@ router.post('/firebase', authLimiter, async (req, res) => {
                 $set: {
                   firebaseUid: identity.localId,
                   emailVerified: Boolean(identity.emailVerified || user.emailVerified),
-                  ...(identity.photoUrl ? { avatarUrl: identity.photoUrl } : {}),
+                  // A user-selected avatar is authoritative. Only seed the
+                  // provider photo when the account has no avatar yet.
+                  ...(!user.avatarUrl && identity.photoUrl ? { avatarUrl: identity.photoUrl } : {}),
                 },
                 $addToSet: { authProviders: providerName },
               },
@@ -270,7 +272,9 @@ router.post('/firebase', authLimiter, async (req, res) => {
           $set: {
             firebaseUid: identity.localId,
             emailVerified: Boolean(identity.emailVerified || user.emailVerified),
-            ...(identity.photoUrl ? { avatarUrl: identity.photoUrl } : {}),
+            // Do not replace an avatar uploaded in the account settings when
+            // the user signs in with Google again.
+            ...(!user.avatarUrl && identity.photoUrl ? { avatarUrl: identity.photoUrl } : {}),
           },
           $addToSet: { authProviders: providerName },
         },
