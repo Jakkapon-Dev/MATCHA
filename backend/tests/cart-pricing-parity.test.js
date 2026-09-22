@@ -154,7 +154,7 @@ const CARTS = {
 
 for (const [name, cart] of Object.entries(CARTS)) {
   for (const shippingOption of ['standard', 'express', 'premium']) {
-    for (const couponCode of [null, 'MATCHA15', '03', 'FREESHIP', 'not-a-code']) {
+    for (const couponCode of [null, 'MATCHA15', 'WELCOME10', 'FREESHIP', 'not-a-code']) {
       test(`checkout matches the server: ${name} / ${shippingOption} / ${couponCode ?? 'no coupon'}`, () => {
         const shown = checkoutTotals(cart, { couponCode, shippingOption });
         const charged = serverTotals(cart, { couponCode, shippingOption });
@@ -221,12 +221,12 @@ test('the checkout total is not rounded the way the order total is', () => {
  * ------------------------------------------------------------------ */
 
 test('a discount that drops the subtotal under $100 does not take free shipping away', () => {
-  /* $105 with half off is $52.50, but the threshold is read from the gross
-     subtotal on the server. Checkout has to agree or the shipping line moves
-     when the coupon is typed. */
+  /* $105 with MATCHA15 is $89.25, under the $100 threshold — but the threshold
+     is read from the gross subtotal on the server. Checkout has to agree or the
+     shipping line moves when the coupon is typed. */
   const cart = [item(105)];
-  const shown = checkoutTotals(cart, { couponCode: '03', shippingOption: 'express' });
-  const charged = serverTotals(cart, { couponCode: '03', shippingOption: 'express' });
+  const shown = checkoutTotals(cart, { couponCode: 'MATCHA15', shippingOption: 'express' });
+  const charged = serverTotals(cart, { couponCode: 'MATCHA15', shippingOption: 'express' });
 
   assert.equal(charged.shippingCost, 0, 'the server still ships it free');
   assert.deepEqual(toCents(shown), toCents(charged));
@@ -242,9 +242,22 @@ test('an unknown code is worth nothing and is not an error on either side', () =
   }
 });
 
+/* The two-digit codes 01/02/03 were live once — 03 took half off any order,
+   and nothing advertised or rate-limited a guess at a two-character field. They
+   are gone from the table now, and gone means the server charges full price for
+   them, exactly as it does for any string that is not a code. */
+test('the retired guessable codes now buy no discount', () => {
+  const cart = [item(105)];
+  for (const code of ['01', '02', '03']) {
+    const charged = serverTotals(cart, { couponCode: code, shippingOption: 'standard' });
+    assert.equal(charged.discount, 0, `${code} no longer discounts anything`);
+    assert.deepEqual(toCents(checkoutTotals(cart, { couponCode: code })), toCents(charged));
+  }
+});
+
 test('a total can never go negative, however deep the discount', () => {
   const cart = [item(1)];
-  const charged = serverTotals(cart, { couponCode: '03', shippingOption: 'standard' });
+  const charged = serverTotals(cart, { couponCode: 'MATCHA15', shippingOption: 'standard' });
   assert.ok(charged.total >= 0);
-  assert.deepEqual(toCents(checkoutTotals(cart, { couponCode: '03' })), toCents(charged));
+  assert.deepEqual(toCents(checkoutTotals(cart, { couponCode: 'MATCHA15' })), toCents(charged));
 });

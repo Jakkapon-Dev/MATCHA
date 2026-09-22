@@ -20,9 +20,10 @@
  */
 
 export const COUPONS = {
-  '01': { discount: 10, type: 'percent' },
-  '02': { discount: 20, type: 'percent' },
-  '03': { discount: 50, type: 'percent' },
+  // '01' / '02' / '03' were removed: two-digit codes that anyone could guess,
+  // never advertised, and '03' took half off the whole order. Because this
+  // table is authoritative the server honoured them for real. Add promotional
+  // codes with names that cannot be stumbled onto, e.g. MATCHA15.
   'MATCHA15': { discount: 15, type: 'percent' },
   'WELCOME10': { discount: 10, type: 'percent' },
   'FREESHIP': { discount: 0, type: 'free_shipping' },
