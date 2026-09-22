@@ -18,6 +18,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import mongoose from 'mongoose';
+import { validateRestoreSafety, isDatabaseNameSafe } from '../services/mongoSafetyGuard.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -44,15 +45,33 @@ async function sha256(filePath) {
 }
 
 async function runRestore() {
-  const uri = getArg('--uri') || process.env.TEST_MONGODB_URI || process.env.MONGODB_URI || '';
+  // 1. Strict Production Detection & Safety Guards (Pre-connection verification)
+  const safety = validateRestoreSafety({
+    uri: getArg('--uri'),
+    env: process.env,
+    cliArgs: process.argv
+  });
+
+  if (!safety.safe) {
+    console.error('\n🚨 ======================================================');
+    console.error('🚨 RESTORE SAFETY GUARD: OPERATION REFUSED');
+    console.error('🚨 ======================================================');
+    console.error(`Reason: ${safety.reason}`);
+    console.error('\nAllowed Usage:');
+    console.error('  TEST_MONGODB_URI="mongodb://localhost:27017/matcha_test" node backend/scripts/restore-mongodb-test.mjs --backup-dir=<path> --confirm-test-restore');
+    console.error('  node backend/scripts/restore-mongodb-test.mjs --uri="mongodb://localhost:27017/matcha_test" --backup-dir=<path> --confirm-test-restore');
+    console.error('\nZero modifications or connections made.\n');
+    process.exit(1);
+  }
+
+  const uri = safety.uri;
   const backupDir = getArg('--backup-dir');
   const confirmTest = hasFlag('--confirm-test-restore');
-  const forceProd = hasFlag('--force-allow-production-restore-DANGEROUS');
 
-  if (!uri) {
-    console.error('\n❌ [RESTORE ERROR] No target MongoDB connection URI provided.');
-    console.error('Usage:');
-    console.error('  node backend/scripts/restore-mongodb-test.mjs --uri="mongodb://localhost:27017/matcha_test" --backup-dir=<path> --confirm-test-restore\n');
+  if (!confirmTest) {
+    console.error('\n⚠️ [CONFIRMATION REQUIRED] To prevent accidental overwrites,');
+    console.error('please pass the confirmation flag:');
+    console.error('  --confirm-test-restore\n');
     process.exit(1);
   }
 
@@ -60,30 +79,6 @@ async function runRestore() {
     console.error('\n❌ [RESTORE ERROR] Missing --backup-dir parameter.');
     console.error('Specify the folder containing manifest.json:');
     console.error('  --backup-dir=backend/backups/backup_matcha_...\n');
-    process.exit(1);
-  }
-
-  // 1. Production Detection & Safety Guards
-  const lowerUri = uri.toLowerCase();
-  const isProdName = /prod|production|live/.test(lowerUri);
-
-  if (isProdName && !forceProd) {
-    console.error('\n🚨 ======================================================');
-    console.error('🚨 SAFETY GUARD TRIGGERED: ATTEMPTED RESTORE TO PRODUCTION');
-    console.error('🚨 ======================================================');
-    console.error(`Target URI appears to be a PRODUCTION database: ${redactUri(uri)}`);
-    console.error('This script is strictly intended for local and test databases.');
-    console.error('If you intentionally intended to overwrite a production database,');
-    console.error('you must explicitly supply:');
-    console.error('  --force-allow-production-restore-DANGEROUS');
-    console.error('Restoration aborted with ZERO modifications made.\n');
-    process.exit(1);
-  }
-
-  if (!confirmTest && !forceProd) {
-    console.error('\n⚠️ [CONFIRMATION REQUIRED] To prevent accidental overwrites,');
-    console.error('please pass the confirmation flag:');
-    console.error('  --confirm-test-restore\n');
     process.exit(1);
   }
 
@@ -121,6 +116,19 @@ async function runRestore() {
   try {
     await mongoose.connect(uri, { serverSelectionTimeoutMS: 8000 });
     const db = mongoose.connection.db;
+
+    // Secondary post-connection safety check
+    const activeDbCheck = isDatabaseNameSafe(db.databaseName);
+    if (!activeDbCheck.safe) {
+      await mongoose.disconnect();
+      console.error('\n🚨 ======================================================');
+      console.error('🚨 POST-CONNECTION SAFETY GUARD FAILED');
+      console.error('🚨 ======================================================');
+      console.error(`Connected database "${db.databaseName}" is NOT permitted for restore: ${activeDbCheck.reason}`);
+      console.error('Connection terminated immediately. ZERO collections or records were modified.\n');
+      process.exit(1);
+    }
+
     console.log(`🍃 Connected to target database: "${db.databaseName}"\n`);
 
     const report = [];
