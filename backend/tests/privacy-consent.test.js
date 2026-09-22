@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import userRoutes from '../routes/userRoutes.js';
 import { User } from '../services/userStore.js';
 import DeletionRequest from '../models/DeletionRequest.js';
+import AuditLog from '../models/AuditLog.js';
 import { getJwtSecret } from '../middleware/auth.js';
 
 let server, base;
@@ -105,6 +106,8 @@ test('member can submit a data deletion request and duplicate pending request is
     existing = { _id: 'del_1', ...doc, createdAt: new Date() };
     return existing;
   });
+
+  t.mock.method(AuditLog, 'create', async () => ({}));
 
   // Submit deletion request
   const submitRes = await fetch(`${base}/users/me/deletion-request`, {
