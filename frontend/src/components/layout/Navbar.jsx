@@ -209,6 +209,27 @@ export default function Navbar({
               </div>
             )}
 
+            {/* At tablet widths the primary navigation is still visible, but
+                the full desktop account control is intentionally hidden to
+                keep the bar from wrapping. Before this compact control was
+                added, the only sign-in door disappeared completely between
+                the md and lg breakpoints. */}
+            <div className="hidden md:flex lg:hidden items-center">
+              <button
+                type="button"
+                onClick={() => handleLinkClick(currentUser ? (currentUser.role === 'Admin' ? '/admin' : '/account') : '/login')}
+                className="p-2.5 rounded-xl bg-white hover:bg-matcha-bg text-matcha-text border border-matcha-border transition-all cursor-pointer shadow-xs outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]"
+                aria-label={currentUser
+                  ? (currentUser.role === 'Admin' ? t('nav.adminTitle') : t('nav.myAccountTitle'))
+                  : t('nav.access')}
+                title={currentUser
+                  ? (currentUser.role === 'Admin' ? t('nav.adminTitle') : t('nav.myAccountTitle'))
+                  : t('nav.access')}
+              >
+                <User size={17} aria-hidden="true" />
+              </button>
+            </div>
+
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

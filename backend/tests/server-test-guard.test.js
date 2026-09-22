@@ -14,7 +14,9 @@ function runServerWithEnv(extraEnv = {}, waitMs = 3000) {
       cwd: path.resolve(__dirname, '..'),
       env: {
         ...process.env,
-        PORT: '5099',
+        // This suite checks the startup guard only. Asking Node for an
+        // ephemeral port keeps concurrent test files from racing for 5099.
+        PORT: '0',
         ...extraEnv
       }
     });
