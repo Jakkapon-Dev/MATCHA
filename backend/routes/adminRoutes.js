@@ -21,7 +21,7 @@ function escapeRegex(str) {
 router.get('/products', authRequired, adminOnly, databaseRequired, async (req, res) => {
   try {
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
-    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 25));
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.pageSize || req.query.limit, 10) || 25));
     const skip = (page - 1) * limit;
 
     const filter = {};
@@ -79,6 +79,7 @@ router.get('/products', authRequired, adminOnly, databaseRequired, async (req, r
         total,
         page,
         limit,
+        pageSize: limit,
         totalPages
       }
     });
@@ -91,7 +92,7 @@ router.get('/products', authRequired, adminOnly, databaseRequired, async (req, r
 router.get('/orders', authRequired, adminOnly, databaseRequired, async (req, res) => {
   try {
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
-    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 25));
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.pageSize || req.query.limit, 10) || 25));
     const skip = (page - 1) * limit;
 
     const filter = {};
@@ -101,6 +102,7 @@ router.get('/orders', authRequired, adminOnly, databaseRequired, async (req, res
       const regex = new RegExp(term, 'i');
       filter.$or = [
         { orderNumber: regex },
+        { orderId: regex },
         { 'customer.firstName': regex },
         { 'customer.lastName': regex },
         { 'customer.email': regex }
@@ -138,6 +140,7 @@ router.get('/orders', authRequired, adminOnly, databaseRequired, async (req, res
         total,
         page,
         limit,
+        pageSize: limit,
         totalPages
       }
     });
