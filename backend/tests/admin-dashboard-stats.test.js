@@ -77,7 +77,7 @@ test('GET /admin/stats reports whole-collection figures, not a page of rows', as
   t.mock.method(Order, 'aggregate', async (pipeline) => (
     pipeline.some(stage => stage.$sort)
       ? [{ _id: '2026-08', orders: 4, revenue: 800 }, { _id: '2026-09', orders: 9, revenue: 1900 }]
-      : [{ _id: null, totalOrders: 13, paidRevenue: 2700 }]
+      : [{ _id: null, totalOrders: 13, paidOrders: 9, paidRevenue: 2700 }]
   ));
   t.mock.method(User, 'aggregate', async () => [{ _id: null, totalMembers: 41, vipMembers: 6 }]);
 
@@ -92,6 +92,7 @@ test('GET /admin/stats reports whole-collection figures, not a page of rows', as
   assert.equal(data.lowStockCount, 7);
   assert.deepEqual(data.categories, { Tops: 30, Outerwear: 45 });
   assert.equal(data.totalOrders, 13);
+  assert.equal(data.paidOrders, 9);
   assert.equal(data.paidRevenue, 2700);
   assert.deepEqual(data.monthly, [
     { month: '2026-08', orders: 4, revenue: 800 },
@@ -199,7 +200,7 @@ test('collectDashboardStats shapes the five aggregations into the dashboard payl
       aggregate: async (pipeline) => (
         pipeline === MONTHLY_PIPELINE
           ? [{ _id: '2026-08', orders: 4, revenue: 800 }, { _id: null, orders: 1, revenue: 50 }]
-          : [{ _id: null, totalOrders: 13, paidRevenue: 2700 }]
+          : [{ _id: null, totalOrders: 13, paidOrders: 9, paidRevenue: 2700 }]
       )
     },
     User: { aggregate: async () => [{ _id: null, totalMembers: 41, vipMembers: 6 }] }
@@ -208,6 +209,7 @@ test('collectDashboardStats shapes the five aggregations into the dashboard payl
   assert.equal(data.totalProducts, 75);
   assert.equal(data.totalStockUnits, 3200);
   assert.equal(data.lowStockCount, 7);
+  assert.equal(data.paidOrders, 9);
   assert.equal(data.paidRevenue, 2700);
   assert.equal(data.vipMembers, 6);
   // A product with no category, and an order with no createdAt, are dropped
@@ -225,6 +227,7 @@ test('an empty shop reports zeroes, never an invented figure', async () => {
     lowStockCount: 0,
     categories: {},
     totalOrders: 0,
+    paidOrders: 0,
     paidRevenue: 0,
     monthly: [],
     totalMembers: 0,

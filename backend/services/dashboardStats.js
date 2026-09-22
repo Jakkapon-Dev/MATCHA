@@ -45,6 +45,19 @@ export const ORDER_TOTALS_PIPELINE = [
     $group: {
       _id: null,
       totalOrders: { $sum: 1 },
+      // The paid, non-cancelled orders — the ones paidRevenue is summed from.
+      // The average order value has to divide by these, not by every order:
+      // dividing paid revenue by a count that includes unpaid orders invents a
+      // figure that is neither the average paid order nor anything else.
+      paidOrders: {
+        $sum: {
+          $cond: [
+            { $and: [{ $ne: ['$status', 'cancelled'] }, { $eq: ['$paymentStatus', 'paid'] }] },
+            1,
+            0
+          ]
+        }
+      },
       paidRevenue: {
         $sum: {
           $cond: [
@@ -106,7 +119,7 @@ export async function collectDashboardStats({ Product, Order, User }) {
   ]);
 
   const products = productAgg?.[0] || { totalProducts: 0, totalStockUnits: 0, lowStockCount: 0 };
-  const orders = orderAgg?.[0] || { totalOrders: 0, paidRevenue: 0 };
+  const orders = orderAgg?.[0] || { totalOrders: 0, paidOrders: 0, paidRevenue: 0 };
   const members = memberAgg?.[0] || { totalMembers: 0, vipMembers: 0 };
 
   const categories = {};
@@ -120,6 +133,7 @@ export async function collectDashboardStats({ Product, Order, User }) {
     lowStockCount: products.lowStockCount || 0,
     categories,
     totalOrders: orders.totalOrders || 0,
+    paidOrders: orders.paidOrders || 0,
     paidRevenue: orders.paidRevenue || 0,
     monthly: (monthlyAgg || [])
       .filter(row => row._id)

@@ -11,7 +11,11 @@ import AdminDataState from './AdminDataState';
    the aggregate is in, and an error if it never arrives. The alternative —
    falling back to per-page arithmetic — is a KPI that is quietly wrong, and
    nothing on this screen is worth more than being right. */
-export default function DashboardTab({ status, errors, totalRevenue, orders, totalOrdersCount, totalStockUnits, totalProductsCount, vipMembersCount, lowStockCount, monthlyData, categoryDistribution, setActiveTab }) {
+export default function DashboardTab({ status, errors, totalRevenue, orders, totalOrdersCount, paidOrdersCount = 0, totalStockUnits, totalProductsCount, vipMembersCount, lowStockCount, monthlyData, categoryDistribution, setActiveTab }) {
+  // Average paid order value: paid revenue over the orders that were actually
+  // paid. Dividing by every order — including those still awaiting payment —
+  // reported a smaller, meaningless figure.
+  const avgPaidOrderValue = paidOrdersCount > 0 ? totalRevenue / paidOrdersCount : 0;
   return (<AdminDataState resources={["stats","orders"]} status={status} errors={errors}>
             <div className="space-y-8 animate-fade-in">
               
@@ -50,7 +54,7 @@ export default function DashboardTab({ status, errors, totalRevenue, orders, tot
                       {totalOrdersCount} <span className="text-xs font-normal text-matcha-muted">orders</span>
                     </div>
                     <div className="text-[11px] font-mono text-matcha-muted mt-1">
-                      Avg. Value: ${(totalRevenue / (totalOrdersCount || 1)).toFixed(2)}
+                      Avg. Paid Order: ${avgPaidOrderValue.toFixed(2)}
                     </div>
                   </div>
                 </div>
