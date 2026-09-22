@@ -50,13 +50,20 @@ before(async () => {
 
 after(() => new Promise(resolve => server.close(resolve)));
 
-function mockDbConnected(t) {
+function mockDbConnected(t, role = 'Admin') {
   const state = mongoose.connection.readyState;
+  const db = mongoose.connection.db;
   mongoose.connection.readyState = 1;
-  t.after(() => { mongoose.connection.readyState = state; });
-  t.mock.method(User, 'findById', id => ({
-    lean: async () => ({ _id: id, role: 'Admin', email: 'admin@matcha.local' })
-  }));
+  mongoose.connection.db = db || {};
+  t.after(() => {
+    mongoose.connection.readyState = state;
+    mongoose.connection.db = db;
+  });
+  t.mock.method(User, 'findById', id => {
+    return ({
+      lean: async () => ({ _id: id, role, email: 'admin@matcha.local' })
+    });
+  });
 }
 
 test('GET /admin/stats reports whole-collection figures, not a page of rows', async (t) => {
@@ -109,7 +116,8 @@ test('GET /admin/stats answers zeroes rather than crashing on an empty shop', as
   assert.deepEqual(data.categories, {});
 });
 
-test('GET /admin/stats is closed to callers who are not administrators', async () => {
+test('GET /admin/stats is closed to callers who are not administrators', async (t) => {
+  mockDbConnected(t, 'Member');
   const anonymous = await fetch(`${base}/api/admin/stats`);
   assert.ok([401, 403].includes(anonymous.status), `anonymous got ${anonymous.status}`);
 

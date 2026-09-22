@@ -1,15 +1,71 @@
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';
+import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import notificationRoutes, { memoryNotifications } from '../routes/notificationRoutes.js';
+import { User } from '../services/userStore.js';
+import Notification from '../models/Notification.js';
+import NotificationOutbox from '../models/NotificationOutbox.js';
+import Order from '../models/Order.js';
 import { getJwtSecret } from '../middleware/auth.js';
 
-let server, base;
+let server, base, originalReadyState, originalDb, originalFindById;
+const originalNotificationMethods = {};
+const originalOutboxFind = NotificationOutbox.find;
+const originalOrderFind = Order.find;
 const token = role => jwt.sign({ id: `test-${role}`, role, email: `${role}@example.test` }, getJwtSecret());
 const headers = role => ({ Authorization: `Bearer ${token(role)}`, 'Content-Type': 'application/json' });
 
 before(async () => {
+  originalReadyState = mongoose.connection.readyState;
+  originalDb = mongoose.connection.db;
+  originalFindById = User.findById;
+  mongoose.connection.readyState = 1;
+  mongoose.connection.db = originalDb || {};
+  User.findById = id => ({
+    lean: async () => ({
+      _id: id,
+      role: id === 'test-Admin' ? 'Admin' : 'Member',
+      email: `${id}@example.test`
+    })
+  });
+  for (const method of ['find', 'countDocuments', 'findByIdAndUpdate', 'updateMany']) {
+    originalNotificationMethods[method] = Notification[method];
+  }
+
+  const notificationQuery = () => ({
+    sort: () => notificationQuery(),
+    limit: () => notificationQuery(),
+    select: () => notificationQuery(),
+    lean: async () => [...memoryNotifications]
+  });
+  Notification.find = () => notificationQuery();
+  Notification.countDocuments = async filter => memoryNotifications.filter(item => (
+    filter?.read === false ? !item.read : true
+  )).length;
+  Notification.findByIdAndUpdate = id => ({
+    lean: async () => {
+      const item = memoryNotifications.find(entry => String(entry._id || entry.id) === String(id));
+      if (item) item.read = true;
+      return item || null;
+    }
+  });
+  Notification.updateMany = async () => {
+    memoryNotifications.forEach(item => { item.read = true; });
+    return { modifiedCount: memoryNotifications.length };
+  };
+
+  // The routes now read the durable Mongo model. Keep the outbox worker quiet
+  // while this route-level test supplies an in-memory model fixture.
+  const emptyQuery = () => ({
+    sort: () => emptyQuery(),
+    limit: () => emptyQuery(),
+    select: () => emptyQuery(),
+    lean: async () => []
+  });
+  NotificationOutbox.find = () => emptyQuery();
+  Order.find = () => emptyQuery();
   const app = express();
   app.use(express.json());
   app.use('/api/admin/notifications', notificationRoutes);
@@ -17,7 +73,17 @@ before(async () => {
   base = `http://127.0.0.1:${server.address().port}`;
 });
 
-after(() => new Promise(resolve => server.close(resolve)));
+after(async () => {
+  await new Promise(resolve => server.close(resolve));
+  mongoose.connection.readyState = originalReadyState;
+  mongoose.connection.db = originalDb;
+  User.findById = originalFindById;
+  for (const [method, original] of Object.entries(originalNotificationMethods)) {
+    Notification[method] = original;
+  }
+  NotificationOutbox.find = originalOutboxFind;
+  Order.find = originalOrderFind;
+});
 
 test('notifications require Admin authorization (401/403 for guest and member)', async () => {
   // Guest
