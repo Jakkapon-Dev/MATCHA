@@ -136,7 +136,10 @@ test('empty admin datasets stay empty, and database errors are not hidden', asyn
 });
 
 test('admin normalization never invents stock, payment, identity or revenue', () => {
-  assert.equal(normalizeProduct({ id: 'p', quantity: 0, stock: 20 }).stock, 0);
+  /* `quantity` is legacy seed data; current inventory writes `stock`. The
+     console must show the persisted value rather than claiming an item with
+     20 units has no stock because an old field still says zero. */
+  assert.equal(normalizeProduct({ id: 'p', quantity: 0, stock: 20 }).stock, 20);
   assert.equal(normalizeMember({ _id: 'u_real' }).id, 'u_real');
   assert.equal(normalizeMember({ _id: 'u_real' }).tier, 'Regular Member');
   assert.equal(normalizeOrder({}).paymentStatus, 'Unknown');

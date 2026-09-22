@@ -62,7 +62,10 @@ before(async () => {
     sort: () => emptyQuery(),
     limit: () => emptyQuery(),
     select: () => emptyQuery(),
-    lean: async () => []
+    lean: async () => [],
+    // Mongoose queries are awaitable. The outbox replay awaits the result
+    // without calling lean(), so the fixture must behave the same way.
+    then: (resolve, reject) => Promise.resolve([]).then(resolve, reject)
   });
   NotificationOutbox.find = () => emptyQuery();
   Order.find = () => emptyQuery();

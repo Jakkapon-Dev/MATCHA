@@ -14,6 +14,23 @@ export const CATEGORY_NAMES = {
 
 const categoryOrder = ['Tops', 'Bottoms', 'Outerwear', 'Shoes', 'Accessories'];
 
+/* `quantity` exists on old seed rows, but current inventory writes maintain
+   `stock` and (when applicable) `sizeStock`. Always present one canonical
+   number to clients so a stale legacy field cannot make the catalogue,
+   lookbook, or admin UI contradict the stock that checkout reserves. */
+export function availableStock(product) {
+  const buckets = Array.isArray(product?.sizeStock) ? product.sizeStock : [];
+  if (buckets.length) {
+    return buckets.reduce((total, row) => total + (Number(row?.stock) || 0), 0);
+  }
+  return Number(product?.stock ?? product?.quantity ?? 0) || 0;
+}
+
+export function presentProduct(product) {
+  const stock = availableStock(product);
+  return { ...product, stock, quantity: stock, inStock: stock > 0 };
+}
+
 /**
  * GET /api/categories
  * Returns categories with product counts (Live MongoDB or Static Fallback)
@@ -182,7 +199,7 @@ export async function getProducts(req, res) {
 
       return res.json({
         success: true,
-        data: paginatedProducts,
+        data: paginatedProducts.map(presentProduct),
         pagination: {
           total: totalItems,
           page: pageNum,
@@ -274,7 +291,7 @@ export async function getProducts(req, res) {
 
     res.json({
       success: true,
-      data: paginatedProducts,
+      data: paginatedProducts.map(presentProduct),
       pagination: {
         total: totalItems,
         page: pageNum,
@@ -313,13 +330,13 @@ export async function getProductById(req, res) {
       }).lean();
 
       if (doc) {
-        return res.json({ success: true, data: doc });
+        return res.json({ success: true, data: presentProduct(doc) });
       }
     }
 
     const localItem = productsData.find(p => p.id === id || p.sku === id);
     if (localItem) {
-      return res.json({ success: true, data: localItem });
+      return res.json({ success: true, data: presentProduct(localItem) });
     }
 
     res.status(404).json({ success: false, message: `Product ${id} not found` });

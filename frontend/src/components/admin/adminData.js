@@ -14,13 +14,20 @@ const PAYMENT_LABELS = {
 export const paymentLabel = value => PAYMENT_LABELS[value] || titleCase(value);
 
 export function normalizeProduct(product) {
-  const stock = product.quantity ?? product.stock ?? 0;
   /* Kept as its own field so the inventory table can offer the sizes that
      actually exist. A product with buckets can only be restocked per size —
      `stock` is the sum of them, not somewhere you can put units. */
   const sizeStock = Array.isArray(product.sizeStock)
     ? product.sizeStock.map(row => ({ size: row.size, stock: Number(row.stock) || 0 }))
     : [];
+  /* `quantity` is legacy seed data. A restock changes `stock` (and each size
+     bucket), so preferring quantity made the admin table appear not to update
+     even after the server had saved the mutation. Size buckets are the source
+     of truth once present; otherwise use the current stock field first. */
+  const bucketTotal = sizeStock.reduce((sum, row) => sum + row.stock, 0);
+  const stock = sizeStock.length > 0
+    ? bucketTotal
+    : Number(product.stock ?? product.quantity ?? 0) || 0;
   /* A garment sold without sizes keeps everything in the single ONE bucket.
      There is nothing to choose there, so the row does not ask. */
   const needsSizeChoice = sizeStock.length > 1 || (sizeStock.length === 1 && sizeStock[0].size !== 'ONE');
