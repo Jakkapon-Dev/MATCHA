@@ -11,8 +11,8 @@ import { getJwtSecret, authRequired, adminOnly } from '../middleware/auth.js';
 import { isDemo } from '../config/storeMode.js';
 import { sendOrderConfirmation } from '../services/email.js';
 import { normaliseCode, discountFor, isFreeShippingCoupon } from '../config/coupons.js';
-import Notification from '../models/Notification.js';
 import { memoryNotifications } from './notificationRoutes.js';
+import { dispatchOrderNotification } from '../services/notificationService.js';
 
 const router = express.Router();
 
@@ -425,17 +425,24 @@ router.post('/', orderLimiter, async (req, res) => {
         console.warn('Order saved but the server cart was not cleared:', cartErr.message);
       }
 
+      /* The admin's notification is recorded after the order is safe, and its
+         failure is never the customer's problem. dispatchOrderNotification
+         already parks the payload for retry when the write cannot happen, so
+         this catch only covers the case where even queueing threw — the order
+         still stands, and the reconciliation sweep will find it.
+
+         Nothing in this block writes an Order, so no retry of it can produce a
+         second one. */
       try {
-        await Notification.create({
-          type: 'new_order',
+        await dispatchOrderNotification({
           orderId: savedOrder._id,
           orderNumber: savedOrder.orderNumber,
           customerName: `${savedOrder.customer?.firstName || 'Guest'} ${savedOrder.customer?.lastName || ''}`.trim(),
-          total: savedOrder.total,
-          read: false
+          total: savedOrder.total
         });
       } catch (notifErr) {
-        console.warn('[Notification] Order saved but notification was not recorded:', notifErr?.message);
+        // Order key and error text only — the customer does not go in the log.
+        console.warn(`[notification] dispatch failed for order ${savedOrder._id}: ${notifErr?.message}`);
       }
     } else {
       const year = new Date().getFullYear();
