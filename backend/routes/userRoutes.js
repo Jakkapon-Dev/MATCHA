@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { User } from '../services/userStore.js';
 import Order from '../models/Order.js';
 import DeletionRequest from '../models/DeletionRequest.js';
+import AuditLog from '../models/AuditLog.js';
 import { authRequired, adminOnly } from '../middleware/auth.js';
 import { MAX_BYTES, storeImage, deleteImage } from '../services/mediaStorage.js';
 
@@ -295,16 +296,45 @@ router.post('/me/deletion-request', checkDbReady, async (req, res) => {
       });
     }
 
-    const created = await DeletionRequest.create({
-      userId,
-      email,
-      reason,
-      status: 'pending'
-    });
+    let created;
+    try {
+      created = await DeletionRequest.create({
+        userId,
+        email,
+        reason,
+        status: 'pending'
+      });
+    } catch (err) {
+      if (err && (err.code === 11000 || String(err).includes('E11000'))) {
+        return res.status(409).json({
+          success: false,
+          message: 'A data deletion request is already pending review for this account.'
+        });
+      }
+      throw err;
+    }
+
+    try {
+      if (typeof AuditLog.create === 'function') {
+        await AuditLog.create({
+          action: 'DELETION_REQUEST_CREATED',
+          performedBy: email || userId,
+          performedByRole: req.user?.role || 'Member',
+          targetUserId: userId,
+          targetEmail: email,
+          targetEntity: 'DeletionRequest',
+          targetEntityId: String(created._id),
+          details: { reason },
+          ip: req.ip
+        });
+      }
+    } catch {
+      // Non-blocking log failure
+    }
 
     res.status(201).json({
       success: true,
-      message: 'Deletion request submitted. Your personal identification data will be reviewed for removal; past orders will have customer identifiers anonymized to satisfy accounting compliance.',
+      message: 'Deletion request submitted successfully and queued for admin review.',
       data: created
     });
   } catch {
