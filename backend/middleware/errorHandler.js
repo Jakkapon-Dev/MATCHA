@@ -3,6 +3,18 @@ import multer from 'multer';
 
 export function errorHandler(error, req, res, next) {
   if (res.headersSent) return next(error);
+
+  const isClientError =
+    error instanceof z.ZodError ||
+    error.code === 'LIMIT_FILE_SIZE' ||
+    error instanceof multer.MulterError ||
+    error.code === 11000 ||
+    (error.status && error.status < 500);
+
+  if (!isClientError && process.env.NODE_ENV !== 'test') {
+    console.error('🚨 [ErrorHandler]', error?.message || error);
+  }
+
   const status =
     error instanceof z.ZodError
       ? 400

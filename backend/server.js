@@ -1,4 +1,14 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Ensure .env is resolved regardless of working directory
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+dotenv.config();
+
 import dns from 'node:dns';
 
 // Windows / Node.js c-ares DNS SRV lookup fix for MongoDB Atlas
@@ -9,8 +19,13 @@ import cors from 'cors';
 import helmet from 'helmet';
 import compression from 'compression';
 import mongoose from 'mongoose';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+
+import {
+  parseMongoDatabaseName,
+  parseMongoHostname,
+  isDatabaseNameSafe,
+  isHostnameSafe
+} from './services/mongoSafetyGuard.js';
 
 import { isDemo } from './config/storeMode.js';
 import { init as initUserStore } from './services/userStore.js';
@@ -275,11 +290,44 @@ app.use(errorHandler);
 
 const isMain = process.argv[1] && path.resolve(fileURLToPath(import.meta.url)).toLowerCase() === path.resolve(process.argv[1]).toLowerCase();
 
-// MongoDB Non-blocking Connection
-if (isMain && process.env.MONGODB_URI) {
-  mongoose.connect(process.env.MONGODB_URI)
+// MongoDB Connection with strict Test Environment Guard
+let mongoUriToConnect = null;
+const isTestMode = process.env.NODE_ENV === 'test' || process.env.IS_E2E === 'true';
+
+if (isTestMode) {
+  const testUri = process.env.TEST_MONGODB_URI;
+  if (!testUri || !testUri.trim()) {
+    const errMsg = '❌ [MongoDB] TEST_MONGODB_URI is required when running in test mode (NODE_ENV=test or IS_E2E=true). Fallback to MONGODB_URI is strictly blocked to protect production/development data.';
+    console.error(errMsg);
+    throw new Error('TEST_MONGODB_URI must be provided when running in test mode');
+  }
+
+  const dbName = parseMongoDatabaseName(testUri);
+  const hostname = parseMongoHostname(testUri);
+  const dbCheck = isDatabaseNameSafe(dbName);
+  const hostCheck = isHostnameSafe(hostname);
+
+  if (!hostCheck.safe) {
+    const errMsg = `❌ [MongoDB] Target hostname "${hostname}" is unsafe: ${hostCheck.reason}`;
+    console.error(errMsg);
+    throw new Error(hostCheck.reason);
+  }
+  if (!dbCheck.safe) {
+    const errMsg = `❌ [MongoDB] Target database "${dbName}" is unsafe: ${dbCheck.reason}`;
+    console.error(errMsg);
+    throw new Error(dbCheck.reason);
+  }
+
+  mongoUriToConnect = testUri.trim();
+  console.log(`🧪 [MongoDB] Operating in TEST mode. Target Database: "${dbName}"`);
+} else {
+  mongoUriToConnect = process.env.MONGODB_URI;
+}
+
+if (isMain && mongoUriToConnect) {
+  mongoose.connect(mongoUriToConnect)
     .then(async () => {
-      console.log('🍃 [MongoDB] Connected successfully!');
+      console.log(`🍃 [MongoDB] Connected successfully to database: "${mongoose.connection.name}"`);
       /* Seeding moved here from above the route registration. Accounts live in
          Mongo now, so seeding before the connection opened would have had
          nothing to write to. */

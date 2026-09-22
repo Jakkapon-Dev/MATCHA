@@ -19,6 +19,8 @@ export default defineConfig({
     ['list'],
     ['html', { open: 'never', outputFolder: 'playwright-report' }]
   ],
+  globalSetup: './e2e/fixtures/global-setup.js',
+  globalTeardown: './e2e/fixtures/global-teardown.js',
   use: {
     baseURL: 'http://localhost:5173',
     trace: 'retain-on-failure',
@@ -31,10 +33,23 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
   ],
-  webServer: {
-    command: 'npm run dev --prefix frontend',
-    url: 'http://localhost:5173',
-    reuseExistingServer: true,
-    timeout: 60000,
-  },
+  webServer: [
+    {
+      command: 'npm run start --prefix backend',
+      url: 'http://localhost:5001/api/health',
+      reuseExistingServer: !process.env.CI,
+      timeout: 60000,
+      env: {
+        NODE_ENV: 'test',
+        IS_E2E: 'true',
+        PORT: '5001',
+      },
+    },
+    {
+      command: 'npm run dev --prefix frontend',
+      url: 'http://localhost:5173',
+      reuseExistingServer: !process.env.CI,
+      timeout: 60000,
+    },
+  ],
 });
