@@ -30,6 +30,10 @@ const auth = { Authorization: `Bearer ${token}` };
 
 before(async () => {
   mongoose.connection.readyState = 1;
+  // requireAuth only resolves the account when the store is genuinely reachable,
+  // and a connected Mongoose always carries a db handle. The faked connection
+  // needs one too, or every request here answers 503 before the route is hit.
+  mongoose.connection.db = {};
   const app = express();
   app.use(express.json());
   app.use('/users', userRoutes);
@@ -41,6 +45,7 @@ before(async () => {
 
 after(async () => {
   mongoose.connection.readyState = 0;
+  mongoose.connection.db = undefined;
   await new Promise(resolve => server.close(resolve));
   await fs.promises.rm(mediaRoot, { recursive: true, force: true });
 });

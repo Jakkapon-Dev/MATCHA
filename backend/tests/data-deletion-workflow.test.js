@@ -35,14 +35,37 @@ after(() => new Promise(resolve => server.close(resolve)));
 
 function mockDbConnected(t) {
   const state = mongoose.connection.readyState;
+  const db = mongoose.connection.db;
   mongoose.connection.readyState = 1;
+  // `requireAuth` deliberately resolves the account from the user store.  A
+  // connected Mongoose instance always has a db object; this lightweight
+  // substitute lets the mocked User.findById below exercise that real path.
+  mongoose.connection.db = db || {};
   t.after(() => {
     mongoose.connection.readyState = state;
+    mongoose.connection.db = db;
   });
+}
+
+function mockAuthUsers(t, users) {
+  t.mock.method(User, 'findById', (id) => mockUserQuery(users[String(id)] || null));
+}
+
+// Mongoose queries work both as promises (`await User.findById`) and through
+// `.lean()`.  The account lookup uses the latter, while anonymization uses the
+// former so it can save the document.  Keep both paths faithful in this test.
+function mockUserQuery(value) {
+  return {
+    lean: async () => value,
+    then: (resolve, reject) => Promise.resolve(value).then(resolve, reject)
+  };
 }
 
 test('Task 4 — Authorization: Only Admin can access Deletion Request management & Audit Logs', async (t) => {
   mockDbConnected(t);
+  mockAuthUsers(t, {
+    u_member_1: { _id: 'u_member_1', role: 'Member', email: 'user@example.test' }
+  });
 
   // 1. Unauthenticated requests return 401
   const unauthList = await fetch(`${base}/api/admin/deletion-requests`);
@@ -92,6 +115,9 @@ test('Task 4 — Authorization: Only Admin can access Deletion Request managemen
 test('Task 4 — Duplicate Request Prevention & E11000 handling', async (t) => {
   mockDbConnected(t);
   const targetUserId = 'u_dup_test_1';
+  mockAuthUsers(t, {
+    [targetUserId]: { _id: targetUserId, role: 'Member', email: 'dup@test.local' }
+  });
   let storedRequest = null;
 
   t.mock.method(DeletionRequest, 'findOne', filter => {
@@ -151,6 +177,9 @@ test('Task 4 — Duplicate Request Prevention & E11000 handling', async (t) => {
 
 test('Task 4 — Admin Deletion Request Lifecycle: Review, Approve, Reject State Transitions', async (t) => {
   mockDbConnected(t);
+  mockAuthUsers(t, {
+    u_admin_1: { _id: 'u_admin_1', role: 'Admin', email: 'admin@matcha.local' }
+  });
 
   const requestRecord = {
     _id: 'del_flow_1',
@@ -271,10 +300,15 @@ test('Task 4 — Complete & Anonymization Engine: Orders Sanitized, User Redacte
     return null;
   });
 
-  t.mock.method(User, 'findById', async (id) => {
-    if (id === 'u_erase_me') return mockTargetUser;
-    return null;
-  });
+  t.mock.method(User, 'findById', (id) => mockUserQuery(
+    (() => {
+      if (id === 'u_erase_me') return mockTargetUser;
+      if (id === 'u_admin_super') {
+        return { _id: 'u_admin_super', role: 'Admin', email: 'superadmin@matcha.local' };
+      }
+      return null;
+    })()
+  ));
 
   t.mock.method(Order, 'find', async () => mockOrders);
 
@@ -342,6 +376,9 @@ test('Task 4 — Complete & Anonymization Engine: Orders Sanitized, User Redacte
 
 test('Task 4 — Admin Server-Side Search, Filter, and Pagination for Deletion Requests', async (t) => {
   mockDbConnected(t);
+  mockAuthUsers(t, {
+    u_admin: { _id: 'u_admin', role: 'Admin', email: 'user@example.test' }
+  });
 
   const sampleRequests = [
     { _id: 'd1', userId: 'u1', email: 'alice@test.local', status: 'pending', createdAt: new Date('2026-09-01') },

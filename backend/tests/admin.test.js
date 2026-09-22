@@ -30,12 +30,18 @@ after(() => new Promise(resolve => server.close(resolve)));
 
 function connected(t) {
   const state = mongoose.connection.readyState;
+  const db = mongoose.connection.db;
   mongoose.connection.readyState = 1;
-  t.after(() => { mongoose.connection.readyState = state; });
+  mongoose.connection.db = db || {};
+  t.after(() => {
+    mongoose.connection.readyState = state;
+    mongoose.connection.db = db;
+  });
   t.mock.method(User, 'findById', id => ({ lean: async () => ({ _id: id, role: id === 'test-Admin' ? 'Admin' : 'Member' }) }));
 }
 
-test('member directory, admin datasets and order writes require an administrator', async () => {
+test('member directory, admin datasets and order writes require an administrator', async (t) => {
+  connected(t);
   for (const [path, method, body] of [['/users', 'GET'], ['/users/u_1', 'PUT', { tier: 'VIP Connoisseur' }], ['/admin/products', 'GET'], ['/admin/orders', 'GET'], ['/orders/o_1', 'PATCH', { status: 'shipped' }]]) {
     assert.equal((await fetch(base + path, { method, headers: { 'Content-Type': 'application/json' }, body: body && JSON.stringify(body) })).status, 401);
     assert.equal((await fetch(base + path, { method, headers: headers('Member'), body: body && JSON.stringify(body) })).status, 403);

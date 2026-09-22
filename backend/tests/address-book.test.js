@@ -75,9 +75,12 @@ after(() => new Promise(resolve => server.close(resolve)));
 
 function setupDbMock(t) {
   const state = mongoose.connection.readyState;
+  const db = mongoose.connection.db;
   mongoose.connection.readyState = 1;
+  mongoose.connection.db = db || {};
   t.after(() => {
     mongoose.connection.readyState = state;
+    mongoose.connection.db = db;
     testUsers.clear();
   });
 

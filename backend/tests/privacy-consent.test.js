@@ -24,10 +24,23 @@ before(async () => {
 
 after(() => new Promise(resolve => server.close(resolve)));
 
-function connected(t) {
+/* requireAuth resolves the account behind the token rather than trusting its
+   claims, and it refuses to guess while the store is unreachable. A connected
+   Mongoose always carries a db handle, so the faked connection needs one too,
+   and the lookup needs an answer — otherwise every request below stops at the
+   middleware and never reaches the route under test. */
+function connected(t, userId = 'u_consent_1', role = 'Member') {
   const state = mongoose.connection.readyState;
+  const db = mongoose.connection.db;
   mongoose.connection.readyState = 1;
-  t.after(() => { mongoose.connection.readyState = state; });
+  mongoose.connection.db = db || {};
+  t.after(() => {
+    mongoose.connection.readyState = state;
+    mongoose.connection.db = db;
+  });
+  t.mock.method(User, 'findById', () => ({
+    lean: async () => ({ _id: userId, role, email: `${userId}@example.test` })
+  }));
 }
 
 test('consent and deletion endpoints require authentication (401)', async () => {
@@ -42,7 +55,10 @@ test('member can update and fetch marketing consent', async t => {
   connected(t);
   let savedConsent = null;
 
+  // Two callers share this stub: requireAuth asks for the account itself, the
+  // route asks for the consent projection.
   t.mock.method(User, 'findById', () => ({
+    lean: async () => ({ _id: 'u_consent_1', role: 'Member', email: 'u_consent_1@example.test' }),
     select: () => ({
       lean: async () => ({
         _id: 'u_consent_1',

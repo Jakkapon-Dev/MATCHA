@@ -414,10 +414,7 @@ test('the last sign-in method cannot be removed', async (t) => {
   t.after(() => mock.restoreAll());
 
   const row = MEMBER();
-  mock.method(User, 'findById', () => ({
-    select: () => ({ lean: async () => row }),
-    lean: async () => row
-  }));
+  withDatabase(t, row);
   let wrote = false;
   mock.method(User, 'findByIdAndUpdate', () => { wrote = true; return { lean: async () => ({}) }; });
 

@@ -41,6 +41,27 @@ after(() => {
   if (server) server.close();
 });
 
+/* requireAuth resolves the account for real now — a signed token no longer
+   speaks for a user on its own, and a request that arrives while the account
+   store is unreachable is told so rather than being waved through.
+
+   These are route tests, so each one fakes a live connection and answers the
+   lookup with the account its token claims to be. That keeps the middleware
+   out of the way and leaves the test asserting its own route. The connection
+   is faked rather than opened: nothing here touches a real database. */
+function withAccount(role = 'Admin') {
+  mongoose.connection.readyState = 1;
+  mongoose.connection.db = {};
+  mock.method(User, 'findById', id => ({
+    lean: async () => ({ _id: id, role, email: `${String(role).toLowerCase()}@matcha.test` })
+  }));
+}
+
+function withoutAccount() {
+  mongoose.connection.readyState = 0;
+  mongoose.connection.db = undefined;
+}
+
 test('GET /api/categories returns formatted categories with counts', async () => {
   const res = await fetch(`${baseUrl}/categories`);
   assert.equal(res.status, 200);
@@ -90,7 +111,10 @@ test('GET /api/products/:id retrieves known product or returns 404', async () =>
   assert.equal(dataInvalid.success, false);
 });
 
-test('POST /api/products blocks unauthenticated and non-admin requests', async () => {
+test('POST /api/products blocks unauthenticated and non-admin requests', async (t) => {
+  withAccount('Member');
+  t.after(withoutAccount);
+
   // 1. Guest request (no token) -> 401
   const resGuest = await fetch(`${baseUrl}/products`, {
     method: 'POST',
@@ -148,13 +172,7 @@ test('POST /api/products reports unavailable persistence to Admin', async () => 
    so this stays offline and touches no real data. save() is stubbed to return
    what a stored document would: the route's own generated id included. */
 test('POST /api/products stores the garment for an Admin when the database is up', async () => {
-  mongoose.connection.readyState = 1;
-  /* With the connection reported as up, requireAuth stops short-circuiting and
-     looks the account up for real, which without a server means a ten-second
-     Mongoose buffer and then a 401. Returning null here is honest — this token
-     belongs to no stored account — and requireAuth falls back to the identity
-     inside the verified token, which is what the other route tests rely on. */
-  mock.method(User, 'findById', () => ({ lean: async () => null }));
+  withAccount('Admin');
   const saved = [];
   mock.method(Product.prototype, 'save', async function save() {
     saved.push(this.toObject ? this.toObject() : { ...this });
@@ -187,7 +205,7 @@ test('POST /api/products stores the garment for an Admin when the database is up
     assert.ok(saved[0].id, 'an id is generated when none is supplied');
   } finally {
     mock.restoreAll();
-    mongoose.connection.readyState = 0;
+    withoutAccount();
   }
 });
 
@@ -203,8 +221,7 @@ test('POST /api/products stores the garment for an Admin when the database is up
    Both spellings are asserted because both are in use — the console sends
    quantity, older callers send stock. */
 test('PUT /api/products/:id writes a quantity-only restock to stock', async () => {
-  mongoose.connection.readyState = 1;
-  mock.method(User, 'findById', () => ({ lean: async () => null }));
+  withAccount('Admin');
   const writes = [];
   // Not migrated to per-size stock: its `stock` is the authoritative figure,
   // so a total-only write is exactly right for it.
@@ -230,7 +247,7 @@ test('PUT /api/products/:id writes a quantity-only restock to stock', async () =
     assert.equal(writes[1].stock, 41, 'a stock update still works unchanged');
   } finally {
     mock.restoreAll();
-    mongoose.connection.readyState = 0;
+    withoutAccount();
   }
 });
 
@@ -246,8 +263,7 @@ test('PUT /api/products/:id writes a quantity-only restock to stock', async () =
    The units have to land in a named size, which is what the restock endpoint
    below is for. */
 test('PUT /api/products/:id refuses a total-only restock on a per-size product', async () => {
-  mongoose.connection.readyState = 1;
-  mock.method(User, 'findById', () => ({ lean: async () => null }));
+  withAccount('Admin');
   let wrote = false;
   mock.method(Product, 'findOne', () => ({
     lean: async () => ({ id: 'LOOK-06-VEST', sizeStock: [{ size: 'S', stock: 25 }, { size: 'M', stock: 25 }] })
@@ -267,7 +283,7 @@ test('PUT /api/products/:id refuses a total-only restock on a per-size product',
     assert.equal(wrote, false, 'nothing was written');
   } finally {
     mock.restoreAll();
-    mongoose.connection.readyState = 0;
+    withoutAccount();
   }
 });
 
@@ -278,8 +294,7 @@ test('PUT /api/products/:id refuses a total-only restock on a per-size product',
    moves by the same amount in the same operation, which is what keeps the
    derived total agreeing with the buckets it sums. */
 test('PATCH /api/products/:id/restock adds units to one size and the total together', async () => {
-  mongoose.connection.readyState = 1;
-  mock.method(User, 'findById', () => ({ lean: async () => null }));
+  withAccount('Admin');
   const calls = [];
   mock.method(Product, 'findOne', () => ({
     lean: async () => ({ id: 'LOOK-06-VEST', stock: 50, sizeStock: [{ size: 'S', stock: 25 }, { size: 'M', stock: 25 }] })
@@ -304,15 +319,14 @@ test('PATCH /api/products/:id/restock adds units to one size and the total toget
     assert.deepEqual(options.arrayFilters, [{ 'bucket.size': 'M' }]);
   } finally {
     mock.restoreAll();
-    mongoose.connection.readyState = 0;
+    withoutAccount();
   }
 });
 
 /* Without a size there is nowhere for the units to go, and guessing one would
    be inventing inventory. */
 test('PATCH /api/products/:id/restock requires a size on a per-size product', async () => {
-  mongoose.connection.readyState = 1;
-  mock.method(User, 'findById', () => ({ lean: async () => null }));
+  withAccount('Admin');
   let wrote = false;
   mock.method(Product, 'findOne', () => ({
     lean: async () => ({ id: 'LOOK-06-VEST', stock: 50, sizeStock: [{ size: 'S', stock: 25 }, { size: 'M', stock: 25 }] })
@@ -330,15 +344,14 @@ test('PATCH /api/products/:id/restock requires a size on a per-size product', as
     assert.equal(wrote, false);
   } finally {
     mock.restoreAll();
-    mongoose.connection.readyState = 0;
+    withoutAccount();
   }
 });
 
 /* A garment the migration has not reached still keeps its stock in one place,
    and must stay restockable without a size. */
 test('PATCH /api/products/:id/restock adjusts the total on a product with no size buckets', async () => {
-  mongoose.connection.readyState = 1;
-  mock.method(User, 'findById', () => ({ lean: async () => null }));
+  withAccount('Admin');
   const calls = [];
   mock.method(Product, 'findOne', () => ({ lean: async () => ({ id: 'SKU-1', stock: 50, sizeStock: [] }) }));
   mock.method(Product, 'findOneAndUpdate', async (filter, update) => {
@@ -358,7 +371,7 @@ test('PATCH /api/products/:id/restock adjusts the total on a product with no siz
     assert.equal(calls[0].update.$inc['sizeStock.$[bucket].stock'], undefined);
   } finally {
     mock.restoreAll();
-    mongoose.connection.readyState = 0;
+    withoutAccount();
   }
 });
 
@@ -369,8 +382,7 @@ test('PATCH /api/products/:id/restock adjusts the total on a product with no siz
    placed in between would make a guess from the stale total wrong, and a
    product wrongly left marked out of stock vanishes from the shop. */
 test('PATCH /api/products/:id/restock brings a sold-out size back on sale', async () => {
-  mongoose.connection.readyState = 1;
-  mock.method(User, 'findById', () => ({ lean: async () => null }));
+  withAccount('Admin');
   const corrections = [];
   mock.method(Product, 'findOne', () => ({
     lean: async () => ({ _id: 'oid-1', id: 'SKU-1', stock: 0, inStock: false, sizeStock: [] })
@@ -392,7 +404,7 @@ test('PATCH /api/products/:id/restock brings a sold-out size back on sale', asyn
     assert.equal((await res.json()).data.inStock, true, 'the caller is told the corrected value');
   } finally {
     mock.restoreAll();
-    mongoose.connection.readyState = 0;
+    withoutAccount();
   }
 });
 
@@ -401,8 +413,7 @@ test('PATCH /api/products/:id/restock brings a sold-out size back on sale', asyn
    does not demand it — but the units still have to land in the bucket, not on
    the total, or the two go out of step exactly as before. */
 test('PATCH /api/products/:id/restock targets the ONE bucket without being told to', async () => {
-  mongoose.connection.readyState = 1;
-  mock.method(User, 'findById', () => ({ lean: async () => null }));
+  withAccount('Admin');
   const calls = [];
   mock.method(Product, 'findOne', () => ({
     lean: async () => ({ _id: 'oid-look', id: 'LOOK-01-CARGO', stock: 50, sizeStock: [{ size: 'ONE', stock: 50 }] })
@@ -430,7 +441,7 @@ test('PATCH /api/products/:id/restock targets the ONE bucket without being told 
     assert.equal(body.data.sizeStock[0].stock, 62);
   } finally {
     mock.restoreAll();
-    mongoose.connection.readyState = 0;
+    withoutAccount();
   }
 });
 
@@ -440,8 +451,7 @@ test('PATCH /api/products/:id/restock targets the ONE bucket without being told 
    first: a read-then-write would let an order slip in between and take the
    bucket below zero anyway. */
 test('PATCH /api/products/:id/restock cannot drive a size below zero', async () => {
-  mongoose.connection.readyState = 1;
-  mock.method(User, 'findById', () => ({ lean: async () => null }));
+  withAccount('Admin');
   let filterUsed = null;
   mock.method(Product, 'findOne', () => ({
     lean: async () => ({ _id: 'oid-vest', id: 'LOOK-06-VEST', stock: 8, sizeStock: [{ size: 'S', stock: 3 }, { size: 'M', stock: 5 }] })
@@ -463,13 +473,12 @@ test('PATCH /api/products/:id/restock cannot drive a size below zero', async () 
     );
   } finally {
     mock.restoreAll();
-    mongoose.connection.readyState = 0;
+    withoutAccount();
   }
 });
 
 test('PATCH /api/products/:id/restock cannot drive an unsized product below zero', async () => {
-  mongoose.connection.readyState = 1;
-  mock.method(User, 'findById', () => ({ lean: async () => null }));
+  withAccount('Admin');
   let filterUsed = null;
   mock.method(Product, 'findOne', () => ({ lean: async () => ({ _id: 'oid-1', id: 'SKU-1', stock: 4, sizeStock: [] }) }));
   mock.method(Product, 'findOneAndUpdate', async (filter) => { filterUsed = filter; return null; });
@@ -484,7 +493,7 @@ test('PATCH /api/products/:id/restock cannot drive an unsized product below zero
     assert.deepEqual(filterUsed.stock, { $gte: 10 });
   } finally {
     mock.restoreAll();
-    mongoose.connection.readyState = 0;
+    withoutAccount();
   }
 });
 
@@ -499,8 +508,7 @@ test('PATCH /api/products/:id/restock cannot drive an unsized product below zero
  * shared figure, exactly as a single-document update would.
  */
 test('concurrent restocks of the same size both land', async () => {
-  mongoose.connection.readyState = 1;
-  mock.method(User, 'findById', () => ({ lean: async () => null }));
+  withAccount('Admin');
 
   let bucket = 25;
   mock.method(Product, 'findOne', () => ({
@@ -527,7 +535,7 @@ test('concurrent restocks of the same size both land', async () => {
     assert.equal(bucket, 42, '25 + 10 + 7 — neither restock was overwritten by the other');
   } finally {
     mock.restoreAll();
-    mongoose.connection.readyState = 0;
+    withoutAccount();
   }
 });
 
@@ -537,8 +545,7 @@ test('concurrent restocks of the same size both land', async () => {
    what order placement decrements, so they are what the total is rebuilt
    from. */
 test('PATCH /api/products/:id/restock rebuilds a total that drifted from its buckets', async () => {
-  mongoose.connection.readyState = 1;
-  mock.method(User, 'findById', () => ({ lean: async () => null }));
+  withAccount('Admin');
   const corrections = [];
   mock.method(Product, 'findOne', () => ({
     lean: async () => ({ _id: 'oid-shirt', id: 'LOOK-06-SHIRT', stock: 12, sizeStock: [{ size: 'M', stock: 25 }, { size: 'L', stock: 25 }] })
@@ -564,6 +571,6 @@ test('PATCH /api/products/:id/restock rebuilds a total that drifted from its buc
     assert.equal((await res.json()).data.stock, 55, 'and the caller is given the corrected product');
   } finally {
     mock.restoreAll();
-    mongoose.connection.readyState = 0;
+    withoutAccount();
   }
 });

@@ -1,6 +1,7 @@
 // Auth middleware: verify the JWT and attach the matching user to the request.
 // Authorization: Bearer <token>  →  jwt.verify  →  req.user
 import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 import { findById } from '../services/userStore.js';
 
 import { isDemo } from '../config/storeMode.js';
@@ -39,6 +40,14 @@ export async function requireAuth(req, res, next) {
     
     // ดักให้รองรับทั้ง id, userId, _id
     const userId = payload.id || payload.userId || payload._id;
+
+    // A syntactically valid token is not enough: the account store must be
+    // available before we can decide whether this session still belongs to a
+    // real user.  Report an outage accurately instead of disguising it as an
+    // invalid login; no route handler is reached and no privileged data leaks.
+    if (mongoose.connection.readyState !== 1 || !mongoose.connection.db) {
+      return res.status(503).json({ success: false, message: 'Authentication service unavailable' });
+    }
 
     /* One lookup, one store. This used to try models/User.js first and fall
        back to the JSON store, with the Mongo attempt wrapped in an empty catch
