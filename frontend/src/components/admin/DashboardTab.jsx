@@ -2,12 +2,17 @@ import React from 'react';
 import { Package, ShoppingBag, DollarSign, Users, ChevronRight, AlertTriangle, ArrowUpRight, Activity } from 'lucide-react';
 import AdminDataState from './AdminDataState';
 
-/* `orders` and `inventory` are the current page of each table and are only
-   used for the recent-orders list. Every headline figure comes in already
-   counted across the whole collection — totalling the paginated arrays here
-   reported on 25 rows out of 75. */
+/* `orders` is the current page of the orders table and is only used for the
+   recent-orders list. Every headline figure arrives already counted across
+   the whole collection by GET /admin/stats — totalling the paginated arrays
+   here reported on 25 rows out of 75.
+
+   `stats` is listed as a resource so the gate below shows "loading" until
+   the aggregate is in, and an error if it never arrives. The alternative —
+   falling back to per-page arithmetic — is a KPI that is quietly wrong, and
+   nothing on this screen is worth more than being right. */
 export default function DashboardTab({ status, errors, totalRevenue, orders, totalOrdersCount, totalStockUnits, totalProductsCount, vipMembersCount, lowStockCount, monthlyData, categoryDistribution, setActiveTab }) {
-  return (<AdminDataState resources={["inventory","orders","members"]} status={status} errors={errors}>
+  return (<AdminDataState resources={["stats","orders"]} status={status} errors={errors}>
             <div className="space-y-8 animate-fade-in">
               
               {/* 4 Top Metric KPI Cards */}

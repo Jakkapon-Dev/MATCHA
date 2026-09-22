@@ -94,14 +94,14 @@ describe('concurrent refresh', () => {
     const { result } = renderHook(() => useAdminData('u_admin'));
 
     await waitFor(() => {
-      expect(result.current.status).toEqual({ inventory: 'ready', orders: 'ready', members: 'ready' });
+      expect(result.current.status).toEqual({ inventory: 'ready', orders: 'ready', members: 'ready', stats: 'ready' });
     });
 
     // The shared counter left two of these three empty.
     expect(result.current.inventory).toHaveLength(1);
     expect(result.current.orders).toHaveLength(1);
     expect(result.current.members).toHaveLength(1);
-    expect(result.current.errors).toEqual({ inventory: null, orders: null, members: null });
+    expect(result.current.errors).toEqual({ inventory: null, orders: null, members: null, stats: null });
   });
 
   test('each resource keeps its own pagination metadata', async () => {

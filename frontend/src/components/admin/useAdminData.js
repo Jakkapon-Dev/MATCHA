@@ -25,7 +25,12 @@ export default function useAdminData(userId) {
   // Whole-collection figures for the dashboard, counted by the database rather
   // than summed from the 25 rows the tables happen to be showing.
   const [stats, setStats] = useState(null);
-  const [status, setStatus] = useState({ inventory: 'loading', orders: 'loading', members: 'loading' });
+  /* `stats` sits alongside the three tables in the same status map, so the
+     dashboard can gate on it exactly as the tables do. It is a resource like
+     any other: while it is loading the dashboard says so, and if it fails the
+     dashboard says that instead of quietly showing numbers derived from one
+     page of rows. */
+  const [status, setStatus] = useState({ inventory: 'loading', orders: 'loading', members: 'loading', stats: 'loading' });
   const [errors, setErrors] = useState({});
   const [pagination, setPagination] = useState({
     inventory: { page: 1, limit: 25, pageSize: 25, total: 0, totalPages: 1 },
@@ -193,17 +198,29 @@ export default function useAdminData(userId) {
     const controller = new AbortController();
     slot.controller = controller;
     const generation = ++slot.generation;
+    const isCurrent = () => mounted.current && generation === slot.generation;
+
+    setStatus(previous => ({ ...previous, stats: 'loading' }));
+    setErrors(previous => ({ ...previous, stats: null }));
 
     try {
       const result = await api.getAdminStats({ signal: controller.signal });
-      if (!mounted.current || generation !== slot.generation) return;
-      if (result?.success && result.data) setStats(result.data);
+      if (!result?.success || !result.data) throw new Error('Invalid server response');
+      if (!isCurrent()) return;
+      setStats(result.data);
+      setStatus(previous => ({ ...previous, stats: 'ready' }));
     } catch (error) {
-      /* The dashboard falls back to per-page totals; a failed aggregate must
-         not take the tables down with it, and an aborted one must not clear
-         figures its replacement is about to fill in. */
-      if (wasAborted(error, controller.signal)) return;
-      if (mounted.current && generation === slot.generation) setStats(null);
+      /* A failed aggregate must not take the tables down with it — the
+         dashboard alone depends on it — and an aborted one must not clear
+         figures its replacement is about to fill in.
+
+         What it must never do is fall back to totalling the rows the tables
+         happen to be holding. That is 25 rows out of 75, and a KPI that is
+         quietly wrong is worse than one that says it could not be loaded. */
+      if (wasAborted(error, controller.signal) || !isCurrent()) return;
+      setStats(null);
+      setErrors(previous => ({ ...previous, stats: apiErrorText(error, tRef.current) }));
+      setStatus(previous => ({ ...previous, stats: 'error' }));
     } finally {
       if (slot.controller === controller) slot.controller = null;
     }
