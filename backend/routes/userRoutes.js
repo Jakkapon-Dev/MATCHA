@@ -447,7 +447,7 @@ router.delete('/me/addresses/:id', async (req, res) => {
 router.get('/', adminOnly, checkDbReady, async (req, res) => {
   try {
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
-    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit, 10) || 25));
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.pageSize || req.query.limit, 10) || 25));
     const skip = (page - 1) * limit;
 
     const filter = {};
@@ -456,6 +456,8 @@ router.get('/', adminOnly, checkDbReady, async (req, res) => {
       const regex = new RegExp(term, 'i');
       filter.$or = [
         { name: regex },
+        { firstName: regex },
+        { lastName: regex },
         { email: regex },
         { _id: regex }
       ];
@@ -505,6 +507,7 @@ router.get('/', adminOnly, checkDbReady, async (req, res) => {
         total,
         page,
         limit,
+        pageSize: limit,
         totalPages
       }
     });

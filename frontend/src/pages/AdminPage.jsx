@@ -81,7 +81,12 @@ export default function AdminPage() {
     }
   };
 
-  const { inventory, setInventory, orders, setOrders, members, setMembers, status, errors, refresh, pagination, changePage } = useAdminData(currentUser?.id || currentUser?._id);
+  const {
+    inventory, setInventory,
+    orders, setOrders,
+    members, setMembers,
+    status, errors, refresh, pagination, changePage, fetchResource
+  } = useAdminData(currentUser?.id || currentUser?._id);
   const [saving, setSaving] = useState(false);
   const savingRef = useRef(false);
   const [mutationNotice, setMutationNotice] = useState(null);
@@ -97,10 +102,53 @@ export default function AdminPage() {
   const monthlyData = useMemo(() => monthlyRevenue(orders), [orders]);
   // Global & Tab Filter States
   const [globalSearch, setGlobalSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [inventoryCategoryFilter, setInventoryCategoryFilter] = useState('ALL');
   const [inventoryStatusFilter, setInventoryStatusFilter] = useState('ALL');
   const [orderStatusFilter, setOrderStatusFilter] = useState('ALL');
   const [memberTierFilter, setMemberTierFilter] = useState('ALL');
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearch(globalSearch.trim());
+    }, 300);
+    return () => clearTimeout(handler);
+  }, [globalSearch]);
+
+  const isFirstMount = useRef(true);
+  useEffect(() => {
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return;
+    }
+    if (activeTab === 'inventory') {
+      fetchResource('inventory', { search: debouncedSearch, category: inventoryCategoryFilter, status: inventoryStatusFilter, page: 1 });
+    } else if (activeTab === 'orders') {
+      fetchResource('orders', { search: debouncedSearch, status: orderStatusFilter, page: 1 });
+    } else if (activeTab === 'members') {
+      fetchResource('members', { search: debouncedSearch, tier: memberTierFilter, page: 1 });
+    }
+  }, [debouncedSearch]);
+
+  const handleInventoryCategoryChange = (cat) => {
+    setInventoryCategoryFilter(cat);
+    fetchResource('inventory', { category: cat, status: inventoryStatusFilter, search: debouncedSearch, page: 1 });
+  };
+
+  const handleInventoryStatusChange = (st) => {
+    setInventoryStatusFilter(st);
+    fetchResource('inventory', { category: inventoryCategoryFilter, status: st, search: debouncedSearch, page: 1 });
+  };
+
+  const handleOrderStatusChange = (st) => {
+    setOrderStatusFilter(st);
+    fetchResource('orders', { status: st, search: debouncedSearch, page: 1 });
+  };
+
+  const handleMemberTierChange = (tr) => {
+    setMemberTierFilter(tr);
+    fetchResource('members', { tier: tr, search: debouncedSearch, page: 1 });
+  };
 
   const isDemo = Boolean(currentUser?.isDemoSession);
 
@@ -171,41 +219,10 @@ export default function AdminPage() {
     ];
   }, [inventory]);
 
-  // Filtered Datasets
-  const filteredInventory = useMemo(() => {
-    return inventory.filter(item => {
-      const matchSearch = globalSearch === '' || 
-        item.name.toLowerCase().includes(globalSearch.toLowerCase()) ||
-        item.id.toLowerCase().includes(globalSearch.toLowerCase()) ||
-        item.color.toLowerCase().includes(globalSearch.toLowerCase());
-      const matchCat = inventoryCategoryFilter === 'ALL' || item.category === inventoryCategoryFilter;
-      const matchStatus = inventoryStatusFilter === 'ALL' || item.status === inventoryStatusFilter;
-      return matchSearch && matchCat && matchStatus;
-    });
-  }, [inventory, globalSearch, inventoryCategoryFilter, inventoryStatusFilter]);
-
-  const filteredOrders = useMemo(() => {
-    return orders.filter(ord => {
-      const matchSearch = globalSearch === '' ||
-        ord.id.toLowerCase().includes(globalSearch.toLowerCase()) ||
-        ord.customer.toLowerCase().includes(globalSearch.toLowerCase()) ||
-        ord.email.toLowerCase().includes(globalSearch.toLowerCase());
-      const matchStatus = orderStatusFilter === 'ALL' || ord.status === orderStatusFilter;
-      return matchSearch && matchStatus;
-    });
-  }, [orders, globalSearch, orderStatusFilter]);
-
-  const filteredMembers = useMemo(() => {
-    return members.filter(mem => {
-      const matchSearch = globalSearch === '' ||
-        mem.name.toLowerCase().includes(globalSearch.toLowerCase()) ||
-        mem.email.toLowerCase().includes(globalSearch.toLowerCase()) ||
-        mem.id.toLowerCase().includes(globalSearch.toLowerCase());
-      const matchTier = memberTierFilter === 'ALL' || 
-        (memberTierFilter === 'VIP' ? mem.tier.includes('VIP') : !mem.tier.includes('VIP'));
-      return matchSearch && matchTier;
-    });
-  }, [members, globalSearch, memberTierFilter]);
+  // Server-side filtered datasets (server filters and paginates directly)
+  const filteredInventory = inventory;
+  const filteredOrders = orders;
+  const filteredMembers = members;
 
   // Change the screen only after persistence succeeds.
   const handleAddProduct = newProduct => runMutation(async () => {
@@ -638,14 +655,42 @@ export default function AdminPage() {
           {/* TAB 2: INVENTORY & STOCK MANAGEMENT                                       */}
           {/* ========================================================================= */}
           {activeTab === 'inventory' && (
-            <InventoryTab status={status} errors={errors} setInventoryCategoryFilter={setInventoryCategoryFilter} inventoryCategoryFilter={inventoryCategoryFilter} inventoryStatusFilter={inventoryStatusFilter} setInventoryStatusFilter={setInventoryStatusFilter} filteredInventory={filteredInventory} restockAmounts={restockAmounts} handleRestockInputChange={handleRestockInputChange} handleRestockSubmit={handleRestockSubmit} saving={saving} isDemo={isDemo} handleDeleteProduct={handleDeleteProduct} pagination={pagination?.inventory} onPageChange={(p) => changePage('inventory', p, { search: globalSearch, category: inventoryCategoryFilter, status: inventoryStatusFilter })} />
+            <InventoryTab
+              status={status}
+              errors={errors}
+              setInventoryCategoryFilter={handleInventoryCategoryChange}
+              inventoryCategoryFilter={inventoryCategoryFilter}
+              inventoryStatusFilter={inventoryStatusFilter}
+              setInventoryStatusFilter={handleInventoryStatusChange}
+              filteredInventory={filteredInventory}
+              restockAmounts={restockAmounts}
+              handleRestockInputChange={handleRestockInputChange}
+              handleRestockSubmit={handleRestockSubmit}
+              saving={saving}
+              isDemo={isDemo}
+              handleDeleteProduct={handleDeleteProduct}
+              pagination={pagination?.inventory}
+              onPageChange={(p) => changePage('inventory', p)}
+            />
           )}
 
           {/* ========================================================================= */}
           {/* TAB 3: ORDERS PIPELINE                                                    */}
           {/* ========================================================================= */}
           {activeTab === 'orders' && (
-            <OrdersTab status={status} errors={errors} setOrderStatusFilter={setOrderStatusFilter} orderStatusFilter={orderStatusFilter} filteredOrders={filteredOrders} setSelectedOrderForModal={order => { setMutationNotice(null); setSelectedOrderForModal(order); }} saving={saving} isDemo={isDemo} handleUpdateOrderStatus={handleUpdateOrderStatus} pagination={pagination?.orders} onPageChange={(p) => changePage('orders', p, { search: globalSearch, status: orderStatusFilter })} />
+            <OrdersTab
+              status={status}
+              errors={errors}
+              setOrderStatusFilter={handleOrderStatusChange}
+              orderStatusFilter={orderStatusFilter}
+              filteredOrders={filteredOrders}
+              setSelectedOrderForModal={order => { setMutationNotice(null); setSelectedOrderForModal(order); }}
+              saving={saving}
+              isDemo={isDemo}
+              handleUpdateOrderStatus={handleUpdateOrderStatus}
+              pagination={pagination?.orders}
+              onPageChange={(p) => changePage('orders', p)}
+            />
           )}
 
           {/* ========================================================================= */}
@@ -659,7 +704,18 @@ export default function AdminPage() {
           {/* TAB 5: VIP CUSTOMER REGISTRY                                              */}
           {/* ========================================================================= */}
           {activeTab === 'members' && (
-            <MembersTab status={status} errors={errors} setMemberTierFilter={setMemberTierFilter} memberTierFilter={memberTierFilter} filteredMembers={filteredMembers} handleToggleVIPTier={handleToggleVIPTier} saving={saving} isDemo={isDemo} pagination={pagination?.members} onPageChange={(p) => changePage('members', p, { search: globalSearch, tier: memberTierFilter })} />
+            <MembersTab
+              status={status}
+              errors={errors}
+              setMemberTierFilter={handleMemberTierChange}
+              memberTierFilter={memberTierFilter}
+              filteredMembers={filteredMembers}
+              handleToggleVIPTier={handleToggleVIPTier}
+              saving={saving}
+              isDemo={isDemo}
+              pagination={pagination?.members}
+              onPageChange={(p) => changePage('members', p)}
+            />
           )}
 
           {/* ========================================================================= */}
