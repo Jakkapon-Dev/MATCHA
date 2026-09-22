@@ -13,6 +13,7 @@ import { sendOrderConfirmation } from '../services/email.js';
 import { normaliseCode, discountFor, isFreeShippingCoupon } from '../config/coupons.js';
 import { memoryNotifications } from './notificationRoutes.js';
 import { dispatchOrderNotification } from '../services/notificationService.js';
+import { PAYMENT_STATES, initialPaymentStatus, paymentDeadlineFor } from '../config/paymentStates.js';
 
 const router = express.Router();
 
@@ -97,18 +98,6 @@ export function stockKeyFor(product, requestedSize) {
   if (!declared.length) return ONE_SIZE;
   return wanted;
 }
-
-/* How long an order may hold stock while its payment is still outstanding.
-   Long enough for a customer to find their card or their banking app, short
-   enough that an abandoned checkout does not keep the last M off sale for the
-   rest of the day. */
-export const RESERVATION_WINDOW_MS = Math.max(
-  60 * 1000,
-  (Number(process.env.ORDER_RESERVATION_MINUTES) || 30) * 60 * 1000
-);
-
-// Only these have an online payment step that can be abandoned.
-export const RESERVED_PAYMENT_METHODS = new Set(['visa', 'mastercard', 'qr']);
 
 /* Take the stock before the order is written, all of it or none of it.
 
@@ -350,7 +339,11 @@ router.post('/', orderLimiter, async (req, res) => {
        Only two things may promote an order: an administrator through
        PATCH /api/orders/:id, and — once there is one — a payment webhook whose
        signature has been checked. Both write the fact after it has happened. */
-    const paymentStatus = 'unpaid';
+    /* A Stripe order opens at `pending_payment`: it is holding stock and owes
+       money. Cash on delivery opens at `unpaid` and stays there until the
+       courier collects — it has no online step to abandon. Nothing here may
+       write `paid`; only a webhook whose signature has been checked may. */
+    const paymentStatus = initialPaymentStatus(safePaymentMethod);
 
     /* A guest's own id is recorded so the order can be shown back to them
        later. A signed-in customer does not need it: their orders are found by
@@ -376,13 +369,10 @@ router.post('/', orderLimiter, async (req, res) => {
       paymentStatus,
       /* The stock is taken off the shelf below, before Stripe has been asked
          for anything. A card that gets declined, a tab that gets closed or a
-         PromptPay QR nobody scans would otherwise leave those units held by an
-         unpaid order for good. The deadline is what the sweeper in
-         services/reservationSweeper.js acts on; cash on delivery has no
-         payment step to wait for and gets none. */
-      reservationExpiresAt: RESERVED_PAYMENT_METHODS.has(safePaymentMethod)
-        ? new Date(Date.now() + RESERVATION_WINDOW_MS)
-        : null,
+         PromptPay QR nobody scans would otherwise leave those units held for
+         good. This deadline is what services/reservationSweeper.js acts on;
+         cash on delivery has no payment step to wait for and gets none. */
+      paymentExpiresAt: paymentDeadlineFor(safePaymentMethod),
       locale: locale === 'en' ? 'en' : 'th'
     };
 
@@ -739,12 +729,12 @@ router.post('/:id/cancel', orderLimiter, async (req, res) => {
     const session = await mongoose.connection.getClient().startSession();
     try {
       await session.withTransaction(async () => {
-        /* The condition on status is what makes this safe to call twice at
-           once: the second attempt matches nothing and the transaction that
-           would have released the stock a second time does nothing. */
         const updated = await Order.findOneAndUpdate(
-          { _id: order._id, status: 'pending' },
-          { $set: { status: 'cancelled', reservationExpiresAt: null, reservationReleasedAt: new Date() } },
+          /* `stockReleasedAt: null` is what makes this safe to call twice at
+             once, and safe to race against the reconciler: whoever gets there
+             first stamps it, and the loser matches nothing. */
+          { _id: order._id, status: 'pending', stockReleasedAt: null },
+          { $set: { status: 'cancelled', paymentExpiresAt: null, stockReleasedAt: new Date() } },
           { new: true, session }
         );
         if (!updated) {
@@ -776,7 +766,7 @@ router.post('/:id/cancel', orderLimiter, async (req, res) => {
 router.patch('/:id', authRequired, adminOnly, async (req, res) => {
   if (mongoose.connection.readyState !== 1) return res.status(503).json({ success: false, message: 'Database unavailable; changes were not saved' });
   const validStatus = !req.body.status || ['pending', 'processing', 'shipped', 'delivered', 'cancelled'].includes(req.body.status);
-  const validPayment = !req.body.paymentStatus || ['unpaid', 'paid', 'refunded'].includes(req.body.paymentStatus);
+  const validPayment = !req.body.paymentStatus || PAYMENT_STATES.includes(req.body.paymentStatus);
   if (!validStatus || !validPayment || (!req.body.status && !req.body.paymentStatus) || Object.keys(req.body).some(key => !['status', 'paymentStatus'].includes(key))) return res.status(400).json({ success: false, message: 'Invalid order status update' });
   try {
     const { id } = req.params;

@@ -84,6 +84,12 @@ export default function PaymentPage() {
      outstanding. Kept so an abandoned checkout can put the goods back
      immediately instead of waiting out the server's reservation window. */
   const pendingOrderRef = useRef(null);
+  /* Set when an attempt ends without payment but the order is still alive:
+     a declined card, a dismissed QR, a wait that timed out. The order keeps
+     its stock until `paymentDeadline`, so the retry below is a real offer
+     rather than a button that leads to a 409. */
+  const [canRetryPayment, setCanRetryPayment] = useState(false);
+  const [paymentDeadline, setPaymentDeadline] = useState(null);
   const [checkoutRequestId] = useState(() => `req-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`);
 
   // โหมดเดโมมีขั้นตอนของตัวเองและล้างตะกร้าทันทีที่ออเดอร์ถูกบันทึก
@@ -143,18 +149,30 @@ export default function PaymentPage() {
     if (id !== 'qr') setQrDisplay(null);
   };
 
+  /* Dismissing the QR stops the wait; it does not throw the order away.
+
+     The order is holding stock and stays payable until its deadline, so the
+     customer can come straight back with the same QR — a banking app that
+     asked for a re-login, a phone that locked, a code scanned a minute too
+     late. Only when the window closes does the reconciler take the goods
+     back. Giving up entirely is a separate, explicit choice below. */
   const handleCancelQr = () => {
     qrCancelRef.current = true;
     setQrDisplay(null);
     setIsProcessing(false);
-    /* The order this QR belongs to took its stock off the shelf when it was
-       created. Cancelling releases it now; if this call never lands, the
-       server's reservation sweeper releases it when the window runs out. */
+    if (pendingOrderRef.current) setCanRetryPayment(true);
+  };
+
+  /* The customer is done with this order, not just with this attempt. Return
+     the stock now rather than holding it for the rest of the window. */
+  const handleAbandonOrder = async () => {
     const abandoned = pendingOrderRef.current;
-    if (abandoned) {
-      pendingOrderRef.current = null;
-      api.cancelOrder(abandoned).catch(() => {});
-    }
+    if (!abandoned) return;
+    pendingOrderRef.current = null;
+    setCanRetryPayment(false);
+    setPaymentDeadline(null);
+    await api.cancelOrder(abandoned).catch(() => {});
+    showToast('ยกเลิกคำสั่งซื้อแล้ว สินค้าถูกคืนเข้าคลัง', 'info');
   };
 
   // รอ paymentStatus จาก webhook จริง แทนที่จะเชื่อผลจาก Stripe.js ฝั่ง browser ตรงๆ
@@ -200,10 +218,13 @@ export default function PaymentPage() {
       const orderId = order.orderId || order._id;
       // Stock is now reserved against this order until it is paid or released.
       pendingOrderRef.current = orderId;
+      setCanRetryPayment(false);
 
       const finishSuccess = (finalOrder) => {
         // Paid, or at least in the shop's hands: no longer ours to release.
         pendingOrderRef.current = null;
+        setCanRetryPayment(false);
+        setPaymentDeadline(null);
         setCreatedOrder(finalOrder);
         showToast(
           finalOrder.paymentStatus === 'paid'
@@ -225,6 +246,8 @@ export default function PaymentPage() {
           throw new Error(intentRes?.message || 'ไม่สามารถเริ่มการชำระเงินได้');
         }
 
+        if (intentRes.data.paymentExpiresAt) setPaymentDeadline(intentRes.data.paymentExpiresAt);
+
         const { error: stripeError } = await stripe.confirmCardPayment(intentRes.data.clientSecret, {
           payment_method: {
             card: cardElement,
@@ -233,6 +256,11 @@ export default function PaymentPage() {
         });
 
         if (stripeError) {
+          /* The order survives a decline, still holding its stock until the
+             deadline. Reaching for another card is the common next move, and
+             taking the garment away mid-checkout would turn that retry into
+             an out-of-stock. */
+          setCanRetryPayment(true);
           throw new Error(stripeError.message || 'บัตรถูกปฏิเสธ กรุณาลองบัตรใบอื่น');
         }
 
@@ -249,6 +277,8 @@ export default function PaymentPage() {
         if (!intentRes || intentRes.success === false || !intentRes.data?.clientSecret) {
           throw new Error(intentRes?.message || 'ไม่สามารถเริ่มการชำระเงินได้');
         }
+
+        if (intentRes.data.paymentExpiresAt) setPaymentDeadline(intentRes.data.paymentExpiresAt);
 
         const { error: stripeError, paymentIntent } = await stripe.confirmPromptPayPayment(intentRes.data.clientSecret, {
           payment_method: {
@@ -325,6 +355,7 @@ export default function PaymentPage() {
         if (!confirmedOrder) {
           // ยังไม่ได้รับการยืนยันภายในเวลาที่รอ — ไม่ใช่ error แค่ยังไม่จ่าย webhook จะอัปเดต
           // สถานะให้เองเมื่อลูกค้าสแกนจ่ายจริง (เช็คสถานะย้อนหลังได้ที่หน้าประวัติคำสั่งซื้อ)
+          setCanRetryPayment(true);
           showToast('ยังไม่ได้รับการยืนยันการชำระเงิน กรุณาตรวจสอบสถานะออเดอร์ภายหลังในหน้าประวัติคำสั่งซื้อ', 'info');
           return;
         }
@@ -421,6 +452,9 @@ export default function PaymentPage() {
                 totalAmount={total}
                 qrDisplay={qrDisplay}
                 onCancelQr={handleCancelQr}
+                canRetryPayment={canRetryPayment}
+                paymentDeadline={paymentDeadline}
+                onAbandonOrder={handleAbandonOrder}
               />
             )}
 

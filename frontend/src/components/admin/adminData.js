@@ -1,5 +1,18 @@
 const titleCase = value => value ? value[0].toUpperCase() + value.slice(1) : 'Unknown';
 
+/* The payment lifecycle carries more than three states now, and two of them
+   are two words. Without this the admin table reads "Pending_payment". */
+const PAYMENT_LABELS = {
+  unpaid: 'Unpaid',
+  pending_payment: 'Pending Payment',
+  paid: 'Paid',
+  failed: 'Failed',
+  expired: 'Expired',
+  refunded: 'Refunded'
+};
+
+export const paymentLabel = value => PAYMENT_LABELS[value] || titleCase(value);
+
 export function normalizeProduct(product) {
   const stock = product.quantity ?? product.stock ?? 0;
   /* Kept as its own field so the inventory table can offer the sizes that
@@ -25,7 +38,7 @@ export function normalizeOrder(order) {
     items: order.items?.reduce((sum, item) => sum + item.quantity, 0) || 0,
     total: order.total ?? 0,
     status: titleCase(order.status),
-    paymentStatus: titleCase(order.paymentStatus),
+    paymentStatus: paymentLabel(order.paymentStatus),
     date: order.createdAt?.split('T')[0] || ''
   };
 }

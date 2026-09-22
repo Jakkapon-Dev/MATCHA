@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import { PAYMENT_STATES } from '../config/paymentStates.js';
+
 const { Schema, model } = mongoose;
 
 const customerSchema = new Schema(
@@ -108,9 +110,16 @@ const orderSchema = new Schema(
       enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
       default: 'pending'
     },
+    /* Where this order stands with the money. The lifecycle and what each
+       state means are in config/paymentStates.js.
+
+       It used to be three values, and a checkout that failed stayed `unpaid`
+       forever — indistinguishable from a cash-on-delivery order that had
+       simply not been delivered yet. Nothing could tell the two apart, so
+       nothing could safely reclaim the stock from either. */
     paymentStatus: {
       type: String,
-      enum: ['unpaid', 'paid', 'refunded'],
+      enum: PAYMENT_STATES,
       default: 'unpaid'
     },
     stripePaymentIntentId: {
@@ -133,26 +142,32 @@ const orderSchema = new Schema(
       default: null
     },
 
-    /* When this order's stock reservation runs out.
+    /* When this order stops being payable and its stock goes back on sale.
      *
      * Placing an order takes the stock off the shelf before Stripe is ever
-     * asked for money. That is the right order of operations — it is the only
-     * way two shoppers cannot both buy the last M — but it means a declined
-     * card, a closed tab or an abandoned PromptPay QR left an `unpaid` order
-     * holding goods with nothing that would ever give them back.
+     * asked for money. That is the right order of operations — the only way
+     * two shoppers cannot both buy the last M — but it means a declined card,
+     * a closed tab or an abandoned PromptPay QR left an order holding goods
+     * with nothing that would ever give them back.
      *
-     * Only orders that have an online payment step to complete get a deadline.
-     * Cash on delivery has nothing to wait for, so it is left null and never
-     * swept. It is cleared the moment payment is confirmed.
+     * Only orders with an online payment step get a deadline. Cash on
+     * delivery has nothing to wait for, so it is left null and the reconciler
+     * never looks at it. It is cleared the moment payment is confirmed.
      */
-    reservationExpiresAt: {
+    paymentExpiresAt: {
       type: Date,
       default: null
     },
 
-    /* Set when the sweeper (or an explicit abandon) put this order's stock
-       back, so nothing can return the same units twice. */
-    reservationReleasedAt: {
+    /* Stamped when this order's stock went back, by whichever of the
+       reconciler, a webhook or an explicit cancellation got there first.
+
+       It is the idempotency marker for the release: every path that returns
+       stock requires it to be null and sets it in the same conditional
+       update, so a duplicate webhook, a retried job and a customer pressing
+       cancel twice cannot credit the same units twice over.
+     */
+    stockReleasedAt: {
       type: Date,
       default: null
     },
@@ -191,8 +206,8 @@ orderSchema.pre('validate', function recomputeTotal(next) {
 orderSchema.index({ userId: 1, createdAt: -1 });
 orderSchema.index({ guestId: 1, createdAt: -1 });
 orderSchema.index({ status: 1 });
-// The sweeper's query: pending, unpaid and past its deadline.
-orderSchema.index({ reservationExpiresAt: 1, status: 1, paymentStatus: 1 });
+// The reconciler's query: still owed, still holding stock, past its deadline.
+orderSchema.index({ paymentExpiresAt: 1, paymentStatus: 1, stockReleasedAt: 1 });
 orderSchema.index({ stripePaymentIntentId: 1 }, { unique: true, sparse: true });
 
 const Order = mongoose.models.Order || model('Order', orderSchema);
