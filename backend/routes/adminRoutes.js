@@ -6,6 +6,7 @@ import DeletionRequest from '../models/DeletionRequest.js';
 import AuditLog from '../models/AuditLog.js';
 import { anonymizeUserData } from '../services/anonymizationService.js';
 import { User } from '../services/userStore.js';
+import { collectDashboardStats } from '../services/dashboardStats.js';
 import { authRequired, adminOnly } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -23,97 +24,19 @@ function escapeRegex(str) {
  * The dashboard used to add up whatever the inventory, orders and members
  * tables happened to be holding. Those tables are paginated at 25 rows, so
  * with 75 garments in the catalogue "Active Stock Units", "Low Stock",
- * "garment lines", the category split and the revenue chart were all reporting
- * on the first page and nothing else — understating every one of them, and
- * changing whenever an administrator turned a page.
+ * "garment lines", the category split and the revenue chart were all
+ * reporting on the first page and nothing else — understating every one of
+ * them, and changing whenever an administrator turned a page.
  *
- * These are whole-collection aggregates and are deliberately unfiltered by the
- * table's search and category controls: they describe the shop, not the view.
+ * The aggregation itself lives in services/dashboardStats.js, where the rules
+ * it encodes can be asserted directly. `databaseRequired` above means a
+ * database that is down answers 503: there is no cached or estimated figure
+ * to fall back on, and a made-up KPI is worse than an absent one.
  */
 router.get('/stats', authRequired, adminOnly, databaseRequired, async (req, res) => {
   try {
-    const [productAgg, categoryAgg, orderAgg, monthlyAgg, memberAgg] = await Promise.all([
-      Product.aggregate([
-        {
-          $group: {
-            _id: null,
-            totalProducts: { $sum: 1 },
-            totalStockUnits: { $sum: { $ifNull: ['$stock', 0] } },
-            lowStockCount: { $sum: { $cond: [{ $lte: [{ $ifNull: ['$stock', 0] }, 10] }, 1, 0] } }
-          }
-        }
-      ]),
-      Product.aggregate([
-        { $group: { _id: '$category', count: { $sum: 1 } } }
-      ]),
-      Order.aggregate([
-        {
-          $group: {
-            _id: null,
-            totalOrders: { $sum: 1 },
-            // Same rule the table used: cancelled never counts, and only a
-            // payment the webhook confirmed counts as revenue.
-            paidRevenue: {
-              $sum: {
-                $cond: [
-                  { $and: [{ $ne: ['$status', 'cancelled'] }, { $eq: ['$paymentStatus', 'paid'] }] },
-                  { $ifNull: ['$total', 0] },
-                  0
-                ]
-              }
-            }
-          }
-        }
-      ]),
-      Order.aggregate([
-        { $match: { status: { $ne: 'cancelled' } } },
-        {
-          $group: {
-            _id: { $dateToString: { format: '%Y-%m', date: '$createdAt' } },
-            orders: { $sum: 1 },
-            revenue: {
-              $sum: { $cond: [{ $eq: ['$paymentStatus', 'paid'] }, { $ifNull: ['$total', 0] }, 0] }
-            }
-          }
-        },
-        { $sort: { _id: 1 } }
-      ]),
-      User.aggregate([
-        {
-          $group: {
-            _id: null,
-            totalMembers: { $sum: 1 },
-            vipMembers: { $sum: { $cond: [{ $regexMatch: { input: { $ifNull: ['$tier', ''] }, regex: 'VIP' } }, 1, 0] } }
-          }
-        }
-      ])
-    ]);
-
-    const products = productAgg[0] || { totalProducts: 0, totalStockUnits: 0, lowStockCount: 0 };
-    const orders = orderAgg[0] || { totalOrders: 0, paidRevenue: 0 };
-    const members = memberAgg[0] || { totalMembers: 0, vipMembers: 0 };
-
-    const categories = {};
-    for (const row of categoryAgg) {
-      if (row._id) categories[row._id] = row.count;
-    }
-
-    res.json({
-      success: true,
-      data: {
-        totalProducts: products.totalProducts,
-        totalStockUnits: products.totalStockUnits,
-        lowStockCount: products.lowStockCount,
-        categories,
-        totalOrders: orders.totalOrders,
-        paidRevenue: orders.paidRevenue,
-        monthly: monthlyAgg
-          .filter(row => row._id)
-          .map(row => ({ month: row._id, orders: row.orders, revenue: row.revenue })),
-        totalMembers: members.totalMembers,
-        vipMembers: members.vipMembers
-      }
-    });
+    const data = await collectDashboardStats({ Product, Order, User });
+    res.json({ success: true, data });
   } catch (error) {
     console.error('Error building admin stats:', error);
     res.status(503).json({ success: false, message: 'Could not load dashboard statistics' });

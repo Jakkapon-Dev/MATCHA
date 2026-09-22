@@ -56,26 +56,45 @@ router.post('/', async (req, res) => {
         return res.status(409).json({ received: false });
       }
 
-      if (event.type === 'payment_intent.succeeded' && order.paymentStatus !== 'paid') {
+      /* Stripe is the only thing in this codebase allowed to make an order
+         paid, and only through this signed, server-to-server event. The
+         browser's own confirmation is not evidence: it can be closed, faked
+         or simply wrong about what the gateway did.
+
+         Each branch is guarded on the current state rather than assuming
+         one, because Stripe retries webhooks and can deliver them out of
+         order. A duplicate `succeeded` finds the order already paid and does
+         nothing; a `payment_failed` arriving after a successful retry cannot
+         drag a paid order backwards. */
+      if (order.paymentStatus === 'paid') {
+        return res.json({ received: true });
+      }
+
+      if (event.type === 'payment_intent.succeeded') {
         order.paymentStatus = 'paid';
         order.paymentError = null;
-        /* Paid orders hold their stock for good — there is nothing left to
-           abandon, so the sweeper must stop looking at this one. */
-        order.reservationExpiresAt = null;
+        /* A paid order holds its stock for good — there is nothing left to
+           abandon, so the reconciler must stop looking at this one. */
+        order.paymentExpiresAt = null;
         await order.save();
       }
-      if (event.type === 'payment_intent.payment_failed' && order.paymentStatus !== 'paid') {
+
+      if (event.type === 'payment_intent.payment_failed') {
+        order.paymentStatus = 'failed';
         order.paymentError = intent.last_payment_error?.message || 'Payment failed';
-        /* The stock stays reserved for now: a declined card is very often
-           retried on the spot with another one, and taking the goods away
-           mid-checkout would turn a retry into an out-of-stock. The deadline
-           already on the order is what eventually gives them back. */
+        /* The stock stays held: a declined card is very often retried on the
+           spot with another one, and taking the goods away mid-checkout would
+           turn a retry into an out-of-stock. The deadline already on the order
+           is what eventually gives them back. */
         await order.save();
       }
-      /* An intent Stripe or we cancelled is a checkout that will not finish.
-         Waiting out the rest of the window would keep real inventory off sale
-         for no reason, so the goods go back now. */
-      if (event.type === 'payment_intent.canceled' && order.paymentStatus !== 'paid') {
+
+      /* An intent that Stripe or this server cancelled is a checkout that
+         will not finish. Waiting out the rest of the window would keep real
+         inventory off sale for no reason, so the goods go back now — through
+         the same conditional release the reconciler uses, so a duplicate
+         delivery of this event cannot return the units twice. */
+      if (event.type === 'payment_intent.canceled') {
         const { expireOrder } = await import('../services/reservationSweeper.js');
         await expireOrder(order.toObject()).catch(error => {
           console.error(`[stripe] could not release stock for cancelled intent ${intent.id}: ${error.message}`);

@@ -19,7 +19,7 @@ import useChangeMotion from '../hooks/useChangeMotion';
 
 import useAdminData from '../components/admin/useAdminData';
 
-import { normalizeProduct, monthlyRevenue } from '../components/admin/adminData';
+import { normalizeProduct } from '../components/admin/adminData';
 
 export default function AdminPage() {
   const { t } = useLanguage();
@@ -101,14 +101,19 @@ export default function AdminPage() {
     catch (error) { setMutationNotice({ error: true, text: apiErrorText(error, t) || t('errors.saveFailed') }); return false; }
     finally { savingRef.current = false; setSaving(false); }
   };
-  /* Every dashboard figure below prefers the server's whole-collection
-     aggregate and only falls back to counting the loaded rows when that
-     request failed. The tables hold at most 25 rows out of 75 garments, so a
-     figure summed from them is a figure about one page. */
-  const monthlyData = useMemo(
-    () => (stats?.monthly ? stats.monthly : monthlyRevenue(orders)),
-    [stats, orders]
-  );
+  /* Every dashboard figure below comes from the server's whole-collection
+     aggregate, and from nowhere else.
+
+     They used to be totalled from whatever the tables were holding — at most
+     25 rows out of 75 garments — so "Active Stock Units", "Low Stock", the
+     category split and the revenue chart all described one page and changed
+     when the administrator turned it. There is deliberately no fallback to
+     that arithmetic: the dashboard gates on `status.stats` and says it could
+     not load rather than showing a number that is quietly wrong.
+
+     `?? 0` is reached only while loading, before the gate lets anything
+     render. */
+  const monthlyData = useMemo(() => stats?.monthly ?? [], [stats]);
   // Global & Tab Filter States
   const [globalSearch, setGlobalSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -162,28 +167,12 @@ export default function AdminPage() {
   const isDemo = Boolean(currentUser?.isDemoSession);
 
   // KPI Calculations
-  const totalRevenue = useMemo(() => {
-    if (stats) return stats.paidRevenue;
-    return orders.reduce((sum, ord) => sum + (ord.status !== 'Cancelled' && ord.paymentStatus === 'Paid' ? ord.total : 0), 0);
-  }, [stats, orders]);
-
-  const totalStockUnits = useMemo(() => {
-    if (stats) return stats.totalStockUnits;
-    return inventory.reduce((sum, item) => sum + item.stock, 0);
-  }, [stats, inventory]);
-
-  const lowStockCount = useMemo(() => {
-    if (stats) return stats.lowStockCount;
-    return inventory.filter(item => item.stock <= 10).length;
-  }, [stats, inventory]);
-
-  const vipMembersCount = useMemo(() => {
-    if (stats) return stats.vipMembers;
-    return members.filter(m => m.tier.includes('VIP')).length;
-  }, [stats, members]);
-
-  const totalOrdersCount = stats ? stats.totalOrders : orders.length;
-  const totalProductsCount = stats ? stats.totalProducts : inventory.length;
+  const totalRevenue = stats?.paidRevenue ?? 0;
+  const totalStockUnits = stats?.totalStockUnits ?? 0;
+  const lowStockCount = stats?.lowStockCount ?? 0;
+  const vipMembersCount = stats?.vipMembers ?? 0;
+  const totalOrdersCount = stats?.totalOrders ?? 0;
+  const totalProductsCount = stats?.totalProducts ?? 0;
 
   const categoryDistribution = useMemo(() => {
     const counts = {
@@ -194,19 +183,11 @@ export default function AdminPage() {
       Accessories: 0
     };
 
-    if (stats?.categories) {
-      for (const [name, count] of Object.entries(stats.categories)) {
-        if (counts[name] !== undefined) counts[name] = count;
-      }
-    } else {
-      inventory.forEach(item => {
-        if (item.category && counts[item.category] !== undefined) {
-          counts[item.category]++;
-        }
-      });
+    for (const [name, count] of Object.entries(stats?.categories ?? {})) {
+      if (counts[name] !== undefined) counts[name] = count;
     }
 
-    const total = stats ? stats.totalProducts : inventory.length;
+    const total = stats?.totalProducts ?? 0;
 
     return [
       {
@@ -240,7 +221,7 @@ export default function AdminPage() {
         color: '#D4A338'
       }
     ];
-  }, [stats, inventory]);
+  }, [stats]);
 
   // Server-side filtered datasets (server filters and paginates directly)
   const filteredInventory = inventory;
@@ -368,7 +349,7 @@ export default function AdminPage() {
     const backupData = {
       exportTimestamp: new Date().toISOString(),
       store: 'MatchA Artisan Apparel',
-      kpis: { totalRevenue, totalOrders: orders.length, totalStockUnits, lowStockCount, vipMembersCount },
+      kpis: { totalRevenue, totalOrders: totalOrdersCount, totalStockUnits, lowStockCount, vipMembersCount },
       inventory,
       orders,
       members,

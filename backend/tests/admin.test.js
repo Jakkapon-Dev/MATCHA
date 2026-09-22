@@ -11,7 +11,7 @@ import { User } from '../services/userStore.js';
 import Product from '../models/Product.js';
 import Order from '../models/Order.js';
 import { getJwtSecret } from '../middleware/auth.js';
-import { normalizeProduct, normalizeOrder, normalizeMember, monthlyRevenue } from '../../frontend/src/components/admin/adminData.js';
+import { normalizeProduct, normalizeOrder, normalizeMember } from '../../frontend/src/components/admin/adminData.js';
 
 let server, base;
 const token = role => jwt.sign({ id: `test-${role}`, role, email: `${role}@example.test` }, getJwtSecret());
@@ -136,10 +136,11 @@ test('admin normalization never invents stock, payment, identity or revenue', ()
   assert.equal(normalizeOrder({}).paymentStatus, 'Unknown');
   assert.equal(normalizeOrder({}).date, '');
   assert.equal(normalizeOrder({ items: [{ quantity: 3 }, { quantity: 2 }] }).items, 5);
-  const records = ['paid', 'unpaid', 'refunded'].map(paymentStatus => normalizeOrder({ createdAt: '2026-09-19T00:00:00Z', status: 'processing', paymentStatus, total: 40 }));
-  records.push(normalizeOrder({ createdAt: '2026-09-19T00:00:00Z', status: 'cancelled', paymentStatus: 'paid', total: 100 }));
-  assert.deepEqual(monthlyRevenue(records), [{ month: '2026-09', revenue: 40, orders: 3 }]);
-  assert.deepEqual(monthlyRevenue([]), []);
+  /* The monthly series used to be built here, from the page of orders the
+     table was holding, and its rules — cancelled orders excluded, only paid
+     ones banked — were asserted on that helper. Both the series and the rules
+     now live in the server's MONTHLY_PIPELINE, over every order rather than
+     twenty-five of them, and are covered in admin-dashboard-stats.test.js. */
 });
 
 test('stock updates return persisted products and missing products are not reported as saved', async t => {

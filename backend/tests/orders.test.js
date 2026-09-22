@@ -84,11 +84,17 @@ test('a new order is never born paid, whatever it says it will be paid with', as
 
     assert.equal(res.status, 201, `${paymentMethod} should still create an order`);
     const { data } = await res.json();
+    /* A Stripe order opens at `pending_payment` — holding stock, owing money,
+       carrying a deadline. Cash on delivery opens at `unpaid`, because it has
+       no online step to abandon and nothing to expire. Neither is `paid`:
+       only a webhook whose signature has been checked may write that. */
+    const expected = ['visa', 'mastercard', 'qr'].includes(paymentMethod) ? 'pending_payment' : 'unpaid';
     assert.equal(
       data.paymentStatus,
-      'unpaid',
-      `an order paid by ${paymentMethod} must start unpaid, not ${data.paymentStatus}`
+      expected,
+      `an order paid by ${paymentMethod} must start ${expected}, not ${data.paymentStatus}`
     );
+    assert.notEqual(data.paymentStatus, 'paid');
   }
 });
 

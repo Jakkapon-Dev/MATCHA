@@ -20,6 +20,13 @@ export default defineConfig({
       }
     }
   },
+  test: {
+    // The admin hooks are the thing under test and they touch state, effects
+    // and AbortController, so they need a DOM rather than a bare Node scope.
+    environment: 'jsdom',
+    include: ['src/**/*.test.{js,jsx}'],
+    restoreMocks: true
+  },
   server: {
     port: 5173,
     watch: {
