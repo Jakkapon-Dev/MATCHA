@@ -206,7 +206,6 @@ FRONTEND_URL="http://localhost:5173"
 
 # รหัสผ่านเริ่มต้นสำหรับบัญชีทดสอบเริ่มต้น (Seed Users)
 ADMIN_SEED_PASSWORD="your-admin-password"
-SEED_MEMBER_PASSWORD="your-member-password"
 
 # Firebase Web API key สำหรับตรวจสอบ Google OAuth Token ฝั่งเซิร์ฟเวอร์
 FIREBASE_WEB_API_KEY=""
@@ -229,7 +228,7 @@ STRIPE_WEBHOOK_SECRET="whsec_..."
 ```env
 # frontend/.env
 # URL ของ Backend API (ปล่อยว่างไว้เมื่อรันในเครื่องเพื่อใช้ Vite Proxy ไปยัง localhost:5001)
-VITE_API_URL="https://matcha-gluk.onrender.com"
+VITE_API_URL=""
 
 # Stripe Publishable Test Key (Public Key ที่อนุญาตให้เปิดเผยได้)
 VITE_STRIPE_PUBLISHABLE_KEY="pk_test_..."
