@@ -34,6 +34,7 @@ const {
   getDiskOutboxPath
 } = await import('../services/notificationService.js');
 const { getJwtSecret } = await import('../middleware/auth.js');
+const { User } = await import('../services/userStore.js');
 
 const notificationRoutes = notificationRoutesModule.default;
 const { memoryNotifications } = notificationRoutesModule;
@@ -357,7 +358,16 @@ durableDescribe('Task 3 — Durable order notifications', () => {
     assert.equal(memoryNotifications.length, before, 'the persistent path must not touch the memory store');
   });
 
-  it('serves the notification API to admins only', async () => {
+  it('serves the notification API to admins only', async (t) => {
+    (t?.mock || mock).method(User, 'findById', id => {
+      const role = id === 'test-Admin-durable' ? 'Admin' : (id === 'test-Member-durable' ? 'Member' : null);
+      const user = role ? { _id: id, id, role, email: `${role.toLowerCase()}@example.test` } : null;
+      return {
+        lean: async () => user,
+        then: (resolve, reject) => Promise.resolve(user).then(resolve, reject)
+      };
+    });
+
     const guestRes = await fetch(`${base}/api/admin/notifications`);
     assert.equal(guestRes.status, 401, 'a signed-out visitor is rejected');
 
