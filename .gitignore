@@ -8,6 +8,11 @@
 docs/*
 !docs/runbooks/
 !docs/runbooks/*
+!docs/plans/
+!docs/plans/*
+!docs/design/
+!docs/design/*
+!docs/PRODUCT.md
 *.visual-check.*
 Requirement/
 Requirement/*
@@ -216,5 +221,6 @@ backend/scripts/*
 !backend/scripts/backup-mongodb.mjs
 !backend/scripts/restore-mongodb-test.mjs
 
-
-
+# Local & AI Assistant Configurations
+CLAUDE.md
+frontend/.impeccable/
