@@ -150,7 +150,7 @@ export default function Navbar({
               onClick={onOpenCart}
               aria-label={t('nav.cartAria')}
               data-cart-target
-              className={`relative p-2.5 rounded-xl bg-white hover:bg-matcha-bg text-matcha-text border border-matcha-border transition-all cursor-pointer shadow-xs outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A] ${
+              className={`relative inline-flex min-h-11 min-w-11 items-center justify-center p-2.5 rounded-xl bg-white hover:bg-matcha-bg text-matcha-text border border-matcha-border transition-all cursor-pointer shadow-xs outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A] ${
                 cartAnimated ? 'animate-cart-pop ring-3 ring-matcha-accent' : ''
               }`}
             >
@@ -218,7 +218,7 @@ export default function Navbar({
               <button
                 type="button"
                 onClick={() => handleLinkClick(currentUser ? (currentUser.role === 'Admin' ? '/admin' : '/account') : '/login')}
-                className="p-2.5 rounded-xl bg-white hover:bg-matcha-bg text-matcha-text border border-matcha-border transition-all cursor-pointer shadow-xs outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]"
+                className="inline-flex min-h-11 min-w-11 items-center justify-center p-2.5 rounded-xl bg-white hover:bg-matcha-bg text-matcha-text border border-matcha-border transition-all cursor-pointer shadow-xs outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]"
                 aria-label={currentUser
                   ? (currentUser.role === 'Admin' ? t('nav.adminTitle') : t('nav.myAccountTitle'))
                   : t('nav.access')}
@@ -233,7 +233,7 @@ export default function Navbar({
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2.5 rounded-xl bg-white text-matcha-text border border-matcha-border transition-all cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]"
+              className="md:hidden inline-flex min-h-11 min-w-11 items-center justify-center p-2.5 rounded-xl bg-white text-matcha-text border border-matcha-border transition-all cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#0A0A0A]"
               aria-label={t('nav.menuAria')}
               aria-expanded={mobileMenuOpen}
               aria-controls="mobile-nav"
