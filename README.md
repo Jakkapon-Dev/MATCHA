@@ -30,7 +30,7 @@
 - **Database System**: MongoDB Atlas Cloud Cluster (Connected 🟢)
 - **API Documentation Root**: [`https://matcha-gluk.onrender.com/`](https://matcha-gluk.onrender.com/)
 
-> 💡 *หมายเหตุสำหรับ Render Free Tier*: หากไม่มีการใช้งานเกิน 15 นาที เซิร์ฟเวอร์จะเข้าสู่โหมดประหยัดพลังงาน (Sleep) การเรียกใช้งานครั้งแรกอาจใช้เวลาตื่น (Cold Start) ประมาณ 30–50 วินาที
+> 💡 *หมายเหตุสำหรับ Render Free Tier*: หากไม่มีการใช้งานเกิน 15 นาที เซิร์ฟเวอร์จะเข้าสู่โหมดประหยัดพลังงาน (Sleep) การเรียกใช้งานครั้งแรกอาจใช้เวลาตื่น (Cold Start) ประมาณ 30–50 วินาที สำหรับการเปิดให้บริการจริงในระดับ Commercial Production แนะนำให้อัปเกรดเป็นแพ็กเกจ Starter ($7/เดือน) ที่เป็น Always-On เพื่อขจัดปัญหา Cold Start สำหรับผู้ใช้งานทั่วไป
 
 ---
 
@@ -123,31 +123,42 @@
 
 ```text
 MATCHA/
-├── frontend/                     # ซอร์สโค้ด React + Vite Client
+├── frontend/                     # ซอร์สโค้ด React 18 + Vite 6 Client
 │   ├── public/                   # สื่อสาธารณะ (รูปภาพ, ไอคอน, Demo Images)
 │   ├── src/
 │   │   ├── components/           # UI Components แยกตามส่วนงาน (Cart, Home, Product, ฯลฯ)
-│   │   ├── context/              # React Context (Auth, Cart, Toast)
+│   │   ├── context/              # React Context (Auth, Cart, Toast, StoreMode, Language)
 │   │   ├── hooks/                # Custom React Hooks
-│   │   ├── pages/                # หน้าหลักของแอปพลิเคชัน (12 หน้า)
+│   │   ├── pages/                # หน้าหลักของแอปพลิเคชัน (17 เส้นทาง)
 │   │   ├── services/             # Client API Service Configuration
-│   │   └── styles/               # CSS Tokens & Animations
+│   │   └── styles/               # CSS Tokens & Animations (Tailwind CSS v4)
 │   ├── package.json
 │   └── vite.config.js
 │
-├── backend/                      # ซอร์สโค้ด Node.js Express REST API
-│   ├── config/                   # การตั้งค่าระบบ (Store Mode, DB)
+├── backend/                      # ซอร์สโค้ด Node.js Express REST API (Native ESM)
+│   ├── config/                   # การตั้งค่าระบบ (Store Mode, DB, Shipping, Coupons)
+│   ├── controllers/              # Business Logic & Controllers (Product, ฯลฯ)
 │   ├── middleware/               # Auth Guard, Rate Limiting, Error Handling
 │   ├── models/                   # Mongoose Data Schemas (User, Product, Order, Cart, Lookbook, ฯลฯ)
-│   ├── routes/                   # API Route Handlers
-│   ├── services/                 # Business Logic (UserStore, MediaStorage, Lookbook)
-│   ├── storage/                  # โฟลเดอร์เก็บไฟล์รูปภาพที่ผ่านการบีบอัด
-│   ├── tests/                    # ชุดทดสอบ Unit & Integration Tests (14 Tests)
+│   ├── routes/                   # API Route Handlers (Modular Endpoints)
+│   ├── services/                 # Core Services (UserStore, MediaStorage, Notification, Sweeper)
+│   ├── storage/                  # โฟลเดอร์เก็บไฟล์รูปภาพที่ผ่านการประมวลผลด้วย Sharp
+│   ├── tests/                    # ชุดทดสอบ Unit & Integration Tests (336 Tests ผ่านทั้งหมด)
 │   ├── package.json
 │   └── server.js                 # จุดเริ่มต้นของ Backend Server
 │
+├── e2e/                          # ชุดทดสอบ End-to-End ด้วย Playwright (5 specs / 25 tests)
+│   ├── fixtures/                 # Global Setup/Teardown พร้อม Safety Guard
+│   ├── address-book.spec.js      # ทดสอบการจัดการที่อยู่จัดส่ง
+│   ├── auth.spec.js              # ทดสอบ Email/Password และ Google OAuth Flow
+│   ├── profile-avatar.spec.js    # ทดสอบการอัปโหลดและลบ Avatar
+│   ├── responsive-a11y.spec.js   # ทดสอบ Responsive Viewports และ WCAG Accessibility
+│   └── unauthorized-access.spec.js # ทดสอบ Role Guards และการป้องกันเส้นทาง
+│
+├── docs/                         # คู่มือและ Runbooks (MongoDB backup/restore & monitoring)
 ├── test-support/                 # Helper utilities สำหรับการทดสอบ
-├── package.json                  # Root Workspace Configuration (Concurrently scripts)
+├── playwright.config.js          # Playwright E2E Configuration (Dual WebServers)
+├── package.json                  # Root Monorepo Configuration (Concurrently scripts)
 └── README.md                     # เอกสารโปรเจกต์
 ```
 
@@ -165,54 +176,85 @@ cd MATCHA
 ```bash
 npm run install:all
 ```
-*(คำสั่งนี้จะทำการ `npm install` ทั้งที่ Root, Backend และ Frontend ให้อัตโนมัติ)*
+*(คำสั่งนี้จะทำการ `npm install` ทั้งที่ Root, Backend และ Frontend ให้อัตโนมัติ เพื่อให้เครื่องมือทั้งหมดรวมถึง Playwright E2E พร้อมทำงานทันที)*
 
 ---
 
 ## 🔑 ตัวแปรสภาพแวดล้อม (Environment Variables)
 
+ระบบแบ่งแยกตัวแปรสภาพแวดล้อมระหว่าง Backend และ Frontend อย่างชัดเจนเพื่อความปลอดภัย โดยไฟล์ `.env` จริงจะถูกละเว้นจาก Git เสมอตาม `.gitignore`:
+
+### 1. ฝั่งเซิร์ฟเวอร์หลังบ้าน (`backend/.env`)
 คัดลอกไฟล์ตัวอย่าง `backend/.env.example` ไปเป็น `backend/.env`:
 
 ```env
 # backend/.env
 PORT=5001
+
+# ฐานข้อมูล MongoDB Atlas หลัก
 MONGODB_URI="mongodb+srv://<username>:<password>@cluster0.hak50ja.mongodb.net/MatchA?appName=Cluster0"
+
+# ฐานข้อมูลทดสอบแยกต่างหาก (จำเป็นสำหรับการรัน E2E tests และ script restore เพื่อป้องกันข้อมูล Production)
+TEST_MONGODB_URI="mongodb+srv://<username>:<password>@cluster0.hak50ja.mongodb.net/MatchA_test?appName=Cluster0"
+
+# JWT Authentication Secret Key & Expiry
 JWT_SECRET="your-super-secret-jwt-key"
 JWT_EXPIRES_IN="7d"
+
+# Frontend Origin URL (ใช้สำหรับ CORS / Server Info)
 FRONTEND_URL="http://localhost:5173"
+
+# รหัสผ่านเริ่มต้นสำหรับบัญชีทดสอบเริ่มต้น (Seed Users)
 ADMIN_SEED_PASSWORD="your-admin-password"
+SEED_MEMBER_PASSWORD="your-member-password"
+
+# Firebase Web API key สำหรับตรวจสอบ Google OAuth Token ฝั่งเซิร์ฟเวอร์
+FIREBASE_WEB_API_KEY=""
+
+# ระบบส่งอีเมล (Resend) สำหรับอีเมลยืนยันคำสั่งซื้อและรีเซ็ตรหัสผ่าน (Backend เท่านั้น)
+RESEND_API_KEY=""
+EMAIL_FROM="orders@your-domain.com"
+
+# พื้นที่เก็บรูปภาพภายนอก (Cloudinary - Backend เท่านั้น)
+CLOUDINARY_URL="cloudinary://<api_key>:<api_secret>@<cloud_name>"
+
+# ระบบชำระเงิน Stripe Test Mode (Backend เท่านั้น — ห้ามนำ Webhook Secret ไปไว้ที่ Frontend)
+STRIPE_SECRET_KEY="sk_test_..."
+STRIPE_WEBHOOK_SECRET="whsec_..."
 ```
 
-### เปิดใช้งานอีเมลจริงบน Render
+### 2. ฝั่งหน้าบ้าน (`frontend/.env`)
+คัดลอกไฟล์ตัวอย่าง `frontend/.env.example` ไปเป็น `frontend/.env`:
 
-ระบบส่งอีเมลยืนยันคำสั่งซื้อและลิงก์ตั้งรหัสผ่านผ่าน Resend โดยไม่เก็บคีย์ไว้ในโค้ด:
-
-1. สร้าง API key ใน Resend แล้วคัดลอกไว้ชั่วคราว (ห้ามใส่ใน Git หรือ `VITE_` variable)
-2. ใน Render → **MATCHA → Environment** เพิ่มตัวแปร `RESEND_API_KEY` เป็น API key นั้น
-3. เพิ่ม `EMAIL_FROM` เป็นอีเมลจากโดเมนที่ยืนยันแล้วใน Resend เช่น `orders@your-domain.com`
-4. กด **Save, rebuild, and deploy** แล้วสั่งซื้อทดสอบหนึ่งรายการ
-
-ถ้ายังไม่ตั้งค่าสองตัวแปรนี้ ระบบจะยังรับออเดอร์ได้ตามปกติ แต่จะข้ามการส่งอีเมลและแจ้งเตือนใน log เท่านั้น
-
-สำหรับ `frontend/` (คัดลอก `frontend/.env.example` ไปเป็น `frontend/.env` เพื่อชี้ไปยัง Production Cloud Backend):
 ```env
 # frontend/.env
+# URL ของ Backend API (ปล่อยว่างไว้เมื่อรันในเครื่องเพื่อใช้ Vite Proxy ไปยัง localhost:5001)
 VITE_API_URL="https://matcha-gluk.onrender.com"
+
+# Stripe Publishable Test Key (Public Key ที่อนุญาตให้เปิดเผยได้)
+VITE_STRIPE_PUBLISHABLE_KEY="pk_test_..."
+
+# การตั้งค่า Firebase Web Client สำหรับ Google Sign-In
+VITE_FIREBASE_API_KEY=""
+VITE_FIREBASE_AUTH_DOMAIN=""
+VITE_FIREBASE_PROJECT_ID=""
+VITE_FIREBASE_STORAGE_BUCKET=""
+VITE_FIREBASE_MESSAGING_SENDER_ID=""
+VITE_FIREBASE_APP_ID=""
 ```
-*(หากต้องการทดสอบแบบ Localhost ในเครื่องตนเอง สามารถลบหรือปล่อย `VITE_API_URL` ว่างไว้ได้ ระบบจะใช้ Proxy เชื่อมต่อไปยัง `localhost:5001` โดยอัตโนมัติ)*
 
 ---
 
 ## 🏃 คำสั่งการรันและทดสอบ (Commands & Testing)
 
-### รันเซิร์ฟเวอร์แบบ Full-Stack (Frontend + Backend พร้อมกัน)
+### 1. รันเซิร์ฟเวอร์แบบ Full-Stack (Frontend + Backend พร้อมกัน)
 ```bash
 npm run dev
 ```
 - **Frontend URL**: `http://localhost:5173`
-- **Backend API URL**: `http://localhost:5001` (หรือชี้ไปยัง `https://matcha-gluk.onrender.com`)
+- **Backend API URL**: `http://localhost:5001` (หรือเชื่อมไปยัง Cloud Backend)
 
-### รันแยกเฉพาะส่วน
+### 2. รันแยกเฉพาะส่วน
 ```bash
 # รันเฉพาะ Backend
 npm run dev:backend
@@ -221,25 +263,31 @@ npm run dev:backend
 npm run dev:frontend
 ```
 
-### รันชุดทดสอบ Backend (Automated Tests)
+### 3. Build โปรเจกต์สำหรับ Production
+```bash
+npm run build
+```
+*(คอมไพล์ Frontend ด้วย Vite 6.4.3 พร้อมแยก Chunking และประมวลผล Assets แบบ Production Ready)*
+
+### 4. รันชุดทดสอบ Backend (Automated Tests)
 ```bash
 cd backend
 npm test
 ```
-*(ทดสอบ 336 รายการใน 3 suites ครอบคลุม Auth, Payment Lifecycle, Reservation Sweeper, Media Upload, Cart Mutation, Admin Aggregates)*
+*(ผ่าน 336 รายการใน 3 suites ครอบคลุม Auth, Payment Lifecycle, Reservation Sweeper, Media Upload, Cart Mutation, Admin Aggregates)*
 
-### รันชุดทดสอบ Frontend (Automated Tests)
+### 5. รันชุดทดสอบ Frontend (Automated Tests)
 ```bash
 cd frontend
 npm test
 ```
-*(ทดสอบ 67 รายการใน 12 files ด้วย Vitest ครอบคลุม Cart, Orders, Favorites, Address Book, Admin Hooks)*
+*(ผ่าน 67 รายการใน 12 files ด้วย Vitest ครอบคลุม CartContext Race Condition, Tap Targets, Coupon Validation, Address Deduplication, Admin Hooks)*
 
-### รันการทดสอบ End-to-End (E2E Tests)
+### 6. รันการทดสอบ End-to-End จาก Root (E2E Tests)
 ```bash
 npm run test:e2e
 ```
-*(ทดสอบ End-to-End ด้วย Playwright 5 specs)*
+*(ผ่าน 25 รายการใน 5 specs ด้วย Playwright ครอบคลุม Address Book CRUD, Auth Lifecycle, Avatar Management, Responsive Viewports 390px/768px/1440px, WCAG Accessibility และ Unauthorized Access Protection)*
 
 ---
 
