@@ -19,6 +19,7 @@ import {
   createAddress,
   updateAddress,
   deleteAddress,
+  formatAddressArea,
 } from '../../features/account/addressBook';
 
 const INITIAL_FORM = {
@@ -376,7 +377,7 @@ export default function AddressesTab({ addresses: initialAddresses }) {
                       <div className="text-matcha-muted">{addr.addressLine2}</div>
                     )}
                     <div className="text-matcha-muted">
-                      {[addr.subdistrict, addr.district, addr.province].filter(Boolean).join(', ')}{' '}
+                      {formatAddressArea([addr.subdistrict, addr.district, addr.province])}{' '}
                       {addr.postalCode}
                     </div>
                     <div className="text-[11px] text-matcha-muted">{addr.country}</div>

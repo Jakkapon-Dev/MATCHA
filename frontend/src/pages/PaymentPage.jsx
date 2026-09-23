@@ -12,7 +12,7 @@ import OrderSuccessModal from '../components/payment/OrderSuccessModal';
 import { api, apiErrorText } from '../services/api';
 import { useStoreMode } from '../context/StoreModeContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, shippingCostFor } from '../config/shipping';
-import { bundleDiscountFor, couponFor, discountFor, normaliseCode, FEATURED_CODES, takePendingCoupon } from '../config/coupons';
+import { bundleDiscountFor, couponFor, discountFor, normaliseCode, takePendingCoupon } from '../config/coupons';
 import PreviewNote from '../components/ui/PreviewNote';
 import { stripePromise } from '../lib/stripe';
 import { QrCode, Truck, Shield, AlertTriangle, RotateCcw } from 'lucide-react';
@@ -132,7 +132,12 @@ export default function PaymentPage() {
     const coupon = couponFor(code);
 
     if (!coupon) {
-      setCouponError(`Invalid promo code. Try ${FEATURED_CODES.join(' or ')}`);
+      /* Naming the codes that do work turned one wrong guess into a working
+         discount. MATCHA15 is advertised on the front page and sits in this
+         box's own placeholder, so nothing is lost by leaving it out — but
+         FREESHIP is published nowhere else, and this message was the only
+         place it could be found. */
+      setCouponError(t('checkout.promoInvalid'));
       return;
     }
 

@@ -10,11 +10,12 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/React-18.2-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React" />
-  <img src="https://img.shields.io/badge/Vite-5.4-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/Vite-6.4.3-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
   <img src="https://img.shields.io/badge/TailwindCSS-v4-000000?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind" />
   <img src="https://img.shields.io/badge/Node.js-Express_ESM-339933?style=for-the-badge&logo=node.js&logoColor=white" alt="Node Express" />
   <img src="https://img.shields.io/badge/MongoDB-Atlas_Cloud-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
-  <img src="https://img.shields.io/badge/Deployed-Render.com-46E3B7?style=for-the-badge&logo=render&logoColor=black" alt="Render" />
+  <img src="https://img.shields.io/badge/Frontend-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
+  <img src="https://img.shields.io/badge/Backend-Render.com-46E3B7?style=for-the-badge&logo=render&logoColor=black" alt="Render" />
 </p>
 
 ---
@@ -23,6 +24,7 @@
 
 สำหรับผู้ทดสอบ สามารถเข้าชมและทดสอบระบบได้ทันที:
 
+- **Frontend Web Application (Production)**: [`https://matcha-inky.vercel.app`](https://matcha-inky.vercel.app)
 - **Backend API Server**: [`https://matcha-gluk.onrender.com`](https://matcha-gluk.onrender.com)
 - **API Health Check**: [`https://matcha-gluk.onrender.com/api/health`](https://matcha-gluk.onrender.com/api/health)
 - **Database System**: MongoDB Atlas Cloud Cluster (Connected 🟢)
@@ -80,17 +82,17 @@
 ### 4. 🛍️ ระบบ E-Commerce ครบวงจร
 - **Product Catalog & Filtering**: ค้นหา กรองตามฤดูกาล หมวดหมู่ และสถานะสต็อก
 - **Cart Management**: รองรับทั้ง Guest Cart (ผูกผ่าน UUID ใน LocalStorage) และสมาชิก พร้อมฟังก์ชัน Merge Cart อัตโนมัติเมื่อเข้าสู่ระบบ
-- **Checkout & Coupon Engine**: คำนวณส่วนลด คูปองโปรโมชัน คำนวณยอดสุทธิ และจำลองการชำระเงิน (Demo Payment Gateway)
+- **Checkout & Payment Engine**: รองรับการชำระเงินจริงใน Test mode ผ่าน Stripe (บัตรเครดิต/เดบิต), PromptPay QR Code และ Cash on Delivery (COD) พร้อมระบบคูปองส่วนลดและกลไกจองสต็อก/คืนสต็อกอัตโนมัติ (Reservation Sweeper)
 
 ### 5. 🔐 ระบบสมาชิกและความปลอดภัย (Auth & Security)
-- ระบบลงทะเบียน / เข้าสู่ระบบด้วย JWT และรหัสผ่านที่เข้ารหัสด้วย bcrypt
+- ระบบลงทะเบียน / เข้าสู่ระบบด้วย JWT และ Firebase Authentication (รองรับ Google Sign-In, Email Verification, และ Password Reset)
 - สมาชิกมีระดับ Tier (`Regular`, `Silver`, `Gold`, `VIP`) พร้อมสิทธิประโยชน์เฉพาะ
 - ระบบจัดการที่อยู่จัดส่งหลายรายการ (Multiple Shipping Addresses)
-- การป้องกันการโจมตีด้วย `express-rate-limit` และ CORS Dynamic Origin
+- การป้องกันการโจมตีด้วย `express-rate-limit` (Shared Counter), CORS Dynamic Origin และ Secure Auth Guards
 
 ### 6. ⚙️ Admin Management Dashboard
-- จัดการสต็อก เพิ่ม ลบ แก้ไข ข้อมูลสินค้า (Product CRUD)
-- จัดการและอัปโหลดรูปภาพผ่าน **Sharp Pipeline** แปลงเป็น WebP พร้อมสร้างรูป Thumbnail อัตโนมัติ
+- จัดการสต็อก เพิ่ม ลบ แก้ไข ข้อมูลสินค้า (Product CRUD พร้อม Size-Aware Restock)
+- จัดการและอัปโหลดรูปภาพผ่าน Cloudinary และ **Sharp Pipeline** แปลงเป็น WebP พร้อม Thumbnail อัตโนมัติ
 - จัดการ Lookbook และสร้างจุด Hotspot สำหรับทีม Editorial
 
 ---
@@ -98,18 +100,21 @@
 ## 🛠️ เทคโนโลยีที่ใช้ (Tech Stack)
 
 ### Frontend (หน้าบ้าน)
-- **Framework**: [React 18](https://react.dev/) + [Vite 5](https://vitejs.dev/)
+- **Framework**: [React 18](https://react.dev/) + [Vite 6](https://vitejs.dev/) (v6.4.3)
 - **Routing**: [React Router 7](https://reactrouter.com/)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
-- **Smooth Scrolling**: [Lenis](https://lenis.darkroom.engineering/)
+- **Animation & Scrolling**: [Motion](https://motion.dev/) + [Lenis](https://lenis.darkroom.engineering/)
+- **Payment & Auth**: Stripe Elements (`@stripe/react-stripe-js`, `@stripe/stripe-js`) + Firebase Client SDK
 - **Icons**: [Lucide React](https://lucide.dev/)
 
 ### Backend (หลังบ้าน)
 - **Runtime & Language**: [Node.js](https://nodejs.org/) (Native ES Modules / `type: module`)
 - **Web Framework**: [Express 4](https://expressjs.com/)
 - **Database & ODM**: [MongoDB Atlas](https://www.mongodb.com/atlas) + [Mongoose 9](https://mongoosejs.com/)
-- **Image Processing**: [Sharp](https://sharp.pixelplumbing.com/) + [Multer](https://github.com/expressjs/multer)
-- **Authentication**: JSON Web Token (`jsonwebtoken`) + `bcryptjs`
+- **Payment Gateway**: [Stripe SDK](https://stripe.com/)
+- **Email Service**: [Resend API](https://resend.com/)
+- **Image Processing & Storage**: [Cloudinary](https://cloudinary.com/) + [Sharp](https://sharp.pixelplumbing.com/) + [Multer](https://github.com/expressjs/multer)
+- **Authentication**: Firebase Admin / Web Token Verification + JSON Web Token (`jsonwebtoken`) + `bcryptjs`
 - **Validation**: [Zod](https://zod.dev/)
 
 ---
@@ -221,7 +226,20 @@ npm run dev:frontend
 cd backend
 npm test
 ```
-*(ทดสอบ 14 ชุด ครอบคลุม Auth, Media Upload, Cart Mutation, Lookbook Hotspots)*
+*(ทดสอบ 336 รายการใน 3 suites ครอบคลุม Auth, Payment Lifecycle, Reservation Sweeper, Media Upload, Cart Mutation, Admin Aggregates)*
+
+### รันชุดทดสอบ Frontend (Automated Tests)
+```bash
+cd frontend
+npm test
+```
+*(ทดสอบ 67 รายการใน 12 files ด้วย Vitest ครอบคลุม Cart, Orders, Favorites, Address Book, Admin Hooks)*
+
+### รันการทดสอบ End-to-End (E2E Tests)
+```bash
+npm run test:e2e
+```
+*(ทดสอบ End-to-End ด้วย Playwright 5 specs)*
 
 ---
 

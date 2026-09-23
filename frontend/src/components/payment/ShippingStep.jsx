@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { fetchAddressBook, readAddressBook, rememberAddress } from '../../features/account/addressBook';
+import { fetchAddressBook, readAddressBook, rememberAddress, formatAddressArea } from '../../features/account/addressBook';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { Truck, CheckCircle2, PlusCircle, ArrowLeft, ArrowRight, ShieldCheck, Building2, Home } from 'lucide-react';
 
@@ -80,7 +80,7 @@ export default function ShippingStep({
       addressLine2: preset.addressLine2 || '',
       subdistrict: preset.subdistrict || '',
       district: preset.district || '',
-      city: [preset.subdistrict, preset.district, preset.province].filter(Boolean).join(', ') || preset.city || '',
+      city: formatAddressArea([preset.subdistrict, preset.district, preset.province]) || preset.city || '',
       state: preset.province || preset.state || '',
       province: preset.province || '',
       zipCode: preset.postalCode || preset.zipCode,
@@ -101,7 +101,7 @@ export default function ShippingStep({
       addressLine2: preset.addressLine2 || '',
       subdistrict: preset.subdistrict || '',
       district: preset.district || '',
-      city: [preset.subdistrict, preset.district, preset.province].filter(Boolean).join(', ') || preset.city || '',
+      city: formatAddressArea([preset.subdistrict, preset.district, preset.province]) || preset.city || '',
       state: preset.province || preset.state || '',
       province: preset.province || '',
       zipCode: preset.postalCode || preset.zipCode,
@@ -129,6 +129,15 @@ export default function ShippingStep({
     if (onNext) onNext();
   };
 
+  /* The same rules the address book has always enforced. Checkout only asked
+     that these two boxes were not empty, so "abcdefg" and "!!!" reached the
+     order API and were stored as the details the courier would have used. The
+     phone is judged on its digits, because 081-000-0000 and 0810000000 are the
+     same number and both are worth accepting. */
+  const phoneDigits = String(formData.phone ?? '').replace(/[\s()-]/g, '').trim();
+  const phoneMalformed = Boolean(phoneDigits) && !/^0[0-9]{8,9}$/.test(phoneDigits);
+  const postalMalformed = Boolean(formData.zipCode?.trim()) && !/^[0-9]{5}$/.test(formData.zipCode.trim());
+
   const isFormValid = Boolean(
     formData.firstName?.trim() &&
     formData.lastName?.trim() &&
@@ -137,7 +146,7 @@ export default function ShippingStep({
     formData.address?.trim() &&
     formData.city?.trim() &&
     formData.zipCode?.trim()
-  );
+  ) && !phoneMalformed && !postalMalformed;
 
   return (
     <div className="space-y-8">
@@ -207,7 +216,7 @@ export default function ShippingStep({
                     {preset.recipientName}
                   </div>
                   <p className="text-[11px] font-mono text-matcha-muted line-clamp-2 leading-relaxed">
-                    {[preset.addressLine1 || preset.address, preset.subdistrict, preset.district, preset.province, preset.postalCode || preset.zipCode].filter(Boolean).join(', ')}
+                    {formatAddressArea([preset.addressLine1 || preset.address, preset.subdistrict, preset.district, preset.province, preset.postalCode || preset.zipCode])}
                   </p>
                   <span className="mt-2 text-[10px] font-mono text-matcha-muted">
                     {t('checkout.tel')}: {preset.phone}
@@ -302,12 +311,21 @@ export default function ShippingStep({
                 id="shipping-phone"
                 type="tel"
                 name="phone"
+                inputMode="tel"
+                autoComplete="tel"
                 value={formData.phone || ''}
                 onChange={handleChange}
                 placeholder={t('checkout.phPhone')}
-                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
+                aria-invalid={phoneMalformed || undefined}
+                aria-describedby={phoneMalformed ? 'shipping-phone-error' : undefined}
+                className={`w-full px-3.5 py-2.5 border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors ${phoneMalformed ? 'border-matcha-accent' : 'border-matcha-border'}`}
                 required
               />
+              {phoneMalformed && (
+                <p id="shipping-phone-error" role="alert" className="mt-1 text-[11px] font-mono text-matcha-accent">
+                  {t('checkout.phoneInvalid')}
+                </p>
+              )}
             </div>
 
             <div className="sm:col-span-2">
@@ -350,12 +368,22 @@ export default function ShippingStep({
                 id="shipping-zipCode"
                 type="text"
                 name="zipCode"
+                inputMode="numeric"
+                autoComplete="postal-code"
+                maxLength={5}
                 value={formData.zipCode || ''}
                 onChange={handleChange}
                 placeholder={t('checkout.phPostal')}
-                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
+                aria-invalid={postalMalformed || undefined}
+                aria-describedby={postalMalformed ? 'shipping-zipCode-error' : undefined}
+                className={`w-full px-3.5 py-2.5 border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors ${postalMalformed ? 'border-matcha-accent' : 'border-matcha-border'}`}
                 required
               />
+              {postalMalformed && (
+                <p id="shipping-zipCode-error" role="alert" className="mt-1 text-[11px] font-mono text-matcha-accent">
+                  {t('checkout.postalInvalid')}
+                </p>
+              )}
             </div>
           </div>
         </div>

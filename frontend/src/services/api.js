@@ -72,25 +72,47 @@ function httpErrorKey(status) {
   return 'errors.unknown';
 }
 
-// Only these two statuses used to let the server's own wording through.
-const SERVER_MESSAGE_WINS = new Set([400, 404]);
+/* Statuses where the server knows something this module cannot name.
 
-function apiError(status, serverMessage) {
+   409 was missing, and the checkout paid for it: the order API refuses a bag
+   it cannot fill with `{ message, shortfall: { name, size, requested } }`,
+   naming the one garment at fault. All of that was thrown away here and the
+   shopper was told "Something went wrong", which is both untrue and unactionable
+   — there is nothing to retry until they take that garment out, and the page
+   never said which one. */
+const SERVER_MESSAGE_WINS = new Set([400, 404, 409]);
+
+function apiError(status, serverMessage, body) {
   console.warn(`[API] Request failed (${status}):`, serverMessage || 'No server message');
 
   const useServerMessage = serverMessage && (SERVER_MESSAGE_WINS.has(status) || status >= 600 || !status);
-  if (useServerMessage) return new Error(serverMessage);
+  const err = useServerMessage
+    ? new Error(serverMessage)
+    // The Error still carries readable text for logs and for any caller that has
+    // no translator to hand.
+    : Object.assign(new Error(httpErrorKey(status)), { i18nKey: httpErrorKey(status) });
 
-  const i18nKey = httpErrorKey(status);
-  // The Error still carries readable text for logs and for any caller that has
-  // no translator to hand.
-  return Object.assign(new Error(i18nKey), { i18nKey });
+  // Structured detail the server sent alongside the sentence. `apiErrorText`
+  // prefers it, because "MatchA Autumn Jeans in size L is gone" is a sentence a
+  // shopper can act on and the server's own wording is Thai-only.
+  err.status = status;
+  if (body && typeof body === 'object' && body.shortfall) err.shortfall = body.shortfall;
+  return err;
 }
 
 /* What a component should show for an error that came out of this module.
    Falls back to the error's own text, so a failure raised anywhere else — or a
    message the server worded itself — still reads properly. */
 export function apiErrorText(err, t) {
+  // A named garment beats both the generic key and the server's Thai sentence:
+  // it is the only version that tells the shopper what to change.
+  const shortName = err?.shortfall?.name;
+  if (shortName && typeof t === 'function') {
+    const size = err.shortfall.size;
+    return size && size !== 'ONE'
+      ? t('errors.outOfStockItemSize', { name: shortName, size })
+      : t('errors.outOfStockItem', { name: shortName });
+  }
   if (err?.i18nKey && typeof t === 'function') return t(err.i18nKey);
   return err?.message || (typeof t === 'function' ? t('errors.unknown') : 'Something went wrong.');
 }
@@ -121,7 +143,7 @@ async function fetchWithFallback(endpoint, options = {}) {
       }
     }
     const errorData = await res.json().catch(() => ({}));
-    throw apiError(res.status, errorData.message);
+    throw apiError(res.status, errorData.message, errorData);
   } catch (err) {
     if (err.message && !err.message.includes('Failed to fetch') && !err.message.includes('NetworkError') && !err.message.includes('Failed to communicate')) {
       throw err;
@@ -144,7 +166,7 @@ async function fetchWithFallback(endpoint, options = {}) {
       }
     }
     const errorData = await directRes.json().catch(() => ({}));
-    throw apiError(directRes.status, errorData.message);
+    throw apiError(directRes.status, errorData.message, errorData);
   } catch (err) {
     if (err.message && !err.message.includes('Failed to fetch') && !err.message.includes('NetworkError')) {
       throw err;

@@ -28,6 +28,22 @@ export default function OrdersTab({ orders = [], isLoaded = true }) {
     return 'bg-amber-100 text-amber-800 border border-amber-200';
   };
 
+  /* `pending_payment` is a database value, not a sentence. It reached the page
+     raw and the badge's `uppercase` turned it into PENDING_PAYMENT, sitting
+     beside PAID and UNPAID which happen to read as words by accident. */
+  const paymentStatusLabel = (paymentStatus = '') => {
+    const key = {
+      unpaid: 'account.payUnpaid',
+      pending_payment: 'account.payPendingPayment',
+      paid: 'account.payPaid',
+      failed: 'account.payFailed',
+      expired: 'account.payExpired',
+      refunded: 'account.payRefunded'
+    }[String(paymentStatus).toLowerCase()];
+    // A state this build has not heard of still has to read as something.
+    return key ? t(key) : String(paymentStatus).replace(/_/g, ' ');
+  };
+
   const getPaymentStatusBadge = (paymentStatus = '') => {
     // Payment state is styled independently from fulfillment state because an order
     // can be shipped, cancelled, or refunded on a separate timeline.
@@ -117,7 +133,7 @@ export default function OrdersTab({ orders = [], isLoaded = true }) {
                   </span>
                   {/* Payment Status */}
                   <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${getPaymentStatusBadge(order.paymentStatus)}`}>
-                    Payment: {order.paymentStatus || 'unpaid'}
+                    Payment: {paymentStatusLabel(order.paymentStatus || 'unpaid')}
                   </span>
                   <span className="font-bold text-[#0A0A0A] ml-1">${order.total.toFixed(2)}</span>
                 </div>

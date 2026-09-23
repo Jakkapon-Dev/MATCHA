@@ -218,3 +218,22 @@ export function defaultAddress(addressesOrUser) {
   const book = readAddressBook(addressesOrUser);
   return book.find((a) => a.isDefault) || book[0] || null;
 }
+
+/* Checkout asks for one location — "City or district" — but the address book
+   stores three, so the same word is written into subdistrict, district and
+   province to satisfy the API. Read back literally that renders as
+   "Bangkok, Bangkok, Bangkok". Repeating a name does not make it three places:
+   say it once, in order, and keep whatever detail there is. */
+export function formatAddressArea(parts) {
+  const seen = new Set();
+  return parts
+    .map((part) => String(part ?? '').trim())
+    .filter((part) => {
+      if (!part) return false;
+      const key = part.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .join(', ');
+}

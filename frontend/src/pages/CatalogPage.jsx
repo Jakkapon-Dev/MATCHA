@@ -221,13 +221,17 @@ export default function CatalogPage({
         className="relative min-h-[42rem] lg:min-h-[39rem] overflow-hidden border-b border-[#0a0a0a]"
         style={{ '--catalog-dye': wash(featuredHex, 0.22) }}
       >
+        {/* A decorative styling-desk texture used to be laid over this wash.
+            Its file was never committed, so every visit to /catalog asked for
+            /images/catalog/styling-desk-wash.png and got a 404 — the hero has
+            only ever rendered as the flat dye below. Removing the tag changes
+            nothing anyone has seen and takes the error off the console.
+
+            Putting it back is a design decision, not a code one: note that
+            .vercelignore drops every png and jpeg under public/images from the
+            deployment, so the replacement has to be a .webp read through
+            webpSrc() the way every other image here is. */}
         <div className="absolute inset-0 bg-[var(--catalog-dye)] transition-colors duration-500" />
-        <img
-          src="/images/catalog/styling-desk-wash.png"
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-y-0 left-[28%] hidden w-[54%] object-cover opacity-45 mix-blend-multiply lg:block"
-        />
 
         <div className="relative mx-auto grid min-h-[42rem] max-w-[94rem] grid-cols-1 lg:min-h-[39rem] lg:grid-cols-[minmax(22rem,0.9fr)_minmax(28rem,1.25fr)_minmax(17rem,0.55fr)]">
           <div className="z-10 flex flex-col justify-between px-5 pb-8 pt-12 sm:px-8 lg:py-12">
