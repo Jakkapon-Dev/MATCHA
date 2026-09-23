@@ -365,8 +365,16 @@ export default function AdminPage() {
   const navTabs = [
     { id: 'media', label: t('admin.tabMedia'), icon: Layers, badge: null },
     { id: 'dashboard', label: 'Overview & KPIs', icon: LayoutDashboard, badge: null },
-    { id: 'inventory', label: 'Inventory & Stock', icon: Boxes, badge: inventory.length },
-    { id: 'orders', label: 'Orders Pipeline', icon: ClipboardList, badge: orders.filter(o => o.status === 'Processing').length },
+    /* Each badge counts what its label names, across the whole shop.
+
+       They used to count the page: `inventory.length` is the 25 rows loaded,
+       not the 75 garments, and the orders badge filtered those same loaded
+       rows for `Processing`. So the menu read "Inventory & Stock 25" beside a
+       table saying "page 1 of 3", and "Orders Pipeline 1" beside 20 orders —
+       numbers that moved when an administrator turned a page. The totals come
+       from GET /admin/stats, which describes the shop rather than the view. */
+    { id: 'inventory', label: 'Inventory & Stock', icon: Boxes, badge: totalProductsCount },
+    { id: 'orders', label: 'Orders Pipeline', icon: ClipboardList, badge: totalOrdersCount },
     { id: 'analytics', label: 'Revenue Analytics', icon: BarChart3, badge: null },
     { id: 'members', label: 'VIP Customer Registry', icon: UserCheck, badge: vipMembersCount },
     { id: 'backup', label: 'Reports & Backups', icon: HardDrive, badge: null }
