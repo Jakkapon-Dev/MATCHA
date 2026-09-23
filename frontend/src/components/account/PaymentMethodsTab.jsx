@@ -1,11 +1,16 @@
 import React from 'react';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { CreditCard } from 'lucide-react';
+import PreviewBadge from '../ui/PreviewBadge';
 
 export default function PaymentMethodsTab() {
   const { t } = useLanguage();
-  // These are masked display fixtures only; full card details must never be stored in
-  // frontend state. A payment-provider integration can replace this summary list.
+  /* Saving a card is not built yet — there is no provider customer or token
+     behind this list. The two cards are a layout sample, and they used to be
+     shown as if they were the shopper's own, each signed "ALEX C." whoever was
+     logged in. The team's rule for mockups is to keep them and say so, so they
+     stay, marked as samples, with no name on them. Full card details must never
+     live in frontend state; a tokenised provider list can replace this one. */
   const cards = [
     { id: 'c1', brand: 'Visa', last4: '8899', exp: '08/28', isDefault: true },
     { id: 'c2', brand: 'Mastercard', last4: '4412', exp: '11/27', isDefault: false }
@@ -19,12 +24,17 @@ export default function PaymentMethodsTab() {
           <h2 className="text-base font-extrabold uppercase tracking-tight text-[#0A0A0A]">
             Saved Payment Cards
           </h2>
+          <PreviewBadge label={t('account.paymentSampleBadge')} />
         </div>
       </div>
 
+      <p role="note" className="text-xs font-mono text-matcha-muted leading-relaxed">
+        {t('account.paymentSampleNote')}
+      </p>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {cards.map((c) => (
-          <div key={c.id} className="p-5 border border-matcha-border bg-[#0A0A0A] text-white space-y-4 font-mono">
+          <div key={c.id} aria-label={t('account.paymentSampleCard')} className="p-5 border border-matcha-border bg-[#0A0A0A] text-white space-y-4 font-mono opacity-70">
             <div className="flex justify-between items-center text-xs">
               <span className="font-bold text-matcha-secondary">{c.brand}</span>
               {c.isDefault && (
@@ -37,7 +47,7 @@ export default function PaymentMethodsTab() {
               •••• •••• •••• {c.last4}
             </div>
             <div className="flex justify-between text-[11px] text-matcha-secondary">
-              <span>{t('account.cardholder')}: ALEX C.</span>
+              <span>{t('account.paymentSampleCard')}</span>
               <span>Exp: {c.exp}</span>
             </div>
           </div>
