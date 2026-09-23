@@ -12,6 +12,7 @@ import { isDemo } from '../config/storeMode.js';
 import { sendOrderConfirmation } from '../services/email.js';
 import { normaliseCode, discountFor, isFreeShippingCoupon } from '../config/coupons.js';
 import { memoryNotifications } from './notificationRoutes.js';
+import { normalizePhone, isValidThaiPhone, isValidPostalCode } from '../utils/contactFormat.js';
 import { dispatchOrderNotification } from '../services/notificationService.js';
 import { PAYMENT_STATES, initialPaymentStatus, paymentDeadlineFor } from '../config/paymentStates.js';
 
@@ -297,12 +298,34 @@ router.post('/', orderLimiter, async (req, res) => {
     const totalDiscount = Math.round((couponDiscount + bundleDiscountAmount) * 100) / 100;
     const total = Math.max(0, Math.round((subtotal + shippingCost - totalDiscount) * 100) / 100);
 
+    /* Contact details the courier has to be able to use.
+
+       The address book has refused a malformed phone or postal code since it
+       was built; checkout did not, so the same shopper could save "abcdefg"
+       nowhere but order with it. Only what the browser actually sent is
+       judged — the fallbacks below are the server's own and are not the
+       shopper's to get wrong. */
+    if (customer.phone != null && String(customer.phone).trim() && !isValidThaiPhone(customer.phone)) {
+      return res.status(400).json({
+        success: false,
+        message: 'เบอร์โทรศัพท์ไม่ถูกต้อง กรุณากรอกเบอร์ 9-10 หลักที่ขึ้นต้นด้วย 0',
+        field: 'phone'
+      });
+    }
+    if (customer.zipCode != null && String(customer.zipCode).trim() && !isValidPostalCode(customer.zipCode)) {
+      return res.status(400).json({
+        success: false,
+        message: 'รหัสไปรษณีย์ไม่ถูกต้อง กรุณากรอกตัวเลข 5 หลัก',
+        field: 'zipCode'
+      });
+    }
+
     // 4. Customer Info Fallbacks for Guest/Member
     const customerPayload = {
       firstName: customer.firstName || (authUser?.name ? authUser.name.split(' ')[0] : 'Guest'),
       lastName: customer.lastName || (authUser?.name ? authUser.name.split(' ').slice(1).join(' ') || 'Customer' : 'Shopper'),
       email: (customer.email || authUser?.email || 'guest@matcha-archive.com').toLowerCase().trim(),
-      phone: customer.phone || '081-234-5678',
+      phone: customer.phone ? normalizePhone(customer.phone) : '0812345678',
       address: customer.address || 'MatchA Customer Residence',
       city: customer.city || 'Bangkok',
       state: customer.state || 'Bangkok',

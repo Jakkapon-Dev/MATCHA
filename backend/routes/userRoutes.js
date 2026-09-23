@@ -8,6 +8,7 @@ import Order from '../models/Order.js';
 import DeletionRequest from '../models/DeletionRequest.js';
 import AuditLog from '../models/AuditLog.js';
 import { authRequired, adminOnly } from '../middleware/auth.js';
+import { THAI_PHONE_RE, POSTAL_CODE_RE } from '../utils/contactFormat.js';
 import { MAX_BYTES, storeImage, deleteImage } from '../services/mediaStorage.js';
 
 const router = express.Router();
@@ -29,9 +30,10 @@ const checkDbReady = (req, res, next) => {
   next();
 };
 
-// Regex rules for Thai postal code (5 digits) and phone (9-10 digits starting with 0)
-const phoneRegex = /^0[0-9]{8,9}$/;
-const postalCodeRegex = /^[0-9]{5}$/;
+/* Shared with checkout. These two rules used to live only here, which is how
+   POST /api/orders came to accept contact details the address book refuses. */
+const phoneRegex = THAI_PHONE_RE;
+const postalCodeRegex = POSTAL_CODE_RE;
 
 const profilePatchSchema = z.object({
   firstName: z.string().trim().min(1, 'First name is required').max(80).optional(),

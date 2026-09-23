@@ -285,3 +285,62 @@ test('a guest cannot open an order placed from another browser', async () => {
   const asNobody = await fetch(`${baseUrl}/${id}`);
   assert.equal(asNobody.status, 404, 'and so does a caller with no id at all');
 });
+
+/* Contact details the courier has to be able to use.
+ *
+ * The address book has refused a malformed phone or postal code since it was
+ * built, in routes/userRoutes.js. Checkout never used those rules: POST
+ * /api/orders took whatever the browser sent, so an order could be written
+ * with a phone of "abcdefg" and a postal code of "!!!". Measured on
+ * production: that form advanced straight to the payment step.
+ */
+const orderWith = (customerOverrides) => ({
+  items: [{ productId: 'p1', name: 'Item', price: 20, quantity: 1 }],
+  customer: {
+    firstName: 'QA', lastName: 'Tester', email: 'qa@example.com',
+    phone: '0812345678', address: '1 Road', city: 'Bangkok',
+    zipCode: '10110', country: 'Thailand',
+    ...customerOverrides
+  },
+  paymentMethod: 'visa', subtotal: 20, shipping: 0, total: 20
+});
+
+const post = (payload) => fetch(baseUrl, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(payload)
+});
+
+test('an order cannot carry a phone number nobody can call', async () => {
+  const res = await post(orderWith({ phone: 'abcdefg' }));
+  assert.equal(res.status, 400);
+  const body = await res.json();
+  assert.equal(body.success, false);
+  assert.equal(body.field, 'phone');
+});
+
+test('an order cannot carry a postal code nobody can deliver to', async () => {
+  const res = await post(orderWith({ zipCode: '!!!' }));
+  assert.equal(res.status, 400);
+  const body = await res.json();
+  assert.equal(body.field, 'zipCode');
+});
+
+test('a phone number written with dashes is the same number', async () => {
+  // People type 081-000-0000; refusing it would be a new bug, not a fix.
+  const res = await post(orderWith({ phone: '081-000-0000' }));
+  assert.notEqual(res.status, 400, 'a human-formatted number is still a valid one');
+  const body = await res.json();
+  assert.equal(
+    body.data?.customer?.phone,
+    '0810000000',
+    'and it is stored in one form, digits only'
+  );
+});
+
+test('a postal code of the wrong length is refused', async () => {
+  for (const zip of ['1011', '101100', '1011a']) {
+    const res = await post(orderWith({ zipCode: zip }));
+    assert.equal(res.status, 400, `${zip} is not a Thai postal code`);
+  }
+});
