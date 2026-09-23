@@ -85,7 +85,6 @@ export const translations = {
       socialSoonToast: 'Sign-in with {provider} is not connected yet. Use your email for now.',
       google: 'Continue with Google',
       googleFailed: 'Google sign-in did not finish. Please try again.',
-      facebookSoon: 'Facebook — coming soon',
     },
 
     verifyEmail: {
@@ -388,6 +387,9 @@ export const translations = {
       favoritesEmptyHint: 'Tap the heart on any garment to keep it here.',
       favoritesUnavailable: 'Your saved garments could not be loaded. Please try again shortly.',
       cardholder: 'Cardholder',
+      paymentSampleBadge: 'Sample',
+      paymentSampleCard: 'Sample card',
+      paymentSampleNote: 'Saving cards is not available yet — the cards below are samples to show the layout. At checkout you can pay by card, PromptPay QR or cash on delivery.',
       saved: 'Saved',
       saveProfile: 'Save changes',
     },
@@ -956,7 +958,6 @@ export const translations = {
       socialSoonToast: 'การเข้าสู่ระบบด้วย {provider} ยังไม่เปิดใช้งาน ใช้อีเมลไปก่อนได้',
       google: 'เข้าสู่ระบบด้วย Google',
       googleFailed: 'เข้าสู่ระบบด้วย Google ไม่สำเร็จ กรุณาลองอีกครั้ง',
-      facebookSoon: 'Facebook — เร็ว ๆ นี้',
     },
 
     verifyEmail: {
@@ -1259,6 +1260,9 @@ export const translations = {
       favoritesEmptyHint: 'กดรูปหัวใจบนสินค้าที่ชอบ แล้วรายการจะมาอยู่ที่นี่',
       favoritesUnavailable: 'โหลดรายการที่บันทึกไว้ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง',
       cardholder: 'ชื่อผู้ถือบัตร',
+      paymentSampleBadge: 'ตัวอย่าง',
+      paymentSampleCard: 'บัตรตัวอย่าง',
+      paymentSampleNote: 'ยังไม่รองรับการบันทึกบัตร — บัตรด้านล่างเป็นตัวอย่างการแสดงผลเท่านั้น ตอนชำระเงินเลือกจ่ายด้วยบัตร, PromptPay QR หรือเก็บเงินปลายทางได้',
       saved: 'บันทึกแล้ว',
       saveProfile: 'บันทึกการแก้ไข',
     },
