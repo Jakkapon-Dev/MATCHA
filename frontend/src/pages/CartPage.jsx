@@ -179,10 +179,15 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
 
                     <div className="flex items-center justify-between mt-4">
                       <div className="inline-flex items-center border border-matcha-border">
+                        {/* The bag floors at one, so at one this button had
+                            nothing left to do — but it still looked live, and
+                            pressing it changed nothing and said nothing. The
+                            way to remove a line is the bin above. */}
                         <button
                           onClick={() => onUpdateQty(key, -1)}
+                          disabled={qty <= 1}
                           aria-label={t('cart.decrease')}
-                          className="w-10 h-10 flex items-center justify-center text-sm font-bold text-[#0A0A0A] hover:bg-matcha-border cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+                          className="w-11 h-11 flex items-center justify-center text-sm font-bold text-[#0A0A0A] hover:bg-matcha-border cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] disabled:opacity-35 disabled:cursor-not-allowed disabled:hover:bg-transparent"
                         >
                           −
                         </button>
@@ -190,7 +195,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                         <button
                           onClick={() => onUpdateQty(key, 1)}
                           aria-label={t('cart.increase')}
-                          className="w-10 h-10 flex items-center justify-center text-sm font-bold text-[#0A0A0A] hover:bg-matcha-border cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
+                          className="w-11 h-11 flex items-center justify-center text-sm font-bold text-[#0A0A0A] hover:bg-matcha-border cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                         >
                           +
                         </button>

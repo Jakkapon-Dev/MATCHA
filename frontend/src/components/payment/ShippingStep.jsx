@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useAuth } from '../../context/AuthContext.jsx';
-import { fetchAddressBook, readAddressBook, rememberAddress } from '../../features/account/addressBook';
+import { fetchAddressBook, readAddressBook, rememberAddress, formatAddressArea } from '../../features/account/addressBook';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { Truck, CheckCircle2, PlusCircle, ArrowLeft, ArrowRight, ShieldCheck, Building2, Home } from 'lucide-react';
 
@@ -80,7 +80,7 @@ export default function ShippingStep({
       addressLine2: preset.addressLine2 || '',
       subdistrict: preset.subdistrict || '',
       district: preset.district || '',
-      city: [preset.subdistrict, preset.district, preset.province].filter(Boolean).join(', ') || preset.city || '',
+      city: formatAddressArea([preset.subdistrict, preset.district, preset.province]) || preset.city || '',
       state: preset.province || preset.state || '',
       province: preset.province || '',
       zipCode: preset.postalCode || preset.zipCode,
@@ -101,7 +101,7 @@ export default function ShippingStep({
       addressLine2: preset.addressLine2 || '',
       subdistrict: preset.subdistrict || '',
       district: preset.district || '',
-      city: [preset.subdistrict, preset.district, preset.province].filter(Boolean).join(', ') || preset.city || '',
+      city: formatAddressArea([preset.subdistrict, preset.district, preset.province]) || preset.city || '',
       state: preset.province || preset.state || '',
       province: preset.province || '',
       zipCode: preset.postalCode || preset.zipCode,
@@ -216,7 +216,7 @@ export default function ShippingStep({
                     {preset.recipientName}
                   </div>
                   <p className="text-[11px] font-mono text-matcha-muted line-clamp-2 leading-relaxed">
-                    {[preset.addressLine1 || preset.address, preset.subdistrict, preset.district, preset.province, preset.postalCode || preset.zipCode].filter(Boolean).join(', ')}
+                    {formatAddressArea([preset.addressLine1 || preset.address, preset.subdistrict, preset.district, preset.province, preset.postalCode || preset.zipCode])}
                   </p>
                   <span className="mt-2 text-[10px] font-mono text-matcha-muted">
                     {t('checkout.tel')}: {preset.phone}
