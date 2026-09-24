@@ -143,7 +143,7 @@
         "title": "Ivory Linen Tailored Blazer",
         "category": "Outerwear",
         "price": 110,
-        "color": "Warm Ivory",
+        "color": "Ivory",
         "productId": "LOOK-02-BLAZER",
         "image": "/images/lookbook_flatlay/02-blazer.png"
       },
@@ -154,7 +154,7 @@
         "title": "Relaxed Linen Shirt",
         "category": "Tops",
         "price": 38,
-        "color": "Warm Ivory",
+        "color": "Ivory",
         "productId": "LOOK-02-SHIRT",
         "image": "/images/lookbook_flatlay/02-shirt.png"
       },
@@ -165,7 +165,7 @@
         "title": "Straight Linen Trousers",
         "category": "Bottoms",
         "price": 82,
-        "color": "Warm Ivory",
+        "color": "Ivory",
         "productId": "LOOK-02-TROUSERS",
         "image": "/images/lookbook_flatlay/02-trousers.png"
       }
@@ -176,7 +176,7 @@
         "name": "Ivory Linen Tailored Blazer",
         "price": 110,
         "category": "Outerwear",
-        "color": "Warm Ivory",
+        "color": "Ivory",
         "image": "/images/lookbook_flatlay/02-blazer.png"
       },
       {
@@ -184,7 +184,7 @@
         "name": "Relaxed Linen Shirt",
         "price": 38,
         "category": "Tops",
-        "color": "Warm Ivory",
+        "color": "Ivory",
         "image": "/images/lookbook_flatlay/02-shirt.png"
       },
       {
@@ -192,7 +192,7 @@
         "name": "Straight Linen Trousers",
         "price": 82,
         "category": "Bottoms",
-        "color": "Warm Ivory",
+        "color": "Ivory",
         "image": "/images/lookbook_flatlay/02-trousers.png"
       }
     ]
@@ -264,7 +264,7 @@
         "title": "Ivory Ankle Trousers",
         "category": "Bottoms",
         "price": 54,
-        "color": "Ivory Cream",
+        "color": "Ivory",
         "productId": "LOOK-03-TROUSERS",
         "image": "/images/lookbook_flatlay/03-trousers.png"
       }
@@ -291,7 +291,7 @@
         "name": "Ivory Ankle Trousers",
         "price": 54,
         "category": "Bottoms",
-        "color": "Ivory Cream",
+        "color": "Ivory",
         "image": "/images/lookbook_flatlay/03-trousers.png"
       }
     ]
@@ -341,7 +341,7 @@
         "title": "Copper Sequin Tailored Blazer",
         "category": "Outerwear",
         "price": 145,
-        "color": "Copper Bronze",
+        "color": "Copper",
         "productId": "LOOK-04-BLAZER",
         "image": "/images/lookbook_flatlay/04-blazer.png"
       },
@@ -352,7 +352,7 @@
         "title": "Copper Sequin Wide-Leg Trousers",
         "category": "Bottoms",
         "price": 96,
-        "color": "Copper Bronze",
+        "color": "Copper",
         "productId": "LOOK-04-TROUSERS",
         "image": "/images/lookbook_flatlay/04-trousers.png"
       }
@@ -363,7 +363,7 @@
         "name": "Copper Sequin Tailored Blazer",
         "price": 145,
         "category": "Outerwear",
-        "color": "Copper Bronze",
+        "color": "Copper",
         "image": "/images/lookbook_flatlay/04-blazer.png"
       },
       {
@@ -371,7 +371,7 @@
         "name": "Copper Sequin Wide-Leg Trousers",
         "price": 96,
         "category": "Bottoms",
-        "color": "Copper Bronze",
+        "color": "Copper",
         "image": "/images/lookbook_flatlay/04-trousers.png"
       }
     ]
@@ -421,7 +421,7 @@
         "title": "Charcoal Cable-Knit Sweater",
         "category": "Tops",
         "price": 110,
-        "color": "Charcoal Marl",
+        "color": "Charcoal",
         "productId": "LOOK-05-SWEATER",
         "image": "/images/lookbook_flatlay/05-sweater.png"
       },
@@ -432,7 +432,7 @@
         "title": "Washed Tapered Cargo Pants",
         "category": "Bottoms",
         "price": 92,
-        "color": "Dark Brown Charcoal",
+        "color": "Charcoal",
         "productId": "LOOK-05-CARGO",
         "image": "/images/lookbook_flatlay/05-cargo.png"
       }
@@ -443,7 +443,7 @@
         "name": "Charcoal Cable-Knit Sweater",
         "price": 110,
         "category": "Tops",
-        "color": "Charcoal Marl",
+        "color": "Charcoal",
         "image": "/images/lookbook_flatlay/05-sweater.png"
       },
       {
@@ -451,7 +451,7 @@
         "name": "Washed Tapered Cargo Pants",
         "price": 92,
         "category": "Bottoms",
-        "color": "Dark Brown Charcoal",
+        "color": "Charcoal",
         "image": "/images/lookbook_flatlay/05-cargo.png"
       }
     ]
