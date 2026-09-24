@@ -13,6 +13,7 @@ import {
   Scissors,
   Briefcase
 } from 'lucide-react';
+import useStreetProducts from '../hooks/useStreetProducts';
 import { productsData } from '../data/productsData';
 import { useCart } from '../context/CartContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
@@ -128,12 +129,30 @@ export default function MixMatchStudioPage() {
   const [activeSlotTab, setActiveSlotTab] = useState('tops'); // 'tops' | 'bottoms' | 'footwear' | 'accessories'
   const [activePresetId, setActivePresetId] = useState(initialPreset.id);
   const [justAddedBundle, setJustAddedBundle] = useState(false);
-  const [selectedSizes, setSelectedSizes] = useState({
-    tops: 'M',
-    bottoms: '32',
-    footwear: 'EU 41',
-    accessories: 'OS'
-  });
+  /* No size is chosen for the shopper. This used to start at
+     { tops: 'M', bottoms: '32', footwear: 'EU 41' } — and no bottom in the
+     archive is cut in a 32, so every bundle put its trousers in the bag in a
+     size the order API has no stock bucket for. A slot's size is the one picked
+     for it, and only while the garment in the slot is made in it. */
+  const [selectedSizes, setSelectedSizes] = useState({});
+
+  // The live catalogue is where sizes and stock are kept. The static list
+  // still supplies the studio's order and editorial copy.
+  const { products: liveProducts } = useStreetProducts();
+  const liveById = useMemo(() => new Map(liveProducts.map((p) => [p.id, p])), [liveProducts]);
+  const sizesFor = (item) => {
+    const live = item && liveById.get(item.id);
+    return ((live ? live.sizes : item?.sizes) || []).filter(Boolean);
+  };
+  const inStockFor = (item) => {
+    const live = item && liveById.get(item.id);
+    return Boolean(live ? live.inStock !== false : item?.inStock);
+  };
+  const sizeFor = (slotKey, item) => {
+    const sizes = sizesFor(item);
+    if (sizes.length === 1) return sizes[0];
+    return sizes.includes(selectedSizes[slotKey]) ? selectedSizes[slotKey] : null;
+  };
   const outfitMotionRef = useChangeMotion([selectedTop?.id, selectedBottom?.id, selectedFootwear?.id, selectedAccessory?.id].join('|'), 'outfit');
   const pickerMotionRef = useChangeMotion(activeSlotTab, 'grid');
 
@@ -204,9 +223,15 @@ export default function MixMatchStudioPage() {
   // Pricing & Combo Discount (12% Full 4-Piece Bundle Discount)
   // ราคาที่โชว์ต้องเท่ากับที่จะโดนตัดจริง จึงนับเฉพาะชิ้นที่ยังมีของ
   // และส่วนลดจะใช้ได้ก็ต่อเมื่อซื้อครบทั้ง 4 ชิ้นจริง ๆ ตามเงื่อนไข bundle
+  const slotOf = (item) => (item.category === 'Tops' || item.category === 'Outerwear') ? 'tops' :
+    item.category === 'Bottoms' ? 'bottoms' :
+      item.category === 'Shoes' ? 'footwear' : 'accessories';
   const itemsInOutfit = [selectedTop, selectedBottom, selectedFootwear, selectedAccessory].filter(Boolean);
-  const buyableItems = itemsInOutfit.filter((item) => item.inStock);
-  const outOfStockItems = itemsInOutfit.filter((item) => !item.inStock);
+  // A garment with no size on record cannot be ordered, the same answer the
+  // catalogue gives, so it is left out like a sold-out one.
+  const buyableItems = itemsInOutfit.filter((item) => inStockFor(item) && sizesFor(item).length > 0);
+  const outOfStockItems = itemsInOutfit.filter((item) => !buyableItems.includes(item));
+  const needsSize = buyableItems.filter((item) => !sizeFor(slotOf(item), item));
   const isCompleteBundle = buyableItems.length === 4;
   const bundleSubtotal = buyableItems.reduce((sum, item) => sum + Number(item.price), 0);
   const comboDiscount = isCompleteBundle ? bundleSubtotal * BUNDLE_DISCOUNT_RATE : 0;
@@ -225,16 +250,17 @@ export default function MixMatchStudioPage() {
       showToast(t('mixMatch.allSoldOut'), 'error');
       return;
     }
+    if (needsSize.length > 0) {
+      showToast(t('mixMatch.chooseSizes', { names: needsSize.map((i) => i.name).join(', ') }), 'info');
+      setActiveSlotTab(slotOf(needsSize[0]));
+      return;
+    }
 
     setJustAddedBundle(true);
     setTimeout(() => setJustAddedBundle(false), 1200);
 
     buyableItems.forEach(item => {
-      const slotKey = (item.category === 'Tops' || item.category === 'Outerwear') ? 'tops' :
-                      item.category === 'Bottoms' ? 'bottoms' :
-                      item.category === 'Shoes' ? 'footwear' : 'accessories';
-
-      const chosenSize = selectedSizes[slotKey] || item.sizes?.[0] || (item.category === 'Accessories' ? 'OS' : item.category === 'Shoes' ? 'EU 40' : 'M');
+      const chosenSize = sizeFor(slotOf(item), item);
 
       addToCart({
         ...item,
@@ -409,11 +435,13 @@ export default function MixMatchStudioPage() {
                 the way the catalogue shows it. */}
             <div ref={outfitMotionRef} className="grid grid-cols-2 gap-px bg-matcha-border border border-matcha-border">
               {[
-                { key: 'tops', item: selectedTop, Icon: Shirt, label: '1. Upper Body (30%)', sizes: ['S', 'M', 'L', 'XL', 'XXL'] },
-                { key: 'bottoms', item: selectedBottom, Icon: Shirt, label: '2. Lower Body (60% Base)', sizes: ['30', '32', '34', '36'] },
-                { key: 'footwear', item: selectedFootwear, Icon: Footprints, label: '3. Footwear Anchor (5%)', sizes: ['EU 38', 'EU 39', 'EU 40', 'EU 41'] },
-                { key: 'accessories', item: selectedAccessory, Icon: Briefcase, label: '4. Accent Accessory (5%)', sizes: ['OS'] },
-              ].map(({ key, item, Icon, label, sizes }) => {
+                { key: 'tops', item: selectedTop, Icon: Shirt, label: '1. Upper Body (30%)' },
+                { key: 'bottoms', item: selectedBottom, Icon: Shirt, label: '2. Lower Body (60% Base)' },
+                { key: 'footwear', item: selectedFootwear, Icon: Footprints, label: '3. Footwear Anchor (5%)' },
+                { key: 'accessories', item: selectedAccessory, Icon: Briefcase, label: '4. Accent Accessory (5%)' },
+              ].map(({ key, item, Icon, label }) => {
+                const sizes = sizesFor(item);
+                const chosen = sizeFor(key, item);
                 const active = activeSlotTab === key;
                 const hex = item?.colorHex || '#DCDCDC';
                 return (
@@ -441,7 +469,7 @@ export default function MixMatchStudioPage() {
                         onError={handleImageError}
                         className="absolute inset-0 w-full h-full object-contain object-center mix-blend-multiply"
                       />
-                      {item && !item.inStock && (
+                      {item && !inStockFor(item) && (
                         <div className="absolute inset-0 bg-matcha-bg/70 flex items-center justify-center">
                           <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#0A0A0A]">{t('mixMatch.soldOut')}</span>
                         </div>
@@ -472,16 +500,22 @@ export default function MixMatchStudioPage() {
                         className="flex flex-wrap items-center gap-1 mt-1.5"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        {(item?.sizes || sizes).map((sz) => (
+                        {sizes.length === 0 && (
+                          <span className={`font-mono text-[9px] ${active ? 'text-matcha-bg/70' : 'text-matcha-muted'}`}>
+                            {t('mixMatch.noSizes')}
+                          </span>
+                        )}
+                        {sizes.map((sz) => (
                           <button
                             key={sz}
                             type="button"
+                            aria-pressed={chosen === sz}
                             onClick={() => setSelectedSizes(prev => ({ ...prev, [key]: sz }))}
                             /* On the inverted caption the usual black chip
                                would vanish, so the selected size flips to
                                light on the dark strip. */
                             className={`px-1.5 py-0.5 font-mono text-[9px] whitespace-nowrap transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-accent ${
-                              selectedSizes[key] === sz
+                              chosen === sz
                                 ? (active ? 'bg-matcha-bg text-[#0A0A0A]' : 'bg-[#0A0A0A] text-matcha-bg')
                                 : (active ? 'bg-matcha-bg/15 text-matcha-bg/70 hover:bg-matcha-bg/25' : 'bg-matcha-bg text-matcha-muted hover:bg-matcha-border')
                             }`}
@@ -619,6 +653,12 @@ export default function MixMatchStudioPage() {
                 <p className="text-[10px] font-mono text-[#B42318] bg-[#FEE4E2] px-2.5 py-1.5  leading-relaxed">
                   {t('mixMatch.outOfStockNote', { names: outOfStockItems.map((i) => i.name).join(', ') })}
                   {t('mixMatch.bundleNeedsFour', { percent: BUNDLE_DISCOUNT_PERCENT })}
+                </p>
+              )}
+
+              {needsSize.length > 0 && (
+                <p role="status" className="text-[10px] font-mono text-[#0A0A0A] bg-matcha-bg border border-matcha-border px-2.5 py-1.5 leading-relaxed">
+                  {t('mixMatch.chooseSizes', { names: needsSize.map((i) => i.name).join(', ') })}
                 </p>
               )}
 

@@ -157,6 +157,8 @@ export const translations = {
       slots: 'Base, top, shoes, bag',
       addedToast: 'Outfit added to your bag',
       allSoldOut: 'This set cannot be added — every piece in it is out of stock.',
+      chooseSizes: 'Choose a size for: {names}',
+      noSizes: 'No sizes on record',
       presetsTitle: 'Four looks to start from',
       presets: {
         'PRESET-01': 'An earth-toned hoodie, chinos, leather boots and a warm leather bag.',
@@ -1031,6 +1033,8 @@ export const translations = {
       slots: 'ตัวหลัก เสื้อ รองเท้า กระเป๋า',
       addedToast: 'เพิ่มชุดลงตะกร้าแล้ว',
       allSoldOut: 'เพิ่มชุดนี้ไม่ได้ เพราะสินค้าในเซ็ตหมดสต็อกทั้งหมด',
+      chooseSizes: 'กรุณาเลือกไซส์ของ: {names}',
+      noSizes: 'ยังไม่มีข้อมูลไซส์',
       presetsTitle: 'สี่ลุคให้เริ่มต้น',
       presets: {
         'PRESET-01': 'เสื้อฮู้ดโทนดิน กางเกงชิโน่ บูทหนังแท้ และกระเป๋าหนังโทนอุ่น',
