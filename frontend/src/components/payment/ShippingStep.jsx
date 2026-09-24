@@ -137,6 +137,9 @@ export default function ShippingStep({
   const phoneDigits = String(formData.phone ?? '').replace(/[\s()-]/g, '').trim();
   const phoneMalformed = Boolean(phoneDigits) && !/^0[0-9]{8,9}$/.test(phoneDigits);
   const postalMalformed = Boolean(formData.zipCode?.trim()) && !/^[0-9]{5}$/.test(formData.zipCode.trim());
+  // The button is type="button", so the browser's own check on type="email"
+  // never ran and "not-an-email" went through to payment.
+  const emailMalformed = Boolean(formData.email?.trim()) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim());
 
   const isFormValid = Boolean(
     formData.firstName?.trim() &&
@@ -146,7 +149,7 @@ export default function ShippingStep({
     formData.address?.trim() &&
     formData.city?.trim() &&
     formData.zipCode?.trim()
-  ) && !phoneMalformed && !postalMalformed;
+  ) && !phoneMalformed && !postalMalformed && !emailMalformed;
 
   return (
     <div className="space-y-8">
@@ -298,9 +301,16 @@ export default function ShippingStep({
                 value={formData.email || ''}
                 onChange={handleChange}
                 placeholder={t('checkout.phEmail')}
-                className="w-full px-3.5 py-2.5 border border-matcha-border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors"
+                aria-invalid={emailMalformed || undefined}
+                aria-describedby={emailMalformed ? 'shipping-email-error' : undefined}
+                className={`w-full px-3.5 py-2.5 border focus:border-matcha-primary outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] text-xs font-mono text-[#0A0A0A] bg-matcha-bg transition-colors ${emailMalformed ? 'border-matcha-accent' : 'border-matcha-border'}`}
                 required
               />
+              {emailMalformed && (
+                <p id="shipping-email-error" role="alert" className="mt-1 text-[11px] font-mono text-matcha-accent">
+                  {t('checkout.emailInvalid')}
+                </p>
+              )}
             </div>
 
             <div>

@@ -316,7 +316,13 @@ export function CartProvider({ children }) {
     return Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   }, [subtotal]);
 
+  /* True once the bag on screen is the one for the store's real mode. Before
+     that it is the demo fallback's (usually empty), and nothing should decide
+     the bag is empty from it. */
+  const cartReady = Boolean(storeReady) && loadedKey === storageKey;
+
   const value = {
+    cartReady,
     cartItems,
     setCartItems,
     addToCart,
