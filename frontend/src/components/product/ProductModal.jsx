@@ -44,7 +44,14 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
   const [selectedSize, setSelectedSize] = useState(
     sizeList.length === 1 ? sizeList[0] : null
   );
-  const [quantity, setQuantity] = useState(1);
+  /* The catalogue card has its own quantity stepper, and choosing a size opens
+     this modal. The card sends what was chosen as `initialQuantity`; this used
+     to start at 1 regardless, so three on the card became one in the bag. */
+  const startingQuantity = (p) => {
+    const n = parseInt(p?.initialQuantity, 10);
+    return n > 0 ? n : 1;
+  };
+  const [quantity, setQuantity] = useState(() => startingQuantity(product));
 
   const isInitiallyWishlisted = () => {
     try {
@@ -136,7 +143,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
       setActiveVariant(initialVariant);
       const list = Array.isArray(product.sizes) ? product.sizes.filter(Boolean) : [];
       setSelectedSize(list.length === 1 ? list[0] : null);
-      setQuantity(1);
+      setQuantity(startingQuantity(product));
       setShowFitGuide(false);
       setActiveAccordion(null);
       setNeedsSize(false);
