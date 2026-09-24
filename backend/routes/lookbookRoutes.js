@@ -52,7 +52,7 @@ export async function findLinkedProducts(items) {
   const ids = [...new Set(items.map(i => i.productId))];
   const objectIds = ids.filter(id => mongoose.Types.ObjectId.isValid(id));
   return Product.find({ $or: [{ id: { $in: ids } }, { _id: { $in: objectIds } }] })
-    .select('id name price category color colorHex image variants sizes quantity gallery mediaRevision specs')
+    .select('id name price category color colorHex image variants sizes sizeStock stock quantity gallery mediaRevision specs')
     .lean();
 }
 

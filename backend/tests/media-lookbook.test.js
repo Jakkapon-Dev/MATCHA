@@ -19,6 +19,7 @@ import { v2 as cloudinary } from 'cloudinary';
 
 import { prepareImage, isManagedUrl, storeImage, deleteImage } from '../services/mediaStorage.js';
 import { defaultLookbooks, resolveLookbooks } from '../services/lookbook.js';
+import { findLinkedProducts } from '../routes/lookbookRoutes.js';
 import router from '../routes/mediaLookbook.js';
 import { setAuthGuards } from '../routes/mediaRoutes.js';
 import Media from '../models/MediaAsset.js';
@@ -111,6 +112,111 @@ test('Lookbook resolves live price, image, stock and sizes; invalid colors are u
   assert.equal(item.price, 137); assert.equal(item.name, 'Live jacket'); assert.equal(item.image, product.image); assert.equal(item.inStock, true);
   product.color = 'Different'; assert.equal(resolveLookbooks(looks, [product])[0].shoppableItems[0].inStock, false);
   looks[0].published = false; assert.equal(resolveLookbooks(looks, []).length, 5);
+});
+
+test('Lookbook inventory resolution handles sizeStock, fallback stock, out of stock, missing sizes, and variants', () => {
+  const looks = defaultLookbooks();
+
+  // 1. Product has sizeStock
+  const withSizeStock = {
+    id: 'LOOK-01-JACKET',
+    name: 'Jacket',
+    price: 100,
+    color: 'Iridescent Lilac',
+    sizes: ['S', 'M'],
+    sizeStock: [{ size: 'S', stock: 3 }, { size: 'M', stock: 2 }]
+  };
+  const item1 = resolveLookbooks(looks, [withSizeStock])[0].shoppableItems[0];
+  assert.equal(item1.quantity, 5);
+  assert.equal(item1.inStock, true);
+
+  // 2. Product has stock but no sizeStock (fallback compatibility)
+  const withStockOnly = {
+    id: 'LOOK-01-JACKET',
+    name: 'Jacket',
+    price: 100,
+    color: 'Iridescent Lilac',
+    sizes: ['S', 'M'],
+    stock: 8
+  };
+  const item2 = resolveLookbooks(looks, [withStockOnly])[0].shoppableItems[0];
+  assert.equal(item2.quantity, 8);
+  assert.equal(item2.inStock, true);
+
+  // 3. Product stock = 0
+  const outOfStock = {
+    id: 'LOOK-01-JACKET',
+    name: 'Jacket',
+    price: 100,
+    color: 'Iridescent Lilac',
+    sizes: ['S', 'M'],
+    stock: 0,
+    sizeStock: [{ size: 'S', stock: 0 }, { size: 'M', stock: 0 }]
+  };
+  const item3 = resolveLookbooks(looks, [outOfStock])[0].shoppableItems[0];
+  assert.equal(item3.quantity, 0);
+  assert.equal(item3.inStock, false);
+
+  // 4. Product has no sizes
+  const withoutSizes = {
+    id: 'LOOK-01-JACKET',
+    name: 'Jacket',
+    price: 100,
+    color: 'Iridescent Lilac',
+    sizes: [],
+    sizeStock: [{ size: 'ONE', stock: 10 }]
+  };
+  const item4 = resolveLookbooks(looks, [withoutSizes])[0].shoppableItems[0];
+  assert.equal(item4.inStock, false);
+
+  // 5. Color mismatch
+  const colorMismatch = {
+    id: 'LOOK-01-JACKET',
+    name: 'Jacket',
+    price: 100,
+    color: 'Wrong Color',
+    sizes: ['S'],
+    stock: 5,
+    variants: []
+  };
+  const item5 = resolveLookbooks(looks, [colorMismatch])[0].shoppableItems[0];
+  assert.equal(item5.inStock, false);
+
+  // 6. Color match via variant
+  const variantMatch = {
+    id: 'LOOK-01-JACKET',
+    name: 'Jacket',
+    price: 100,
+    color: 'Black',
+    sizes: ['S'],
+    stock: 5,
+    variants: [{ color: 'Iridescent Lilac', image: '/images/variant.png' }]
+  };
+  const item6 = resolveLookbooks(looks, [variantMatch])[0].shoppableItems[0];
+  assert.equal(item6.inStock, true);
+  assert.equal(item6.image, '/images/variant.png');
+});
+
+test('findLinkedProducts projects authoritative sizeStock and stock fields', async () => {
+  let capturedSelect = null;
+  const originalFind = Product.find;
+  Product.find = () => ({
+    select(fields) {
+      capturedSelect = fields;
+      return this;
+    },
+    lean: async () => [{ id: 'LOOK-01-JACKET', stock: 10, sizeStock: [{ size: 'S', stock: 10 }] }]
+  });
+
+  try {
+    const products = await findLinkedProducts([{ productId: 'LOOK-01-JACKET' }]);
+    assert.ok(capturedSelect.includes('stock'), 'projection should include stock');
+    assert.ok(capturedSelect.includes('sizeStock'), 'projection should include sizeStock');
+    assert.equal(products[0].stock, 10);
+    assert.equal(products[0].sizeStock[0].stock, 10);
+  } finally {
+    Product.find = originalFind;
+  }
 });
 test('media mutation requires a real administrator', async () => {
   assert.equal((await fetch(`${base}/admin/media`, { method: 'POST' })).status, 401);
