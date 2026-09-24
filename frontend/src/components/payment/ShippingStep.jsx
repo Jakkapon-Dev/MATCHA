@@ -456,6 +456,9 @@ export default function ShippingStep({
                 </div>
 
                 <div className="text-right pl-7 sm:pl-0 font-mono font-bold text-sm text-matcha-primary">
+                  {option.price === 0 && option.listPrice > 0 && (
+                    <span className="mr-1.5 line-through opacity-50">${option.listPrice.toFixed(2)}</span>
+                  )}
                   {option.price === 0 ? 'Free' : `$${option.price.toFixed(2)}`}
                 </div>
               </div>

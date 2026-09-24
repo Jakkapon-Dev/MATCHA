@@ -130,6 +130,15 @@ export default function PaymentPage() {
 
   const total = Math.max(0, subtotal + shippingCost - discount);
 
+  /* Each delivery option priced for this bag. The cards used to show the list
+     rate — $12 and $25 — while the summary beside them said Free, because an
+     order over the threshold ships free by every method. */
+  const shippingOptionsForBag = SHIPPING_OPTIONS.map((option) => ({
+    ...option,
+    listPrice: option.price,
+    price: shippingCostFor(subtotal, option.id, { freeShippingCoupon: appliedCoupon?.type === 'free_shipping' })
+  }));
+
   const handleApplyCoupon = (e) => {
     e.preventDefault();
     setCouponError('');
@@ -445,7 +454,7 @@ export default function PaymentPage() {
               <ShippingStep
                 formData={formData}
                 onFormChange={setFormData}
-                shippingOptions={SHIPPING_OPTIONS}
+                shippingOptions={shippingOptionsForBag}
                 selectedShipping={selectedShipping}
                 onSelectShipping={setSelectedShipping}
                 onNext={() => {

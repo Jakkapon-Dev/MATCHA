@@ -17,7 +17,8 @@ vi.mock('../hooks/useChangeMotion', () => ({ default: () => ({ current: null }) 
 vi.mock('@stripe/react-stripe-js', () => ({ Elements: ({ children }) => children }));
 vi.mock('../lib/stripe', () => ({ stripePromise: null }));
 vi.mock('../services/api', () => ({ api: {}, apiErrorText: (e) => String(e?.message) }));
-vi.mock('../components/payment/ShippingStep', () => ({ default: () => <div>shipping-step</div> }));
+let lastShippingOptions = [];
+vi.mock('../components/payment/ShippingStep', () => ({ default: ({ shippingOptions }) => { lastShippingOptions = shippingOptions; return <div>shipping-step</div>; } }));
 vi.mock('../components/payment/PaymentMethodStep', () => ({ default: () => <div>payment-step</div> }));
 vi.mock('../components/payment/OrderSummarySidebar', () => ({ default: () => null }));
 vi.mock('../components/payment/OrderSuccessModal', () => ({ default: () => null }));
@@ -75,5 +76,20 @@ describe('PaymentPage empty-bag guard', () => {
     cart = { cartReady: true, cartItems: [], clearCart: vi.fn() };
     renderAt();
     expect(where).toBe('/cart');
+  });
+});
+
+describe('PaymentPage delivery options', () => {
+  test('are priced for the bag: every method is free over the threshold', () => {
+    cart = { cartReady: true, cartItems: [{ ...ITEM, price: 150 }], clearCart: vi.fn() };
+    renderAt();
+    expect(lastShippingOptions.map((o) => [o.id, o.price])).toEqual([['standard', 0], ['express', 0], ['premium', 0]]);
+    expect(lastShippingOptions.find((o) => o.id === 'premium').listPrice).toBe(25);
+  });
+
+  test('and at the list rate under it', () => {
+    cart = { cartReady: true, cartItems: [{ ...ITEM, price: 40 }], clearCart: vi.fn() };
+    renderAt();
+    expect(lastShippingOptions.map((o) => [o.id, o.price])).toEqual([['standard', 0], ['express', 12], ['premium', 25]]);
   });
 });

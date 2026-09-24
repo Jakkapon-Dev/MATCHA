@@ -56,3 +56,25 @@ describe('ShippingStep email', () => {
     expect(continueButton().disabled).toBe(false);
   });
 });
+
+describe('ShippingStep delivery prices', () => {
+  test('an option the bag ships free by shows Free, not its list rate', () => {
+    render(
+      <ShippingStep
+        formData={VALID}
+        onFormChange={vi.fn()}
+        shippingOptions={[
+          { id: 'standard', name: 'Standard', price: 0, listPrice: 0, days: '3-5' },
+          { id: 'premium', name: 'VIP Same-Day', price: 0, listPrice: 25, days: '24h' }
+        ]}
+        selectedShipping="premium"
+        onSelectShipping={vi.fn()}
+        onNext={vi.fn()}
+        onBackToCart={vi.fn()}
+      />
+    );
+    const premium = screen.getByText('VIP Same-Day').closest('[role="radio"]');
+    expect(premium.textContent).toContain('Free');
+    expect(premium.textContent).toContain('$25.00'); // struck through, for reference
+  });
+});
