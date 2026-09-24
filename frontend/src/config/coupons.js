@@ -7,6 +7,8 @@
 // ก่อนหน้านี้ไม่มีไฟล์นี้: รหัสถูกประกาศซ้ำอยู่สองที่ ที่หัว PaymentPage.jsx
 // และหัว backend/routes/orderRoutes.js โดยไม่มีอะไรยึดให้ตรงกัน
 //
+import { productsData } from '../data/productsData.js';
+
 // `label` อยู่ฝั่งนี้ที่เดียว เพราะเป็นข้อความที่แสดงผล ไม่ใช่ตัวเลขที่ใช้คิดเงิน
 export const COUPONS = {
   // '01' / '02' / '03' ถูกลบออก — เป็นรหัสสองหลักที่เดาได้ ไม่เคยโฆษณา และ '03'
@@ -46,8 +48,24 @@ const BUNDLE_SLOTS = ['tops', 'bottoms', 'shoes', 'accessories'];
 
 export function bundleSlotFor(item) {
   if (!item) return null;
-  const category = (item.category || '').trim().toLowerCase();
-  const subCategory = (item.subCategory || '').trim();
+  let category = (item.category || '').trim().toLowerCase();
+  let subCategory = (item.subCategory || '').trim();
+
+  // If category information is missing, look up product metadata from frontend productsData
+  if (!category) {
+    const rawId = item.productId || item.id;
+    if (rawId) {
+      const targetId = String(rawId).trim().toLowerCase();
+      const matched = Array.isArray(productsData)
+        ? productsData.find(p => String(p?.id || '').trim().toLowerCase() === targetId)
+        : null;
+      if (matched) {
+        category = (matched.category || '').trim().toLowerCase();
+        subCategory = (matched.subCategory || '').trim();
+      }
+    }
+  }
+
   if (category === 'shoes' || SHOE_SUBCATEGORIES.has(subCategory)) return 'shoes';
   if (category === 'tops' || category === 'outerwear') return 'tops';
   if (category === 'bottoms') return 'bottoms';
@@ -75,6 +93,27 @@ export function bundleDiscountFor(items = []) {
     quota[l.slot] -= n;
   }
   return Math.round(amount * 100) / 100;
+}
+
+export function bundleQualifiedIndices(items = []) {
+  const lines = items.map((item, index) => ({
+    index,
+    slot: bundleSlotFor(item),
+    qty: Math.max(1, parseInt(item?.quantity, 10) || 1),
+  }));
+  const counts = Object.fromEntries(BUNDLE_SLOTS.map(s => [s, 0]));
+  lines.forEach(l => { if (l.slot) counts[l.slot] += l.qty; });
+  const sets = Math.min(...BUNDLE_SLOTS.map(s => counts[s]));
+  if (sets <= 0) return new Set();
+
+  const quota = Object.fromEntries(BUNDLE_SLOTS.map(s => [s, sets]));
+  const qualified = new Set();
+  for (const l of lines) {
+    if (!l.slot || quota[l.slot] <= 0) continue;
+    qualified.add(l.index);
+    quota[l.slot] -= Math.min(l.qty, quota[l.slot]);
+  }
+  return qualified;
 }
 
 /* คูปองที่หน้าโปรโมชันรับไว้ รอให้หน้าชำระเงินมาหยิบไปใช้

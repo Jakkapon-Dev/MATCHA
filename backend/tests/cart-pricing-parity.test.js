@@ -32,6 +32,7 @@ import {
   normaliseCode as clientNormalise,
   discountFor as clientDiscountFor,
   bundleDiscountFor as clientBundleDiscountFor,
+  bundleSlotFor as clientBundleSlotFor,
   couponFor as clientCouponFor
 } from '../../frontend/src/config/coupons.js';
 
@@ -60,9 +61,38 @@ function serverTotals(cart, { couponCode = null, shippingOption = 'standard' } =
   for (const item of cart) {
     const qty = Math.max(1, parseInt(item.quantity, 10) || 1);
     subtotal += item.price * qty;
-    if (item.isBundleItem) bundleDiscountAmount += item.price * qty * BUNDLE_DISCOUNT_RATE;
   }
   subtotal = round(subtotal);
+
+  // Transcribed from routes/orderRoutes.js: bundle eligibility requires 4 slots
+  const slotCounts = { tops: 0, bottoms: 0, shoes: 0, accessories: 0 };
+  for (const item of cart) {
+    const slot = clientBundleSlotFor(item);
+    if (slot) slotCounts[slot] += Math.max(1, parseInt(item.quantity, 10) || 1);
+  }
+  const completeBundles = Math.min(
+    slotCounts.tops,
+    slotCounts.bottoms,
+    slotCounts.shoes,
+    slotCounts.accessories
+  );
+  if (completeBundles > 0) {
+    const remainingQuota = {
+      tops: completeBundles,
+      bottoms: completeBundles,
+      shoes: completeBundles,
+      accessories: completeBundles
+    };
+    for (const item of cart) {
+      const slot = clientBundleSlotFor(item);
+      const qty = Math.max(1, parseInt(item.quantity, 10) || 1);
+      if (slot && remainingQuota[slot] > 0) {
+        const discountable = Math.min(qty, remainingQuota[slot]);
+        bundleDiscountAmount += discountable * item.price * BUNDLE_DISCOUNT_RATE;
+        remainingQuota[slot] -= discountable;
+      }
+    }
+  }
   bundleDiscountAmount = round(bundleDiscountAmount);
 
   const clean = serverNormalise(couponCode);
@@ -174,10 +204,10 @@ for (const [name, cart] of Object.entries(CARTS)) {
 
 test('the server does apply 12% to a complete outfit', () => {
   const outfit = [
-    item(92.99, 1, { isBundleItem: true }),
-    item(73.99, 1, { isBundleItem: true }),
-    item(70.99, 1, { isBundleItem: true }),
-    item(48.99, 1, { isBundleItem: true })
+    item(92.99, 1, { category: 'Tops', isBundleItem: true }),
+    item(73.99, 1, { category: 'Bottoms', isBundleItem: true }),
+    item(70.99, 1, { category: 'Shoes', isBundleItem: true }),
+    item(48.99, 1, { category: 'Accessories', isBundleItem: true })
   ];
   const charged = serverTotals(outfit, { shippingOption: 'standard' });
   const gross = round(92.99 + 73.99 + 70.99 + 48.99);
@@ -189,10 +219,10 @@ test('the server does apply 12% to a complete outfit', () => {
 
 test('a complete outfit is charged what the checkout screen shows', () => {
   const outfit = [
-    item(92.99, 1, { isBundleItem: true }),
-    item(73.99, 1, { isBundleItem: true }),
-    item(70.99, 1, { isBundleItem: true }),
-    item(48.99, 1, { isBundleItem: true })
+    item(92.99, 1, { category: 'Tops', isBundleItem: true }),
+    item(73.99, 1, { category: 'Bottoms', isBundleItem: true }),
+    item(70.99, 1, { category: 'Shoes', isBundleItem: true }),
+    item(48.99, 1, { category: 'Accessories', isBundleItem: true })
   ];
   assert.deepEqual(
     toCents(checkoutTotals(outfit, { shippingOption: 'standard' })),
