@@ -398,7 +398,7 @@ const handleCompleteDeletion = async (req, res) => {
     if (!item) {
       return res.status(404).json({ success: false, message: 'Deletion request not found' });
     }
-    if (!['approved', 'reviewed'].includes(item.status)) {
+    if (item.status !== 'approved') {
       return res.status(400).json({
         success: false,
         message: `Cannot complete request with status "${item.status}". Request must be approved first.`

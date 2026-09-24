@@ -437,3 +437,70 @@ test('Task 4 — Admin Server-Side Search, Filter, and Pagination for Deletion R
   const dataSearch = await listSearch.json();
   assert.equal(dataSearch.data[0].email, 'bob@test.local');
 });
+
+test('Task 4 — Approval Gate: complete requires approved status and rejects reviewed, pending, or rejected', async (t) => {
+  mockDbConnected(t);
+
+  const mockTargetUser = {
+    _id: 'u_gate_target',
+    email: 'gate@matcha.test',
+    name: 'Gate User',
+    save: async function () { return this; }
+  };
+  mockAuthUsers(t, {
+    u_admin_gate: { _id: 'u_admin_gate', role: 'Admin', email: 'admin.gate@matcha.local' },
+    u_gate_target: mockTargetUser
+  });
+
+  const gateRequest = {
+    _id: 'del_gate_1',
+    userId: 'u_gate_target',
+    email: 'gate@matcha.test',
+    status: 'reviewed',
+    save: async function () { return this; }
+  };
+
+  t.mock.method(DeletionRequest, 'findById', async (id) => {
+    if (id === 'del_gate_1') return gateRequest;
+    return null;
+  });
+
+  // A. reviewed -> complete must be rejected (400)
+  gateRequest.status = 'reviewed';
+  const reviewedRes = await fetch(`${base}/api/admin/deletion-requests/del_gate_1/complete`, {
+    method: 'POST',
+    headers: authHeaders('u_admin_gate', 'Admin', 'admin.gate@matcha.local')
+  });
+  assert.equal(reviewedRes.status, 400);
+  const reviewedBody = await reviewedRes.json();
+  assert.equal(reviewedBody.success, false);
+  assert.equal(reviewedBody.message, 'Cannot complete request with status "reviewed". Request must be approved first.');
+
+  // C. Other invalid statuses (pending, rejected, completed) must be rejected (400)
+  for (const status of ['pending', 'rejected', 'completed']) {
+    gateRequest.status = status;
+    const res = await fetch(`${base}/api/admin/deletion-requests/del_gate_1/complete`, {
+      method: 'POST',
+      headers: authHeaders('u_admin_gate', 'Admin', 'admin.gate@matcha.local')
+    });
+    assert.equal(res.status, 400);
+    const body = await res.json();
+    assert.equal(body.success, false);
+    assert.equal(body.message, `Cannot complete request with status "${status}". Request must be approved first.`);
+  }
+
+  // B. approved -> complete must succeed (200)
+  gateRequest.status = 'approved';
+  t.mock.method(Cart, 'deleteMany', async () => ({ deletedCount: 0 }));
+  t.mock.method(Order, 'find', async () => []);
+  t.mock.method(AuditLog, 'create', async (entry) => entry);
+
+  const approvedRes = await fetch(`${base}/api/admin/deletion-requests/del_gate_1/complete`, {
+    method: 'POST',
+    headers: authHeaders('u_admin_gate', 'Admin', 'admin.gate@matcha.local')
+  });
+  assert.equal(approvedRes.status, 200);
+  const approvedBody = await approvedRes.json();
+  assert.equal(approvedBody.success, true);
+  assert.equal(gateRequest.status, 'completed');
+});
