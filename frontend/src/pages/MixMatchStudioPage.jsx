@@ -19,6 +19,7 @@ import { useCart } from '../context/CartContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { handleImageError, webpSrc } from '../utils/imageFallback';
 import { computeOutfitSynergy } from '../utils/fashionTheory';
+import { taxonomyLabel } from '../utils/taxonomy';
 // กฎสีชุดเดียวกับที่แค็ตตาล็อกและ Color Lab ใช้
 import { wash, inkOn, needsEdge } from '../utils/dye';
 import useChangeMotion from '../hooks/useChangeMotion';
@@ -340,7 +341,7 @@ export default function MixMatchStudioPage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="max-w-2xl">
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase text-[#0A0A0A] tracking-[-0.02em] leading-[0.95]">
-              Mix &amp; Match Fashion Studio
+              {t('studio.title')}
             </h1>
             <p className="text-matcha-muted text-xs sm:text-sm mt-3 leading-relaxed">
               {t('mixMatch.heroBody')}
@@ -405,14 +406,14 @@ export default function MixMatchStudioPage() {
                       {preset.name}
                     </span>
                     <span
-                      title={`Color Harmony: ${preset.harmonyType}`}
+                      title={t('studio.harmonyTitle', { type: preset.harmonyType })}
                       className={`text-[10px] font-bold px-2 py-0.5  transition-colors shrink-0 ${
                         isActive
                           ? 'bg-matcha-primary text-white '
                           : 'bg-matcha-bg text-matcha-primary'
                       }`}
                     >
-                      {PRESET_HARMONY[preset.id]}% Harmony
+                      {t('studio.harmonyChip', { score: PRESET_HARMONY[preset.id] })}
                     </span>
                   </div>
                   <p className={`text-[11px] line-clamp-2 leading-relaxed transition-colors ${
@@ -467,10 +468,10 @@ export default function MixMatchStudioPage() {
                 the way the catalogue shows it. */}
             <div ref={outfitMotionRef} className="grid grid-cols-2 gap-px bg-matcha-border border border-matcha-border">
               {[
-                { key: 'tops', item: selectedTop, Icon: Shirt, label: '1. Upper Body (30%)' },
-                { key: 'bottoms', item: selectedBottom, Icon: Shirt, label: '2. Lower Body (60% Base)' },
-                { key: 'footwear', item: selectedFootwear, Icon: Footprints, label: '3. Footwear Anchor (5%)' },
-                { key: 'accessories', item: selectedAccessory, Icon: Briefcase, label: '4. Accent Accessory (5%)' },
+                { key: 'tops', item: selectedTop, Icon: Shirt, label: t('studio.slot.tops') },
+                { key: 'bottoms', item: selectedBottom, Icon: Shirt, label: t('studio.slot.bottoms') },
+                { key: 'footwear', item: selectedFootwear, Icon: Footprints, label: t('studio.slot.footwear') },
+                { key: 'accessories', item: selectedAccessory, Icon: Briefcase, label: t('studio.slot.accessories') },
               ].map(({ key, item, Icon, label }) => {
                 const sizes = sizesFor(item);
                 const chosen = sizeFor(key, item);
@@ -566,7 +567,7 @@ export default function MixMatchStudioPage() {
             <div className="p-4  bg-matcha-bg border border-matcha-border space-y-3">
               <div className="flex items-center justify-between text-xs font-mono font-bold">
                 <span className="uppercase text-matcha-muted">{t('mixMatch.harmony')}:</span>
-                <span className="text-matcha-primary font-black text-sm">{harmonyScore}% Synergy</span>
+                <span className="text-matcha-primary font-black text-sm">{t('studio.synergy', { score: harmonyScore })}</span>
               </div>
               <div className="w-full h-2  bg-white border border-matcha-border overflow-hidden">
                 <div 
@@ -581,7 +582,7 @@ export default function MixMatchStudioPage() {
                   {synergy.harmonyType}
                 </span>
                 <span className="text-matcha-muted">
-                  {synergy.dominantSeason} Capsule
+                  {t('studio.capsule', { season: taxonomyLabel(t, 'season', synergy.dominantSeason) })}
                 </span>
               </div>
 
@@ -638,7 +639,7 @@ export default function MixMatchStudioPage() {
               {/* Detected Itten Optical Contrasts & Delta E */}
               <div className="pt-2 border-t border-matcha-border/60 space-y-1.5">
                 <span className="text-[10px] font-mono font-bold uppercase text-matcha-muted block">
-                  Optical Contrasts (Johannes Itten):
+                  {t('studio.contrasts')}
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {synergy.ittenContrasts && synergy.ittenContrasts.map((contrast) => (
@@ -650,7 +651,7 @@ export default function MixMatchStudioPage() {
                       {contrast.name}: {contrast.badge}
                     </span>
                   ))}
-                  <span className="text-[9px] font-mono px-2 py-0.5  bg-white border border-matcha-border text-matcha-muted" title="CIELAB Color Distance (ΔE)">
+                  <span className="text-[9px] font-mono px-2 py-0.5  bg-white border border-matcha-border text-matcha-muted" title={t('studio.deltaTitle')}>
                     ΔE: {synergy.deltaE}
                   </span>
                 </div>
@@ -671,7 +672,7 @@ export default function MixMatchStudioPage() {
             <div className="space-y-3 pt-2">
               <div className="flex items-baseline justify-between font-mono">
                 <span className="text-xs text-matcha-muted uppercase font-bold">
-                  Total Bundle ({buyableItems.length} Item{buyableItems.length === 1 ? '' : 's'}):
+                  {buyableItems.length === 1 ? t('studio.totalOne') : t('studio.total', { count: buyableItems.length })}
                 </span>
                 <div className="text-right">
                   {isCompleteBundle && (
@@ -712,8 +713,8 @@ export default function MixMatchStudioPage() {
                     <ShoppingBag size={16} />
                     <span>
                       {isCompleteBundle
-                        ? `Add Complete Outfit (4 Pcs) • $${finalBundleTotal.toFixed(2)}`
-                        : `Add ${buyableItems.length} Available Pcs • $${finalBundleTotal.toFixed(2)}`}
+                        ? t('studio.addComplete', { price: finalBundleTotal.toFixed(2) })
+                        : t('studio.addAvailable', { count: buyableItems.length, price: finalBundleTotal.toFixed(2) })}
                     </span>
                   </>
                 )}
@@ -742,7 +743,7 @@ export default function MixMatchStudioPage() {
                 }`}
               >
                 <Shirt size={14} />
-                <span>1. Tops ({tops.length})</span>
+                <span>{t('studio.tab.tops', { count: tops.length })}</span>
               </button>
 
               <button
@@ -754,7 +755,7 @@ export default function MixMatchStudioPage() {
                 }`}
               >
                 <Scissors size={14} />
-                <span>2. Bottoms ({bottoms.length})</span>
+                <span>{t('studio.tab.bottoms', { count: bottoms.length })}</span>
               </button>
 
               <button
@@ -766,7 +767,7 @@ export default function MixMatchStudioPage() {
                 }`}
               >
                 <Footprints size={14} />
-                <span>3. Shoes ({footwear.length})</span>
+                <span>{t('studio.tab.footwear', { count: footwear.length })}</span>
               </button>
 
               <button
@@ -778,7 +779,7 @@ export default function MixMatchStudioPage() {
                 }`}
               >
                 <Briefcase size={14} />
-                <span>4. Bags &amp; Accs ({accessories.length})</span>
+                <span>{t('studio.tab.accessories', { count: accessories.length })}</span>
               </button>
             </div>
 
@@ -833,7 +834,7 @@ export default function MixMatchStudioPage() {
                         </div>
                       )}
                       <span className="absolute bottom-2 left-2 text-[9px] font-mono px-2 py-0.5 bg-white/90  backdrop-blur-xs font-bold text-matcha-text">
-                        {item.season}
+                        {taxonomyLabel(t, 'season', item.season)}
                       </span>
                       {!item.inStock && (
                         <span className="absolute top-2 left-2 text-[9px] font-mono px-2 py-0.5 bg-[#B42318] text-white  font-bold">

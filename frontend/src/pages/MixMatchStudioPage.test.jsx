@@ -31,7 +31,7 @@ const byId = (id) => productsData.find((p) => p.id === id);
 const renderStudio = () => render(<MemoryRouter><MixMatchStudioPage /></MemoryRouter>);
 const slot = (key) => document.querySelector(`[data-motion-slot="${key}"]`);
 const pick = (key, size) => fireEvent.click(within(slot(key)).getByRole('button', { name: size }));
-const addButton = () => screen.getAllByRole('button').find((b) => /Add (Complete Outfit|\d+ Available)/.test(b.textContent));
+const addButton = () => screen.getAllByRole('button').find((b) => /studio\.add(Complete|Available)/.test(b.textContent));
 
 beforeEach(() => {
   vi.clearAllMocks();

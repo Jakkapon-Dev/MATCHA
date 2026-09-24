@@ -11,6 +11,31 @@ export const DEFAULT_LANG = 'en';
 
 export const translations = {
   en: {
+    studio: {
+      title: 'Mix & Match Fashion Studio',
+      harmonyChip: '{score}% Harmony',
+      harmonyTitle: 'Colour harmony: {type}',
+      slot: {
+        tops: '1. Upper body (30%)',
+        bottoms: '2. Lower body (60% base)',
+        footwear: '3. Footwear anchor (5%)',
+        accessories: '4. Accent accessory (5%)',
+      },
+      synergy: '{score}% Synergy',
+      capsule: '{season} capsule',
+      contrasts: 'Optical contrasts (Johannes Itten):',
+      deltaTitle: 'CIELAB colour distance (ΔE)',
+      total: 'Total bundle ({count} items):',
+      totalOne: 'Total bundle (1 item):',
+      addComplete: 'Add complete outfit (4 pcs) • ${price}',
+      addAvailable: 'Add {count} available pcs • ${price}',
+      tab: {
+        tops: '1. Tops ({count})',
+        bottoms: '2. Bottoms ({count})',
+        footwear: '3. Shoes ({count})',
+        accessories: '4. Bags & accs ({count})',
+      },
+    },
     a11y: {
       skipToContent: 'Skip to main content',
       opensInNewTab: '{name} (opens in new tab)',
@@ -955,6 +980,31 @@ export const translations = {
   },
 
   th: {
+    studio: {
+      title: 'สตูดิโอจับคู่ชุด Mix & Match',
+      harmonyChip: 'เข้ากัน {score}%',
+      harmonyTitle: 'ความกลมกลืนของสี: {type}',
+      slot: {
+        tops: '1. ท่อนบน (30%)',
+        bottoms: '2. ท่อนล่าง (ฐาน 60%)',
+        footwear: '3. รองเท้า (5%)',
+        accessories: '4. เครื่องประดับ (5%)',
+      },
+      synergy: 'เข้ากัน {score}%',
+      capsule: 'แคปซูล{season}',
+      contrasts: 'คอนทราสต์ของสี (โยฮันเนส อิทเทิน):',
+      deltaTitle: 'ระยะห่างของสีแบบ CIELAB (ΔE)',
+      total: 'รวมทั้งชุด ({count} ชิ้น):',
+      totalOne: 'รวมทั้งชุด (1 ชิ้น):',
+      addComplete: 'เพิ่มทั้งชุด (4 ชิ้น) • ${price}',
+      addAvailable: 'เพิ่ม {count} ชิ้นที่มีสินค้า • ${price}',
+      tab: {
+        tops: '1. เสื้อ ({count})',
+        bottoms: '2. กางเกงและกระโปรง ({count})',
+        footwear: '3. รองเท้า ({count})',
+        accessories: '4. กระเป๋าและเครื่องประดับ ({count})',
+      },
+    },
     a11y: {
       skipToContent: 'ข้ามไปยังเนื้อหาหลัก',
       opensInNewTab: '{name} (เปิดในแท็บใหม่)',
@@ -1356,7 +1406,7 @@ export const translations = {
       home: 'MatchA — เสื้อผ้าย้อมชา',
       catalog: 'สินค้าทั้งหมด — MatchA',
       personalColor: 'ค้นหาสีประจำตัว — MatchA',
-      mixMatch: 'Mix & Match Studio — MatchA',
+      mixMatch: 'สตูดิโอจับคู่ชุด Mix & Match — MatchA',
       lookbook: 'สมุดภาพชุด — MatchA',
       cart: 'ตะกร้าสินค้า — MatchA',
       payment: 'ชำระเงิน — MatchA',
