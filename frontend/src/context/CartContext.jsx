@@ -68,6 +68,21 @@ export function CartProvider({ children }) {
   const cartItemsRef = useRef(cartItems);
   useEffect(() => { cartItemsRef.current = cartItems; }, [cartItems]);
 
+  /* Server writes go out one at a time, in the order the shopper made them.
+
+     A PUT carries the quantity the line should end at, so the server keeps
+     whichever PUT it applies last. Fired together, requests reach it in any
+     order: five presses of − showed 1 in the bag and left 7 on the server.
+     Chaining them keeps the server's order the shopper's order, and a quantity
+     still waiting to be sent is replaced by the newer one rather than queued
+     behind it, so a burst of presses costs one request per line in flight. */
+  const syncChainRef = useRef(Promise.resolve());
+  const pendingQtyRef = useRef(new Map());
+  const enqueueSync = useCallback((task) => {
+    syncChainRef.current = syncChainRef.current.then(task, task);
+    return syncChainRef.current;
+  }, []);
+
   // Sync cart items to localStorage on any change
   useEffect(() => {
     // Never write to a key whose contents have not been read yet.
@@ -89,18 +104,29 @@ export function CartProvider({ children }) {
     };
     const key = getCartKey(resolvedProduct);
 
-    setCartItems((prev) => {
-      const idx = prev.findIndex((item) => getCartKey(item) === key);
-      if (idx > -1) {
-        const next = [...prev];
-        next[idx] = { ...next[idx], quantity: (next[idx].quantity || 1) + amount };
-        return next;
-      }
-      return [...prev, resolvedProduct];
-    });
+    // Worked out from the ref, as updateQty does, so an add and a press on +
+    // in the same tick both count.
+    const prev = cartItemsRef.current;
+    const idx = prev.findIndex((item) => getCartKey(item) === key);
+    const next = [...prev];
+    if (idx > -1) {
+      next[idx] = { ...next[idx], quantity: (next[idx].quantity || 1) + amount };
+    } else {
+      next.push(resolvedProduct);
+    }
+    cartItemsRef.current = next;
+    setCartItems(next);
+
+    // A quantity for this line is already waiting to go out: send the new
+    // total with it instead of an increment that would land after it.
+    const pending = pendingQtyRef.current;
+    if (idx > -1 && pending.has(key)) {
+      pending.set(key, next[idx].quantity);
+      return;
+    }
 
     // Background sync to backend MongoDB Cart API (Task 8.5)
-    api.addToCart({
+    const payload = {
       itemId: key,
       productId: resolvedProduct.id || resolvedProduct._id || 'SKU-ITEM',
       name: resolvedProduct.name || 'MatchA Item',
@@ -109,10 +135,11 @@ export function CartProvider({ children }) {
       size: resolvedSize,
       color: resolvedProduct.color || 'Default',
       image: resolvedProduct.image || ''
-    }).catch((err) => {
+    };
+    enqueueSync(() => api.addToCart(payload).catch((err) => {
       console.warn('Backend cart sync note:', err.message);
-    });
-  }, []);
+    }));
+  }, [enqueueSync]);
 
   /* The new quantity is worked out from the current items and then applied,
      rather than captured out of the updater as it runs.
@@ -147,19 +174,31 @@ export function CartProvider({ children }) {
     setCartItems(nextItems);
 
     // Background sync to backend MongoDB Cart API (Task 8.6)
-    api.updateCartItem(key, nextQty).catch((err) => {
-      console.warn('Backend cart update note:', err.message);
+    const pending = pendingQtyRef.current;
+    const alreadyQueued = pending.has(key);
+    pending.set(key, nextQty);
+    if (alreadyQueued) return;
+    enqueueSync(() => {
+      if (!pending.has(key)) return undefined; // removed before it was sent
+      const quantity = pending.get(key);
+      pending.delete(key);
+      return api.updateCartItem(key, quantity).catch((err) => {
+        console.warn('Backend cart update note:', err.message);
+      });
     });
-  }, []);
+  }, [enqueueSync]);
 
   const removeItem = useCallback((key) => {
-    setCartItems((prev) => prev.filter((item) => getCartKey(item) !== key));
+    const next = cartItemsRef.current.filter((item) => getCartKey(item) !== key);
+    cartItemsRef.current = next;
+    setCartItems(next);
+    pendingQtyRef.current.delete(key);
 
     // Background sync to backend MongoDB Cart API (Task 8.7)
-    api.deleteCartItem(key).catch((err) => {
+    enqueueSync(() => api.deleteCartItem(key).catch((err) => {
       console.warn('Backend cart delete note:', err.message);
-    });
-  }, []);
+    }));
+  }, [enqueueSync]);
 
   const clearCart = useCallback(() => {
     // The ref is reset with the state: updateQty reads it synchronously, so
@@ -167,11 +206,12 @@ export function CartProvider({ children }) {
     // quantity from a bag that no longer exists.
     cartItemsRef.current = [];
     setCartItems([]);
+    pendingQtyRef.current.clear();
 
-    api.clearCart().catch((err) => {
+    enqueueSync(() => api.clearCart().catch((err) => {
       console.warn('Backend cart clear note:', err.message);
-    });
-  }, []);
+    }));
+  }, [enqueueSync]);
 
   // Computed summary values
   const subtotal = useMemo(() => {

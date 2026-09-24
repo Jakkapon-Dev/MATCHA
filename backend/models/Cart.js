@@ -81,5 +81,11 @@ cartSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 const Cart = mongoose.models.Cart || model('Cart', cartSchema);
 
+/* The expiry the save hook above sets. Cart routes write with atomic update
+   operators, which do not run save hooks, so they apply the same rule here. */
+export function cartExpiryFor(owner) {
+  return owner?.guestId ? new Date(Date.now() + GUEST_CART_TTL_SECONDS * 1000) : null;
+}
+
 export default Cart;
 export { Cart };
