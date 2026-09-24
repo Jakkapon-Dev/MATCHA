@@ -1,6 +1,7 @@
 import React from 'react';
 import AdminDataState from './AdminDataState';
 import AdminPagination from './AdminPagination';
+import { ORDER_STATUSES, isKnownOrderStatus } from './adminData';
 
 export default function OrdersTab({ status, errors, setOrderStatusFilter, orderStatusFilter, filteredOrders, setSelectedOrderForModal, saving, isDemo, handleUpdateOrderStatus, pagination, onPageChange }) {
   return (<AdminDataState resources={["orders"]} status={status} errors={errors}>
@@ -75,11 +76,13 @@ export default function OrdersTab({ status, errors, setOrderStatusFilter, orderS
                                 'bg-matcha-bg border-matcha-border text-matcha-text'
                               }`}
                             >
-                              <option value="Pending">Pending</option>
-                              <option value="Processing">Processing</option>
-                              <option value="Shipped">Shipped</option>
-                              <option value="Delivered">Delivered</option>
-                              <option value="Cancelled">Cancelled</option>
+                              {!isKnownOrderStatus(order.status) && (
+                                // A stored status outside the list is shown, not replaced by Pending.
+                                <option value={order.status} disabled>{order.status}</option>
+                              )}
+                              {ORDER_STATUSES.map((status) => (
+                                <option key={status} value={status}>{status}</option>
+                              ))}
                             </select>
                           </td>
                         </tr>
