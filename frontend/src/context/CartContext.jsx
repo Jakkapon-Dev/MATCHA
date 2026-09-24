@@ -163,7 +163,18 @@ export function CartProvider({ children }) {
 
   const addToCart = useCallback((product, customQty) => {
     localEditsRef.current += 1;
-    const amount = customQty || product.quantity || 1;
+    /* How many to buy, and never how many are in stock.
+
+       A product as the API returns it carries `quantity` — the stock count. The
+       saved archive handed one straight in and a garment with 47 in stock went
+       into the bag 47 times. A quantity counts only when the caller says so:
+       the second argument, or a cart line it built by choosing a size. A bare
+       product record gets one. */
+    const explicit = parseInt(customQty, 10);
+    const lineQty = parseInt(product.quantity, 10);
+    const amount = explicit > 0 ? explicit
+      : product.size && lineQty > 0 ? lineQty
+        : 1;
     const resolvedSize = resolveDefaultSize(product);
     const resolvedProduct = {
       ...product,

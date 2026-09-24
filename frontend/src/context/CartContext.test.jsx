@@ -318,3 +318,51 @@ describe('CartProvider server cart hydration', () => {
     expect(api.getCart).not.toHaveBeenCalled();
   });
 });
+
+/* The API's product record puts the stock count in `quantity`. The saved
+   archive passed one straight to addToCart and the bag took 47 of a garment
+   with 47 in stock; pressing again made it 94. */
+describe('CartProvider purchase quantity', () => {
+  const STOCKED = {
+    id: 'AUT-BOT-004', name: 'MatchA Autumn Jeans', price: 70.99, color: 'Brown',
+    sizes: ['S', 'M', 'L'], quantity: 47, stock: 47,
+    sizeStock: [{ size: 'S', stock: 20 }, { size: 'M', stock: 20 }, { size: 'L', stock: 7 }]
+  };
+
+  beforeEach(() => {
+    storeMode = { isDemo: false, ready: true };
+    vi.mocked(api.addToCart).mockReset().mockImplementation(() => Promise.resolve());
+  });
+
+  test('a bare product record adds one, and one more on the next press', async () => {
+    const { result } = render();
+    act(() => { result.current.addToCart(STOCKED); });
+    expect(result.current.cartItems[0].quantity).toBe(1);
+    act(() => { result.current.addToCart(STOCKED); });
+    expect(result.current.cartItems[0].quantity).toBe(2);
+    expect(result.current.cartCount).toBe(2);
+    await waitFor(() => expect(api.addToCart).toHaveBeenCalledTimes(2));
+    expect(vi.mocked(api.addToCart).mock.calls.map(([line]) => line.quantity)).toEqual([1, 1]);
+  });
+
+  test('stock stays on the line as data and never becomes the quantity', () => {
+    const { result } = render();
+    act(() => { result.current.addToCart(STOCKED); });
+    const line = result.current.cartItems[0];
+    expect(line.quantity).toBe(1);
+    expect(line.stock).toBe(47);
+    expect(result.current.subtotal).toBeCloseTo(70.99);
+  });
+
+  test('a quantity the caller asks for is honoured', () => {
+    const { result } = render();
+    act(() => { result.current.addToCart(STOCKED, 3); });
+    expect(result.current.cartItems[0].quantity).toBe(3);
+  });
+
+  test('a cart line built with a chosen size keeps the quantity it was built with', () => {
+    const { result } = render();
+    act(() => { result.current.addToCart({ ...STOCKED, size: 'M', quantity: 2 }); });
+    expect(result.current.cartItems[0].quantity).toBe(2);
+  });
+});

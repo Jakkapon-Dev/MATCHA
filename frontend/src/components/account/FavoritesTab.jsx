@@ -138,9 +138,10 @@ export default function FavoritesTab({ favorites = null }) {
               </div>
 
               <div className="flex flex-col gap-2 shrink-0">
-                {/* CartContext owns cart persistence and duplicate-item behavior. */}
+                {/* CartContext owns cart persistence and duplicate-item behavior.
+                    One per press: the catalogue record's `quantity` is its stock. */}
                 <button
-                  onClick={() => addToCart(item)}
+                  onClick={() => addToCart(item, 1)}
                   className="p-2.5 bg-matcha-primary hover:bg-matcha-primary-dark text-white transition-colors cursor-pointer"
                   title={t('account.addToCart')}
                 >

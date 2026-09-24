@@ -169,6 +169,18 @@ describe('FavoritesTab', () => {
     expect(sent.sizes).toEqual(['S', 'M', 'L', 'XL', 'XXL']);
   });
 
+  /* GET /api/products puts the stock count in `quantity`. Handed over as it
+     was, a garment with 47 in stock went into the bag 47 times. */
+  test('adding a saved garment asks for one, whatever its stock', async () => {
+    api.getProducts.mockResolvedValue({ data: [{ ...CATALOGUE[0], quantity: 47, stock: 47 }] });
+    setWishlist([{ id: 'AUT-BOT-004' }]);
+    render(<FavoritesTab />);
+
+    await waitFor(() => expect(screen.getByText('MatchA Autumn Jeans')).toBeTruthy());
+    screen.getByTitle('account.addToCart').click();
+    expect(addToCart).toHaveBeenCalledWith(expect.objectContaining({ id: 'AUT-BOT-004' }), 1);
+  });
+
   test('when the catalogue cannot be reached nothing buyable is rendered', async () => {
     setWishlist([{ id: 'AUT-BOT-004' }]);
     api.getProducts.mockRejectedValue(new Error('offline'));
