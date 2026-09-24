@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useChangeMotion from '../hooks/useChangeMotion';
 import {
@@ -50,6 +50,8 @@ export default function EditorialLookbookPage() {
   const { showToast } = useToast();
   const { looks: curatedEditorialSpreads, loading, error, retry } = useLookbooks();
   const [purchaseItem, setPurchaseItem] = useState(null);
+  const [wholeLookActive, setWholeLookActive] = useState(false);
+  const wholeLookStateRef = useRef(null);
 
   const [selectedSeason, setSelectedSeason] = useState('ALL');
   const editorialMotionRef = useChangeMotion(selectedSeason);
@@ -158,6 +160,8 @@ export default function EditorialLookbookPage() {
       return;
     }
     if (!item.sizes || item.sizes.length !== 1) {
+      setWholeLookActive(false);
+      wholeLookStateRef.current = null;
       setPurchaseItem({ ...item, id: item.productId || item.id, name: item.name || item.title });
       return;
     }
@@ -182,14 +186,9 @@ export default function EditorialLookbookPage() {
   };
 
   const handleAddEntireLook = (spread) => {
-    if (loading) return;
-    const needsSelection = spread.shoppableItems.find(item => item.inStock && item.sizes?.length !== 1);
-    if (needsSelection) {
-      showToast(t('lookbook.chooseSizes'), 'info');
-      setPurchaseItem(needsSelection);
-      return;
-    }
-    const availableItems = (spread.shoppableItems || []).filter(item => item.inStock !== false);
+    if (loading || wholeLookStateRef.current) return;
+
+    const availableItems = (spread.shoppableItems || []).filter(item => item.inStock === true);
     const outOfStockItems = (spread.shoppableItems || []).filter(item => item.inStock === false);
 
     if (availableItems.length === 0) {
@@ -197,27 +196,107 @@ export default function EditorialLookbookPage() {
       return;
     }
 
-    availableItems.forEach((item) => {
-      addToCart({
-        id: item.id,
-        name: item.name,
-        price: item.price,
-        image: item.image,
-        quantity: 1,
-        size: getItemSize(item),
-        color: item.color || 'Artisan'
-      });
-    });
+    const multiSizeItems = availableItems.filter(item => (item.sizes || []).length > 1);
+    const singleSizeItems = availableItems.filter(item => (item.sizes || []).length <= 1);
 
-    setAddedEntireLook(true);
-    setTimeout(() => setAddedEntireLook(false), 2000);
+    // Pre-create cart payloads for single-size items in memory
+    const initialCollected = singleSizeItems.map(item => ({
+      ...item,
+      id: item.productId || item.id,
+      name: item.name || item.title,
+      price: item.price,
+      image: item.image,
+      quantity: 1,
+      size: getItemSize(item),
+      color: item.color || 'Artisan Default'
+    }));
 
-    if (outOfStockItems.length > 0) {
-      const oosNames = outOfStockItems.map(i => i.name).join(', ');
-      showToast(`Added ${availableItems.length} items to bag (Excluding ${oosNames} - out of stock)`, 'info');
-    } else {
-      showToast(`Added full ${spread.title} look (${availableItems.length} items) to bag! ✨`, 'success');
+    // If no multi-size items exist, add all immediately
+    if (multiSizeItems.length === 0) {
+      initialCollected.forEach(item => addToCart(item));
+      setAddedEntireLook(true);
+      setTimeout(() => setAddedEntireLook(false), 2000);
+
+      if (outOfStockItems.length > 0) {
+        const oosNames = outOfStockItems.map(i => i.name).join(', ');
+        showToast(`Added ${initialCollected.length} items to bag (Excluding ${oosNames} - out of stock)`, 'info');
+      } else {
+        showToast(`Added full ${spread.title} look (${initialCollected.length} items) to bag! ✨`, 'success');
+      }
+      return;
     }
+
+    // Multi-size items exist: initialize whole-look queue
+    const queue = [...multiSizeItems];
+    const firstItem = queue[0];
+    const remainingQueue = queue.slice(1);
+
+    wholeLookStateRef.current = {
+      spread,
+      queue: remainingQueue,
+      collected: initialCollected,
+      expectedCount: availableItems.length,
+      outOfStockItems
+    };
+
+    setWholeLookActive(true);
+    showToast(t('lookbook.chooseSizes'), 'info');
+    setPurchaseItem({ ...firstItem, id: firstItem.productId || firstItem.id, name: firstItem.name || firstItem.title });
+  };
+
+  const handleWholeLookSelection = (itemToAdd) => {
+    const current = wholeLookStateRef.current;
+    if (!current) {
+      addToCart(itemToAdd);
+      setPurchaseItem(null);
+      return;
+    }
+
+    const normalizedItem = {
+      ...itemToAdd,
+      id: itemToAdd.productId || itemToAdd.id,
+      name: itemToAdd.name || itemToAdd.title
+    };
+
+    const nextCollected = [...current.collected, normalizedItem];
+    const nextQueue = [...current.queue];
+
+    if (nextQueue.length > 0) {
+      const nextItem = nextQueue.shift();
+      wholeLookStateRef.current = {
+        ...current,
+        queue: nextQueue,
+        collected: nextCollected
+      };
+      setPurchaseItem({ ...nextItem, id: nextItem.productId || nextItem.id, name: nextItem.name || nextItem.title });
+    } else {
+      // Queue complete! All selections collected.
+      if (nextCollected.length === current.expectedCount) {
+        nextCollected.forEach(item => addToCart(item));
+
+        setAddedEntireLook(true);
+        setTimeout(() => setAddedEntireLook(false), 2000);
+
+        if (current.outOfStockItems.length > 0) {
+          const oosNames = current.outOfStockItems.map(i => i.name).join(', ');
+          showToast(`Added ${nextCollected.length} items to bag (Excluding ${oosNames} - out of stock)`, 'info');
+        } else {
+          showToast(`Added full ${current.spread.title} look (${nextCollected.length} items) to bag! ✨`, 'success');
+        }
+      }
+
+      wholeLookStateRef.current = null;
+      setWholeLookActive(false);
+      setPurchaseItem(null);
+    }
+  };
+
+  const handleCloseModal = () => {
+    if (wholeLookStateRef.current) {
+      wholeLookStateRef.current = null;
+      setWholeLookActive(false);
+    }
+    setPurchaseItem(null);
   };
 
   // Determine if a hotspot or item is active (synchronized selection state)
@@ -246,7 +325,14 @@ export default function EditorialLookbookPage() {
 
   return (
     <div className="w-full bg-matcha-bg text-matcha-text min-h-screen">
-      {purchaseItem && <ProductModal product={purchaseItem} onClose={() => setPurchaseItem(null)} />}
+      {purchaseItem && (
+        <ProductModal
+          key={purchaseItem.id || purchaseItem.productId}
+          product={purchaseItem}
+          onClose={handleCloseModal}
+          {...(wholeLookActive ? { onAddToCart: handleWholeLookSelection } : {})}
+        />
+      )}
       {loading && <div role="status" aria-label={t('common.loading')} className="h-16 bg-[#EAE5DB]" />}
       {error && <div role="alert" className="p-4 border-b border-matcha-accent bg-[#FFF4ED] text-center">{t(error)} <button onClick={retry} className="underline font-bold ml-3">{t('common.retry')}</button></div>}
 
@@ -582,7 +668,7 @@ export default function EditorialLookbookPage() {
 
                 <button
                   type="button"
-                  disabled={loading || !coverStory.shoppableItems.some(i => i.inStock)}
+                  disabled={loading || wholeLookActive || !coverStory.shoppableItems.some(i => i.inStock)}
                   onClick={() => handleAddEntireLook(coverStory)}
                   className="mt-5 w-full py-3.5 bg-matcha-accent hover:bg-matcha-accent-hover disabled:bg-matcha-border disabled:text-matcha-muted text-white font-mono text-xs uppercase tracking-[0.15em] transition-colors cursor-pointer disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
@@ -928,7 +1014,7 @@ export default function EditorialLookbookPage() {
                 <div className="space-y-2 pt-4 border-t border-matcha-border">
                   <button
                     type="button"
-                    disabled={loading || !selectedSpread.shoppableItems.some(i => i.inStock)}
+                    disabled={loading || wholeLookActive || !selectedSpread.shoppableItems.some(i => i.inStock)}
                     onClick={() => handleAddEntireLook(selectedSpread)}
                     className="w-full py-3.5 bg-matcha-accent hover:bg-matcha-accent-hover disabled:bg-matcha-border disabled:text-matcha-muted text-white font-mono text-xs uppercase tracking-[0.15em] transition-colors cursor-pointer disabled:cursor-not-allowed"
                   >
