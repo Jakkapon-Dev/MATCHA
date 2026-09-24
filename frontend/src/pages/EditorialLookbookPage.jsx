@@ -43,6 +43,25 @@ const SEASONS = [
    floating pane on a page that already had too many. The photographs are now
    flat rectangles that sit on the page. */
 
+export const SAVED_LOOKS_STORAGE_KEY = 'matcha_saved_looks';
+
+function readSavedLooks() {
+  try {
+    const ids = JSON.parse(localStorage.getItem(SAVED_LOOKS_STORAGE_KEY) || '[]');
+    return Array.isArray(ids) ? Object.fromEntries(ids.map((id) => [id, true])) : {};
+  } catch {
+    return {};
+  }
+}
+
+function writeSavedLooks(liked) {
+  try {
+    localStorage.setItem(SAVED_LOOKS_STORAGE_KEY, JSON.stringify(Object.keys(liked).filter((id) => liked[id])));
+  } catch {
+    // Storage is off (private mode): the heart still works for this visit.
+  }
+}
+
 export default function EditorialLookbookPage() {
   const navigate = useNavigate();
   const { t } = useLanguage();
@@ -64,7 +83,12 @@ export default function EditorialLookbookPage() {
   // คีย์บอร์ดโฟกัส
   const [focusedItemId, setFocusedItemId] = useState(null);
 
-  const [likedLooks, setLikedLooks] = useState({});
+  /* "Save this look" said the look was saved to a private vault and kept it in
+     component state, so a refresh forgot it. There is no server-side store for
+     looks; like the wishlist, saved looks are kept in this browser, and the
+     message now says exactly that. */
+  const [likedLooks, setLikedLooks] = useState(readSavedLooks);
+  useEffect(() => { writeSavedLooks(likedLooks); }, [likedLooks]);
   const [addedItems, setAddedItems] = useState({});
   const [addedEntireLook, setAddedEntireLook] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
@@ -139,7 +163,7 @@ export default function EditorialLookbookPage() {
     e.stopPropagation();
     setLikedLooks((prev) => {
       const next = !prev[id];
-      if (next) showToast('Saved editorial look to your private vault! 🤍');
+      if (next) showToast(t('lookbook.lookSaved'), 'success');
       return { ...prev, [id]: next };
     });
   };
@@ -1024,8 +1048,18 @@ export default function EditorialLookbookPage() {
                   <button
                     type="button"
                     onClick={() => {
+                      const spread = selectedSpread;
                       setSelectedSpread(null);
-                      navigate('/mix-match');
+                      // The studio opens on this spread's pieces, not a preset.
+                      navigate('/mix-match', {
+                        state: {
+                          lookbookLook: {
+                            id: spread.id,
+                            title: spread.title,
+                            productIds: (spread.shoppableItems || []).map((item) => item.productId || item.id)
+                          }
+                        }
+                      });
                     }}
                     className="w-full py-2.5 font-mono text-xs uppercase tracking-wider text-[#0A0A0A] hover:text-matcha-accent transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                   >

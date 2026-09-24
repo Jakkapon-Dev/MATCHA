@@ -129,6 +129,7 @@ export const translations = {
       addedPartial: '⚠️ Added {count} to your bag ({skipped} left out, out of stock). The {percent}% set discount needs all four pieces.',
       addedFullSet: '✨ The full set of {count} is in your bag. The {percent}% set discount shows on the order summary.',
       showingLook: '✓ Showing the look you picked',
+      showingLookbook: '✓ Pieces from “{title}”',
       matchesYourReading: '✓ Matches your colour reading',
       fullSetCount: '{count} pieces, full set',
       buyableCount: '{count} of {total} available',
@@ -650,6 +651,7 @@ export const translations = {
       highlightOnImage: 'Highlight {title} on the photograph',
       outOfStock: 'That piece is out of stock for now.',
       chooseSizes: 'Choose a size for each piece before adding the look to your bag.',
+      lookSaved: 'Look saved on this device.',
       lookOutOfStock: 'This look cannot be added: every piece in the set is out of stock for now.',
     },
 
@@ -1005,6 +1007,7 @@ export const translations = {
       addedPartial: '⚠️ เพิ่มลงตะกร้า {count} ชิ้น (ยกเว้น {skipped} เนื่องจากหมดสต็อก) — ส่วนลดเซ็ต {percent}% ใช้ได้เมื่อครบ 4 ชิ้นเท่านั้น',
       addedFullSet: '✨ เพิ่มเซ็ตชุดครบ {count} ชิ้นลงตะกร้าเรียบร้อยแล้ว (ส่วนลดเซ็ต {percent}% จะแสดงในใบสรุปยอด)',
       showingLook: '✓ กำลังแสดงลุคที่เลือก',
+      showingLookbook: '✓ ชิ้นจากลุค “{title}”',
       matchesYourReading: '✓ ตรงกับผลวิเคราะห์ของคุณ',
       fullSetCount: '{count} ชิ้นครบเซ็ต',
       buyableCount: 'ซื้อได้ {count}/{total} ชิ้น',
@@ -1523,6 +1526,7 @@ export const translations = {
       highlightOnImage: 'ไฮไลต์ {title} บนภาพ',
       outOfStock: 'สินค้านี้หมดสต็อกชั่วคราว',
       chooseSizes: 'กรุณาเลือกไซซ์ของแต่ละชิ้นก่อนเพิ่มลงถุง',
+      lookSaved: 'บันทึกลุคนี้ไว้ในเครื่องนี้แล้ว',
       lookOutOfStock: 'ไม่สามารถเพิ่มชุดได้ เนื่องจากสินค้าทั้งหมดในเซ็ตนี้หมดสต็อกชั่วคราว',
     },
 

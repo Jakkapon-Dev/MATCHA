@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext.jsx';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   ShoppingBag, 
   Check, 
@@ -121,13 +121,38 @@ export default function MixMatchStudioPage() {
   const initialPreset = useMemo(() => getPresetForSeason(userSeason), [userSeason]);
   const pickById = (id, fallback) => productsData.find((p) => p.id === id) || fallback;
 
+  /* A lookbook spread sends its pieces here. The studio used to ignore them and
+     open on the season preset, with "Showing the look you picked" above a look
+     nobody had picked. Each piece now takes the slot its category belongs to;
+     a slot the spread has nothing for keeps the preset's garment. */
+  const location = useLocation();
+  const [lookbookLook] = useState(() => {
+    const look = location.state?.lookbookLook;
+    return look && Array.isArray(look.productIds) ? look : null;
+  });
+  const lookPieces = useMemo(() => {
+    const pieces = {};
+    (lookbookLook?.productIds || []).forEach((id) => {
+      const product = productsData.find((p) => p.id === id);
+      if (!product) return;
+      const key = (product.category === 'Tops' || product.category === 'Outerwear') ? 'tops'
+        : product.category === 'Bottoms' ? 'bottoms'
+          : product.category === 'Shoes' ? 'footwear' : 'accessories';
+      if (!pieces[key]) pieces[key] = product;
+    });
+    return pieces;
+  }, [lookbookLook]);
+
   // Selected Outfit Slots (4-Slot Architecture)
-  const [selectedTop, setSelectedTop] = useState(() => pickById(initialPreset.topId, tops[0] || productsData[0]));
-  const [selectedBottom, setSelectedBottom] = useState(() => pickById(initialPreset.bottomId, bottoms[0] || productsData[1]));
-  const [selectedFootwear, setSelectedFootwear] = useState(() => pickById(initialPreset.footwearId, footwear[0] || productsData[2]));
-  const [selectedAccessory, setSelectedAccessory] = useState(() => pickById(initialPreset.accessoryId, accessories[0] || productsData[3]));
+  const [selectedTop, setSelectedTop] = useState(() => lookPieces.tops || pickById(initialPreset.topId, tops[0] || productsData[0]));
+  const [selectedBottom, setSelectedBottom] = useState(() => lookPieces.bottoms || pickById(initialPreset.bottomId, bottoms[0] || productsData[1]));
+  const [selectedFootwear, setSelectedFootwear] = useState(() => lookPieces.footwear || pickById(initialPreset.footwearId, footwear[0] || productsData[2]));
+  const [selectedAccessory, setSelectedAccessory] = useState(() => lookPieces.accessories || pickById(initialPreset.accessoryId, accessories[0] || productsData[3]));
   const [activeSlotTab, setActiveSlotTab] = useState('tops'); // 'tops' | 'bottoms' | 'footwear' | 'accessories'
-  const [activePresetId, setActivePresetId] = useState(initialPreset.id);
+  const [activePresetId, setActivePresetId] = useState(lookbookLook ? null : initialPreset.id);
+  // Whether the shopper chose the active preset, or the page chose it for them.
+  const [presetPicked, setPresetPicked] = useState(false);
+  const [showingLookbook, setShowingLookbook] = useState(Boolean(lookbookLook));
   const [justAddedBundle, setJustAddedBundle] = useState(false);
   /* No size is chosen for the shopper. This used to start at
      { tops: 'M', bottoms: '32', footwear: 'EU 41' } — and no bottom in the
@@ -202,6 +227,8 @@ export default function MixMatchStudioPage() {
     setSelectedFootwear(f);
     setSelectedAccessory(a);
     setActivePresetId(preset.id);
+    setPresetPicked(true);
+    setShowingLookbook(false);
   };
 
   // Randomize Outfit
@@ -218,6 +245,7 @@ export default function MixMatchStudioPage() {
     setSelectedFootwear(pickRandom(footwear));
     setSelectedAccessory(pickRandom(accessories));
     setActivePresetId(null);
+    setShowingLookbook(false);
   };
 
   // Pricing & Combo Discount (12% Full 4-Piece Bundle Discount)
@@ -346,7 +374,11 @@ export default function MixMatchStudioPage() {
                 ? t('mixMatch.presetsForYou', { season: userSeason })
                 : t('mixMatch.presetsPopular')}
             </span>
-            {activePresetId && (
+            {showingLookbook ? (
+              <span className="text-[10px] font-mono text-matcha-primary font-bold bg-matcha-bg px-2.5 py-0.5 ">
+                {t('mixMatch.showingLookbook', { title: lookbookLook.title })}
+              </span>
+            ) : activePresetId && presetPicked && (
               <span className="text-[10px] font-mono text-matcha-primary font-bold bg-matcha-bg px-2.5 py-0.5 ">
                 {t('mixMatch.showingLook')}
               </span>

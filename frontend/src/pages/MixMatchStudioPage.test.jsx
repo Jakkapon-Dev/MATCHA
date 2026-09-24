@@ -91,3 +91,33 @@ describe('Mix & Match sizes', () => {
     expect(ids).toHaveLength(3);
   });
 });
+
+describe('Mix & Match opened from a lookbook spread', () => {
+  const renderFrom = (state) => render(
+    <MemoryRouter initialEntries={[{ pathname: '/mix-match', state }]}>
+      <MixMatchStudioPage />
+    </MemoryRouter>
+  );
+
+  test("the spread's pieces take their slots and the banner names the spread", () => {
+    live = [...live, byId('LOOK-02-BLAZER'), byId('LOOK-02-TROUSERS')].map((p) => ({ ...p, inStock: true }));
+    renderFrom({ lookbookLook: { id: 'SPREAD-02', title: 'Concrete Botanical Bloom', productIds: ['LOOK-02-BLAZER', 'LOOK-02-TROUSERS'] } });
+
+    expect(slot('tops').getAttribute('data-motion-item')).toBe('LOOK-02-BLAZER');
+    expect(slot('bottoms').getAttribute('data-motion-item')).toBe('LOOK-02-TROUSERS');
+    expect(screen.getByText('mixMatch.showingLookbook')).toBeTruthy();
+    expect(screen.queryByText('mixMatch.showingLook')).toBeNull();
+  });
+
+  test('a piece the catalogue does not have is skipped rather than breaking the studio', () => {
+    renderFrom({ lookbookLook: { id: 'SPREAD-06', title: 'x', productIds: ['LOOK-06-SHORTS'] } });
+    expect(slot('bottoms').getAttribute('data-motion-item')).toBe('AUT-BOT-003');
+  });
+
+  test('opened without a spread, the page does not claim a look was picked', () => {
+    renderStudio();
+    expect(screen.queryByText('mixMatch.showingLook')).toBeNull();
+    fireEvent.click(screen.getAllByRole('button').find((b) => /Spring Floral Blossom/.test(b.textContent)));
+    expect(screen.getByText('mixMatch.showingLook')).toBeTruthy();
+  });
+});

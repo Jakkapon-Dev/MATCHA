@@ -661,3 +661,69 @@ describe('Add the whole look queue flow', () => {
   });
 });
 
+
+/* "Open in Mix & Match Studio" in a spread went to the studio with nothing, and
+   the studio opened on its season preset under "Showing the look you picked".
+   "Save this look" announced a private vault and forgot the look on refresh. */
+describe('Lookbook state carried out of the page', () => {
+  const TWO_LOOKS = [
+    { ...mockLooksData[0], id: 'look-1', title: 'Cover Story', shoppableItems: [] },
+    {
+      id: 'look-2', title: 'Concrete Botanical Bloom', season: 'Spring', coverImage: '/images/b.jpg',
+      photographer: 'MatchA Studio', location: 'Tokyo', palette: ['#ffffff'], hotspots: [],
+      shoppableItems: [
+        { id: 'LOOK-02-BLAZER', productId: 'LOOK-02-BLAZER', name: 'Ivory Linen Tailored Blazer', price: 110, inStock: true, sizes: ['ONE'] },
+        { id: 'LOOK-02-TROUSERS', productId: 'LOOK-02-TROUSERS', name: 'Straight Linen Trousers', price: 82, inStock: true, sizes: ['ONE'] }
+      ]
+    }
+  ];
+
+  let seenState;
+  function StudioProbe() {
+    seenState = useLocation().state;
+    return <div>studio</div>;
+  }
+
+  const renderPage = () => render(
+    <MemoryRouter initialEntries={['/lookbook']}>
+      <Routes>
+        <Route path="/lookbook" element={<EditorialLookbookPage />} />
+        <Route path="/mix-match" element={<StudioProbe />} />
+      </Routes>
+    </MemoryRouter>
+  );
+
+  test('the spread sends its own pieces to the studio', () => {
+    const saved = mockLooksData;
+    mockLooksData = TWO_LOOKS;
+    try {
+      renderPage();
+      fireEvent.click(screen.getAllByText('All details')[0].closest('button'));
+      fireEvent.click(screen.getByText(/Open in Mix & Match Studio/i).closest('button'));
+      expect(screen.getByText('studio')).toBeTruthy();
+      expect(seenState.lookbookLook).toEqual({
+        id: 'look-2',
+        title: 'Concrete Botanical Bloom',
+        productIds: ['LOOK-02-BLAZER', 'LOOK-02-TROUSERS']
+      });
+    } finally {
+      mockLooksData = saved;
+    }
+  });
+
+  test('a saved look is still saved after the page reloads', () => {
+    localStorage.clear();
+    const first = renderPage();
+    const heart = screen.getAllByRole('button', { name: 'Save this look' })[0];
+    fireEvent.click(heart);
+    expect(heart.getAttribute('aria-pressed')).toBe('true');
+    expect(JSON.parse(localStorage.getItem('matcha_saved_looks'))).toEqual(['look-1']);
+
+    first.unmount();
+    renderPage();
+    expect(screen.getAllByRole('button', { name: 'Save this look' })[0].getAttribute('aria-pressed')).toBe('true');
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Save this look' })[0]);
+    expect(JSON.parse(localStorage.getItem('matcha_saved_looks'))).toEqual([]);
+  });
+});
