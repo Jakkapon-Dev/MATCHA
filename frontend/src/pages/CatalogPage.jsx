@@ -16,7 +16,14 @@ const SORTS = [
   { value: 'name', label: 'A to Z' },
 ];
 
-const FITS = ['ALL', 'Oversized', 'Relaxed', 'Tailored', 'Wide Leg', 'Vintage Boxy'];
+// The order fits are offered in. The list itself comes from the archive, so a
+// fit it carries is never missing: "Regular", fifteen garments, was.
+const FIT_ORDER = ['Oversized', 'Relaxed', 'Regular', 'Tailored', 'Wide Leg', 'Vintage Boxy'];
+export function fitOptionsFor(products) {
+  const fits = [...new Set((products || []).map((p) => p?.fit).filter(Boolean))];
+  const rank = (fit) => (FIT_ORDER.includes(fit) ? FIT_ORDER.indexOf(fit) : FIT_ORDER.length);
+  return ['ALL', ...fits.sort((a, b) => rank(a) - rank(b) || a.localeCompare(b))];
+}
 const SEASONS = ['ALL', 'Spring', 'Summer', 'Autumn', 'Winter', 'Artisan'];
 const MAX_PRICE = 200;
 
@@ -42,6 +49,7 @@ export default function CatalogPage({
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedDye, setSelectedDye] = useState(() => searchParams.get('dye') || 'ALL');
   const [selectedFit, setSelectedFit] = useState('ALL');
+  const fitOptions = useMemo(() => fitOptionsFor(products), [products]);
   const [priceRange, setPriceRange] = useState(MAX_PRICE);
   const [inStockOnly, setInStockOnly] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
@@ -409,7 +417,7 @@ export default function CatalogPage({
                     onChange={(event) => setSelectedFit(event.target.value)}
                     className="w-full border border-matcha-border px-2 py-1.5 text-xs bg-white cursor-pointer"
                   >
-                    {FITS.map((fit) => (
+                    {fitOptions.map((fit) => (
                       <option key={fit} value={fit}>{fit === 'ALL' ? 'Any fit' : fit}</option>
                     ))}
                   </select>
