@@ -26,6 +26,14 @@ export default function Navbar({
   const [cartAnimated, setCartAnimated] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
+  // Escape closes the drawer, as it closes every other panel on the site.
+  useEffect(() => {
+    if (!mobileMenuOpen) return undefined;
+    const onKey = (e) => { if (e.key === 'Escape') setMobileMenuOpen(false); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [mobileMenuOpen]);
+
   // Trigger bouncy pop animation on cart icon when items are added
   useEffect(() => {
     if (cartCount > 0) {
@@ -312,6 +320,17 @@ export default function Navbar({
                   {t(`nav.links.${link.id}`)}
                 </a>
               ))}
+
+              {/* The MIX@MATCH button is hidden below 640px, and this drawer
+                  had no link of its own, so on a phone the studio could only
+                  be reached through another page. */}
+              <a
+                href="/mix-match"
+                onClick={(e) => { e.preventDefault(); handleLinkClick('/mix-match'); }}
+                className="text-sm font-semibold text-matcha-text/80 hover:text-matcha-text py-1 border-b border-matcha-border"
+              >
+                {t('nav.links.mixMatch')}
+              </a>
             </nav>
           </div>
         )}

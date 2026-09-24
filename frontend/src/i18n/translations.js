@@ -668,6 +668,7 @@ export const translations = {
         colorLab: 'Color Lab',
         catalog: 'Catalog',
         lookbook: 'Lookbook',
+        mixMatch: 'Mix & Match',
       },
       adminDashboard: '👑 Admin Dashboard',
       adminTitle: 'Open Admin Command Center',
@@ -683,7 +684,7 @@ export const translations = {
       logOutTitle: 'Sign out of MatchA',
       exiting: 'EXITING...',
       exitingMobile: 'Exiting...',
-      returnToLanding: 'RETURN TO LANDING LOOKBOOK',
+      returnToLanding: 'Home',
       switchLanguage: 'Switch to Thai',
     },
 
@@ -1543,6 +1544,7 @@ export const translations = {
         colorLab: 'ค้นหาสีประจำตัว',
         catalog: 'สินค้าทั้งหมด',
         lookbook: 'สมุดภาพชุด',
+        mixMatch: 'จับคู่ชุด Mix & Match',
       },
       adminDashboard: '👑 หน้าจัดการระบบ',
       adminTitle: 'เปิดหน้าจัดการระบบ',
@@ -1558,7 +1560,7 @@ export const translations = {
       logOutTitle: 'ออกจากระบบ MatchA',
       exiting: 'กำลังออก...',
       exitingMobile: 'กำลังออก...',
-      returnToLanding: 'กลับไปหน้าสมุดภาพแรก',
+      returnToLanding: 'หน้าแรก',
       switchLanguage: 'เปลี่ยนเป็นภาษาอังกฤษ',
     },
 
