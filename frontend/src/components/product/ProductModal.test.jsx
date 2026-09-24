@@ -44,3 +44,31 @@ describe('ProductModal starting quantity', () => {
     expect(quantityShown()).toBe('1');
   });
 });
+
+/* The modal is aria-modal, but opening it left focus on the button behind it,
+   Tab walked through the page underneath, and closing it dropped focus on
+   <body>. */
+describe('ProductModal keyboard focus', () => {
+  test('moves in on open, stays in on Tab, and goes back on close', () => {
+    const trigger = document.createElement('button');
+    trigger.textContent = 'open';
+    document.body.appendChild(trigger);
+    trigger.focus();
+
+    const view = render(<ProductModal product={JEANS} onClose={vi.fn()} onAddToCart={vi.fn()} />);
+    const dialog = screen.getByRole('dialog');
+    expect(dialog.contains(document.activeElement)).toBe(true);
+
+    const focusables = [...dialog.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')];
+    focusables.at(-1).focus();
+    fireEvent.keyDown(document, { key: 'Tab' });
+    expect(document.activeElement).toBe(focusables[0]);
+
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    expect(document.activeElement).toBe(focusables.at(-1));
+
+    view.unmount();
+    expect(document.activeElement).toBe(trigger);
+    trigger.remove();
+  });
+});

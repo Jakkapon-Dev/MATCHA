@@ -15,6 +15,7 @@ import { handleImageError, webpSrc } from '../../utils/imageFallback';
 import { wash, inkOn, needsEdge } from '../../utils/dye';
 import { describeProduct } from '../../utils/productCopy';
 import { useCart } from '../../context/CartContext.jsx';
+import useDialogFocus from '../../hooks/useDialogFocus';
 import { useToast } from '../../context/ToastContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, FREE_SHIPPING_THRESHOLD } from '../../config/shipping';
@@ -171,6 +172,9 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
     };
   }, [product, onClose]);
 
+  const dialogRef = useRef(null);
+  useDialogFocus(dialogRef, Boolean(product));
+
   // No selected product means there is no modal or backdrop to render.
   if (!product) return null;
 
@@ -240,6 +244,8 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
       onClick={onClose}
     >
       <div 
+        ref={dialogRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby="product-modal-title"
