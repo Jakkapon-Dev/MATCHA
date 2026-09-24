@@ -95,7 +95,9 @@ const userSchema = new mongoose.Schema(
        signed in on their own device — which is the one thing a person resetting
        a password is usually trying to stop. middleware/auth.js refuses any
        token minted before this moment. */
-    passwordChangedAt: { type: Date, default: null }
+    passwordChangedAt: { type: Date, default: null },
+    isAnonymized: { type: Boolean, default: false },
+    anonymizedAt: { type: Date, default: null }
   },
   { timestamps: true, collection: 'users' }
 );

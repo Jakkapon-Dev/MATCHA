@@ -11,6 +11,7 @@ import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
 import { User } from '../services/userStore.js';
 import { getJwtSecret } from '../middleware/auth.js';
+import { anonymizeUserData } from '../services/anonymizationService.js';
 
 let server, base;
 const token = (id, role = 'Member', email = 'user@example.test') =>
@@ -503,4 +504,81 @@ test('Task 4 — Approval Gate: complete requires approved status and rejects re
   const approvedBody = await approvedRes.json();
   assert.equal(approvedBody.success, true);
   assert.equal(gateRequest.status, 'completed');
+});
+
+test('Task 4 — Mongoose Schema Persistence: User and Order retain isAnonymized and anonymizedAt when processed by anonymizationService', async (t) => {
+  mockDbConnected(t);
+  t.mock.method(Cart, 'deleteMany', async () => ({ deletedCount: 0 }));
+
+  const userDoc = new User({
+    _id: 'u_persist_test',
+    email: 'persist.test@matcha.local',
+    name: 'Persist Test'
+  });
+
+  const orderDoc = new Order({
+    orderNumber: 'ORD-PERSIST-001',
+    idempotencyKey: 'idem-persist-001',
+    userId: 'u_persist_test',
+    customer: {
+      firstName: 'Persist',
+      lastName: 'Test',
+      email: 'persist.test@matcha.local',
+      phone: '0899999999',
+      address: '100 Road',
+      city: 'Bangkok',
+      zipCode: '10110',
+      country: 'Thailand'
+    },
+    items: [{ productId: 'p1', name: 'Item', quantity: 1, priceAtPurchase: 50 }],
+    paymentMethod: 'demo',
+    shippingOption: 'standard',
+    subtotal: 50,
+    shippingCost: 0,
+    total: 50
+  });
+
+  userDoc.save = async function () { return this; };
+  orderDoc.save = async function () { return this; };
+
+  const origFindById = User.findById;
+  const origOrderFind = Order.find;
+
+  User.findById = async () => userDoc;
+  Order.find = async () => [orderDoc];
+  t.mock.method(AuditLog, 'create', async (entry) => entry);
+
+  try {
+    await anonymizeUserData('u_persist_test', {
+      performedBy: 'admin@matcha.local',
+      targetEmail: 'persist.test@matcha.local'
+    });
+
+    // 1. In-memory Mongoose instance verification
+    assert.equal(userDoc.isAnonymized, true);
+    assert.ok(userDoc.anonymizedAt instanceof Date);
+    assert.equal(orderDoc.isAnonymized, true);
+    assert.ok(orderDoc.anonymizedAt instanceof Date);
+
+    // 2. Schema filtering verification: toObject() represents document payload serialized to MongoDB
+    const userObj = userDoc.toObject();
+    assert.equal(userObj.isAnonymized, true, 'User schema must declare and persist isAnonymized');
+    assert.ok(userObj.anonymizedAt instanceof Date, 'User schema must declare and persist anonymizedAt');
+
+    const orderObj = orderDoc.toObject();
+    assert.equal(orderObj.isAnonymized, true, 'Order schema must declare and persist isAnonymized');
+    assert.ok(orderObj.anonymizedAt instanceof Date, 'Order schema must declare and persist anonymizedAt');
+
+    // 3. Reload from DB simulation: constructing new Mongoose document from persisted data
+    const reloadedUser = new User(userObj);
+    assert.equal(reloadedUser.isAnonymized, true);
+    assert.ok(reloadedUser.anonymizedAt instanceof Date);
+
+    const reloadedOrder = new Order(orderObj);
+    assert.equal(reloadedOrder.isAnonymized, true);
+    assert.ok(reloadedOrder.anonymizedAt instanceof Date);
+  } finally {
+    User.findById = origFindById;
+    Order.find = origOrderFind;
+  }
 });

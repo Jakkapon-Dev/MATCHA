@@ -180,6 +180,14 @@ const orderSchema = new Schema(
       type: String,
       enum: ['th', 'en'],
       default: 'th'
+    },
+    isAnonymized: {
+      type: Boolean,
+      default: false
+    },
+    anonymizedAt: {
+      type: Date,
+      default: null
     }
   },
   { timestamps: true }
