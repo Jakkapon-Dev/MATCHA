@@ -66,11 +66,8 @@ export function AuthProvider({ children }) {
 
   const login = useCallback((userData, rememberMe = true, token = null) => {
     if (token) setToken(token, rememberMe);
-    // The basket filled before signing in belongs to this account now. Failing
-    // to hand it over must not block the sign-in itself.
-    if (token) {
-      api.mergeGuestCart().catch((err) => console.warn('Guest cart merge skipped:', err.message));
-    }
+    // The basket filled before signing in is handed to the account by
+    // CartProvider, which merges it and shows the account's cart from the answer.
     currentUserRef.current = userData;
     setCurrentUser(userData);
     rememberSession(userData, rememberMe);

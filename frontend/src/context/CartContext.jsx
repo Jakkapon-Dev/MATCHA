@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo, useCall
 import { useToast } from './ToastContext.jsx';
 import { api } from '../services/api';
 import { useStoreMode } from './StoreModeContext.jsx';
+import { useAuth } from './AuthContext.jsx';
 import { shippingCostFor, FREE_SHIPPING_THRESHOLD } from '../config/shipping';
 
 const CART_CONTEXT_KEY = Symbol.for('matcha.cart.context');
@@ -82,6 +83,8 @@ export function CartProvider({ children }) {
     syncChainRef.current = syncChainRef.current.then(task, task);
     return syncChainRef.current;
   }, []);
+  // Bumped by every local change, so a server answer can tell it is out of date.
+  const localEditsRef = useRef(0);
 
   // Sync cart items to localStorage on any change
   useEffect(() => {
@@ -94,7 +97,72 @@ export function CartProvider({ children }) {
     }
   }, [cartItems, storageKey, loadedKey]);
 
+  /* A signed-in shopper's bag is the one on the server.
+
+     The browser used to write every change to the server and never read it
+     back. Signing in merged the pre-sign-in basket into the account there, and
+     the page went on showing whatever this browser happened to hold — nothing
+     from another device, nothing that had been in the account before. Now the
+     account's cart is read after sign-in (from the merge's answer) and on every
+     load while signed in, and replaces what storage held.
+
+     Signing out, or another account signing in, empties the bag on screen. The
+     account keeps its cart on the server; the next person at this browser does
+     not see it. */
+  const { currentUser } = useAuth();
+  const { ready: storeReady } = useStoreMode();
+  const userId = currentUser?.id || null;
+  const cartOwnerRef = useRef(undefined); // whose bag state holds; undefined until known
+
+  useEffect(() => {
+    if (!storeReady || loadedKey !== storageKey) return;
+    const previous = cartOwnerRef.current;
+    if (previous === userId) return;
+    cartOwnerRef.current = userId;
+
+    if (previous) {
+      // The last shopper's bag, not the next one's. Only the screen is cleared.
+      pendingQtyRef.current.clear();
+      cartItemsRef.current = [];
+      setCartItems([]);
+    }
+    if (!userId) return;
+
+    const justSignedIn = previous === null;
+    const hydrate = (request) => enqueueSync(async () => {
+      const editsBefore = localEditsRef.current;
+      let res;
+      try {
+        res = await request();
+      } catch (err) {
+        console.warn('Server cart not loaded; keeping this browser\'s bag:', err.message);
+        return;
+      }
+      if (cartOwnerRef.current !== userId) return;
+      // The server answered from a store that is not up (see cartRoutes).
+      if (!res?.success || res.data?.available === false || !Array.isArray(res.data?.items)) return;
+      if (localEditsRef.current !== editsBefore) {
+        // Changed while the request was out: those writes are queued behind this
+        // one, so read again once they have landed.
+        hydrate(() => api.getCart());
+        return;
+      }
+      const local = new Map(cartItemsRef.current.map((item) => [getCartKey(item), item]));
+      const next = res.data.items.map((line) => {
+        const known = local.get(line.itemId);
+        return known
+          ? { ...known, quantity: line.quantity }
+          : { ...line, id: line.productId, quantity: line.quantity };
+      });
+      cartItemsRef.current = next;
+      setCartItems(next);
+    });
+
+    hydrate(justSignedIn ? () => api.mergeGuestCart() : () => api.getCart());
+  }, [userId, storeReady, loadedKey, storageKey, enqueueSync]);
+
   const addToCart = useCallback((product, customQty) => {
+    localEditsRef.current += 1;
     const amount = customQty || product.quantity || 1;
     const resolvedSize = resolveDefaultSize(product);
     const resolvedProduct = {
@@ -155,6 +223,7 @@ export function CartProvider({ children }) {
      server settling on 1 while the shopper saw 10, with nothing to reveal the
      disagreement because every screen reads local state. */
   const updateQty = useCallback((key, delta) => {
+    localEditsRef.current += 1;
     const items = cartItemsRef.current;
     const current = items.find((item) => getCartKey(item) === key);
     if (!current) return;
@@ -189,6 +258,7 @@ export function CartProvider({ children }) {
   }, [enqueueSync]);
 
   const removeItem = useCallback((key) => {
+    localEditsRef.current += 1;
     const next = cartItemsRef.current.filter((item) => getCartKey(item) !== key);
     cartItemsRef.current = next;
     setCartItems(next);
@@ -201,6 +271,7 @@ export function CartProvider({ children }) {
   }, [enqueueSync]);
 
   const clearCart = useCallback(() => {
+    localEditsRef.current += 1;
     // The ref is reset with the state: updateQty reads it synchronously, so
     // leaving it holding the old items would let the next press compute a
     // quantity from a bag that no longer exists.

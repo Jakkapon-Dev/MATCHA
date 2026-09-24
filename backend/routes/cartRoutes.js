@@ -36,8 +36,9 @@ function resolveOwner(req) {
 
 // ฐานข้อมูลหลุดเมื่อไร ตะกร้าฝั่งเบราว์เซอร์ยังทำงานได้เองอยู่แล้ว ที่นี่จึงตอบตะกร้าว่าง
 // แทนการโยน error เพื่อไม่ให้หน้าเว็บขึ้นข้อความแดงโดยไม่จำเป็น
+// `available: false` บอกหน้าเว็บว่ารายการว่างนี้ไม่ใช่ตะกร้าจริง ห้ามเอาไปทับตะกร้าในเบราว์เซอร์
 const dbReady = () => mongoose.connection.readyState === 1;
-const emptyCart = (res) => res.json({ success: true, data: { items: [] }, message: 'ตะกร้าฝั่งเซิร์ฟเวอร์ยังไม่พร้อมใช้งาน' });
+const emptyCart = (res) => res.json({ success: true, data: { items: [], available: false }, message: 'ตะกร้าฝั่งเซิร์ฟเวอร์ยังไม่พร้อมใช้งาน' });
 
 /* Every write below is a single atomic update against the owner's document.
 
