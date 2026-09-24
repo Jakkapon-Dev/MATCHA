@@ -8,12 +8,14 @@ import EmptyState from '../components/ui/EmptyState';
 import CatalogPagination from '../components/catalog/CatalogPagination';
 import DyeTile from '../components/catalog/DyeTile';
 import { buildDyeIndex, variantForDye, wash } from '../utils/dye';
+import { useLanguage } from '../context/LanguageContext.jsx';
+import { taxonomyLabel } from '../utils/taxonomy';
 
 const SORTS = [
-  { value: 'featured', label: 'Featured' },
-  { value: 'price-asc', label: 'Price, low to high' },
-  { value: 'price-desc', label: 'Price, high to low' },
-  { value: 'name', label: 'A to Z' },
+  { value: 'featured', label: 'catalog.sort.featured' },
+  { value: 'price-asc', label: 'catalog.sort.priceAsc' },
+  { value: 'price-desc', label: 'catalog.sort.priceDesc' },
+  { value: 'name', label: 'catalog.sort.name' },
 ];
 
 // The order fits are offered in. The list itself comes from the archive, so a
@@ -35,6 +37,7 @@ export default function CatalogPage({
   onAddToCart,
   onQuickView,
 }) {
+  const { t } = useLanguage();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -81,7 +84,7 @@ export default function CatalogPage({
       } catch (err) {
         if (cancelled) return;
         console.error('Failed to load products:', err);
-        setError('The archive could not be reached. Reload to try again.');
+        setError('catalog.loadError');
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -245,17 +248,17 @@ export default function CatalogPage({
           <div className="z-10 flex flex-col justify-between px-5 pb-8 pt-12 sm:px-8 lg:py-12">
             <div>
               <h1 className="max-w-[8ch] text-[clamp(4.2rem,7.2vw,6.6rem)] font-black uppercase leading-[0.78] tracking-[-0.035em] text-[#0a0a0a]">
-                Find your colour in motion
+                {t('catalog.heroTitle')}
               </h1>
               <p className="mt-7 max-w-md text-lg leading-relaxed text-[#263328]">
-                เลือกเฉดที่สะท้อนตัวคุณ แล้วดูสีเดียวกันเคลื่อนไปกับเสื้อผ้า ลุค และความมั่นใจของคุณ
+                {t('catalog.heroBody')}
               </p>
             </div>
 
             {!loading && dyes.length > 0 && (
               <div className="mt-10">
                 <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.18em] text-[#263328]">
-                  Choose a dye · {dyes.length} colours
+                  {t('catalog.chooseDye', { count: dyes.length })}
                 </p>
                 <div className="flex flex-wrap gap-3">
                   {dyes.slice(0, 7).map((dye) => {
@@ -287,7 +290,7 @@ export default function CatalogPage({
             {featuredProduct && (
               <img
                 src={featuredVariant?.image || featuredProduct.image}
-                alt={`${featuredProduct.name} in ${featuredVariant?.color || featuredProduct.color || 'featured colour'}`}
+                alt={t('catalog.imageAlt', { name: featuredProduct.name, colour: featuredVariant?.color || featuredProduct.color || t('catalog.featuredColour') })}
                 className="absolute inset-0 h-full w-full object-contain object-center mix-blend-multiply transition-[opacity,transform] duration-500 motion-safe:animate-fade-in"
               />
             )}
@@ -295,7 +298,7 @@ export default function CatalogPage({
 
           <aside className="z-10 flex flex-col justify-between bg-[#101210] px-6 py-8 text-[#f5f3eb] lg:px-8 lg:py-10">
             <div className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#c8cec4]">
-              {selectedDye === 'ALL' ? 'The archive edit' : `${selectedDye} edit`}
+              {selectedDye === 'ALL' ? t('catalog.editAll') : t('catalog.editDye', { dye: selectedDye })}
             </div>
             {featuredProduct ? (
               <div className="py-10 lg:py-0">
@@ -306,21 +309,21 @@ export default function CatalogPage({
                   ${priceOf(featuredProduct).toFixed(2)}
                 </p>
                 <p className="mt-5 text-sm leading-relaxed text-[#c8cec4]">
-                  {featuredVariant?.color || featuredProduct.color} · {featuredProduct.fit || 'Signature fit'}
+                  {featuredVariant?.color || featuredProduct.color} · {taxonomyLabel(t, 'fit', featuredProduct.fit) || t('catalog.signatureFit')}
                 </p>
                 <button
                   type="button"
                   onClick={() => onQuickView?.({ ...featuredProduct, initialVariant: featuredVariant, activeImage: featuredVariant?.image })}
                   className="mt-8 flex w-full items-center justify-between bg-matcha-accent px-5 py-4 font-mono text-xs font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#a81717] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
                 >
-                  View this piece <ArrowRight size={16} />
+                  {t('catalog.viewPiece')} <ArrowRight size={16} />
                 </button>
               </div>
             ) : (
-              <p className="py-12 font-mono text-sm text-[#c8cec4]">Opening the archive…</p>
+              <p className="py-12 font-mono text-sm text-[#c8cec4]">{t('catalog.openingEllipsis')}</p>
             )}
             <p className="max-w-[18ch] font-mono text-[11px] uppercase leading-relaxed tracking-[0.16em] text-[#c8cec4]">
-              Your colour. Your movement.
+              {t('catalog.tagline')}
             </p>
           </aside>
         </div>
@@ -330,7 +333,7 @@ export default function CatalogPage({
 
         <header className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
           <h2 className="text-4xl sm:text-6xl font-black uppercase text-[#0A0A0A] tracking-[-0.035em] leading-none">
-            Shop the archive
+            {t('catalog.shopTitle')}
           </h2>
           {/* The archive described by its own contents, in a sentence, instead
               of a tracked-out label stack above the title. Once a filter is on,
@@ -339,10 +342,10 @@ export default function CatalogPage({
               narrowed total would be two different numbers in one breath. */}
           <p className="font-mono text-xs text-matcha-muted">
             {loading
-              ? 'Opening the archive'
+              ? t('catalog.opening')
               : hasFilters
-                ? `${totalItems} of ${products.length} pieces`
-                : `${products.length} pieces in ${dyes.length} dyes`}
+                ? t('catalog.countFiltered', { shown: totalItems, total: products.length })
+                : t('catalog.countAll', { total: products.length, dyes: dyes.length })}
           </p>
         </header>
 
@@ -366,7 +369,7 @@ export default function CatalogPage({
                     : 'text-matcha-muted hover:text-[#0A0A0A]'
                 }`}
               >
-                {name === 'ALL' ? 'Everything' : name}
+                {name === 'ALL' ? t('catalog.everything') : taxonomyLabel(t, 'category', name)}
               </button>
             );
           })}
@@ -374,12 +377,12 @@ export default function CatalogPage({
 
         <div className="flex flex-wrap items-center justify-between gap-4 py-4 border-b border-matcha-border mb-8">
           <label className="flex-1 min-w-[12rem] max-w-sm">
-            <span className="sr-only">Search the archive</span>
+            <span className="sr-only">{t('catalog.search')}</span>
             <input
               type="search"
               value={searchQuery}
               onChange={(event) => setSearchQuery(event.target.value)}
-              placeholder="Search the archive"
+              placeholder={t('catalog.search')}
               className="w-full bg-transparent border-b border-matcha-border focus:border-[#0A0A0A] outline-hidden py-1.5 text-sm text-[#0A0A0A] placeholder:text-[#999999] transition-colors"
             />
           </label>
@@ -389,11 +392,11 @@ export default function CatalogPage({
                 permanent second row competing with the dye index. */}
             <details ref={refineRef} className="relative">
               <summary className="font-mono text-xs uppercase tracking-wider text-[#0A0A0A] cursor-pointer list-none marker:hidden outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]">
-                Refine{refineCount > 0 ? ` (${refineCount})` : ''}
+                {t('catalog.refine')}{refineCount > 0 ? ` (${refineCount})` : ''}
               </summary>
               <div className="absolute right-0 z-30 mt-2 w-72 bg-white border border-matcha-border p-4 space-y-4 shadow-lg">
                 <fieldset>
-                  <legend className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">Season</legend>
+                  <legend className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">{t('catalog.season')}</legend>
                   <div className="flex flex-wrap gap-x-4 gap-y-1">
                     {SEASONS.map((season) => (
                       <label key={season} className="flex items-center gap-1.5 text-xs cursor-pointer">
@@ -404,28 +407,28 @@ export default function CatalogPage({
                           onChange={() => setSelectedSeason(season)}
                           className="accent-matcha-accent"
                         />
-                        <span>{season === 'ALL' ? 'Any' : season}</span>
+                        <span>{season === 'ALL' ? t('catalog.any') : taxonomyLabel(t, 'season', season)}</span>
                       </label>
                     ))}
                   </div>
                 </fieldset>
 
                 <fieldset>
-                  <legend className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">Fit</legend>
+                  <legend className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">{t('catalog.fit')}</legend>
                   <select
                     value={selectedFit}
                     onChange={(event) => setSelectedFit(event.target.value)}
                     className="w-full border border-matcha-border px-2 py-1.5 text-xs bg-white cursor-pointer"
                   >
                     {fitOptions.map((fit) => (
-                      <option key={fit} value={fit}>{fit === 'ALL' ? 'Any fit' : fit}</option>
+                      <option key={fit} value={fit}>{fit === 'ALL' ? t('catalog.anyFit') : taxonomyLabel(t, 'fit', fit)}</option>
                     ))}
                   </select>
                 </fieldset>
 
                 <label className="block">
                   <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted">
-                    Up to ${priceRange}
+                    {t('catalog.upTo', { price: priceRange })}
                   </span>
                   <input
                     type="range"
@@ -445,7 +448,7 @@ export default function CatalogPage({
                     onChange={() => setInStockOnly(!inStockOnly)}
                     className="accent-matcha-accent"
                   />
-                  <span>In stock only</span>
+                  <span>{t('catalog.inStockOnly')}</span>
                 </label>
               </div>
             </details>
@@ -461,17 +464,17 @@ export default function CatalogPage({
                       : dyes.find((dye) => dye.name === selectedDye)?.hex || '#0A0A0A',
                   }}
                 />
-                Colour · {selectedDye === 'ALL' ? 'All' : selectedDye}
+                {t('catalog.colour', { name: selectedDye === 'ALL' ? t('catalog.all') : selectedDye })}
               </summary>
               <div className="absolute right-0 z-30 mt-3 w-[min(22rem,calc(100vw-2.5rem))] border border-[#0A0A0A] bg-[#eeede7] p-4 shadow-[0_14px_35px_rgba(0,0,0,0.16)]">
                 <div className="mb-4 flex items-baseline justify-between border-b border-matcha-border pb-3">
-                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#0A0A0A]">Choose a colour</p>
+                  <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#0A0A0A]">{t('catalog.chooseColour')}</p>
                   <button
                     type="button"
                     onClick={() => setSelectedDye('ALL')}
                     className="font-mono text-[10px] uppercase text-matcha-accent hover:underline"
                   >
-                    Clear
+                    {t('catalog.clear')}
                   </button>
                 </div>
                 <div className="grid grid-cols-2 gap-x-3 gap-y-1 sm:grid-cols-3">
@@ -503,14 +506,14 @@ export default function CatalogPage({
             </details>
 
             <label className="flex items-center gap-2">
-              <span className="sr-only">Sort by</span>
+              <span className="sr-only">{t('catalog.sortBy')}</span>
               <select
                 value={sortBy}
                 onChange={(event) => setSortBy(event.target.value)}
                 className="font-mono text-xs uppercase tracking-wider bg-transparent border-0 outline-hidden cursor-pointer text-[#0A0A0A]"
               >
                 {SORTS.map((sort) => (
-                  <option key={sort.value} value={sort.value}>{sort.label}</option>
+                  <option key={sort.value} value={sort.value}>{t(sort.label)}</option>
                 ))}
               </select>
             </label>
@@ -522,7 +525,7 @@ export default function CatalogPage({
                 className="font-mono text-xs uppercase tracking-wider text-matcha-accent hover:underline cursor-pointer flex items-center gap-1.5"
               >
                 <RotateCcw size={12} />
-                <span>Clear</span>
+                <span>{t('catalog.clear')}</span>
               </button>
             )}
           </div>
@@ -535,12 +538,12 @@ export default function CatalogPage({
                 {Array.from({ length: 8 }).map((_, i) => <ProductCardSkeleton key={i} />)}
               </div>
             ) : error ? (
-              <p role="alert" className="py-16 text-sm text-matcha-accent">{error}</p>
+              <p role="alert" className="py-16 text-sm text-matcha-accent">{t(error)}</p>
             ) : pageItems.length === 0 ? (
               <EmptyState
-                title="Nothing in the archive matches yet"
-                description="No garment carries this combination of dye, season and fit. Clearing the dye usually brings the most back."
-                actionLabel="Clear all filters"
+                title={t('catalog.emptyTitle')}
+                description={t('catalog.emptyBody')}
+                actionLabel={t('catalog.emptyAction')}
                 onAction={resetAll}
               />
             ) : (
