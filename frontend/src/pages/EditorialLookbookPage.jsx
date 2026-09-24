@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useChangeMotion from '../hooks/useChangeMotion';
 import {
   Sparkles,
@@ -43,6 +44,7 @@ const SEASONS = [
    flat rectangles that sit on the page. */
 
 export default function EditorialLookbookPage() {
+  const navigate = useNavigate();
   const { t } = useLanguage();
   const { addToCart } = useCart();
   const { showToast } = useToast();
