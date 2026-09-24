@@ -14,16 +14,19 @@ export default function BorderBeam({
   delay = 0,
   className = '',
 }) {
+  const durationValue = typeof duration === 'number' ? `${duration}s` : duration;
+  const delayValue = typeof delay === 'number' ? (delay !== 0 ? `-${delay}s` : '0s') : delay;
+
   return (
     <div
       style={{
         '--size': `${size}px`,
-        '--duration': `${duration}s`,
+        '--duration': durationValue,
         '--anchor': `${anchor}%`,
         '--border-width': `${borderWidth}px`,
         '--color-from': colorFrom,
         '--color-to': colorTo,
-        '--delay': `-${delay}s`,
+        '--delay': delayValue,
       }}
       className={`pointer-events-none absolute inset-0 rounded-[inherit] border-[calc(var(--border-width))] border-transparent [mask-clip:padding-box,border-box] mask-intersect mask-[linear-gradient(transparent,transparent),linear-gradient(#000,#000)] ${className}`}
     >
