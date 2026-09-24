@@ -4,7 +4,7 @@ import { Trash2, Lock, RefreshCw, ShoppingBag } from 'lucide-react';
 import { webpSrc } from '../utils/imageFallback';
 import { wash, inkOn, needsEdge } from '../utils/dye';
 import { shippingCostFor, FREE_SHIPPING_THRESHOLD } from '../config/shipping';
-import { bundleDiscountFor } from '../config/coupons';
+import { bundleDiscountFor, bundleQualifiedIndices } from '../config/coupons';
 import { useLanguage } from '../context/LanguageContext.jsx';
 /* These used to be declared again here, and the copy had drifted: it keyed on
    item.id alone, while the cart keys on item.id || item.productId. An item
@@ -23,6 +23,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
   const subtotal = cartItems.reduce((sum, item) => sum + parsePrice(item.price) * (item.quantity || 1), 0);
 
   const bundleSavings = bundleDiscountFor(cartItems);
+  const bundleIndices = bundleQualifiedIndices(cartItems);
   const netSubtotal = Math.max(0, subtotal - bundleSavings);
   const shipping = cartItems.length === 0 ? 0 : shippingCostFor(netSubtotal);
   const total = netSubtotal + shipping;
@@ -95,7 +96,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10">
 
           <div ref={cartMotionRef} className="lg:col-span-7 border-t border-matcha-border -mx-3 sm:-mx-4">
-            {cartItems.map((item) => {
+            {cartItems.map((item, index) => {
               const key = getCartKey(item);
               const qty = item.quantity || 1;
               const unitPrice = parsePrice(item.price);
@@ -167,7 +168,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                       <div className="mt-1.5 flex items-center gap-3 text-xs font-mono text-matcha-muted">
                         <span>{t('cart.size', { size: item.size || 'M' })}</span>
                         <span className="tabular-nums">${unitPrice.toFixed(2)}</span>
-                        {item.isBundleItem && (
+                        {bundleIndices.has(index) && (
                           <span className="px-1.5 py-0.5 bg-[#0A0A0A] text-matcha-bg text-[9px] font-bold uppercase">
                             {t('cart.bundle')}
                           </span>
