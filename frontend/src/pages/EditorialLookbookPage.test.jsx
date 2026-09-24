@@ -18,9 +18,20 @@ afterEach(() => {
 
 const mockAddToCart = vi.fn();
 
-vi.mock('../context/LanguageContext.jsx', () => ({
-  useLanguage: () => ({ t: (key) => key })
-}));
+// The page's copy comes from translations.js; these tests read it in English.
+vi.mock('../context/LanguageContext.jsx', async () => {
+  const { translations } = await import('../i18n/translations');
+  const resolve = (obj, key) => key.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
+  return {
+    useLanguage: () => ({
+      lang: 'en',
+      t: (key, vars) => {
+        const value = resolve(translations.en, key) ?? key;
+        return typeof value === 'string' && vars ? value.replace(/\{(\w+)\}/g, (m, n) => (vars[n] ?? m)) : value;
+      }
+    })
+  };
+});
 
 vi.mock('../context/CartContext.jsx', () => ({
   useCart: () => ({ addToCart: mockAddToCart })
@@ -259,7 +270,7 @@ describe('Add the whole look queue flow', () => {
 
     // Select size 'M'
     fireEvent.click(within(dialog).getByRole('button', { name: /^M$/ }));
-    fireEvent.click(within(dialog).getByRole('button', { name: /product\.addToBag/ }));
+    fireEvent.click(within(dialog).getByRole('button', { name: /^Add to bag/ }));
 
     // Still nothing added to cart!
     expect(mockAddToCart).not.toHaveBeenCalled();
@@ -270,7 +281,7 @@ describe('Add the whole look queue flow', () => {
 
     // Select size 'S'
     fireEvent.click(within(dialog).getByRole('button', { name: /^S$/ }));
-    fireEvent.click(within(dialog).getByRole('button', { name: /product\.addToBag/ }));
+    fireEvent.click(within(dialog).getByRole('button', { name: /^Add to bag/ }));
 
     // Still nothing added to cart!
     expect(mockAddToCart).not.toHaveBeenCalled();
@@ -281,7 +292,7 @@ describe('Add the whole look queue flow', () => {
 
     // Select size 'L'
     fireEvent.click(within(dialog).getByRole('button', { name: /^L$/ }));
-    fireEvent.click(within(dialog).getByRole('button', { name: /product\.addToBag/ }));
+    fireEvent.click(within(dialog).getByRole('button', { name: /^Add to bag/ }));
 
     // Queue complete! Modal closed
     expect(screen.queryByRole('dialog')).toBeNull();
@@ -337,7 +348,7 @@ describe('Add the whole look queue flow', () => {
 
     // Select size 'S'
     fireEvent.click(within(dialog).getByRole('button', { name: /^S$/ }));
-    fireEvent.click(within(dialog).getByRole('button', { name: /product\.addToBag/ }));
+    fireEvent.click(within(dialog).getByRole('button', { name: /^Add to bag/ }));
 
     // Modal closes
     expect(screen.queryByRole('dialog')).toBeNull();
@@ -424,7 +435,7 @@ describe('Add the whole look queue flow', () => {
     expect(dialog).toBeDefined();
 
     // Click close button
-    const closeBtn = within(dialog).getByRole('button', { name: 'product.close' });
+    const closeBtn = within(dialog).getByRole('button', { name: 'Close' });
     fireEvent.click(closeBtn);
 
     expect(screen.queryByRole('dialog')).toBeNull();
@@ -460,14 +471,14 @@ describe('Add the whole look queue flow', () => {
     // Select size for Jacket
     let dialog = screen.getByRole('dialog');
     fireEvent.click(within(dialog).getByRole('button', { name: /^M$/ }));
-    fireEvent.click(within(dialog).getByRole('button', { name: /product\.addToBag/ }));
+    fireEvent.click(within(dialog).getByRole('button', { name: /^Add to bag/ }));
 
     // Modal 2 opens for Crop
     dialog = screen.getByRole('dialog');
     expect(within(dialog).getByRole('heading', { name: 'Metallic Silver Top' })).toBeDefined();
 
     // Cancel modal 2
-    fireEvent.click(within(dialog).getByRole('button', { name: 'product.close' }));
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Close' }));
 
     expect(screen.queryByRole('dialog')).toBeNull();
     // Nothing was added to cart!
@@ -506,7 +517,7 @@ describe('Add the whole look queue flow', () => {
     expect(within(dialog).getByRole('heading', { name: 'Holographic Jacket' })).toBeDefined();
 
     fireEvent.click(within(dialog).getByRole('button', { name: /^S$/ }));
-    fireEvent.click(within(dialog).getByRole('button', { name: /product\.addToBag/ }));
+    fireEvent.click(within(dialog).getByRole('button', { name: /^Add to bag/ }));
 
     expect(screen.queryByRole('dialog')).toBeNull();
 
@@ -554,7 +565,7 @@ describe('Add the whole look queue flow', () => {
 
     // Select size 'M'
     fireEvent.click(within(dialog).getByRole('button', { name: /^M$/ }));
-    fireEvent.click(within(dialog).getByRole('button', { name: /product\.addToBag/ }));
+    fireEvent.click(within(dialog).getByRole('button', { name: /^Add to bag/ }));
 
     // Directly adds 1 item to cart via CartContext
     expect(mockAddToCart).toHaveBeenCalledTimes(1);
@@ -609,7 +620,7 @@ describe('Add the whole look queue flow', () => {
 
     // Select size 'S'
     fireEvent.click(within(dialog).getByRole('button', { name: /^S$/ }));
-    fireEvent.click(within(dialog).getByRole('button', { name: /product\.addToBag/ }));
+    fireEvent.click(within(dialog).getByRole('button', { name: /^Add to bag/ }));
 
     expect(mockAddToCart).toHaveBeenCalledTimes(1);
     expect(mockAddToCart).toHaveBeenCalledWith(
@@ -653,7 +664,7 @@ describe('Add the whole look queue flow', () => {
 
     const dialog = screen.getByRole('dialog');
     fireEvent.click(within(dialog).getByRole('button', { name: /^M$/ }));
-    fireEvent.click(within(dialog).getByRole('button', { name: /product\.addToBag/ }));
+    fireEvent.click(within(dialog).getByRole('button', { name: /^Add to bag/ }));
 
     // Should only add once
     expect(mockAddToCart).toHaveBeenCalledTimes(1);

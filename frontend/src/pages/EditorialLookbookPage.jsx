@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { taxonomyLabel } from '../utils/taxonomy';
 import useChangeMotion from '../hooks/useChangeMotion';
 import {
   Sparkles,
@@ -29,12 +30,21 @@ import { useLanguage } from '../context/LanguageContext.jsx';
    page: a magazine masthead and a weather sticker cannot share a line. The
    season names already say what season they are. */
 const SEASONS = [
-  { id: 'ALL', label: 'All Issues' },
-  { id: 'Spring', label: 'Spring Bloom' },
-  { id: 'Summer', label: 'Summer Resort' },
-  { id: 'Autumn', label: 'Autumn Earth' },
-  { id: 'Winter', label: 'Winter Minimal' }
+  { id: 'ALL', label: 'lookbookUi.issue.ALL' },
+  { id: 'Spring', label: 'lookbookUi.issue.Spring' },
+  { id: 'Summer', label: 'lookbookUi.issue.Summer' },
+  { id: 'Autumn', label: 'lookbookUi.issue.Autumn' },
+  { id: 'Winter', label: 'lookbookUi.issue.Winter' }
 ];
+
+/* A spread's editorial copy is written once. Its season caption carries a Thai
+   gloss in brackets — "Autumn Warm (เอิร์ธโทนอบอุ่น)" — which English readers
+   are spared; its narrative has an English version beside the Thai one. */
+const THAI_GLOSS = /\s*\([^)]*[\u0E00-\u0E7F][^)]*\)/g;
+const seasonCaption = (spread, lang) => (lang === 'en'
+  ? String(spread?.seasonThai || spread?.season || '').replace(THAI_GLOSS, '').trim()
+  : spread?.seasonThai || spread?.season);
+const narrativeFor = (spread, lang) => (lang === 'en' ? spread?.narrativeEn || spread?.narrative : spread?.narrative);
 
 /* The 3D tilt wrapper that used to hold the cover and every spread was
    removed. A photograph that leans toward the pointer and throws a specular
@@ -64,7 +74,7 @@ function writeSavedLooks(liked) {
 
 export default function EditorialLookbookPage() {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const { addToCart } = useCart();
   const { showToast } = useToast();
   const { looks: curatedEditorialSpreads, loading, error, retry } = useLookbooks();
@@ -206,7 +216,7 @@ export default function EditorialLookbookPage() {
       setAddedItems((prev) => ({ ...prev, [itemId]: false }));
     }, 1600);
 
-    showToast(`Added ${item.name || item.title} to bag! 🛒`, 'success');
+    showToast(t('lookbookUi.toast.addedItem', { name: item.name || item.title }), 'success');
   };
 
   const handleAddEntireLook = (spread) => {
@@ -243,9 +253,9 @@ export default function EditorialLookbookPage() {
 
       if (outOfStockItems.length > 0) {
         const oosNames = outOfStockItems.map(i => i.name).join(', ');
-        showToast(`Added ${initialCollected.length} items to bag (Excluding ${oosNames} - out of stock)`, 'info');
+        showToast(t('lookbookUi.toast.addedPartial', { count: initialCollected.length, names: oosNames }), 'info');
       } else {
-        showToast(`Added full ${spread.title} look (${initialCollected.length} items) to bag! ✨`, 'success');
+        showToast(t('lookbookUi.toast.addedLook', { title: spread.title, count: initialCollected.length }), 'success');
       }
       return;
     }
@@ -303,9 +313,9 @@ export default function EditorialLookbookPage() {
 
         if (current.outOfStockItems.length > 0) {
           const oosNames = current.outOfStockItems.map(i => i.name).join(', ');
-          showToast(`Added ${nextCollected.length} items to bag (Excluding ${oosNames} - out of stock)`, 'info');
+          showToast(t('lookbookUi.toast.addedPartial', { count: nextCollected.length, names: oosNames }), 'info');
         } else {
-          showToast(`Added full ${current.spread.title} look (${nextCollected.length} items) to bag! ✨`, 'success');
+          showToast(t('lookbookUi.toast.addedLook', { title: current.spread.title, count: nextCollected.length }), 'success');
         }
       }
 
@@ -385,19 +395,19 @@ export default function EditorialLookbookPage() {
             <figcaption className="absolute top-0 inset-x-0 z-20 p-5 sm:p-8 flex items-start justify-between gap-4 text-white">
               <div className="space-y-1">
                 <div className="font-mono text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-white/90 drop-shadow">
-                  <span>MatchA Archive Magazine — Issue No. 04</span>
-                  <span className="hidden sm:inline"> — Tokyo · Kyoto · Enoshima (2026 Edition)</span>
+                  <span>{t('lookbookUi.issueLine')}</span>
+                  <span className="hidden sm:inline">{t('lookbookUi.issueCities')}</span>
                 </div>
                 <div className="text-[10px] font-mono text-matcha-secondary uppercase tracking-widest flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-matcha-secondary" />
-                  <span>Cover Story: {coverStory.vol} — {coverStory.season}</span>
+                  <span>{t('lookbookUi.coverStory', { vol: coverStory.vol, season: taxonomyLabel(t, 'season', coverStory.season) })}</span>
                 </div>
               </div>
 
               <button
                 type="button"
                 onClick={(e) => toggleLike(e, coverStory.id)}
-                aria-label="Save this look"
+                aria-label={t('lookbookUi.saveLook')}
                 aria-pressed={Boolean(likedLooks[coverStory.id])}
                 className="shrink-0 text-white cursor-pointer transition-transform hover:scale-110 outline-hidden focus-visible:ring-2 focus-visible:ring-white p-2.5 rounded-full bg-black/40 backdrop-blur-xs border border-white/20 shadow-md"
               >
@@ -414,7 +424,7 @@ export default function EditorialLookbookPage() {
                 街頭美學
               </span>
               <h1 className="text-4xl sm:text-7xl md:text-8xl lg:text-[6.8rem] font-black uppercase text-white tracking-[-0.03em] font-sans leading-[0.88] drop-shadow-2xl -mt-8 sm:-mt-16 lg:-mt-24">
-                Editorial Lookbook
+                {t('lookbookUi.title')}
               </h1>
             </div>
 
@@ -494,7 +504,7 @@ export default function EditorialLookbookPage() {
                         className="mt-2.5 w-full py-2 bg-[#0A0A0A] hover:bg-matcha-accent disabled:bg-matcha-border disabled:text-matcha-muted text-matcha-bg font-mono text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:cursor-not-allowed rounded-lg"
                       >
                         {addedItems[hs.productId || hs.id] ? <Check size={12} /> : <ShoppingBag size={12} />}
-                        <span>{addedItems[hs.productId || hs.id] ? 'Added' : !hs.inStock ? 'Unavailable' : 'Add to bag'}</span>
+                        <span>{addedItems[hs.productId || hs.id] ? t('lookbookUi.added') : !hs.inStock ? t('lookbookUi.unavailable') : t('lookbookUi.addToBag')}</span>
                       </button>
                     </div>
                   )}
@@ -506,7 +516,7 @@ export default function EditorialLookbookPage() {
             <div className="absolute bottom-0 inset-x-0 z-10 p-5 sm:p-8 lg:p-12 text-white pointer-events-none flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
                 <span className="inline-block px-2.5 py-0.5 bg-matcha-accent text-white font-mono text-[10px] uppercase tracking-[0.18em] rounded-xs font-bold mb-2 shadow-xs">
-                  {coverStory.theme} — {coverStory.seasonThai}
+                  {coverStory.theme} — {seasonCaption(coverStory, lang)}
                 </span>
                 <h2 className="mt-1 text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-[-0.02em] leading-[0.9] max-w-3xl text-white drop-shadow-md">
                   {coverStory.title}
@@ -533,14 +543,14 @@ export default function EditorialLookbookPage() {
       <div className="w-full overflow-hidden border-y border-matcha-border py-2.5 bg-white font-mono text-[11px] text-matcha-muted tracking-[0.15em] uppercase">
         <div className="animate-marquee whitespace-nowrap flex items-center">
           {[
-            'Matcha Archive, Spring to Autumn 2026',
-            'High-precision Japanese street silhouettes',
-            'Botanical dyed pieces, 100% artisan guarantee',
-            'Click any pin on a photograph to shop it',
-            'Limited run fabrications in Ginza, Enoshima and Odaiba',
+            t('lookbookUi.marquee.archive'),
+            t('lookbookUi.marquee.silhouettes'),
+            t('lookbookUi.marquee.dyed'),
+            t('lookbookUi.marquee.pins'),
+            t('lookbookUi.marquee.limited'),
           ].concat([
-            'Matcha Archive, Spring to Autumn 2026',
-            'High-precision Japanese street silhouettes',
+            t('lookbookUi.marquee.archive'),
+            t('lookbookUi.marquee.silhouettes'),
           ]).map((line, i) => (
             <span key={i} className="flex items-center">
               <span className="px-6">{line}</span>
@@ -557,7 +567,7 @@ export default function EditorialLookbookPage() {
         
         {/* Issue navigation */}
         <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-3 pb-6 border-b border-matcha-border">
-          <nav aria-label="Filter by issue" className="flex flex-wrap items-baseline gap-x-5 gap-y-2">
+          <nav aria-label={t('lookbookUi.filterAria')} className="flex flex-wrap items-baseline gap-x-5 gap-y-2">
             {SEASONS.map((s) => {
               const isActive = selectedSeason === s.id;
               const count = s.id === 'ALL'
@@ -581,7 +591,7 @@ export default function EditorialLookbookPage() {
                       : 'text-matcha-muted hover:text-[#0A0A0A]'
                   }`}
                 >
-                  {s.label}
+                  {t(s.label)}
                   <span className="ml-1.5 text-[10px] tabular-nums text-[#999999]">{count}</span>
                 </button>
               );
@@ -593,7 +603,7 @@ export default function EditorialLookbookPage() {
             onClick={() => navigate('/mix-match')}
             className="font-mono text-xs uppercase tracking-wider text-matcha-accent hover:underline underline-offset-4 cursor-pointer flex items-center gap-1.5 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
           >
-            <span>Open Mix &amp; Match Studio</span>
+            <span>{t('lookbookUi.openStudio')}</span>
             <ArrowRight size={13} />
           </button>
         </div>
@@ -610,14 +620,14 @@ export default function EditorialLookbookPage() {
                 </blockquote>
 
                 <p className="text-sm text-matcha-muted leading-relaxed max-w-prose">
-                  {coverStory.narrative}
+                  {narrativeFor(coverStory, lang)}
                 </p>
 
                 {/* The palette speaks the catalogue's language: solid colour
                     with its name on it, not a dot inside a rounded chip. */}
                 <div className="pt-2">
                   <h3 className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">
-                    Botanical palette
+                    {t('lookbookUi.palette')}
                   </h3>
                   <div className="flex flex-wrap">
                     {coverStory.palette.map((c, i) => (
@@ -635,8 +645,8 @@ export default function EditorialLookbookPage() {
 
               <div className="lg:col-span-5">
                 <div className="flex items-baseline justify-between pb-3 border-b border-[#0A0A0A] font-mono text-[10px] uppercase tracking-[0.18em]">
-                  <h3 className="text-[#0A0A0A] font-bold">Shop this look</h3>
-                  <span className="text-matcha-muted">{coverStory.shoppableItems.length} pieces</span>
+                  <h3 className="text-[#0A0A0A] font-bold">{t('lookbookUi.shopLook')}</h3>
+                  <span className="text-matcha-muted">{t('lookbookUi.pieces', { count: coverStory.shoppableItems.length })}</span>
                 </div>
 
                 <ul className="divide-y divide-matcha-border">
@@ -683,7 +693,7 @@ export default function EditorialLookbookPage() {
                           disabled={loading || !item.inStock} onClick={(e) => handleQuickAdd(e, item)}
                           className="shrink-0 px-3 py-1.5 bg-[#0A0A0A] hover:bg-matcha-accent disabled:bg-transparent disabled:text-[#999999] text-matcha-bg font-mono text-[10px] uppercase tracking-wider transition-colors cursor-pointer disabled:cursor-not-allowed"
                         >
-                          {isAdded ? 'Added' : !item.inStock ? 'Sold out' : 'Add'}
+                          {isAdded ? t('lookbookUi.added') : !item.inStock ? t('lookbookUi.soldOut') : t('lookbookUi.add')}
                         </button>
                       </li>
                     );
@@ -699,8 +709,8 @@ export default function EditorialLookbookPage() {
                   {addedEntireLook && <Check size={14} />}
                   <span>
                     {addedEntireLook
-                      ? `All ${coverStory.shoppableItems.length} pieces added`
-                      : 'Add the whole look'}
+                      ? t('lookbookUi.allAdded', { count: coverStory.shoppableItems.length })
+                      : t('lookbookUi.addWhole')}
                   </span>
                 </button>
               </div>
@@ -715,10 +725,10 @@ export default function EditorialLookbookPage() {
           
           <div className="flex items-baseline justify-between pb-3 border-b border-[#0A0A0A] font-mono text-[10px] uppercase tracking-[0.18em]">
             <h2 className="font-bold text-[#0A0A0A]">
-              Curated seasonal editions
+              {t('lookbookUi.curated')}
             </h2>
             <span className="text-matcha-muted">
-              {remainingSpreads.length} feature {remainingSpreads.length === 1 ? 'story' : 'stories'}
+              {remainingSpreads.length === 1 ? t('lookbookUi.featureOne') : t('lookbookUi.features', { count: remainingSpreads.length })}
             </span>
           </div>
 
@@ -760,7 +770,7 @@ export default function EditorialLookbookPage() {
                       <button
                         type="button"
                         onClick={(e) => toggleLike(e, spread.id)}
-                        aria-label="Save this look"
+                        aria-label={t('lookbookUi.saveLook')}
                         aria-pressed={Boolean(likedLooks[spread.id])}
                         className="shrink-0 text-white cursor-pointer transition-transform hover:scale-110 outline-hidden focus-visible:ring-2 focus-visible:ring-white"
                       >
@@ -774,7 +784,7 @@ export default function EditorialLookbookPage() {
                         <span className="truncate">{spread.location}</span>
                       </span>
                       <span className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity underline underline-offset-4">
-                        Open spread
+                        {t('lookbookUi.openSpread')}
                       </span>
                     </div>
                   </figure>
@@ -811,7 +821,7 @@ export default function EditorialLookbookPage() {
                   </blockquote>
 
                   <p className="text-sm text-matcha-muted leading-relaxed">
-                    {spread.narrative}
+                    {narrativeFor(spread, lang)}
                   </p>
 
                   <div className="flex flex-wrap">
@@ -831,13 +841,13 @@ export default function EditorialLookbookPage() {
                       thing without building another container to say it in. */}
                   <div className="pt-2">
                     <div className="flex items-baseline justify-between pb-2 border-b border-[#0A0A0A] font-mono text-[10px] uppercase tracking-[0.18em]">
-                      <h4 className="font-bold text-[#0A0A0A]">Key garments</h4>
+                      <h4 className="font-bold text-[#0A0A0A]">{t('lookbookUi.keyGarments')}</h4>
                       <button
                         type="button"
                         onClick={() => setSelectedSpread(spread)}
                         className="text-matcha-accent hover:underline underline-offset-4 cursor-pointer flex items-center gap-1 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A]"
                       >
-                        <span>All details</span>
+                        <span>{t('lookbookUi.allDetails')}</span>
                         <ArrowRight size={11} />
                       </button>
                     </div>
@@ -866,7 +876,7 @@ export default function EditorialLookbookPage() {
                               disabled={loading || !item.inStock} onClick={(e) => handleQuickAdd(e, item)}
                               className="shrink-0 px-3 py-1.5 bg-[#0A0A0A] hover:bg-matcha-accent disabled:bg-transparent disabled:text-[#999999] text-matcha-bg font-mono text-[10px] uppercase tracking-wider transition-colors cursor-pointer disabled:cursor-not-allowed"
                             >
-                              {isAdded ? 'Added' : !item.inStock ? 'Sold out' : 'Add'}
+                              {isAdded ? t('lookbookUi.added') : !item.inStock ? t('lookbookUi.soldOut') : t('lookbookUi.add')}
                             </button>
                           </li>
                         );
@@ -909,8 +919,8 @@ export default function EditorialLookbookPage() {
                 <button
                   type="button"
                   onClick={handlePrevSpread}
-                  title="Previous spread (left arrow)"
-                  aria-label="Previous spread"
+                  title={t('lookbookUi.prevTitle')}
+                  aria-label={t('lookbookUi.prevSpread')}
                   className="text-white/80 hover:text-white cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-white"
                 >
                   <ChevronLeft size={18} />
@@ -918,8 +928,8 @@ export default function EditorialLookbookPage() {
                 <button
                   type="button"
                   onClick={handleNextSpread}
-                  title="Next spread (right arrow)"
-                  aria-label="Next spread"
+                  title={t('lookbookUi.nextTitle')}
+                  aria-label={t('lookbookUi.nextSpread')}
                   className="text-white/80 hover:text-white cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-white"
                 >
                   <ChevronRight size={18} />
@@ -930,7 +940,7 @@ export default function EditorialLookbookPage() {
                     setSelectedSpread(null);
                     setIsZoomed(false);
                   }}
-                  title="Close (Escape)"
+                  title={t('lookbookUi.closeTitle')}
                   aria-label="Close"
                   className="text-white/80 hover:text-white cursor-pointer transition-colors outline-hidden focus-visible:ring-2 focus-visible:ring-white"
                 >
@@ -960,14 +970,14 @@ export default function EditorialLookbookPage() {
                   className="absolute bottom-4 left-4 z-20 text-white/70 hover:text-white font-mono text-[10px] uppercase tracking-[0.15em] flex items-center gap-1.5 transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-white"
                 >
                   {isZoomed ? <ZoomOut size={12} /> : <ZoomIn size={12} />}
-                  <span>{isZoomed ? 'Reset' : 'Zoom 1.5×'}</span>
+                  <span>{isZoomed ? t('lookbookUi.reset') : t('lookbookUi.zoom')}</span>
                 </button>
 
                 {selectedSpread.detailImages && (
                   <div className="flex items-center gap-2 mt-3 overflow-x-auto max-w-full pb-1 z-10">
                     {selectedSpread.detailImages.map((img, idx) => (
                       <div key={idx} className="w-16 h-20 overflow-hidden shrink-0">
-                        <img src={webpSrc(img)} data-original-src={img} alt="Detail" onError={handleImageError} className="w-full h-full object-cover" />
+                        <img src={webpSrc(img)} data-original-src={img} alt={t('lookbookUi.detailAlt')} onError={handleImageError} className="w-full h-full object-cover" />
                       </div>
                     ))}
                   </div>
@@ -981,7 +991,7 @@ export default function EditorialLookbookPage() {
 
                   <div className="space-y-1.5">
                     <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-accent block">
-                      {selectedSpread.theme} — {selectedSpread.seasonThai}
+                      {selectedSpread.theme} — {seasonCaption(selectedSpread, lang)}
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-[-0.02em] leading-[0.95] text-[#0A0A0A]">
                       {selectedSpread.title}
@@ -997,12 +1007,12 @@ export default function EditorialLookbookPage() {
                   </blockquote>
 
                   <p className="text-xs text-matcha-muted leading-relaxed">
-                    {selectedSpread.narrative}
+                    {narrativeFor(selectedSpread, lang)}
                   </p>
 
                   <div>
                     <h3 className="pb-2 border-b border-[#0A0A0A] font-mono text-[10px] uppercase tracking-[0.18em] font-bold text-[#0A0A0A]">
-                      Pieces in this spread
+                      {t('lookbookUi.piecesInSpread')}
                     </h3>
                     <ul className="divide-y divide-matcha-border max-h-56 overflow-y-auto">
                       {selectedSpread.shoppableItems.map((item) => {
@@ -1025,7 +1035,7 @@ export default function EditorialLookbookPage() {
                               disabled={loading || !item.inStock} onClick={(e) => handleQuickAdd(e, item)}
                               className="shrink-0 px-3 py-1.5 bg-[#0A0A0A] hover:bg-matcha-accent disabled:bg-transparent disabled:text-[#999999] text-matcha-bg font-mono text-[10px] uppercase tracking-wider transition-colors cursor-pointer disabled:cursor-not-allowed"
                             >
-                              {isAdded ? 'Added' : !item.inStock ? 'Sold out' : 'Add'}
+                              {isAdded ? t('lookbookUi.added') : !item.inStock ? t('lookbookUi.soldOut') : t('lookbookUi.add')}
                             </button>
                           </li>
                         );
@@ -1042,7 +1052,7 @@ export default function EditorialLookbookPage() {
                     onClick={() => handleAddEntireLook(selectedSpread)}
                     className="w-full py-3.5 bg-matcha-accent hover:bg-matcha-accent-hover disabled:bg-matcha-border disabled:text-matcha-muted text-white font-mono text-xs uppercase tracking-[0.15em] transition-colors cursor-pointer disabled:cursor-not-allowed"
                   >
-                    Add the whole look
+                    {t('lookbookUi.addWhole')}
                   </button>
 
                   <button
@@ -1064,7 +1074,7 @@ export default function EditorialLookbookPage() {
                     className="w-full py-2.5 font-mono text-xs uppercase tracking-wider text-[#0A0A0A] hover:text-matcha-accent transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                   >
                     <Sparkles size={13} />
-                    <span>Open in Mix &amp; Match Studio</span>
+                    <span>{t('lookbookUi.openInStudio')}</span>
                   </button>
                 </div>
 
