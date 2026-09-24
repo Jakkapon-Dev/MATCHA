@@ -4,6 +4,7 @@ import { Trash2, Lock, RefreshCw, ShoppingBag } from 'lucide-react';
 import { webpSrc } from '../utils/imageFallback';
 import { wash, inkOn, needsEdge } from '../utils/dye';
 import { shippingCostFor, FREE_SHIPPING_THRESHOLD } from '../config/shipping';
+import { bundleDiscountFor } from '../config/coupons';
 import { useLanguage } from '../context/LanguageContext.jsx';
 /* These used to be declared again here, and the copy had drifted: it keyed on
    item.id alone, while the cart keys on item.id || item.productId. An item
@@ -21,10 +22,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
 
   const subtotal = cartItems.reduce((sum, item) => sum + parsePrice(item.price) * (item.quantity || 1), 0);
 
-  const bundleItems = cartItems.filter(item => item.isBundleItem);
-  const bundleSavings = bundleItems.length >= 2
-    ? bundleItems.reduce((sum, item) => sum + parsePrice(item.price) * (item.quantity || 1) * (item.bundleDiscountRate || 0.12), 0)
-    : 0;
+  const bundleSavings = bundleDiscountFor(cartItems);
   const netSubtotal = Math.max(0, subtotal - bundleSavings);
   const shipping = cartItems.length === 0 ? 0 : shippingCostFor(netSubtotal);
   const total = netSubtotal + shipping;

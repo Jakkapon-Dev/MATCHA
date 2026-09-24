@@ -36,16 +36,44 @@ export function discountFor(coupon, subtotal) {
   return Math.round(subtotal * (coupon.discount / 100) * 100) / 100;
 }
 
-// Mix & Match marks each piece of a complete outfit. Keep this calculation
-// beside the coupon calculation so checkout can show exactly what the server
-// will charge when both discounts are present.
+// The server decides the bundle discount from each garment's category, not
+// from the isBundleItem flag (backend/routes/orderRoutes.js). This mirrors that
+// rule line for line so the cart and checkout show what will actually be charged.
 export const BUNDLE_DISCOUNT_RATE = 0.12;
 
+const SHOE_SUBCATEGORIES = new Set(['Boots', 'Loafers', 'Sandals', 'Sneakers']);
+const BUNDLE_SLOTS = ['tops', 'bottoms', 'shoes', 'accessories'];
+
+export function bundleSlotFor(item) {
+  if (!item) return null;
+  const category = (item.category || '').trim().toLowerCase();
+  const subCategory = (item.subCategory || '').trim();
+  if (category === 'shoes' || SHOE_SUBCATEGORIES.has(subCategory)) return 'shoes';
+  if (category === 'tops' || category === 'outerwear') return 'tops';
+  if (category === 'bottoms') return 'bottoms';
+  if (category === 'accessories') return 'accessories';
+  return null;
+}
+
 export function bundleDiscountFor(items = []) {
-  const amount = items.reduce((sum, item) => {
-    if (!item?.isBundleItem) return sum;
-    return sum + (Number(item.price) || 0) * (Number(item.quantity) || 1) * BUNDLE_DISCOUNT_RATE;
-  }, 0);
+  const lines = items.map(item => ({
+    slot: bundleSlotFor(item),
+    qty: Math.max(1, parseInt(item?.quantity, 10) || 1),
+    price: Number(String(item?.price ?? 0).replace(/[^0-9.]/g, '')) || 0,
+  }));
+  const counts = Object.fromEntries(BUNDLE_SLOTS.map(s => [s, 0]));
+  lines.forEach(l => { if (l.slot) counts[l.slot] += l.qty; });
+  const sets = Math.min(...BUNDLE_SLOTS.map(s => counts[s]));
+  if (sets <= 0) return 0;
+
+  const quota = Object.fromEntries(BUNDLE_SLOTS.map(s => [s, sets]));
+  let amount = 0;
+  for (const l of lines) {
+    if (!l.slot || quota[l.slot] <= 0) continue;
+    const n = Math.min(l.qty, quota[l.slot]);
+    amount += n * l.price * BUNDLE_DISCOUNT_RATE;
+    quota[l.slot] -= n;
+  }
   return Math.round(amount * 100) / 100;
 }
 
