@@ -36,6 +36,21 @@ const forgetSession = () => {
   }
 };
 
+/* The wishlist and saved looks live only in this browser, under keys that are
+   not tied to an account. Left behind at sign-out, the next person to sign in
+   here saw them as their own. A guest's lists still carry into the account
+   they sign in to; it is signing out that ends them. The bag is emptied by
+   CartProvider, which also knows the account's cart stays on the server. */
+const BROWSER_LIST_KEYS = ['matcha_wishlist', 'matcha_saved_looks'];
+
+const forgetBrowserLists = () => {
+  try {
+    BROWSER_LIST_KEYS.forEach((key) => localStorage.removeItem(key));
+  } catch (err) {
+    console.warn('Saved lists not cleared from storage:', err.message);
+  }
+};
+
 // Which store already holds the session, so an update lands where it lives.
 const sessionIsPersistent = () => {
   try {
@@ -78,6 +93,7 @@ export function AuthProvider({ children }) {
     currentUserRef.current = null;
     setCurrentUser(null);
     forgetSession();
+    forgetBrowserLists();
   }, []);
 
   /* The storage write used to sit inside the setCurrentUser updater. Updaters
