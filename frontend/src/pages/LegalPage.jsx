@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ShieldCheck, FileText, Truck, RotateCcw, Eye } from 'lucide-react';
 import PreviewBadge from '../components/ui/PreviewBadge';
+import NotFoundPage from './NotFoundPage';
 
 const LEGAL_DOCS = {
   privacy: {
@@ -116,7 +117,10 @@ const LEGAL_DOCS = {
 
 export default function LegalPage() {
   const { topic = 'privacy' } = useParams();
-  const docKey = LEGAL_DOCS[topic] ? topic : 'privacy';
+  // /legal/anything used to show the Privacy Policy, so a mistyped or retired
+  // policy link looked like it had worked. Only /legal itself means privacy.
+  if (!Object.hasOwn(LEGAL_DOCS, topic)) return <NotFoundPage />;
+  const docKey = topic;
   const doc = LEGAL_DOCS[docKey];
   const Icon = doc.icon;
 
