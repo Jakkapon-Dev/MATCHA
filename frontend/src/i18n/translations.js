@@ -11,6 +11,12 @@ export const DEFAULT_LANG = 'en';
 
 export const translations = {
   en: {
+    a11y: {
+      skipToContent: 'Skip to main content',
+      opensInNewTab: '{name} (opens in new tab)',
+      mainNav: 'Main navigation',
+      mobileNav: 'Mobile navigation',
+    },
     catalog: {
       heroTitle: 'Find your colour in motion',
       heroBody: 'Pick the shade that is yours, then watch the same colour move through garments, looks and the way you carry them.',
@@ -949,6 +955,12 @@ export const translations = {
   },
 
   th: {
+    a11y: {
+      skipToContent: 'ข้ามไปยังเนื้อหาหลัก',
+      opensInNewTab: '{name} (เปิดในแท็บใหม่)',
+      mainNav: 'เมนูหลัก',
+      mobileNav: 'เมนูบนมือถือ',
+    },
     catalog: {
       heroTitle: 'ค้นหาสีของคุณผ่านการเคลื่อนไหว',
       heroBody: 'เลือกเฉดที่สะท้อนตัวคุณ แล้วดูสีเดียวกันเคลื่อนไปกับเสื้อผ้า ลุค และความมั่นใจของคุณ',

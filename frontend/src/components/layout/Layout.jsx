@@ -6,6 +6,7 @@ import '../../styles/motion.css';
 import Navbar from './Navbar';
 import Footer from './Footer';
 import ScrollProgressTracker from '../ui/ScrollProgressTracker';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function Layout({ 
   children, 
@@ -18,6 +19,7 @@ export default function Layout({
   onLogout
 }) {
   const { pathname } = useLocation();
+  const { t } = useLanguage();
   const pageMotionRef = useChangeMotion(pathname, 'route');
   const revealRef = useScrollReveal(pathname);
   // One <main> drives both: the route fade and the scroll reveals below it.
@@ -33,7 +35,7 @@ export default function Layout({
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#0A0A0A] focus:text-white focus:font-mono focus:text-xs focus:font-bold focus:uppercase focus:tracking-wider focus:outline-2 focus:outline-offset-2 focus:outline-matcha-accent focus:shadow-xl"
       >
-        Skip to main content
+        {t('a11y.skipToContent')}
       </a>
 
       {/* Global Scroll Progress & Frame Tracker */}

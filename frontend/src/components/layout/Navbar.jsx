@@ -118,7 +118,7 @@ export default function Navbar({
           </div>
 
           {/* Center: Desktop Navigation Links (Clean Black & White) */}
-          <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-6 lg:gap-8">
+          <nav aria-label={t('a11y.mainNav')} className="hidden md:flex items-center gap-6 lg:gap-8">
             {navLinks.map((link) => {
               const isActive = currentPage === 'home' && false;
 
@@ -259,7 +259,7 @@ export default function Navbar({
         {/* 3. Mobile Navigation Drawer */}
         {mobileMenuOpen && (
           <div id="mobile-nav" className="md:hidden bg-matcha-bg border-b border-matcha-border px-6 py-5 shadow-xl animate-fade-in">
-            <nav aria-label="Mobile Navigation" className="flex flex-col gap-4">
+            <nav aria-label={t('a11y.mobileNav')} className="flex flex-col gap-4">
 
               {/* Mobile Auth Quick Buttons */}
               {currentUser ? (
