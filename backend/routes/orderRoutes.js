@@ -27,7 +27,7 @@ const router = express.Router();
    page and throttling it would break the page rather than an attacker. */
 const orderLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  limit: 20,
+  limit: () => (process.env.NODE_ENV === 'test' ? 1000 : 20),
   standardHeaders: 'draft-7',
   legacyHeaders: false,
   message: { success: false, message: 'สั่งซื้อถี่เกินไป กรุณารอสักครู่แล้วลองใหม่' },
@@ -53,6 +53,28 @@ const SHIPPING_RATES = {
 
 const BUNDLE_DISCOUNT_RATE = 0.12;
 const FREE_SHIPPING_THRESHOLD = 100.0;
+
+const SHOE_SUBCATEGORIES = new Set(['Boots', 'Loafers', 'Sandals', 'Sneakers']);
+
+export function getProductBundleSlot(product) {
+  if (!product) return null;
+  const category = (product.category || '').trim();
+  const subCategory = (product.subCategory || '').trim();
+
+  if (category.toLowerCase() === 'shoes' || SHOE_SUBCATEGORIES.has(subCategory)) {
+    return 'shoes';
+  }
+  if (['tops', 'outerwear'].includes(category.toLowerCase())) {
+    return 'tops';
+  }
+  if (category.toLowerCase() === 'bottoms') {
+    return 'bottoms';
+  }
+  if (category.toLowerCase() === 'accessories') {
+    return 'accessories';
+  }
+  return null;
+}
 
 // Safe helper to extract auth payload if provided
 const extractAuthUser = (req) => {
@@ -248,7 +270,7 @@ router.post('/', orderLimiter, async (req, res) => {
       // sizes and sizeStock ride along now: the stock check below cannot be
       // made without them, and the old projection is exactly why this endpoint
       // could say yes to a garment it did not have.
-      const dbProds = await Product.find({}, 'id sku price name image color sizes sizeStock').lean();
+      const dbProds = await Product.find({}, 'id sku price name image color sizes sizeStock category subCategory').lean();
       dbProds.forEach(p => {
         if (p.id) productCache.set(p.id, p);
         if (p.sku) productCache.set(p.sku, p);
@@ -256,7 +278,6 @@ router.post('/', orderLimiter, async (req, res) => {
     }
 
     let subtotal = 0;
-    let bundleDiscountAmount = 0;
 
     const validatedItems = items.map(item => {
       const pId = item.productId || item.id || 'SKU-UNKNOWN';
@@ -266,11 +287,6 @@ router.post('/', orderLimiter, async (req, res) => {
 
       subtotal += actualPrice * qty;
 
-      // Bundle Item Discount (12% per item marked as isBundleItem)
-      if (item.isBundleItem) {
-        bundleDiscountAmount += (actualPrice * qty) * BUNDLE_DISCOUNT_RATE;
-      }
-
       return {
         productId: pId,
         name: item.name || matched?.name || 'MatchA Garment',
@@ -278,9 +294,48 @@ router.post('/', orderLimiter, async (req, res) => {
         size: item.size || 'M',
         color: item.color || matched?.color || 'Default',
         image: item.image || matched?.image || '',
-        priceAtPurchase: actualPrice
+        priceAtPurchase: actualPrice,
+        _bundleSlot: getProductBundleSlot(matched)
       };
     });
+
+    // Server-side Bundle Eligibility: requires all 4 wardrobe slots (tops, bottoms, shoes, accessories)
+    const slotCounts = { tops: 0, bottoms: 0, shoes: 0, accessories: 0 };
+    for (const vItem of validatedItems) {
+      if (vItem._bundleSlot) {
+        slotCounts[vItem._bundleSlot] += vItem.quantity;
+      }
+    }
+
+    const completeBundles = Math.min(
+      slotCounts.tops,
+      slotCounts.bottoms,
+      slotCounts.shoes,
+      slotCounts.accessories
+    );
+
+    let bundleDiscountAmount = 0;
+    if (completeBundles > 0) {
+      const remainingQuota = {
+        tops: completeBundles,
+        bottoms: completeBundles,
+        shoes: completeBundles,
+        accessories: completeBundles
+      };
+
+      for (const vItem of validatedItems) {
+        const slot = vItem._bundleSlot;
+        if (slot && remainingQuota[slot] > 0) {
+          const discountableQty = Math.min(vItem.quantity, remainingQuota[slot]);
+          bundleDiscountAmount += discountableQty * vItem.priceAtPurchase * BUNDLE_DISCOUNT_RATE;
+          remainingQuota[slot] -= discountableQty;
+        }
+      }
+    }
+
+    for (const vItem of validatedItems) {
+      delete vItem._bundleSlot;
+    }
 
     subtotal = Math.round(subtotal * 100) / 100;
     bundleDiscountAmount = Math.round(bundleDiscountAmount * 100) / 100;

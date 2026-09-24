@@ -1,3 +1,5 @@
+process.env.NODE_ENV = 'test';
+
 import { test, before, after } from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';
@@ -343,4 +345,126 @@ test('a postal code of the wrong length is refused', async () => {
     const res = await post(orderWith({ zipCode: zip }));
     assert.equal(res.status, 400, `${zip} is not a Thai postal code`);
   }
+});
+
+/* ------------------------------------------------------------------ *
+ * Server-side bundle discount eligibility
+ * ------------------------------------------------------------------ */
+
+test('A. complete bundle receives 12% discount calculated server-side', async () => {
+  const payload = {
+    customer: {
+      firstName: 'Test', lastName: 'Bundle', email: 'bundle.a@matcha.test',
+      phone: '0899999999', address: '100 Road', city: 'Bangkok', zipCode: '10110'
+    },
+    items: [
+      { productId: 'AUT-TOP-009', quantity: 1, size: 'M' },
+      { productId: 'AUT-BOT-003', quantity: 1, size: 'M' },
+      { productId: 'AUT-ACC-007', quantity: 1, size: 'OS' },
+      { productId: 'AUT-ACC-001', quantity: 1, size: 'OS' }
+    ],
+    paymentMethod: 'demo',
+    shippingOption: 'standard'
+  };
+
+  const res = await post(payload);
+  assert.equal(res.status, 201);
+  const { data } = await res.json();
+
+  const expectedSubtotal = 65.99 + 81.99 + 102.99 + 43.99; // 294.96
+  const expectedDiscount = Math.round(expectedSubtotal * 0.12 * 100) / 100; // 35.40
+  const expectedTotal = Math.round((expectedSubtotal - expectedDiscount) * 100) / 100; // 259.56
+
+  assert.equal(data.subtotal, expectedSubtotal);
+  assert.equal(data.discount, expectedDiscount);
+  assert.equal(data.total, expectedTotal);
+});
+
+test('B. single item with isBundleItem: true does not get 12% discount', async () => {
+  const payload = {
+    customer: {
+      firstName: 'Test', lastName: 'Bundle', email: 'bundle.b@matcha.test',
+      phone: '0899999999', address: '100 Road', city: 'Bangkok', zipCode: '10110'
+    },
+    items: [
+      { productId: 'AUT-TOP-009', quantity: 1, size: 'M', isBundleItem: true }
+    ],
+    paymentMethod: 'demo',
+    shippingOption: 'standard'
+  };
+
+  const res = await post(payload);
+  assert.equal(res.status, 201);
+  const { data } = await res.json();
+
+  assert.equal(data.subtotal, 65.99);
+  assert.equal(data.discount, 0, 'server must ignore client isBundleItem flag on incomplete bundle');
+});
+
+test('C. 4 items not fulfilling required bundle categories do not get bundle discount', async () => {
+  const payload = {
+    customer: {
+      firstName: 'Test', lastName: 'Bundle', email: 'bundle.c@matcha.test',
+      phone: '0899999999', address: '100 Road', city: 'Bangkok', zipCode: '10110'
+    },
+    items: [
+      { productId: 'AUT-TOP-009', quantity: 2, size: 'M', isBundleItem: true },
+      { productId: 'AUT-BOT-003', quantity: 2, size: 'M', isBundleItem: true }
+    ],
+    paymentMethod: 'demo',
+    shippingOption: 'standard'
+  };
+
+  const res = await post(payload);
+  assert.equal(res.status, 201);
+  const { data } = await res.json();
+
+  assert.equal(data.discount, 0, 'no bundle discount if shoes or accessories are missing');
+});
+
+test('D. client sends isBundleItem: false but products satisfy bundle criteria -> server applies discount', async () => {
+  const payload = {
+    customer: {
+      firstName: 'Test', lastName: 'Bundle', email: 'bundle.d@matcha.test',
+      phone: '0899999999', address: '100 Road', city: 'Bangkok', zipCode: '10110'
+    },
+    items: [
+      { productId: 'AUT-TOP-009', quantity: 1, size: 'M', isBundleItem: false },
+      { productId: 'AUT-BOT-003', quantity: 1, size: 'M', isBundleItem: false },
+      { productId: 'AUT-ACC-007', quantity: 1, size: 'OS', isBundleItem: false },
+      { productId: 'AUT-ACC-001', quantity: 1, size: 'OS', isBundleItem: false }
+    ],
+    paymentMethod: 'demo',
+    shippingOption: 'standard'
+  };
+
+  const res = await post(payload);
+  assert.equal(res.status, 201);
+  const { data } = await res.json();
+
+  const expectedSubtotal = 65.99 + 81.99 + 102.99 + 43.99;
+  const expectedDiscount = Math.round(expectedSubtotal * 0.12 * 100) / 100;
+  assert.equal(data.discount, expectedDiscount, 'server is source of truth even when client sent false');
+});
+
+test('E. client spoofing price, category, and isBundleItem does not fool server calculation', async () => {
+  const payload = {
+    customer: {
+      firstName: 'Test', lastName: 'Bundle', email: 'bundle.e@matcha.test',
+      phone: '0899999999', address: '100 Road', city: 'Bangkok', zipCode: '10110'
+    },
+    items: [
+      { productId: 'AUT-ACC-001', price: 1.00, category: 'Tops', quantity: 1, size: 'OS', isBundleItem: true }
+    ],
+    paymentMethod: 'demo',
+    shippingOption: 'standard'
+  };
+
+  const res = await post(payload);
+  assert.equal(res.status, 201);
+  const { data } = await res.json();
+
+  // AUT-ACC-001 real price is 43.99, not 1.00. Real category is Accessories, not Tops. Single item is not a bundle.
+  assert.equal(data.subtotal, 43.99, 'price must come from catalog');
+  assert.equal(data.discount, 0, 'must not give bundle discount based on fake category/flag');
 });
