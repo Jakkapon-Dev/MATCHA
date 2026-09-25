@@ -8,7 +8,8 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import { apiErrorText } from '../services/api';
-import { Plus, BarChart3, Layers, Search, ExternalLink, ChevronRight, Download, FileSpreadsheet, FileJson, ChevronDown, LayoutDashboard, Boxes, ClipboardList, UserCheck, HardDrive, LogOut, Bell, CheckCheck } from 'lucide-react';
+import { Plus, BarChart3, Layers, Search, ExternalLink, ChevronRight, Download, FileSpreadsheet, FileJson, ChevronDown, LayoutDashboard, Boxes, ClipboardList, UserCheck, HardDrive, LogOut, Bell, CheckCheck, RefreshCw } from 'lucide-react';
+import { webpSrc } from '../utils/imageFallback';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import AddProductModal from '../components/admin/AddProductModal';
@@ -364,7 +365,7 @@ export default function AdminPage() {
   // Nav Items
   const navTabs = [
     { id: 'media', label: t('admin.tabMedia'), icon: Layers, badge: null },
-    { id: 'dashboard', label: 'Overview & KPIs', icon: LayoutDashboard, badge: null },
+    { id: 'dashboard', label: 'Overview', icon: LayoutDashboard, badge: null },
     /* Each badge counts what its label names, across the whole shop.
 
        They used to count the page: `inventory.length` is the 25 rows loaded,
@@ -388,26 +389,27 @@ export default function AdminPage() {
       {/* ========================================================================= */}
       <aside className="w-full md:w-64 lg:w-72 bg-matcha-text text-white flex flex-col shrink-0 border-r border-[#3E322C] select-none">
         
-        {/* Brand Header */}
-        <div className="p-6 border-b border-[#3E322C]">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-matcha-primary flex items-center justify-center text-lg font-black text-white shadow-md">
-                🍵
-              </div>
-              <div>
-                <h1 className="font-extrabold text-base tracking-tight uppercase font-sans">MatchA Admin</h1>
-                <span className="block text-[9px] font-mono text-matcha-secondary tracking-widest uppercase">
-                  Command Center
-                </span>
-              </div>
+        {/* Brand Header — the shop's own mark, not a status light. The green
+            dot that sat here pulsed whatever the data was doing, so it read
+            as "online" even while every table was failing to load; loading
+            and failure are already shown where the data is. */}
+        <div className="px-5 py-5 md:px-6 md:py-6 border-b border-[#3E322C]">
+          <div className="flex items-center gap-3">
+            <img
+              src={webpSrc('/images/brand/matcha-icon.png')} data-original-src="/images/brand/matcha-icon.png"
+              alt=""
+              aria-hidden="true"
+              className="w-9 h-9 rounded-xl object-cover shrink-0"
+            />
+            <div className="min-w-0 leading-tight">
+              <span className="block font-sans text-base font-extrabold uppercase tracking-[0.12em] text-white">MatchA</span>
+              <span className="block text-[11px] font-mono text-[#A89F91]">Admin Console</span>
             </div>
-            <div className="w-2.5 h-2.5 rounded-full bg-[#85E369] animate-pulse" title={Object.values(status).every(value => value === 'ready') ? 'Data loaded' : 'Data unavailable or loading'} />
           </div>
         </div>
 
         {/* Current Admin Identity Card */}
-        <div className="p-4 mx-4 mt-4 rounded-xl bg-[#3A2E28] border border-[#4D3E35] flex items-center justify-between text-xs font-mono">
+        <div className="hidden md:flex p-4 mx-4 mt-4 rounded-xl bg-[#3A2E28] border border-[#4D3E35] items-center justify-between gap-2 text-xs font-mono">
           <div className="truncate">
             <div className="text-[10px] text-matcha-secondary uppercase">Active Operator</div>
             <div className="font-bold text-white truncate">{currentUser?.name || 'Administrator'}</div>
@@ -418,8 +420,8 @@ export default function AdminPage() {
         </div>
 
         {/* Navigation Tab Links */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          <div className="text-[10px] font-mono font-bold uppercase text-[#A89F91] px-3 py-2 tracking-wider">
+        <nav aria-label="Admin sections" className="md:flex-1 p-3 md:p-4 flex md:block gap-1 md:space-y-1 overflow-x-auto [scrollbar-width:thin] md:overflow-x-visible md:overflow-y-auto">
+          <div className="hidden md:block text-[10px] font-mono font-bold uppercase text-[#A89F91] px-3 py-2 tracking-wider">
             Management Modules
           </div>
 
@@ -433,9 +435,10 @@ export default function AdminPage() {
                   setActiveTab(tab.id);
                   setGlobalSearch('');
                 }}
-                className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer ${
+                aria-current={isActive ? 'page' : undefined}
+                className={`shrink-0 md:w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-xl font-mono text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-matcha-primary text-white shadow-md translate-x-1'
+                    ? 'bg-matcha-primary text-white shadow-md md:translate-x-1'
                     : 'text-matcha-border hover:bg-[#3A2E28] hover:text-white'
                 }`}
               >
@@ -456,10 +459,10 @@ export default function AdminPage() {
         </nav>
 
         {/* Bottom System Actions */}
-        <div className="p-4 border-t border-[#3E322C] space-y-2 font-mono text-xs">
+        <div className="p-3 md:p-4 border-t border-[#3E322C] grid grid-cols-2 md:grid-cols-1 gap-2 font-mono text-xs">
           <button
             onClick={() => navigate('/catalog')}
-            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-[#3A2E28] hover:bg-[#4D3E35] text-matcha-secondary transition-colors cursor-pointer"
+            className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl whitespace-nowrap bg-[#3A2E28] hover:bg-[#4D3E35] text-matcha-secondary transition-colors cursor-pointer"
           >
             <ExternalLink size={13} />
             <span>Visit Live Storefront</span>
@@ -495,26 +498,26 @@ export default function AdminPage() {
         )}
 
         {/* Top Header Bar with Universal Search & Action Buttons */}
-        <header className="sticky top-0 z-20 bg-matcha-bg/90 backdrop-blur-md border-b border-matcha-border px-6 py-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
+        <header className="sticky top-0 z-20 bg-matcha-bg/90 backdrop-blur-md border-b border-matcha-border px-4 sm:px-6 py-4 flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 xl:gap-6">
           
           {/* Breadcrumb & Tab Title */}
           <div>
             <h1 className="sr-only">Admin Control Center</h1>
-            <div className="flex items-center gap-2 text-[11px] font-mono text-matcha-muted">
+            <div className="flex items-center gap-1.5 text-[11px] font-mono text-matcha-muted">
               <span>Admin</span>
-              <ChevronRight size={11} />
-              <span className="text-matcha-primary font-bold capitalize">{activeTab}</span>
+              <ChevronRight size={11} aria-hidden="true" />
+              <span className="text-matcha-primary font-bold">{navTabs.find(tab => tab.id === activeTab)?.label}</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-matcha-text">
-              {navTabs.find(t => t.id === activeTab)?.label}
+            <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-matcha-text">
+              {navTabs.find(tab => tab.id === activeTab)?.label}
             </h2>
           </div>
 
           {/* Header Action Tools */}
-          <div className="flex items-center gap-2.5 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
             
             {/* Global Search Input */}
-            <div className="relative flex-1 sm:w-64">
+            <div className="relative basis-full sm:basis-auto sm:flex-1 xl:flex-none xl:w-72">
               <Search size={14} className="absolute left-3 inset-y-0 my-auto text-matcha-muted" aria-hidden="true" />
               <input
                 type="text"
@@ -522,10 +525,12 @@ export default function AdminPage() {
                 onChange={(e) => setGlobalSearch(e.target.value)}
                 placeholder="Search metrics, SKU, orders, members..."
                 aria-label="Search metrics, SKU, orders, members"
-                className="w-full pl-9 pr-3 py-1.5 rounded-xl border border-matcha-border bg-white font-mono text-xs text-matcha-text outline-none focus:ring-2 focus:ring-matcha-primary/40"
+                className="w-full h-9 pl-9 pr-8 rounded-xl border border-matcha-border bg-white font-mono text-xs text-matcha-text outline-none focus:ring-2 focus:ring-matcha-primary/40"
               />
               {globalSearch && (
                 <button
+                  type="button"
+                  aria-label="Clear search"
                   onClick={() => setGlobalSearch('')}
                   className="absolute right-2.5 inset-y-0 my-auto h-fit text-xs text-matcha-accent hover:font-bold cursor-pointer"
                 >
@@ -533,6 +538,17 @@ export default function AdminPage() {
                 </button>
               )}
             </div>
+
+            {/* Refresh — reloads every admin table and the dashboard aggregate */}
+            <button
+              type="button"
+              disabled={saving || Object.values(status).includes('loading')}
+              onClick={() => { setSelectedOrderForModal(null); setMutationNotice(null); refresh(); }}
+              className="h-9 px-3 rounded-xl bg-white border border-matcha-border hover:border-matcha-primary text-matcha-text font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary"
+            >
+              <RefreshCw size={13} className={Object.values(status).includes('loading') ? 'animate-spin' : ''} aria-hidden="true" />
+              <span>Refresh data</span>
+            </button>
 
             {/* Notifications Bell */}
             <div className="relative">
@@ -542,7 +558,7 @@ export default function AdminPage() {
                 aria-label="Order Notifications"
                 aria-haspopup="true"
                 aria-expanded={isNotifMenuOpen}
-                className="relative p-2 rounded-xl bg-white border border-matcha-border hover:border-matcha-primary text-matcha-text transition-all cursor-pointer shadow-2xs flex items-center justify-center outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary"
+                className="relative h-9 w-9 rounded-xl bg-white border border-matcha-border hover:border-matcha-primary text-matcha-text transition-all cursor-pointer flex items-center justify-center outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary"
                 title="Order Notifications"
               >
                 <Bell size={16} />
@@ -556,7 +572,7 @@ export default function AdminPage() {
               {isNotifMenuOpen && (
                 <>
                   <div className="fixed inset-0 z-20 cursor-default" onClick={() => setIsNotifMenuOpen(false)} />
-                  <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl border border-matcha-border shadow-2xl p-3 z-30 font-mono text-xs animate-fade-in max-h-96 flex flex-col">
+                  <div className="absolute right-0 mt-2 w-[min(24rem,calc(100vw-2rem))] bg-white rounded-2xl border border-matcha-border shadow-2xl p-3 z-30 font-mono text-xs animate-fade-in max-h-96 flex flex-col">
                     <div className="flex items-center justify-between pb-2 border-b border-matcha-border px-1">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-matcha-text uppercase font-sans">New Orders</span>
@@ -609,15 +625,6 @@ export default function AdminPage() {
               )}
             </div>
 
-            {/* Quick Add Product Button */}
-            <button
-              onClick={() => { setMutationNotice(null); setIsAddModalOpen(true); }} disabled={saving || isDemo || status.inventory !== 'ready'}
-              className="px-3.5 py-1.5 bg-matcha-primary hover:bg-matcha-primary-dark text-white rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all shadow-xs cursor-pointer active:scale-98"
-            >
-              <Plus size={14} />
-              <span>Add Garment</span>
-            </button>
-
             {/* Export Dropdown */}
             <div className="relative">
               <button
@@ -626,7 +633,7 @@ export default function AdminPage() {
                 aria-label="Export Data"
                 aria-haspopup="true"
                 aria-expanded={isExportMenuOpen}
-                className="px-3 py-1.5 bg-white border border-matcha-border hover:border-matcha-primary text-matcha-text rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary"
+                className="h-9 px-3 bg-white border border-matcha-border hover:border-matcha-primary text-matcha-text rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary"
               >
                 <Download size={13} className="text-matcha-primary" />
                 <span>Export Data</span>
@@ -667,21 +674,30 @@ export default function AdminPage() {
               )}
             </div>
 
+
+            {/* Quick Add Product Button */}
+            <button
+              onClick={() => { setMutationNotice(null); setIsAddModalOpen(true); }} disabled={saving || isDemo || status.inventory !== 'ready'}
+              className="h-9 px-4 bg-matcha-primary hover:bg-matcha-primary-dark text-white rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-matcha-primary"
+            >
+              <Plus size={14} />
+              <span>Add Garment</span>
+            </button>
           </div>
         </header>
 
         {/* Dashboard Body Area */}
-        <div ref={adminMotionRef} className="p-6 max-w-7xl w-full mx-auto space-y-8">
+        <div ref={adminMotionRef} className="p-4 sm:p-6 max-w-7xl w-full mx-auto space-y-6">
           
           {/* ========================================================================= */}
           {/* TAB 1: OVERVIEW & KPIS (EXECUTIVE DASHBOARD)                              */}
           {/* ========================================================================= */}
-          <div className="flex flex-wrap items-center gap-3">
-            <button type="button" disabled={saving || Object.values(status).includes('loading')} onClick={() => { setSelectedOrderForModal(null); setMutationNotice(null); refresh(); }} className="px-4 py-2 rounded-lg bg-matcha-primary text-white disabled:opacity-50">Refresh data</button>
-            {saving && <span role="status">Saving changes…</span>}
-            {mutationNotice && <p role={mutationNotice.error ? 'alert' : 'status'} className={mutationNotice.error ? 'text-red-800' : 'text-green-900'}>{mutationNotice.error && `${t('errors.saveFailed')}: `}{mutationNotice.text}</p>}
-            {isDemo && <span>Demo session — changes disabled</span>}
-          </div>
+          {(saving || mutationNotice) && (
+            <div className="flex flex-wrap items-center gap-3 text-xs font-mono">
+              {saving && <span role="status">Saving changes…</span>}
+              {mutationNotice && <p role={mutationNotice.error ? 'alert' : 'status'} className={mutationNotice.error ? 'text-red-800' : 'text-green-900'}>{mutationNotice.error && `${t('errors.saveFailed')}: `}{mutationNotice.text}</p>}
+            </div>
+          )}
           {activeTab === 'media' && <MediaManager />}
           {activeTab === 'dashboard' && (
             <DashboardTab status={status} errors={errors} totalRevenue={totalRevenue} orders={orders} totalOrdersCount={totalOrdersCount} paidOrdersCount={paidOrdersCount} totalStockUnits={totalStockUnits} totalProductsCount={totalProductsCount} vipMembersCount={vipMembersCount} lowStockCount={lowStockCount} monthlyData={monthlyData} categoryDistribution={categoryDistribution} setActiveTab={setActiveTab} />
