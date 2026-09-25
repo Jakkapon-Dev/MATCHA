@@ -704,7 +704,7 @@ export default function AdminPage() {
           {activeTab === 'media' && <MediaManager key="media" />}
           {activeTab === 'lookbook' && <MediaManager key="lookbook" initialTab="looks" />}
           {activeTab === 'dashboard' && (
-            <DashboardTab status={status} errors={errors} totalRevenue={totalRevenue} orders={orders} totalOrdersCount={totalOrdersCount} paidOrdersCount={paidOrdersCount} totalStockUnits={totalStockUnits} totalProductsCount={totalProductsCount} vipMembersCount={vipMembersCount} lowStockCount={lowStockCount} monthlyData={monthlyData} categoryDistribution={categoryDistribution} setActiveTab={setActiveTab} />
+            <DashboardTab status={status} errors={errors} totalRevenue={totalRevenue} orders={orders} totalOrdersCount={totalOrdersCount} paidOrdersCount={paidOrdersCount} orderStatus={stats?.orderStatus ?? null} totalStockUnits={totalStockUnits} totalProductsCount={totalProductsCount} vipMembersCount={vipMembersCount} lowStockCount={lowStockCount} monthlyData={monthlyData} categoryDistribution={categoryDistribution} setActiveTab={setActiveTab} />
           )}
 
           {/* ========================================================================= */}
