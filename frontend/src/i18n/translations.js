@@ -11,6 +11,13 @@ export const DEFAULT_LANG = 'en';
 
 export const translations = {
   en: {
+    legalUi: {
+      back: 'Back to store',
+      draftBadge: 'Official policy draft',
+      effective: 'Effective date: {date}',
+      thaiOnly: 'These policies are published in Thai. An English version will follow once the Thai text has been reviewed.',
+      inquiries: 'For questions about our policies, write to',
+    },
     lookbookUi: {
       issueLine: 'MatchA Archive Magazine — Issue No. 04',
       issueCities: ' — Tokyo · Kyoto · Enoshima (2026 Edition)',
@@ -1035,6 +1042,13 @@ export const translations = {
   },
 
   th: {
+    legalUi: {
+      back: 'กลับไปหน้าร้าน',
+      draftBadge: 'ร่างนโยบายฉบับทางการ',
+      effective: 'มีผลตั้งแต่: {date}',
+      thaiOnly: '',
+      inquiries: 'สอบถามเกี่ยวกับนโยบายของเรา ติดต่อ',
+    },
     lookbookUi: {
       issueLine: 'นิตยสาร MatchA Archive — ฉบับที่ 04',
       issueCities: ' — โตเกียว · เกียวโต · เอโนชิมะ (ฉบับปี 2026)',
