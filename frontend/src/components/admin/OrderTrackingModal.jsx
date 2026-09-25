@@ -211,6 +211,15 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                     {order.paymentStatus || 'Unknown'}
                   </span>
                 </div>
+                {order.coupon && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-matcha-muted">Coupon:</span>
+                    <span className="text-matcha-text">
+                      <strong>{order.coupon.code}</strong>
+                      {order.coupon.type === 'free_shipping' ? ' · free shipping' : ` · −$${order.coupon.discountAmount.toFixed(2)}`}
+                    </span>
+                  </div>
+                )}
                 <div className="pt-2 border-t border-[#E5E5E5] flex items-center justify-between font-bold text-sm">
                   <span className="text-matcha-text">Total Amount:</span>
                   <span className="text-matcha-primary">${Number(order.total || 0).toFixed(2)}</span>

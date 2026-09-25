@@ -4,11 +4,12 @@ import AnalyticsTab from '../components/admin/AnalyticsTab';
 import OrdersTab from '../components/admin/OrdersTab';
 import InventoryTab from '../components/admin/InventoryTab';
 import DashboardTab from '../components/admin/DashboardTab';
+import CouponsTab from '../components/admin/CouponsTab';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import { apiErrorText } from '../services/api';
-import { Plus, BarChart3, Layers, Search, ExternalLink, ChevronRight, Download, FileSpreadsheet, FileJson, ChevronDown, LayoutDashboard, Boxes, ClipboardList, UserCheck, HardDrive, LogOut, Bell, CheckCheck, RefreshCw, MapPin } from 'lucide-react';
+import { Plus, BarChart3, Layers, Search, ExternalLink, ChevronRight, Download, FileSpreadsheet, FileJson, ChevronDown, LayoutDashboard, Boxes, ClipboardList, UserCheck, HardDrive, LogOut, Bell, CheckCheck, RefreshCw, MapPin, TicketPercent } from 'lucide-react';
 import { webpSrc } from '../utils/imageFallback';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
@@ -28,7 +29,7 @@ export default function AdminPage() {
   const { currentUser, logout } = useAuth();
   const { showToast } = useToast();
 
-  // Active Tab View: 'dashboard' | 'inventory' | 'orders' | 'analytics' | 'members' | 'backup'
+  // Active Tab View: 'media' | 'lookbook' | 'dashboard' | 'inventory' | 'orders' | 'analytics' | 'members' | 'coupons' | 'backup'
   const [activeTab, setActiveTab] = useState('dashboard');
   const adminMotionRef = useChangeMotion(activeTab);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -379,6 +380,7 @@ export default function AdminPage() {
     { id: 'orders', label: 'Orders Pipeline', icon: ClipboardList, badge: totalOrdersCount },
     { id: 'analytics', label: 'Revenue Analytics', icon: BarChart3, badge: null },
     { id: 'members', label: 'VIP Customer Registry', icon: UserCheck, badge: vipMembersCount },
+    { id: 'coupons', label: 'Coupons', icon: TicketPercent, badge: null },
     { id: 'backup', label: 'Reports & Backups', icon: HardDrive, badge: null }
   ];
 
@@ -773,6 +775,8 @@ export default function AdminPage() {
               onPageChange={(p) => changePage('members', p)}
             />
           )}
+
+          {activeTab === 'coupons' && <CouponsTab search={debouncedSearch} isDemo={isDemo} />}
 
           {/* ========================================================================= */}
           {/* TAB 6: REPORTS & SYSTEM BACKUPS                                           */}
