@@ -8,16 +8,13 @@ import { anonymizeUserData } from '../services/anonymizationService.js';
 import { User } from '../services/userStore.js';
 import { collectDashboardStats } from '../services/dashboardStats.js';
 import { authRequired, adminOnly } from '../middleware/auth.js';
+import { escapeRegex } from '../utils/regex.js';
 
 const router = express.Router();
 const databaseRequired = (req, res, next) => {
   if (mongoose.connection.readyState !== 1) return res.status(503).json({ success: false, message: 'Database unavailable' });
   next();
 };
-
-function escapeRegex(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
 
 /* GET /admin/stats — the dashboard's numbers, counted by the database.
  *

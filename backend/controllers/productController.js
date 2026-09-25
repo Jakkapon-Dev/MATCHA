@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import productsData from '../data/products.js';
 import Product, { ONE_SIZE } from '../models/Product.js';
+import { escapeRegex } from '../utils/regex.js';
 
 // Standard Display Names for Categories
 export const CATEGORY_NAMES = {
@@ -127,7 +128,7 @@ export async function getProducts(req, res) {
       }
 
       if (search && search.trim()) {
-        const escaped = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const escaped = escapeRegex(search.trim());
         const searchRegex = new RegExp(escaped, 'i');
         filter.$or = [
           { name: searchRegex },
