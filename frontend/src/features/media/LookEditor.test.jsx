@@ -7,7 +7,14 @@ import { render, screen, fireEvent, cleanup, within } from '@testing-library/rea
 const saveLook = vi.fn(async () => ({ success: true }));
 let manager;
 vi.mock('./useMediaManager', () => ({ default: () => manager }));
-vi.mock('../../context/LanguageContext.jsx', () => ({ useLanguage: () => ({ t: k => k }) }));
+vi.mock('../../context/LanguageContext.jsx', async () => {
+  const { translations } = await import('../../i18n/translations');
+  const resolve = (obj, key) => key.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
+  return { useLanguage: () => ({ lang: 'th', t: (key, vars) => {
+    const v = resolve(translations.th, key) ?? resolve(translations.en, key) ?? key;
+    return typeof v === 'string' && vars ? v.replace(/\{(\w+)\}/g, (m, n) => (vars[n] ?? m)) : v;
+  } }) };
+});
 
 const { default: MediaManager } = await import('./MediaManager');
 
@@ -43,7 +50,7 @@ const board = () => {
 };
 const openLook = () => {
   render(<MediaManager initialTab="looks" />);
-  fireEvent.change(screen.getByLabelText('เลือกลุค'), { target: { value: 'SPREAD-01' } });
+  fireEvent.change(screen.getByLabelText('เลือก Look'), { target: { value: 'SPREAD-01' } });
 };
 const pins = () => within(screen.getByTestId('pin-board')).getAllByRole('button');
 
@@ -99,7 +106,7 @@ describe('lookbook hotspot editor', () => {
 
   test('removing a pin drops it from the look', () => {
     openLook();
-    fireEvent.click(screen.getByRole('button', { name: 'นำจุดนี้ออก' }));
+    fireEvent.click(screen.getByRole('button', { name: 'ลบ Hotspot' }));
     expect(within(screen.getByTestId('pin-board')).queryAllByRole('button')).toHaveLength(0);
   });
 
@@ -107,17 +114,17 @@ describe('lookbook hotspot editor', () => {
     openLook();
     fireEvent.click(board(), { clientX: 100, clientY: 100 });
     fireEvent.change(screen.getAllByLabelText('สินค้า')[1], { target: { value: 'JACKET-1' } });
-    expect(screen.getAllByRole('alert').some(a => /อยู่ในลุคแล้ว/.test(a.textContent))).toBe(true);
+    expect(screen.getAllByRole('alert').some(a => /อยู่ใน Look แล้ว/.test(a.textContent))).toBe(true);
     expect(screen.getByRole('button', { name: 'บันทึก Lookbook' }).disabled).toBe(true);
   });
 
   test('a new look needs a photograph before pins can be placed', () => {
     render(<MediaManager initialTab="looks" />);
-    fireEvent.click(screen.getByRole('button', { name: /สร้างลุคใหม่/ }));
+    fireEvent.click(screen.getByRole('button', { name: /สร้าง Look ใหม่/ }));
     expect(screen.queryByTestId('pin-board')).toBeNull();
     fireEvent.change(screen.getByLabelText('ภาพนายแบบ / นางแบบ'), { target: { value: '/api/media/files/abc.webp' } });
     expect(screen.getByTestId('pin-board')).toBeTruthy();
-    fireEvent.change(screen.getByLabelText('ชื่อลุค'), { target: { value: 'New look' } });
+    fireEvent.change(screen.getByLabelText('ชื่อ Look'), { target: { value: 'New look' } });
     fireEvent.click(board(), { clientX: 50, clientY: 50 });
     fireEvent.change(screen.getAllByLabelText('สินค้า')[0], { target: { value: 'JACKET-1' } });
     fireEvent.click(screen.getByRole('button', { name: 'บันทึก Lookbook' }));

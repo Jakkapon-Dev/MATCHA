@@ -4,9 +4,12 @@ import { useToast } from '../../context/ToastContext.jsx';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { ORDER_STATUSES, isKnownOrderStatus } from './adminData';
+import { statusText, paymentText } from './adminI18n';
 
 export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateStatus, saveError }) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  // Dates follow the admin's language; the values they are worked out from do not change.
+  const dateLocale = lang === 'th' ? 'th-TH' : 'en-GB';
   const [currentStatus, setCurrentStatus] = useState(order?.status || 'Processing');
   const [isApplying, setIsApplying] = useState(false);
   const { showToast } = useToast();
@@ -44,7 +47,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
       if (!baseDate || Number.isNaN(baseDate.getTime())) return null;
       const d = new Date(baseDate);
       d.setDate(d.getDate() + daysOffset);
-      return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+      return d.toLocaleDateString(dateLocale, { day: 'numeric', month: 'short', year: 'numeric' });
     };
 
     const statusHierarchy = ['Pending', 'Processing', 'Shipped', 'Delivered'];
@@ -53,36 +56,36 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
 
     return [
       {
-        title: 'Delivered',
-        location: 'With the customer',
+        title: t('admin.orderModal.stepDelivered'),
+        location: t('admin.orderModal.stepDeliveredNote'),
         date: formatDate(4),
         isCompleted: effectiveIdx >= 3,
         isCurrent: order.status === 'Delivered'
       },
       {
-        title: 'Out for delivery',
-        location: 'With the courier',
+        title: t('admin.orderModal.stepOutForDelivery'),
+        location: t('admin.orderModal.stepOutForDeliveryNote'),
         date: formatDate(3),
         isCompleted: effectiveIdx >= 2,
         isCurrent: order.status === 'Shipped'
       },
       {
-        title: 'In transit',
-        location: 'On its way from the workshop',
+        title: t('admin.orderModal.stepInTransit'),
+        location: t('admin.orderModal.stepInTransitNote'),
         date: formatDate(2),
         isCompleted: effectiveIdx >= 1,
         isCurrent: false
       },
       {
-        title: 'Picked up',
-        location: 'Packed and collected',
+        title: t('admin.orderModal.stepPickedUp'),
+        location: t('admin.orderModal.stepPickedUpNote'),
         date: formatDate(1),
         isCompleted: effectiveIdx >= 1,
         isCurrent: order.status === 'Processing'
       },
       {
-        title: 'Order received',
-        location: 'Paid for and queued',
+        title: t('admin.orderModal.stepReceived'),
+        location: t('admin.orderModal.stepReceivedNote'),
         date: formatDate(0),
         isCompleted: true,
         isCurrent: order.status === 'Pending'
@@ -118,7 +121,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={`Order ${order.id}`}
+        aria-label={t('admin.orderModal.dialogLabel', { id: order.id })}
         className="relative bg-white border border-matcha-border rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl overflow-hidden z-10"
       >
         
@@ -126,7 +129,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
         <button
           onClick={onClose}
           className="absolute top-4 right-4 z-20 p-2 rounded-full bg-white/80 hover:bg-matcha-bg text-matcha-muted hover:text-matcha-text border border-matcha-border shadow-xs transition-colors cursor-pointer"
-          title="Close Dialog"
+          title={t('admin.orderModal.closeTitle')}
         >
           <X size={18} />
         </button>
@@ -158,7 +161,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
               {/* Customer Name */}
               <div className="space-y-1">
                 <span className="text-[11px] font-mono uppercase text-matcha-muted font-medium tracking-wide">
-                  Customer Name
+                  {t('admin.orderModal.customerName')}
                 </span>
                 <p className="text-sm sm:text-base font-bold text-matcha-text tracking-tight">
                   {order.customer}
@@ -168,10 +171,10 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
               {/* Customer Contact */}
               <div className="space-y-1">
                 <span className="text-[11px] font-mono uppercase text-matcha-muted font-medium tracking-wide">
-                  Customer Contact
+                  {t('admin.orderModal.customerContact')}
                 </span>
                 <p className={`text-xs sm:text-sm font-mono font-semibold ${customerPhone ? 'text-[#222222]' : 'text-[#888888]'}`}>
-                  {customerPhone || 'Not on this order'}
+                  {customerPhone || t('admin.orderModal.notOnOrder')}
                 </p>
                 {order.email && (
                   <p className="text-xs font-mono text-matcha-muted">
@@ -183,21 +186,21 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
               {/* Delivery Address */}
               <div className="space-y-1">
                 <span className="text-[11px] font-mono uppercase text-matcha-muted font-medium tracking-wide">
-                  Delivery Address
+                  {t('admin.orderModal.deliveryAddress')}
                 </span>
                 <p className={`text-xs leading-relaxed font-sans ${deliveryAddress ? 'text-[#333333]' : 'text-[#888888]'}`}>
-                  {deliveryAddress || 'Not on this order'}
+                  {deliveryAddress || t('admin.orderModal.notOnOrder')}
                 </p>
               </div>
 
               {/* Order Package & Amount Breakdown */}
               <div className="p-3.5 rounded-2xl bg-white border border-[#E5E5E5] shadow-2xs space-y-2 font-mono text-xs">
                 <div className="flex items-center justify-between text-matcha-muted">
-                  <span>Items Ordered</span>
-                  <span className="font-bold text-matcha-text">{order.items} {order.items > 1 ? 'items' : 'item'}</span>
+                  <span>{t('admin.orderModal.itemsOrdered')}</span>
+                  <span className="font-bold text-matcha-text">{order.items} {order.items > 1 ? t('admin.orderModal.itemMany') : t('admin.orderModal.itemOne')}</span>
                 </div>
                 <div className="flex items-center justify-between text-matcha-muted">
-                  <span>Payment Status</span>
+                  <span>{t('admin.orderModal.paymentStatus')}</span>
                   {/* An order with no payment status is unknown, not paid. Guessing
                       "Paid" from the order status put a green PAID badge on money
                       nobody had confirmed arriving. */}
@@ -208,20 +211,20 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                       ? 'bg-emerald-100 text-emerald-800'
                       : 'bg-amber-100 text-amber-800'
                   }`}>
-                    {order.paymentStatus || 'Unknown'}
+                    {order.paymentStatus ? paymentText(t, order.paymentStatus) : t('admin.status.unknown')}
                   </span>
                 </div>
                 {order.coupon && (
                   <div className="flex items-center justify-between">
-                    <span className="text-matcha-muted">Coupon:</span>
+                    <span className="text-matcha-muted">{t('admin.orderModal.coupon')}</span>
                     <span className="text-matcha-text">
                       <strong>{order.coupon.code}</strong>
-                      {order.coupon.type === 'free_shipping' ? ' · free shipping' : ` · −$${order.coupon.discountAmount.toFixed(2)}`}
+                      {order.coupon.type === 'free_shipping' ? ` · ${t('admin.orderModal.freeShipping')}` : ` · −$${order.coupon.discountAmount.toFixed(2)}`}
                     </span>
                   </div>
                 )}
                 <div className="pt-2 border-t border-[#E5E5E5] flex items-center justify-between font-bold text-sm">
-                  <span className="text-matcha-text">Total Amount:</span>
+                  <span className="text-matcha-text">{t('admin.orderModal.totalAmount')}</span>
                   <span className="text-matcha-primary">${Number(order.total || 0).toFixed(2)}</span>
                 </div>
               </div>
@@ -229,15 +232,15 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
               {/* Seller Name & Support */}
               <div className="pt-2 space-y-3 border-t border-[#E5E5E5] text-xs">
                 <div className="space-y-0.5">
-                  <span className="text-[11px] font-mono uppercase text-matcha-muted">Seller Name</span>
+                  <span className="text-[11px] font-mono uppercase text-matcha-muted">{t('admin.orderModal.sellerName')}</span>
                   <p className="font-semibold text-matcha-text">MatchA Apparel Private Limited</p>
                 </div>
                 {/* The support number and mailbox that sat here were invented, and
                     "(See Number)" was styled as a link with nothing behind it.
                     There is no support desk to point at yet, so this says that. */}
                 <div className="space-y-0.5">
-                  <span className="text-[11px] font-mono uppercase text-matcha-muted">Seller Support</span>
-                  <p className="font-mono text-[11px] text-[#888888]">No support contact configured</p>
+                  <span className="text-[11px] font-mono uppercase text-matcha-muted">{t('admin.orderModal.sellerSupport')}</span>
+                  <p className="font-mono text-[11px] text-[#888888]">{t('admin.orderModal.noSupport')}</p>
                 </div>
               </div>
 
@@ -258,14 +261,14 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                 <div className="flex items-center justify-between pb-4 border-b border-[#E5E5E5] gap-4">
                   <div>
                     <span className="text-[10px] font-mono uppercase text-matcha-muted tracking-wider block">
-                      Order No.
+                      {t('admin.orderModal.orderNo')}
                     </span>
                     <span className="text-sm sm:text-base font-black font-mono text-matcha-text tracking-tight">
                       {order.id}
                     </span>
                   </div>
                   <div className="px-3 py-1 rounded-lg bg-matcha-bg border border-matcha-border text-matcha-muted font-mono text-[10px] tracking-wider uppercase">
-                    No carrier assigned
+                    {t('admin.orderModal.noCarrier')}
                   </div>
                 </div>
 
@@ -273,7 +276,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                 <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                   <div>
                     <span className="text-xs text-matcha-muted font-medium font-sans">
-                      your order is
+                      {t('admin.orderModal.yourOrderIs')}
                     </span>
                     <h2 className={`text-2xl sm:text-3xl font-extrabold tracking-tight capitalize mt-0.5 ${
                       order.status === 'Delivered'
@@ -286,10 +289,10 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                         ? 'text-red-700'
                         : 'text-amber-700'
                     }`}>
-                      {order.status}
+                      {statusText(t, order.status)}
                     </h2>
                     <p className="text-xs text-matcha-muted font-sans mt-1">
-                      as on {new Date(order.date || '2026-08-25').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', weekday: 'long' })}
+                      {t('admin.orderModal.asOn', { date: new Date(order.date || '2026-08-25').toLocaleDateString(dateLocale, { day: 'numeric', month: 'short', year: 'numeric', weekday: 'long' }) })}
                     </p>
 
                   </div>
@@ -298,22 +301,22 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                   <div className="flex flex-col items-start sm:items-end gap-1.5 text-xs font-mono">
                     <button
                       type="button"
-                      onClick={() => showToast('Returns are not connected yet', 'info')}
+                      onClick={() => showToast(t('admin.orderModal.returnsToast'), 'info')}
                       className="flex items-center gap-1.5 text-matcha-text hover:text-matcha-primary font-bold underline transition-colors cursor-pointer"
                     >
                       <RotateCcw size={13} />
-                      <span>Return Order</span>
+                      <span>{t('admin.orderModal.returnOrder')}</span>
                     </button>
                     <button
                       type="button"
-                      onClick={() => showToast('Exchanges are not connected yet', 'info')}
+                      onClick={() => showToast(t('admin.orderModal.exchangesToast'), 'info')}
                       className="flex items-center gap-1.5 text-matcha-text hover:text-matcha-primary font-bold underline transition-colors cursor-pointer"
                     >
                       <ArrowRightLeft size={13} />
-                      <span>Exchange Item</span>
+                      <span>{t('admin.orderModal.exchangeItem')}</span>
                     </button>
                     <div className="text-[10px] text-matcha-muted mt-1 sm:text-right">
-                      For delivery queries, contact the customer directly.
+                      {t('admin.orderModal.deliveryQueries')}
                     </div>
                   </div>
                 </div>
@@ -322,11 +325,10 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                 <div className="space-y-4 pt-2">
                   <div>
                     <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-matcha-text">
-                      Expected schedule
+                      {t('admin.orderModal.scheduleTitle')}
                     </h4>
                     <p className="text-[10px] text-[#888888] font-sans mt-0.5">
-                      Stages follow the order's status. Dates are worked out from the
-                      order date, not reported by a carrier.
+                      {t('admin.orderModal.scheduleNote')}
                     </p>
                   </div>
 
@@ -361,7 +363,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                             </div>
                             {step.date && (
                               <span className="text-[10px] font-mono text-[#888888] shrink-0">
-                                est. {step.date}
+                                {t('admin.orderModal.estimated', { date: step.date })}
                               </span>
                             )}
                           </div>
@@ -385,7 +387,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
           
           <div className="flex items-center gap-2 text-xs font-mono text-matcha-muted">
             <Clock size={14} className="text-matcha-primary" />
-            <span>Order ID: <strong className="text-matcha-text">{order.id}</strong></span>
+            <span>{t('admin.orderModal.orderId')} <strong className="text-matcha-text">{order.id}</strong></span>
           </div>
 
           {saveError && <p role="alert" className="text-red-800">{t('errors.saveFailed')}: {saveError}</p>}
@@ -393,7 +395,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
           <div className="flex items-center justify-end gap-3 flex-wrap">
             <div className="flex items-center gap-2">
               <span className="text-xs font-mono font-bold text-matcha-text shrink-0">
-                Change Status:
+                {t('admin.orderModal.changeStatus')}
               </span>
               <select
                 value={currentStatus}
@@ -402,10 +404,10 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
               >
                 {!isKnownOrderStatus(currentStatus) && (
                   // A stored status outside the list is shown, not replaced by Pending.
-                  <option value={currentStatus} disabled>{currentStatus}</option>
+                  <option value={currentStatus} disabled>{statusText(t, currentStatus)}</option>
                 )}
                 {ORDER_STATUSES.map((status) => (
-                  <option key={status} value={status}>{status}</option>
+                  <option key={status} value={status}>{statusText(t, status)}</option>
                 ))}
               </select>
             </div>
@@ -417,7 +419,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
               className="px-5 py-2 rounded-xl bg-matcha-primary hover:bg-matcha-primary-dark text-white font-mono text-xs font-bold flex items-center gap-2 transition-all shadow-md cursor-pointer active:scale-98 disabled:opacity-50"
             >
               <Check size={14} className={isApplying ? 'animate-spin' : ''} />
-              <span>{isApplying ? 'Saving...' : 'Apply Status'}</span>
+              <span>{isApplying ? t('admin.orderModal.saving') : t('admin.orderModal.applyStatus')}</span>
             </button>
           </div>
 

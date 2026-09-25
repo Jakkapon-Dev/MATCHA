@@ -20,9 +20,16 @@ vi.mock('../services/api', () => ({
   apiErrorText: (error) => error?.message || 'failed'
 }));
 
-vi.mock('../context/LanguageContext.jsx', () => ({
-  useLanguage: () => ({ t: (key) => key, lang: 'en' })
-}));
+// A real resolver over the English copy, so the English assertions below read
+// the words an admin sees rather than translation keys.
+vi.mock('../context/LanguageContext.jsx', async () => {
+  const { translations } = await import('../i18n/translations');
+  const resolve = (obj, key) => key.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
+  return { useLanguage: () => ({ lang: 'en', t: (key, vars) => {
+    const v = resolve(translations.en, key) ?? key;
+    return typeof v === 'string' && vars ? v.replace(/\{(\w+)\}/g, (m, n) => (vars[n] ?? m)) : v;
+  } }) };
+});
 vi.mock('../context/AuthContext.jsx', () => ({
   useAuth: () => ({ currentUser: { id: 'admin-1', name: 'Admin', role: 'Admin' }, logout: vi.fn() })
 }));

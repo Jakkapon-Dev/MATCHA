@@ -3,14 +3,16 @@ import { Plus, Pencil, Power, TicketPercent } from 'lucide-react';
 import { api, apiErrorText } from '../../services/api';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import CouponFormModal from './CouponFormModal';
+import { categoryText } from './adminI18n';
 
+// Status ids are what the API filters on; only the labels are translated.
 const STATUSES = [
-  { id: 'all', label: 'All' },
-  { id: 'active', label: 'Active' },
-  { id: 'scheduled', label: 'Scheduled' },
-  { id: 'expired', label: 'Expired' },
-  { id: 'exhausted', label: 'Used up' },
-  { id: 'disabled', label: 'Disabled' }
+  { id: 'all', labelKey: 'admin.common.all' },
+  { id: 'active', labelKey: 'admin.coupons.statusActive' },
+  { id: 'scheduled', labelKey: 'admin.coupons.statusScheduled' },
+  { id: 'expired', labelKey: 'admin.coupons.statusExpired' },
+  { id: 'exhausted', labelKey: 'admin.coupons.statusExhausted' },
+  { id: 'disabled', labelKey: 'admin.coupons.statusDisabled' }
 ];
 const STATUS_TONE = {
   active: 'bg-green-50 text-green-800 border-green-200',
@@ -19,16 +21,26 @@ const STATUS_TONE = {
   exhausted: 'bg-amber-50 text-amber-800 border-amber-200',
   disabled: 'bg-red-50 text-red-800 border-red-200'
 };
-const STATUS_LABEL = Object.fromEntries(STATUSES.map(s => [s.id, s.label]));
+const STATUS_LABEL_KEY = Object.fromEntries(STATUSES.map(s => [s.id, s.labelKey]));
 
-const formatDate = (value) => (value ? new Date(value).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—');
+const formatDate = (value, lang) => (value ? new Date(value).toLocaleString(lang === 'th' ? 'th-TH' : 'en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—');
 const money = (n) => `$${Number(n).toFixed(2)}`;
 
-function discountDetail(c) {
+/* Built from type/value on the client (same wording as the server's English
+   `label`) so the discount reads in the admin's language. */
+function discountLabel(c, t) {
+  if (c.type === 'percentage') return t('admin.coupons.labelPercentage', { value: c.value });
+  if (c.type === 'fixed_amount') return t('admin.coupons.labelFixed', { value: Number(c.value).toFixed(2) });
+  if (c.type === 'free_shipping') return t('admin.coupons.labelFreeShipping');
+  return c.label;
+}
+
+function discountDetail(c, t) {
   const parts = [];
-  if (c.type === 'percentage' && c.maxDiscountAmount != null) parts.push(`max ${money(c.maxDiscountAmount)}`);
-  if (c.minOrderAmount > 0) parts.push(`min ${money(c.minOrderAmount)}`);
-  const scope = [...(c.applicableCategories || []), ...(c.applicableProducts?.length ? [`${c.applicableProducts.length} product${c.applicableProducts.length > 1 ? 's' : ''}`] : [])];
+  if (c.type === 'percentage' && c.maxDiscountAmount != null) parts.push(t('admin.coupons.detailMax', { amount: money(c.maxDiscountAmount) }));
+  if (c.minOrderAmount > 0) parts.push(t('admin.coupons.detailMin', { amount: money(c.minOrderAmount) }));
+  const count = c.applicableProducts?.length || 0;
+  const scope = [...(c.applicableCategories || []).map(cat => categoryText(t, cat)), ...(count ? [t(count > 1 ? 'admin.coupons.productMany' : 'admin.coupons.productOne', { count })] : [])];
   if (scope.length) parts.push(scope.join(', '));
   return parts.join(' · ');
 }
@@ -37,7 +49,7 @@ function discountDetail(c) {
    deleted from this screen: orders keep a snapshot of the coupon they used,
    and disabling keeps that history readable while stopping new use. */
 export default function CouponsTab({ search = '', isDemo = false }) {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
   const [status, setStatus] = useState('all');
   const [coupons, setCoupons] = useState([]);
   const [state, setState] = useState('loading');
@@ -70,7 +82,7 @@ export default function CouponsTab({ search = '', isDemo = false }) {
       const res = original?.id ? await api.updateCoupon(original.id, payload) : await api.createCoupon(payload);
       if (!res?.success) throw new Error(res?.message || t('errors.saveFailed'));
       setEditing(null);
-      setNotice({ error: false, text: `${res.data.code} saved` });
+      setNotice({ error: false, text: t('admin.coupons.noticeSaved', { code: res.data.code }) });
       reload();
     } catch (err) {
       setSaveError(apiErrorText(err, t));
@@ -86,7 +98,7 @@ export default function CouponsTab({ search = '', isDemo = false }) {
     try {
       const res = await api.setCouponActive(coupon.id, !coupon.active);
       if (!res?.success) throw new Error(res?.message || t('errors.saveFailed'));
-      setNotice({ error: false, text: `${coupon.code} ${res.data.active ? 'enabled' : 'disabled'}` });
+      setNotice({ error: false, text: t(res.data.active ? 'admin.coupons.noticeEnabled' : 'admin.coupons.noticeDisabled', { code: coupon.code }) });
       reload();
     } catch (err) {
       setNotice({ error: true, text: apiErrorText(err, t) });
@@ -98,16 +110,16 @@ export default function CouponsTab({ search = '', isDemo = false }) {
   return (
     <div className="space-y-5 animate-fade-in">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div role="group" aria-label="Filter by status" className="flex gap-1.5 overflow-x-auto [scrollbar-width:thin] -mx-1 px-1 pb-1">
+        <div role="group" aria-label={t('admin.coupons.filterByStatus')} className="flex gap-1.5 overflow-x-auto [scrollbar-width:thin] -mx-1 px-1 pb-1">
           {STATUSES.map(s => (
             <button
               key={s.id}
               type="button"
               aria-pressed={status === s.id}
               onClick={() => setStatus(s.id)}
-              className={`shrink-0 h-9 px-3.5 rounded-xl font-mono text-xs font-bold border transition-colors cursor-pointer ${status === s.id ? 'bg-matcha-primary text-white border-matcha-primary' : 'bg-white text-matcha-muted border-matcha-border hover:border-matcha-primary'}`}
+              className={`shrink-0 whitespace-nowrap h-9 px-3.5 rounded-xl font-mono text-xs font-bold border transition-colors cursor-pointer ${status === s.id ? 'bg-matcha-primary text-white border-matcha-primary' : 'bg-white text-matcha-muted border-matcha-border hover:border-matcha-primary'}`}
             >
-              {s.label}
+              {t(s.labelKey)}
             </button>
           ))}
         </div>
@@ -115,9 +127,9 @@ export default function CouponsTab({ search = '', isDemo = false }) {
           type="button"
           onClick={() => openForm(null)}
           disabled={isDemo}
-          className="shrink-0 h-9 px-4 rounded-xl bg-matcha-primary hover:bg-matcha-primary-dark text-white font-mono text-xs font-bold flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          className="shrink-0 whitespace-nowrap h-9 px-4 rounded-xl bg-matcha-primary hover:bg-matcha-primary-dark text-white font-mono text-xs font-bold flex items-center justify-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
         >
-          <Plus size={14} /> Add Coupon
+          <Plus size={14} /> {t('admin.coupons.addCoupon')}
         </button>
       </div>
 
@@ -135,13 +147,13 @@ export default function CouponsTab({ search = '', isDemo = false }) {
             <table className="w-full min-w-[860px] text-left font-mono text-xs">
               <thead className="bg-matcha-bg/60 border-b border-matcha-border text-[10px] uppercase tracking-[0.12em] text-matcha-muted">
                 <tr>
-                  <th className="p-4 font-bold">Code</th>
-                  <th className="p-4 font-bold">Status</th>
-                  <th className="p-4 font-bold">Discount</th>
-                  <th className="p-4 font-bold">Usage</th>
-                  <th className="p-4 font-bold">Starts</th>
-                  <th className="p-4 font-bold">Expires</th>
-                  <th className="p-4 font-bold text-right">Actions</th>
+                  <th className="p-4 font-bold whitespace-nowrap">{t('admin.coupons.colCode')}</th>
+                  <th className="p-4 font-bold whitespace-nowrap">{t('admin.coupons.colStatus')}</th>
+                  <th className="p-4 font-bold whitespace-nowrap">{t('admin.coupons.colDiscount')}</th>
+                  <th className="p-4 font-bold whitespace-nowrap">{t('admin.coupons.colUsage')}</th>
+                  <th className="p-4 font-bold whitespace-nowrap">{t('admin.coupons.colStarts')}</th>
+                  <th className="p-4 font-bold whitespace-nowrap">{t('admin.coupons.colExpires')}</th>
+                  <th className="p-4 font-bold whitespace-nowrap text-right">{t('admin.coupons.colActions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-matcha-border/60">
@@ -149,36 +161,36 @@ export default function CouponsTab({ search = '', isDemo = false }) {
                 {state === 'ready' && coupons.length === 0 && (
                   <tr><td colSpan={7} className="p-10 text-center text-matcha-muted">
                     <TicketPercent size={22} className="mx-auto mb-2 text-matcha-border" aria-hidden="true" />
-                    {search || status !== 'all' ? 'No coupons match the current filters.' : 'No coupons yet. Add the first one.'}
+                    {search || status !== 'all' ? t('admin.coupons.emptyFiltered') : t('admin.coupons.empty')}
                   </td></tr>
                 )}
                 {coupons.map(c => (
                   <tr key={c.id || `builtin-${c.code}`} className="hover:bg-matcha-bg/50 align-top">
                     <td className="p-4">
                       <div className="font-bold text-matcha-primary text-sm">{c.code}</div>
-                      <div className="text-[11px] text-matcha-muted mt-0.5 max-w-56 truncate">{c.builtIn ? 'Built-in code' : c.description || '—'}</div>
+                      <div className="text-[11px] text-matcha-muted mt-0.5 max-w-56 truncate">{c.builtIn ? t('admin.coupons.builtInCode') : c.description || '—'}</div>
                     </td>
                     <td className="p-4">
-                      <span className={`inline-block px-2 py-0.5 rounded-md border text-[10px] font-bold ${STATUS_TONE[c.status] || STATUS_TONE.expired}`}>{STATUS_LABEL[c.status] || c.status}</span>
+                      <span className={`inline-block whitespace-nowrap px-2 py-0.5 rounded-md border text-[10px] font-bold ${STATUS_TONE[c.status] || STATUS_TONE.expired}`}>{STATUS_LABEL_KEY[c.status] ? t(STATUS_LABEL_KEY[c.status]) : c.status}</span>
                     </td>
                     <td className="p-4">
-                      <div className="font-bold text-matcha-text">{c.label}</div>
-                      {discountDetail(c) && <div className="text-[11px] text-matcha-muted mt-0.5 max-w-60">{discountDetail(c)}</div>}
+                      <div className="font-bold text-matcha-text">{discountLabel(c, t)}</div>
+                      {discountDetail(c, t) && <div className="text-[11px] text-matcha-muted mt-0.5 max-w-60">{discountDetail(c, t)}</div>}
                     </td>
                     <td className="p-4 tabular-nums">
                       <div className="text-matcha-text">{c.builtIn ? '—' : `${c.usedCount || 0} / ${c.usageLimit ?? '∞'}`}</div>
-                      {c.perUserLimit != null && <div className="text-[11px] text-matcha-muted mt-0.5">{c.perUserLimit} per shopper</div>}
+                      {c.perUserLimit != null && <div className="text-[11px] text-matcha-muted mt-0.5">{t('admin.coupons.perShopper', { count: c.perUserLimit })}</div>}
                     </td>
-                    <td className="p-4 text-matcha-muted whitespace-nowrap">{formatDate(c.startsAt)}</td>
-                    <td className="p-4 text-matcha-muted whitespace-nowrap">{formatDate(c.expiresAt)}</td>
+                    <td className="p-4 text-matcha-muted whitespace-nowrap">{formatDate(c.startsAt, lang)}</td>
+                    <td className="p-4 text-matcha-muted whitespace-nowrap">{formatDate(c.expiresAt, lang)}</td>
                     <td className="p-4">
                       <div className="flex justify-end gap-1.5">
-                        <button type="button" onClick={() => openForm(c)} disabled={isDemo} aria-label={`${c.builtIn ? 'Customise' : 'Edit'} ${c.code}`} className="h-8 px-2.5 rounded-lg border border-matcha-border hover:border-matcha-primary text-matcha-text flex items-center gap-1 disabled:opacity-50 cursor-pointer">
-                          <Pencil size={12} /> {c.builtIn ? 'Customise' : 'Edit'}
+                        <button type="button" onClick={() => openForm(c)} disabled={isDemo} aria-label={t(c.builtIn ? 'admin.coupons.customiseAria' : 'admin.coupons.editAria', { code: c.code })} className="h-8 px-2.5 whitespace-nowrap rounded-lg border border-matcha-border hover:border-matcha-primary text-matcha-text flex items-center gap-1 disabled:opacity-50 cursor-pointer">
+                          <Pencil size={12} /> {c.builtIn ? t('admin.coupons.customise') : t('admin.common.edit')}
                         </button>
                         {!c.builtIn && (
-                          <button type="button" onClick={() => toggle(c)} disabled={isDemo || saving} aria-label={`${c.active ? 'Disable' : 'Enable'} ${c.code}`} className={`h-8 px-2.5 rounded-lg border flex items-center gap-1 disabled:opacity-50 cursor-pointer ${c.active ? 'border-red-200 text-red-800 hover:bg-red-50' : 'border-green-200 text-green-800 hover:bg-green-50'}`}>
-                            <Power size={12} /> {c.active ? 'Disable' : 'Enable'}
+                          <button type="button" onClick={() => toggle(c)} disabled={isDemo || saving} aria-label={t(c.active ? 'admin.coupons.disableAria' : 'admin.coupons.enableAria', { code: c.code })} className={`h-8 px-2.5 whitespace-nowrap rounded-lg border flex items-center gap-1 disabled:opacity-50 cursor-pointer ${c.active ? 'border-red-200 text-red-800 hover:bg-red-50' : 'border-green-200 text-green-800 hover:bg-green-50'}`}>
+                            <Power size={12} /> {c.active ? t('admin.common.disable') : t('admin.common.enable')}
                           </button>
                         )}
                       </div>
