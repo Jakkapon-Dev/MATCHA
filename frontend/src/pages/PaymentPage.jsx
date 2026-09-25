@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Elements } from '@stripe/react-stripe-js';
 import { useLanguage } from '../context/LanguageContext.jsx';
@@ -12,7 +12,7 @@ import OrderSuccessModal from '../components/payment/OrderSuccessModal';
 import { api, apiErrorText } from '../services/api';
 import { useStoreMode } from '../context/StoreModeContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, shippingCostFor } from '../config/shipping';
-import { bundleDiscountFor, couponFor, discountFor, normaliseCode, takePendingCoupon } from '../config/coupons';
+import { bundleDiscountFor, normaliseCode, takePendingCoupon } from '../config/coupons';
 import PreviewNote from '../components/ui/PreviewNote';
 import { stripePromise } from '../lib/stripe';
 import { QrCode, Truck, Shield, AlertTriangle, RotateCcw } from 'lucide-react';
@@ -74,6 +74,7 @@ export default function PaymentPage() {
   const [couponCode, setCouponCode] = useState('');
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [couponError, setCouponError] = useState('');
+  const [couponBusy, setCouponBusy] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [createdOrder, setCreatedOrder] = useState(null);
@@ -109,12 +110,50 @@ export default function PaymentPage() {
     }
   }, [cartReady, cartItems, showSuccessModal, createdOrder, navigate]);
 
+  /* What a coupon is worth is the server's answer for this exact bag, never
+     a table in the browser. `cartKey` records which bag the answer was for,
+     so a bag that changes underneath an applied coupon is asked about again. */
+  const cartKey = cartItems.map(item => `${item.id || item.productId}:${Number(item.quantity) || 1}`).join('|');
+  const couponMessage = useCallback((err) => {
+    const key = err?.code ? `checkout.couponErrors.${err.code}` : null;
+    const translated = key ? t(key) : null;
+    return translated && translated !== key ? translated : apiErrorText(err, t);
+  }, [t]);
+  const applyCouponCode = useCallback(async (rawCode, { quiet = false } = {}) => {
+    const code = normaliseCode(rawCode);
+    if (!code) return false;
+    setCouponBusy(true);
+    setCouponError('');
+    try {
+      const res = await api.quoteCoupon(code, cartItems);
+      if (!res?.success || !res.data) throw new Error(t('checkout.promoInvalid'));
+      const { data } = res;
+      setAppliedCoupon({ code: data.code, type: data.type, label: data.label, discountAmount: Number(data.discountAmount) || 0, freeShipping: Boolean(data.freeShipping), cartKey });
+      if (!quiet) showToast(`Applied coupon: ${data.code} (${data.label})`, 'success');
+      return true;
+    } catch (err) {
+      setAppliedCoupon(null);
+      setCouponError(couponMessage(err));
+      return false;
+    } finally {
+      setCouponBusy(false);
+    }
+  }, [cartItems, cartKey, couponMessage, showToast, t]);
+
+  // A code picked up on the home page waits for the real bag before it is priced.
+  const pendingCouponTakenRef = useRef(false);
   useEffect(() => {
+    if (!cartReady || cartItems.length === 0 || pendingCouponTakenRef.current) return;
+    pendingCouponTakenRef.current = true;
     const pending = takePendingCoupon();
-    if (!pending) return;
-    setAppliedCoupon(pending);
-    showToast(`Applied coupon ${pending.code} (${pending.label})`, 'success');
-  }, [showToast]);
+    if (pending) applyCouponCode(pending);
+  }, [cartReady, cartItems.length, applyCouponCode]);
+
+  useEffect(() => {
+    if (appliedCoupon && cartItems.length > 0 && appliedCoupon.cartKey !== cartKey && !couponBusy) {
+      applyCouponCode(appliedCoupon.code, { quiet: true });
+    }
+  }, [appliedCoupon, cartKey, cartItems.length, couponBusy, applyCouponCode]);
 
   // Pricing calculations
   const subtotal = cartItems.reduce(
@@ -123,10 +162,10 @@ export default function PaymentPage() {
   );
 
   const shippingCost = shippingCostFor(subtotal, selectedShipping, {
-    freeShippingCoupon: appliedCoupon?.type === 'free_shipping'
+    freeShippingCoupon: Boolean(appliedCoupon?.freeShipping)
   });
 
-  const discount = Math.round((discountFor(appliedCoupon, subtotal) + bundleDiscountFor(cartItems)) * 100) / 100;
+  const discount = Math.round(((appliedCoupon?.discountAmount || 0) + bundleDiscountFor(cartItems)) * 100) / 100;
 
   const total = Math.max(0, subtotal + shippingCost - discount);
 
@@ -136,28 +175,20 @@ export default function PaymentPage() {
   const shippingOptionsForBag = SHIPPING_OPTIONS.map((option) => ({
     ...option,
     listPrice: option.price,
-    price: shippingCostFor(subtotal, option.id, { freeShippingCoupon: appliedCoupon?.type === 'free_shipping' })
+    price: shippingCostFor(subtotal, option.id, { freeShippingCoupon: Boolean(appliedCoupon?.freeShipping) })
   }));
 
-  const handleApplyCoupon = (e) => {
+  /* A code the server does not accept is answered with the reason it gives
+     (expired, minimum order, …) and never with a list of codes that do work:
+     naming them once turned a wrong guess into a working discount. */
+  const handleApplyCoupon = async (e) => {
     e.preventDefault();
-    setCouponError('');
-    const code = normaliseCode(couponCode);
-    const coupon = couponFor(code);
-
-    if (!coupon) {
-      /* Naming the codes that do work turned one wrong guess into a working
-         discount. MATCHA15 is advertised on the front page and sits in this
-         box's own placeholder, so nothing is lost by leaving it out — but
-         FREESHIP is published nowhere else, and this message was the only
-         place it could be found. */
+    if (couponBusy) return;
+    if (!normaliseCode(couponCode)) {
       setCouponError(t('checkout.promoInvalid'));
       return;
     }
-
-    setAppliedCoupon({ ...coupon, code });
-    showToast(`Applied coupon: ${code} (${coupon.label}) 🎉`);
-    setCouponCode('');
+    if (await applyCouponCode(couponCode)) setCouponCode('');
   };
 
   const handleRemoveCoupon = () => {
@@ -391,7 +422,14 @@ export default function PaymentPage() {
     } catch (err) {
       // ออเดอร์ที่เซิร์ฟเวอร์ปฏิเสธคือออเดอร์ที่ไม่เกิดขึ้น — อย่าบอกลูกค้าว่าสำเร็จ
       console.error('Order creation failed:', err.message);
-      const message = apiErrorText(err, t);
+      const isCouponError = String(err?.code || '').startsWith('COUPON_');
+      const message = isCouponError ? couponMessage(err) : apiErrorText(err, t);
+      // A coupon the server refused at the last moment (used up, just
+      // disabled) comes off the bag so the totals on screen are real again.
+      if (isCouponError) {
+        setAppliedCoupon(null);
+        setCouponError(message);
+      }
       showToast(message, 'error');
       setOrderError(message);
     } finally {
@@ -544,6 +582,7 @@ export default function PaymentPage() {
               onApplyCoupon={handleApplyCoupon}
               appliedCoupon={appliedCoupon}
               couponError={couponError}
+              couponBusy={couponBusy}
               onRemoveCoupon={handleRemoveCoupon}
             />
           </div>

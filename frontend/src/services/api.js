@@ -97,6 +97,8 @@ function apiError(status, serverMessage, body) {
   // shopper can act on and the server's own wording is Thai-only.
   err.status = status;
   if (body && typeof body === 'object' && body.shortfall) err.shortfall = body.shortfall;
+  // Business error codes (COUPON_EXPIRED, …) so a page can say it in the shopper's language.
+  if (body && typeof body === 'object' && typeof body.code === 'string') err.code = body.code;
   return err;
 }
 
@@ -206,6 +208,17 @@ export const api = {
   markNotificationRead: (id) => fetchWithFallback(`/admin/notifications/${id}/read`, { method: 'PATCH' }),
   markAllNotificationsRead: () => fetchWithFallback('/admin/notifications/read-all', { method: 'PATCH' }),
   getStoreConfig: () => fetchWithFallback('/store-config'),
+  /* Coupons. Checkout asks the server what a code is worth for this cart and
+     shows that figure; only product ids and quantities are sent. */
+  quoteCoupon: (code, items) => fetchWithFallback('/coupons/quote', {
+    method: 'POST',
+    body: JSON.stringify({ code, items: items.map(item => ({ productId: item.id || item.productId, quantity: Number(item.quantity) || 1 })) })
+  }),
+  getAdminCoupons: ({ search = '', status = 'all', signal } = {}) =>
+    fetchWithFallback(`/admin/coupons?${new URLSearchParams({ search, status })}`, { signal: requestSignal(signal) }),
+  createCoupon: (data) => fetchWithFallback('/admin/coupons', { method: 'POST', body: JSON.stringify(data) }),
+  updateCoupon: (id, data) => fetchWithFallback(`/admin/coupons/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(data) }),
+  setCouponActive: (id, active) => fetchWithFallback(`/admin/coupons/${encodeURIComponent(id)}/status`, { method: 'PATCH', body: JSON.stringify({ active }) }),
   // Check backend server health status
   checkHealth: async () => {
     return fetchWithFallback('/health');

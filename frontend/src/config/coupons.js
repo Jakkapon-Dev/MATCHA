@@ -1,41 +1,15 @@
-// ตารางคูปองชุดเดียวกับที่เซิร์ฟเวอร์ใช้ตัดสิน — คู่กับ backend/config/coupons.js
+// รหัสส่วนลดตัดสินที่เซิร์ฟเวอร์ที่เดียว
 //
-// เซิร์ฟเวอร์เป็นคนคิดส่วนลดจริงตอนสร้างออเดอร์ ฝั่งหน้าเว็บมีตารางนี้ไว้แสดงผล
-// ล่วงหน้าเท่านั้น ถ้าสองไฟล์นี้ไม่ตรงกัน ยอดบนจอจะไม่ตรงกับที่ถูกเรียกเก็บจริง
-// ซึ่งเป็นความเสี่ยงแบบเดียวกับที่เคยเกิดกับค่าจัดส่งมาแล้ว
-//
-// ก่อนหน้านี้ไม่มีไฟล์นี้: รหัสถูกประกาศซ้ำอยู่สองที่ ที่หัว PaymentPage.jsx
-// และหัว backend/routes/orderRoutes.js โดยไม่มีอะไรยึดให้ตรงกัน
+// หน้าเว็บไม่มีตารางคูปองหรือสูตรคิดส่วนลดของตัวเองแล้ว คูปองอยู่ใน MongoDB
+// ให้แอดมินจัดการได้ หน้าชำระเงินส่งรหัสไปถาม POST /api/coupons/quote แล้วแสดง
+// ส่วนลดตามตัวเลขที่เซิร์ฟเวอร์ตอบกลับมา และตอนสร้างออเดอร์เซิร์ฟเวอร์ก็คิดใหม่
+// อีกรอบจากรหัสอย่างเดียว ตัวเลขบนจอจึงไม่มีทางต่างจากยอดที่ถูกเรียกเก็บ
 //
 import { productsData } from '../data/productsData.js';
-
-// `label` อยู่ฝั่งนี้ที่เดียว เพราะเป็นข้อความที่แสดงผล ไม่ใช่ตัวเลขที่ใช้คิดเงิน
-export const COUPONS = {
-  // '01' / '02' / '03' ถูกลบออก — เป็นรหัสสองหลักที่เดาได้ ไม่เคยโฆษณา และ '03'
-  // ลดครึ่งราคาทั้งออเดอร์ ตารางนี้ต้องตรงกับ backend/config/coupons.js เสมอ
-  'MATCHA15': { discount: 15, type: 'percent', label: '15% OFF' },
-  'WELCOME10': { discount: 10, type: 'percent', label: '10% OFF' },
-  'FREESHIP': { discount: 0, type: 'free_shipping', label: 'Free Shipping' },
-};
-
-/* เคยมี FEATURED_CODES ไว้เติมลงข้อความ "กรอกรหัสผิด" — ถอดออกแล้ว เพราะการ
-   บอกรหัสที่ใช้ได้ในข้อความนั้น ทำให้คนที่เดารหัสมั่วครั้งเดียวได้ FREESHIP ไป
-   ทั้งที่ไม่ได้ประกาศไว้ที่ไหนเลย ส่วน MATCHA15 ประกาศอยู่แล้วบนหน้าแรกและใน
-   placeholder ของช่องกรอก จึงไม่ต้องบอกซ้ำ */
 
 // ฟอร์มส่งรหัสมาแบบไหนก็ได้ ตัดช่องว่างและทำเป็นตัวพิมพ์ใหญ่ให้ตรงกับเซิร์ฟเวอร์
 export function normaliseCode(code) {
   return String(code || '').trim().toUpperCase();
-}
-
-export function couponFor(code) {
-  return COUPONS[normaliseCode(code)] || null;
-}
-
-// ปัดเศษที่จุดคำนวณเหมือนฝั่งเซิร์ฟเวอร์ ตัวเลขบนจอจะได้ตรงกับใบเสร็จ
-export function discountFor(coupon, subtotal) {
-  if (!coupon || coupon.type !== 'percent') return 0;
-  return Math.round(subtotal * (coupon.discount / 100) * 100) / 100;
 }
 
 // The server decides the bundle discount from each garment's category, not
@@ -120,7 +94,7 @@ export function bundleQualifiedIndices(items = []) {
  *
  * เก็บแค่ "รหัส" ตัวเดียว ไม่เก็บส่วนลดหรือชนิดคูปอง เพราะค่าใน localStorage
  * ผู้ใช้แก้เองได้ ถ้าเก็บตัวเลขไว้แล้วเชื่อตามนั้น ใครก็ตั้งส่วนลดให้ตัวเองได้
- * ฝั่งนี้จึงเอารหัสไปเทียบกับตารางด้านบนใหม่เสมอ (เซิร์ฟเวอร์ก็คิดใหม่อีกชั้น)
+ * หน้าชำระเงินจึงเอารหัสไปถามเซิร์ฟเวอร์ใหม่เสมอ
  *
  * และต้องลบทิ้งทันทีที่ถูกใช้ ไม่งั้นคูปองจะค้างอยู่แล้วโผล่มาลดราคาให้เอง
  * ตอนสั่งซื้อครั้งถัดไปโดยที่ไม่มีใครกดรับ
@@ -129,7 +103,7 @@ const PENDING_KEY = 'matcha_applied_coupon';
 
 export function storePendingCoupon(code) {
   const clean = normaliseCode(code);
-  if (!COUPONS[clean]) return false;
+  if (!clean) return false;
   try {
     localStorage.setItem(PENDING_KEY, clean);
     return true;
@@ -139,7 +113,7 @@ export function storePendingCoupon(code) {
   }
 }
 
-/** อ่านแล้วลบทิ้งในจังหวะเดียว คูปองหนึ่งใบใช้ได้ครั้งเดียว */
+/** อ่านแล้วลบทิ้งในจังหวะเดียว คูปองหนึ่งใบใช้ได้ครั้งเดียว — คืนแค่รหัส ให้เซิร์ฟเวอร์ตัดสิน */
 export function takePendingCoupon() {
   let raw = null;
   try {
@@ -148,7 +122,7 @@ export function takePendingCoupon() {
   } catch {
     return null;
   }
+  // ค่าเก่าจากเวอร์ชันก่อนอาจเป็นอะไรก็ได้ เอาเฉพาะรูปแบบที่เป็นรหัสจริง
   const code = normaliseCode(raw);
-  const coupon = COUPONS[code];
-  return coupon ? { ...coupon, code } : null;
+  return /^[A-Z0-9_-]{3,30}$/.test(code) ? code : null;
 }
