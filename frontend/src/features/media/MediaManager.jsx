@@ -1,4 +1,5 @@
 import { webpSrc } from '../../utils/imageFallback';
+import { formatCurrency } from '../../utils/currency.js';
 import React, { useEffect, useRef, useState } from 'react';
 import { Image, Upload, ArrowUp, ArrowDown, X, Archive, RefreshCw, Plus, ExternalLink } from 'lucide-react';
 import useMediaManager from './useMediaManager';
@@ -137,7 +138,7 @@ function LookEditor({ initial, manager, onSaved }) {
           <label>สินค้า<select ref={el => { pickers.current[index] = el; }} value={item.productId} aria-invalid={!item.productId || duplicate} onChange={e => { const p = manager.products.find(p => (p.id || p._id) === e.target.value); updateItem(index, { productId: e.target.value, color: p?.color || '' }); }}>
             <option value="">เลือกสินค้า</option>{!product && item.productId && <option value={item.productId}>{item.productId} — ค้นหาหรือนำเข้าสินค้าเดิม</option>}{manager.products.map(p => <option key={p._id} value={p.id || p._id}>{p.name}</option>)}
           </select></label>
-          {product ? <div className="media-hotspot-preview"><img src={webpSrc(product.image)} alt="" /><div><strong>{product.name}</strong><span>{product.category} · ${Number(product.price || 0).toFixed(2)}</span></div></div>
+          {product ? <div className="media-hotspot-preview"><img src={webpSrc(product.image)} alt="" /><div><strong>{product.name}</strong><span>{product.category} · {formatCurrency(product.price)}</span></div></div>
             : item.productId ? <p className="media-hint">ไม่พบสินค้านี้ในหน้ารายการปัจจุบัน — ค้นหาด้านบนเพื่อดูตัวอย่าง ระบบจะตรวจอีกครั้งตอนบันทึก</p> : null}
           {duplicate && <p role="alert" className="media-hint media-hint-error">สินค้านี้อยู่ในลุคแล้ว หนึ่งสินค้าใช้ได้หนึ่งจุด</p>}
           <label>สี<select value={item.color} onChange={e => updateItem(index, { color: e.target.value })}><option value="">สีหลัก</option>{[...new Set([item.color, product?.color, ...(product?.variants || []).map(v => v.color)].filter(Boolean))].map(c => <option key={c}>{c}</option>)}</select></label>

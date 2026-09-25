@@ -10,6 +10,7 @@ import DyeTile from '../components/catalog/DyeTile';
 import { buildDyeIndex, variantForDye, wash } from '../utils/dye';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import { taxonomyLabel } from '../utils/taxonomy';
+import { formatCurrency } from '../utils/currency.js';
 
 const SORTS = [
   { value: 'featured', label: 'catalog.sort.featured' },
@@ -306,7 +307,7 @@ export default function CatalogPage({
                   {featuredProduct.name}
                 </h2>
                 <p className="mt-4 font-mono text-2xl tabular-nums">
-                  ${priceOf(featuredProduct).toFixed(2)}
+                  {formatCurrency(priceOf(featuredProduct))}
                 </p>
                 <p className="mt-5 text-sm leading-relaxed text-[#c8cec4]">
                   {featuredVariant?.color || featuredProduct.color} · {taxonomyLabel(t, 'fit', featuredProduct.fit) || t('catalog.signatureFit')}

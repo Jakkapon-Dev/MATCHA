@@ -6,6 +6,7 @@ import { wash, inkOn, needsEdge } from '../utils/dye';
 import { shippingCostFor, FREE_SHIPPING_THRESHOLD } from '../config/shipping';
 import { bundleDiscountFor, bundleQualifiedIndices } from '../config/coupons';
 import { useLanguage } from '../context/LanguageContext.jsx';
+import { formatCurrency } from '../utils/currency.js';
 /* These used to be declared again here, and the copy had drifted: it keyed on
    item.id alone, while the cart keys on item.id || item.productId. An item
    carrying only a productId got a key of "undefined-M-Red" from this page and
@@ -100,7 +101,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
               const key = getCartKey(item);
               const qty = item.quantity || 1;
               const unitPrice = parsePrice(item.price);
-              const lineTotal = (unitPrice * qty).toFixed(2);
+              const lineTotal = unitPrice * qty;
               const hex = item.colorHex || null;
 
               return (
@@ -167,7 +168,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
 
                       <div className="mt-1.5 flex items-center gap-3 text-xs font-mono text-matcha-muted">
                         <span>{t('cart.size', { size: item.size || 'M' })}</span>
-                        <span className="tabular-nums">${unitPrice.toFixed(2)}</span>
+                        <span className="tabular-nums">{formatCurrency(unitPrice)}</span>
                         {bundleIndices.has(index) && (
                           <span className="px-1.5 py-0.5 bg-[#0A0A0A] text-matcha-bg text-[9px] font-bold uppercase">
                             {t('cart.bundle')}
@@ -201,7 +202,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                       </div>
 
                       <div className="text-right font-mono font-bold text-base text-[#0A0A0A] tabular-nums">
-                        ${lineTotal}
+                        {formatCurrency(lineTotal)}
                       </div>
                     </div>
                   </div>
@@ -219,7 +220,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
               <div className="flex flex-col gap-2.5 text-xs font-mono">
                 <div className="flex justify-between text-matcha-muted">
                   <span>{t('cart.subtotal')}</span>
-                  <span className="font-bold text-[#0A0A0A] tabular-nums">${subtotal.toFixed(2)}</span>
+                  <span className="font-bold text-[#0A0A0A] tabular-nums">{formatCurrency(subtotal)}</span>
                 </div>
 
                 {bundleSavings > 0 && (
@@ -236,7 +237,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                 <div className="flex justify-between text-matcha-muted">
                   <span>{t('cart.delivery')}</span>
                   <span className="font-bold text-[#0A0A0A] tabular-nums">
-                    {shipping === 0 ? t('cart.deliveryFree') : `$${shipping.toFixed(2)}`}
+                    {shipping === 0 ? t('cart.deliveryFree') : formatCurrency(shipping)}
                   </span>
                 </div>
                 <p className="text-[11px] text-matcha-muted leading-relaxed">
@@ -249,7 +250,7 @@ export default function CartPage({ cartItems = [], onUpdateQty, onRemove, onBack
                   <span className="text-xs font-mono text-matcha-muted block">{t('cart.total')}</span>
                   <span className="text-[10px] font-mono text-matcha-muted">{t('cart.taxes')}</span>
                 </div>
-                <span className="text-2xl font-bold font-mono text-[#0A0A0A] tabular-nums">${total.toFixed(2)}</span>
+                <span className="text-2xl font-bold font-mono text-[#0A0A0A] tabular-nums">{formatCurrency(total)}</span>
               </div>
 
               <button

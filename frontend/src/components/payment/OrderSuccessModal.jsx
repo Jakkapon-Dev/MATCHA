@@ -2,6 +2,7 @@ import React from 'react';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { CheckCircle2, ArrowRight, Printer, Package } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { formatCurrency } from '../../utils/currency.js';
 
 export default function OrderSuccessModal({
   isOpen,
@@ -74,7 +75,7 @@ export default function OrderSuccessModal({
 
           <div className="flex justify-between items-baseline pt-2 border-t border-matcha-border">
             <span className="text-matcha-muted">{t('checkout.total')}</span>
-            <span className="font-bold text-base text-matcha-primary">${totalAmount?.toFixed(2)}</span>
+            <span className="font-bold text-base text-matcha-primary">{formatCurrency(totalAmount)}</span>
           </div>
 
           <div className="text-[10px] text-matcha-muted pt-1">

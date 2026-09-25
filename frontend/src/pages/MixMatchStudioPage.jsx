@@ -23,6 +23,7 @@ import { taxonomyLabel } from '../utils/taxonomy';
 // กฎสีชุดเดียวกับที่แค็ตตาล็อกและ Color Lab ใช้
 import { wash, inkOn, needsEdge } from '../utils/dye';
 import useChangeMotion from '../hooks/useChangeMotion';
+import { formatCurrency } from '../utils/currency.js';
 
 // ส่วนลดเซ็ต 4 ชิ้น — ประกาศที่เดียวเพื่อไม่ให้ตัวเลขที่โชว์กับที่คิดเงินหลุดจากกัน
 const BUNDLE_DISCOUNT_RATE = 0.12;
@@ -676,9 +677,9 @@ export default function MixMatchStudioPage() {
                 </span>
                 <div className="text-right">
                   {isCompleteBundle && (
-                    <span className="text-xs line-through text-matcha-muted mr-2">${bundleSubtotal.toFixed(2)}</span>
+                    <span className="text-xs line-through text-matcha-muted mr-2">{formatCurrency(bundleSubtotal)}</span>
                   )}
-                  <span className="text-xl font-black text-matcha-text">${finalBundleTotal.toFixed(2)}</span>
+                  <span className="text-xl font-black text-matcha-text">{formatCurrency(finalBundleTotal)}</span>
                 </div>
               </div>
 
@@ -848,7 +849,7 @@ export default function MixMatchStudioPage() {
                         {item.name}
                       </h5>
                       <div className="flex items-center justify-between text-[11px] font-mono">
-                        <span className="font-bold text-matcha-text">${Number(item.price).toFixed(2)}</span>
+                        <span className="font-bold text-matcha-text">{formatCurrency(item.price)}</span>
                         <div className="flex items-center gap-1">
                           <span className="w-2 h-2  border border-black/10" style={{ backgroundColor: item.colorHex }} />
                           <span className="text-[10px] text-matcha-muted truncate max-w-16">{item.color}</span>

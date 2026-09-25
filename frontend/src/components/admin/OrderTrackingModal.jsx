@@ -4,6 +4,7 @@ import { useToast } from '../../context/ToastContext.jsx';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { ORDER_STATUSES, isKnownOrderStatus } from './adminData';
+import { formatCurrency } from '../../utils/currency.js';
 
 export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateStatus, saveError }) {
   const { t } = useLanguage();
@@ -222,7 +223,7 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                 )}
                 <div className="pt-2 border-t border-[#E5E5E5] flex items-center justify-between font-bold text-sm">
                   <span className="text-matcha-text">Total Amount:</span>
-                  <span className="text-matcha-primary">${Number(order.total || 0).toFixed(2)}</span>
+                  <span className="text-matcha-primary">{formatCurrency(order.total)}</span>
                 </div>
               </div>
 
