@@ -72,6 +72,113 @@ function writeSavedLooks(liked) {
   }
 }
 
+/* One garment pin on a photograph, and the card it opens.
+
+   The cover used to be the only photograph that drew its pins; every other
+   spread had the same hotspot data from the API and rendered none of it, so
+   the lookbook looked shoppable on one image and inert on the rest. Both now
+   go through this component.
+
+   `style` is the pin's position after object-fit compensation, so the card
+   is anchored to whichever side keeps it inside the frame. */
+function HotspotPin({ hs, style, active, pinned, added, disabled, onHover, onFocusChange, onToggle, onAdd, t }) {
+  const left = parseFloat(style?.left);
+  const align = left < 30 ? 'left-0' : left > 70 ? 'right-0' : 'left-1/2 -translate-x-1/2';
+  const title = hs.title || hs.name;
+  return (
+    <div className="absolute z-20 pointer-events-auto transform -translate-x-1/2 -translate-y-1/2" style={style}>
+      <button
+        type="button"
+        aria-label={t('lookbook.highlightOnImage', { title })}
+        aria-pressed={pinned}
+        onMouseEnter={() => onHover(true)}
+        onMouseLeave={() => onHover(false)}
+        onFocus={() => onFocusChange(true)}
+        onBlur={() => onFocusChange(false)}
+        onClick={(e) => { e.stopPropagation(); onToggle(); }}
+        className="min-h-11 min-w-11 cursor-pointer flex items-center justify-center outline-hidden focus-visible:ring-2 focus-visible:ring-white"
+      >
+        <span
+          className={`block rounded-full border transition-all duration-200 ${
+            active
+              ? 'h-4 w-4 bg-matcha-accent border-white ring-4 ring-white/30'
+              : 'h-3 w-3 bg-white/90 border-white/60 hover:h-4 hover:w-4'
+          }`}
+        />
+      </button>
+
+      {active && (
+        <div
+          className={`absolute ${align} bottom-10 w-60 max-w-[calc(100vw-2rem)] p-3 bg-white/95 backdrop-blur-md shadow-2xl text-left z-30 pointer-events-auto border border-[#E5E2D8] rounded-xl`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center gap-3">
+            <img
+              src={webpSrc(hs.image)} data-original-src={hs.image}
+              loading="lazy"
+              decoding="async"
+              alt={title}
+              onError={handleImageError}
+              className="w-12 h-14 object-contain bg-[#FAF9F5] rounded-md shrink-0 border border-[#E5E2D8]"
+            />
+            <div className="min-w-0 flex-1">
+              <span className="text-[9px] font-mono uppercase tracking-wider text-matcha-muted block">
+                {hs.category || 'Garment'}
+              </span>
+              <div className="text-xs font-bold text-[#0A0A0A] leading-snug truncate">
+                {title}
+              </div>
+              <div className="text-xs font-mono text-[#0A0A0A] mt-0.5 font-bold">
+                ${Number(hs.price || 0).toFixed(2)}
+              </div>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            disabled={disabled || !hs.inStock}
+            onClick={(e) => { e.stopPropagation(); onAdd(e); }}
+            className="mt-2.5 w-full py-2 bg-[#0A0A0A] hover:bg-matcha-accent disabled:bg-matcha-border disabled:text-matcha-muted text-matcha-bg font-mono text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:cursor-not-allowed rounded-lg"
+          >
+            {added ? <Check size={12} /> : <ShoppingBag size={12} />}
+            <span>{added ? t('lookbookUi.added') : !hs.inStock ? t('lookbookUi.unavailable') : t('lookbookUi.addToBag')}</span>
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* A spread's photograph with its pins. Each photograph crops differently
+   under object-fit: cover, so each one measures itself; the focus passed here
+   is the same point the image's object-position uses (centred). */
+const SPREAD_FOCUS = { x: 0.5, y: 0.5 };
+function SpreadPhoto({ spread, renderPin }) {
+  const { imageRef, position } = useCoverCoordinates(spread.heroImage, SPREAD_FOCUS);
+  const drift = 'absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.03]';
+  /* The pins sit on their own layer above the vignette, scaled by the same
+     hover drift as the photograph so they stay on their garments. */
+  return (
+    <>
+    <div className={drift}>
+      <img
+        ref={imageRef}
+        src={webpSrc(spread.heroImage)} data-original-src={spread.heroImage}
+        loading="lazy"
+        decoding="async"
+        alt={spread.title}
+        onError={handleImageError}
+        style={{ objectPosition: `${SPREAD_FOCUS.x * 100}% ${SPREAD_FOCUS.y * 100}%` }}
+        className="w-full h-full object-cover"
+      />
+    </div>
+    <div className={`${drift} z-20 pointer-events-none`}>
+      {(spread.hotspots ?? []).map((hs) => renderPin(hs, position(hs)))}
+    </div>
+    </>
+  );
+}
+
 export default function EditorialLookbookPage() {
   const navigate = useNavigate();
   const { t, lang } = useLanguage();
@@ -338,8 +445,34 @@ export default function EditorialLookbookPage() {
   // ภาพกับรายการต้องอ่านจากค่าเดียวกัน จะได้ไม่เลือกคนละชิ้น
   // ลำดับความสำคัญ: คลิกค้าง > คีย์บอร์ดโฟกัส > เมาส์ชี้
   const activeItemId = pinnedItemId ?? focusedItemId ?? hoveredItemId;
-  const isHotspotActive = (hs) => Boolean(activeItemId) && hsKey(hs) === activeItemId;
   const isItemActive = (item) => Boolean(activeItemId) && item.id === activeItemId;
+
+  /* The cover keys its pins by product so they stay in step with the cover's
+     garment list. Other spreads prefix the look id, so one product appearing
+     in two looks does not light up both. */
+  const renderPin = (hs, style, key = `${hs.id}`) => {
+    // A crop can push a pin off the visible frame; an invisible button would
+    // still take keyboard focus, so it is left out until a wider frame shows it.
+    const offFrame = [style?.left, style?.top].some(v => { const n = parseFloat(v); return n < 0 || n > 100; });
+    if (offFrame) return null;
+    const itemId = hs.productId || hs.id;
+    return (
+      <HotspotPin
+        key={hs.id}
+        hs={hs}
+        style={style}
+        t={t}
+        active={Boolean(activeItemId) && activeItemId === key}
+        pinned={pinnedItemId === key}
+        added={Boolean(addedItems[itemId])}
+        disabled={loading}
+        onHover={(on) => setHoveredItemId(on ? key : null)}
+        onFocusChange={(on) => setFocusedItemId(on ? key : null)}
+        onToggle={() => setPinnedItemId((prev) => (prev === key ? null : key))}
+        onAdd={(e) => handleQuickAdd(e, { ...hs, id: itemId, name: hs.title || hs.name })}
+      />
+    );
+  };
 
   if (!curatedEditorialSpreads?.length || !coverStory) {
     return (
@@ -429,88 +562,7 @@ export default function EditorialLookbookPage() {
             </div>
 
             {/* Interactive garment pins */}
-            {coverStory.hotspots && coverStory.hotspots.map((hs) => {
-              const active = isHotspotActive(hs);
-              return (
-                <div
-                  key={hs.id}
-                  className="absolute z-20 transform -translate-x-1/2 -translate-y-1/2"
-                  style={coverPosition(hs)}
-                >
-                  <button
-                    type="button"
-                    aria-label={t('lookbook.highlightOnImage', { title: hs.title })}
-                    aria-pressed={pinnedItemId === hsKey(hs)}
-                    onMouseEnter={() => setHoveredItemId(hsKey(hs))}
-                    onMouseLeave={() => setHoveredItemId(null)}
-                    onFocus={() => setFocusedItemId(hsKey(hs))}
-                    onBlur={() => setFocusedItemId(null)}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setPinnedItemId((prev) => (prev === hsKey(hs) ? null : hsKey(hs)));
-                    }}
-                    className="min-h-11 min-w-11 cursor-pointer flex items-center justify-center outline-hidden focus-visible:ring-2 focus-visible:ring-white"
-                  >
-                    <span
-                      className={`block rounded-full border transition-all duration-200 ${
-                        active
-                          ? 'h-4 w-4 bg-matcha-accent border-white ring-4 ring-white/30'
-                          : 'h-3 w-3 bg-white/90 border-white/60 hover:h-4 hover:w-4'
-                      }`}
-                    />
-                  </button>
-
-                  {active && (
-                    <div
-                      className="absolute left-1/2 -translate-x-1/2 bottom-10 w-60 p-3 bg-white/95 backdrop-blur-md shadow-2xl text-left z-30 pointer-events-auto border border-[#E5E2D8] rounded-xl"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={webpSrc(hs.image)} data-original-src={hs.image}
-                          loading="lazy"
-                          decoding="async"
-                          alt={hs.title}
-                          onError={handleImageError}
-                          className="w-12 h-14 object-contain bg-[#FAF9F5] rounded-md shrink-0 border border-[#E5E2D8]"
-                        />
-                        <div className="min-w-0 flex-1">
-                          <span className="text-[9px] font-mono uppercase tracking-wider text-matcha-muted block">
-                            {hs.category || 'Garment'}
-                          </span>
-                          <div className="text-xs font-bold text-[#0A0A0A] leading-snug truncate">
-                            {hs.title}
-                          </div>
-                          <div className="text-xs font-mono text-[#0A0A0A] mt-0.5 font-bold">
-                            ${hs.price.toFixed(2)}
-                          </div>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
-                        disabled={loading || !hs.inStock} onClick={(e) => {
-                          e.stopPropagation();
-                          handleQuickAdd(e, {
-                            id: hs.productId || hs.id,
-                            name: hs.title,
-                            price: hs.price,
-                            image: hs.image,
-                            inStock: hs.inStock,
-                            size: 'M',
-                            color: 'Editorial MatchA'
-                          });
-                        }}
-                        className="mt-2.5 w-full py-2 bg-[#0A0A0A] hover:bg-matcha-accent disabled:bg-matcha-border disabled:text-matcha-muted text-matcha-bg font-mono text-[10px] uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer disabled:cursor-not-allowed rounded-lg"
-                      >
-                        {addedItems[hs.productId || hs.id] ? <Check size={12} /> : <ShoppingBag size={12} />}
-                        <span>{addedItems[hs.productId || hs.id] ? t('lookbookUi.added') : !hs.inStock ? t('lookbookUi.unavailable') : t('lookbookUi.addToBag')}</span>
-                      </button>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+            {(coverStory.hotspots ?? []).map((hs) => renderPin(hs, coverPosition(hs), hsKey(hs)))}
 
             {/* Bottom Cover Story Captions */}
             <div className="absolute bottom-0 inset-x-0 z-10 p-5 sm:p-8 lg:p-12 text-white pointer-events-none flex flex-col sm:flex-row sm:items-end justify-between gap-4">
@@ -754,14 +806,7 @@ export default function EditorialLookbookPage() {
                     onClick={() => setSelectedSpread(spread)}
                     className="group relative aspect-4/5 sm:aspect-3/4 overflow-hidden bg-[#E4E4E4] cursor-pointer select-none"
                   >
-                    <img
-                      src={webpSrc(spread.heroImage)} data-original-src={spread.heroImage}
-                      loading="lazy"
-                      decoding="async"
-                      alt={spread.title}
-                      onError={handleImageError}
-                      className="w-full h-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-                    />
+                    <SpreadPhoto spread={spread} renderPin={renderPin} />
 
                     <div className="absolute inset-0 bg-linear-to-t from-black/70 via-transparent to-black/30 pointer-events-none" />
 

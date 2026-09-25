@@ -10,7 +10,7 @@ import productsData from '../data/products.js';
 import { getJwtSecret, authRequired, adminOnly } from '../middleware/auth.js';
 import { isDemo } from '../config/storeMode.js';
 import { sendOrderConfirmation } from '../services/email.js';
-import { normaliseCode, discountFor, isFreeShippingCoupon } from '../config/coupons.js';
+import { normaliseCode, quoteCoupon, redeemCoupon, releaseCoupon, couponUserKey, ensureCouponIndexes, CouponError } from '../services/coupons.js';
 import { memoryNotifications } from './notificationRoutes.js';
 import { normalizePhone, isValidThaiPhone, isValidPostalCode, isValidEmail } from '../utils/contactFormat.js';
 import { dispatchOrderNotification } from '../services/notificationService.js';
@@ -43,7 +43,7 @@ const withStoreMode = (order) => ({
 // Fallback store in memory if database is disconnected during local evaluation
 const memoryOrders = [];
 
-// Coupon rates live in config/coupons.js, shared with the checkout screen.
+// Coupons are looked up and priced by services/coupons.js; checkout only sends the code.
 
 const SHIPPING_RATES = {
   standard: 0,
@@ -77,7 +77,7 @@ export function getProductBundleSlot(product) {
 }
 
 // Safe helper to extract auth payload if provided
-const extractAuthUser = (req) => {
+export const extractAuthUser = (req) => {
   const header = req.headers.authorization || '';
   const token = header.startsWith('Bearer ') ? header.slice(7) : null;
   if (!token || token === 'demo-offline-token') return null;
@@ -354,21 +354,24 @@ router.post('/', orderLimiter, async (req, res) => {
       delete vItem._bundleSlot;
     }
 
+    // What a coupon's product and category restrictions are judged against:
+    // the catalogue's identity and category for each line, never the browser's.
+    const couponLines = validatedItems.map(vItem => {
+      const matched = productCache.get(vItem.productId);
+      return {
+        productId: matched?.id || vItem.productId,
+        sku: matched?.sku || null,
+        category: matched?.category || null,
+        lineTotal: vItem.priceAtPurchase * vItem.quantity
+      };
+    });
+
     subtotal = Math.round(subtotal * 100) / 100;
     bundleDiscountAmount = Math.round(bundleDiscountAmount * 100) / 100;
 
-    // 3. Coupon and Shipping Calculation
-    // The discount is recomputed here from the server's own table and the
-    // server's own subtotal. Whatever the browser believed it had applied is
-    // only ever a code string.
-    const cleanCoupon = normaliseCode(couponCode);
-    const couponDiscount = discountFor(cleanCoupon, subtotal);
-    const isFreeShipping = isFreeShippingCoupon(cleanCoupon) || subtotal >= FREE_SHIPPING_THRESHOLD;
+    // 3. Shipping rate. The coupon, and so the total, are worked out below
+    //    once it is known whose order this is — a per-customer limit needs it.
     const shippingBaseRate = SHIPPING_RATES[shippingOption] ?? 0;
-    const shippingCost = isFreeShipping ? 0 : shippingBaseRate;
-
-    const totalDiscount = Math.round((couponDiscount + bundleDiscountAmount) * 100) / 100;
-    const total = Math.max(0, Math.round((subtotal + shippingCost - totalDiscount) * 100) / 100);
 
     /* Contact details the courier has to be able to use.
 
@@ -421,6 +424,34 @@ router.post('/', orderLimiter, async (req, res) => {
       orderUserId = String(candidateId).trim();
     }
 
+    /* 6. Coupon, shipping and total.
+
+       The browser sends a code and nothing else — any amount, percentage or
+       total it also sends is never read. The coupon is looked up here, every
+       rule is checked against the server's own subtotal and catalogue, and a
+       code that does not apply is refused rather than silently dropped, so a
+       shopper is never charged a total they were not shown. The use itself is
+       claimed atomically inside the order transaction below. */
+    const cleanCoupon = normaliseCode(couponCode);
+    const couponUser = couponUserKey({ userId: orderUserId, email: customerPayload.email });
+    let couponQuote = null;
+    if (cleanCoupon) {
+      try {
+        couponQuote = await quoteCoupon(cleanCoupon, { lines: couponLines, subtotal, userKey: couponUser });
+      } catch (err) {
+        if (err instanceof CouponError) {
+          return res.status(err.status).json({ success: false, code: err.code, message: err.message, field: 'couponCode' });
+        }
+        throw err;
+      }
+    }
+    const couponDiscount = couponQuote?.discountAmount || 0;
+    const isFreeShipping = Boolean(couponQuote?.freeShipping) || subtotal >= FREE_SHIPPING_THRESHOLD;
+    const shippingCost = isFreeShipping ? 0 : shippingBaseRate;
+
+    const totalDiscount = Math.round((couponDiscount + bundleDiscountAmount) * 100) / 100;
+    const total = Math.max(0, Math.round((subtotal + shippingCost - totalDiscount) * 100) / 100);
+
     const validPaymentMethods = ['visa', 'mastercard', 'cod', 'qr', 'demo'];
     const safePaymentMethod = validPaymentMethods.includes(paymentMethod) ? paymentMethod : 'demo';
 
@@ -460,7 +491,16 @@ router.post('/', orderLimiter, async (req, res) => {
       guestId: orderGuestId,
       customer: customerPayload,
       items: validatedItems,
-      couponCode: cleanCoupon || null,
+      couponCode: couponQuote ? cleanCoupon : null,
+      coupon: couponQuote ? {
+        couponId: couponQuote.coupon._id || null,
+        code: cleanCoupon,
+        type: couponQuote.coupon.type,
+        value: couponQuote.coupon.value,
+        discountAmount: couponDiscount,
+        freeShipping: couponQuote.freeShipping,
+        userKey: couponQuote.coupon._id ? couponUser : null
+      } : null,
       paymentMethod: safePaymentMethod,
       shippingOption: ['standard', 'express', 'premium'].includes(shippingOption) ? shippingOption : 'standard',
       subtotal,
@@ -485,14 +525,24 @@ router.post('/', orderLimiter, async (req, res) => {
          Before this, nothing was decremented at all: the comment at the top of
          this file claimed the endpoint decrements stock and it never had, so
          the same garment could be sold without limit. */
+      if (couponQuote?.coupon?._id) await ensureCouponIndexes();
       const session = await mongoose.connection.getClient().startSession();
       try {
         await session.withTransaction(async () => {
           await reserveStock(orderPayload.items, productCache, session);
+          /* The coupon's use is claimed with the stock: if either fails,
+             neither happens. Two checkouts racing for a coupon's last use
+             cannot both pass — see redeemCoupon. */
+          if (couponQuote?.coupon?._id) {
+            await redeemCoupon(couponQuote.coupon, { userKey: couponUser, session, expected: couponQuote, lines: couponLines, subtotal });
+          }
           const [written] = await Order.create([orderPayload], { session });
           savedOrder = written;
         });
       } catch (err) {
+        if (err instanceof CouponError) {
+          return res.status(err.status).json({ success: false, code: err.code, message: err.message, field: 'couponCode' });
+        }
         if (err?.shortfall) {
           return res.status(409).json({
             success: false,
@@ -845,6 +895,7 @@ router.post('/:id/cancel', orderLimiter, async (req, res) => {
           throw raced;
         }
         await releaseStock(order.items, session);
+        await releaseCoupon(order, { session });
         cancelled = updated;
       });
     } catch (err) {

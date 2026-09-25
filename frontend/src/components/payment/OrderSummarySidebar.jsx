@@ -14,6 +14,7 @@ export default function OrderSummarySidebar({
   onApplyCoupon,
   appliedCoupon = null,
   couponError = '',
+  couponBusy = false,
   onRemoveCoupon
 }) {
   const { t } = useLanguage();
@@ -74,18 +75,22 @@ export default function OrderSummarySidebar({
             value={couponCode}
             onChange={(e) => onCouponCodeChange(e.target.value)}
             placeholder={t('checkout.promoPlaceholder')}
+            aria-label={t('checkout.promo')}
+            aria-invalid={Boolean(couponError) || undefined}
             className="flex-1 px-3 py-2 border border-matcha-border focus:border-matcha-primary outline-none text-xs font-mono uppercase bg-matcha-bg transition-colors"
           />
           <button
             type="submit"
-            className="px-4 py-2 bg-matcha-primary hover:bg-[#1A381F] text-white text-xs font-bold font-mono transition-colors cursor-pointer"
+            disabled={couponBusy}
+            aria-busy={couponBusy || undefined}
+            className="px-4 py-2 bg-matcha-primary hover:bg-[#1A381F] text-white text-xs font-bold font-mono transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-wait"
           >
             {t('checkout.apply')}
           </button>
         </div>
 
         {couponError && (
-          <p className="text-[11px] text-matcha-accent font-mono mt-1">{couponError}</p>
+          <p role="alert" className="text-[11px] text-matcha-accent font-mono mt-1">{couponError}</p>
         )}
 
         {appliedCoupon && (

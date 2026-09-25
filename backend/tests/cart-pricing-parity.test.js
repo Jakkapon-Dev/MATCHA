@@ -18,22 +18,19 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 
-// The server's table — the one the customer is actually charged against.
+// The server prices coupons (services/coupons.js). Checkout no longer keeps a
+// table of its own: it shows the discount POST /api/coupons/quote returns,
+// which is the same evaluateCoupon the order route runs.
 import {
-  COUPONS as SERVER_COUPONS,
-  normaliseCode as serverNormalise,
-  discountFor as serverDiscountFor,
-  isFreeShippingCoupon
-} from '../config/coupons.js';
+  builtInCoupons,
+  evaluateCoupon,
+  normaliseCode as serverNormalise
+} from '../services/coupons.js';
 
-// The browser's copy, kept only so checkout can show a figure in advance.
 import {
-  COUPONS as CLIENT_COUPONS,
   normaliseCode as clientNormalise,
-  discountFor as clientDiscountFor,
   bundleDiscountFor as clientBundleDiscountFor,
-  bundleSlotFor as clientBundleSlotFor,
-  couponFor as clientCouponFor
+  bundleSlotFor as clientBundleSlotFor
 } from '../../frontend/src/config/coupons.js';
 
 import {
@@ -50,6 +47,18 @@ const SERVER_FREE_SHIPPING_THRESHOLD = 100.0;
 const BUNDLE_DISCOUNT_RATE = 0.12;
 
 const round = (n) => Math.round(n * 100) / 100;
+
+/* What the server answers for a code against a cart — the quote endpoint and
+   the order route share this. Only the built-in codes exist without a
+   database; a code that does not apply is refused (null here). */
+const BUILT_INS = new Map(builtInCoupons().map(c => [c.code, c]));
+function serverQuote(cart, couponCode) {
+  const coupon = BUILT_INS.get(serverNormalise(couponCode));
+  if (!coupon) return null;
+  const lines = cart.map(i => ({ productId: i.id || 'ITEM', category: i.category || null, lineTotal: i.price * (i.quantity || 1) }));
+  const subtotal = round(lines.reduce((sum, l) => sum + l.lineTotal, 0));
+  try { return evaluateCoupon(coupon, { lines, subtotal }); } catch { return null; }
+}
 
 /* What routes/orderRoutes.js computes, transcribed from the route so the two
    can be compared without standing a database up. Any change there that is not
@@ -95,9 +104,9 @@ function serverTotals(cart, { couponCode = null, shippingOption = 'standard' } =
   }
   bundleDiscountAmount = round(bundleDiscountAmount);
 
-  const clean = serverNormalise(couponCode);
-  const couponDiscount = serverDiscountFor(clean, subtotal);
-  const isFreeShipping = isFreeShippingCoupon(clean) || subtotal >= SERVER_FREE_SHIPPING_THRESHOLD;
+  const quote = serverQuote(cart, couponCode);
+  const couponDiscount = quote?.discountAmount || 0;
+  const isFreeShipping = Boolean(quote?.freeShipping) || subtotal >= SERVER_FREE_SHIPPING_THRESHOLD;
   const shippingCost = isFreeShipping ? 0 : (SERVER_SHIPPING_RATES[shippingOption] ?? 0);
   const totalDiscount = round(couponDiscount + bundleDiscountAmount);
   const total = Math.max(0, round(subtotal + shippingCost - totalDiscount));
@@ -105,14 +114,15 @@ function serverTotals(cart, { couponCode = null, shippingOption = 'standard' } =
   return { subtotal, shippingCost, discount: totalDiscount, total };
 }
 
-/* What pages/PaymentPage.jsx puts on the screen, transcribed the same way. */
+/* What pages/PaymentPage.jsx puts on the screen, transcribed the same way.
+   `applied` is what the page received from POST /api/coupons/quote. */
 function checkoutTotals(cart, { couponCode = null, shippingOption = 'standard' } = {}) {
   const subtotal = cart.reduce((sum, item) => sum + item.price * (item.quantity || 1), 0);
-  const applied = clientCouponFor(couponCode);
+  const applied = serverQuote(cart, couponCode);
   const shippingCost = shippingCostFor(subtotal, shippingOption, {
-    freeShippingCoupon: applied?.type === 'free_shipping'
+    freeShippingCoupon: Boolean(applied?.freeShipping)
   });
-  const discount = round(clientDiscountFor(applied, subtotal) + clientBundleDiscountFor(cart));
+  const discount = round((applied?.discountAmount || 0) + clientBundleDiscountFor(cart));
   const total = Math.max(0, subtotal + shippingCost - discount);
   return { subtotal, shippingCost, discount, total };
 }
@@ -127,19 +137,12 @@ const toCents = (totals) => Object.fromEntries(
 );
 
 /* ------------------------------------------------------------------ *
- * The two tables have to say the same thing
+ * There is only one coupon table now
  * ------------------------------------------------------------------ */
 
-test('every coupon code exists on both sides', () => {
-  assert.deepEqual(Object.keys(CLIENT_COUPONS).sort(), Object.keys(SERVER_COUPONS).sort());
-});
-
-test('every coupon is worth the same on both sides', () => {
-  for (const [code, server] of Object.entries(SERVER_COUPONS)) {
-    const client = CLIENT_COUPONS[code];
-    assert.equal(client.type, server.type, `${code} type`);
-    assert.equal(client.discount, server.discount, `${code} value`);
-  }
+test('the built-in codes are still the advertised ones', () => {
+  assert.deepEqual([...BUILT_INS.keys()].sort(), ['FREESHIP', 'MATCHA15', 'WELCOME10']);
+  assert.equal(serverQuote([item(100)], 'MATCHA15').discountAmount, 15);
 });
 
 test('codes are normalised identically, however they are typed', () => {
@@ -151,19 +154,6 @@ test('codes are normalised identically, however they are typed', () => {
 test('shipping rates and the free-shipping threshold match the server', () => {
   assert.deepEqual(SHIPPING_OPTIONS, SERVER_SHIPPING_RATES);
   assert.equal(CLIENT_THRESHOLD, SERVER_FREE_SHIPPING_THRESHOLD);
-});
-
-test('a percentage discount rounds to the same cent on both sides', () => {
-  // Thirds and sevenths are where a half-cent difference would appear.
-  for (const subtotal of [33.33, 66.67, 0.01, 19.99, 99.99, 100, 1234.56, 7.77]) {
-    for (const code of Object.keys(SERVER_COUPONS)) {
-      assert.equal(
-        clientDiscountFor(clientCouponFor(code), subtotal),
-        serverDiscountFor(code, subtotal),
-        `${code} on ${subtotal}`
-      );
-    }
-  }
 });
 
 /* ------------------------------------------------------------------ *
@@ -262,7 +252,9 @@ test('a discount that drops the subtotal under $100 does not take free shipping 
   assert.deepEqual(toCents(shown), toCents(charged));
 });
 
-test('an unknown code is worth nothing and is not an error on either side', () => {
+/* The order route refuses an unknown code outright now (COUPON_INVALID, see
+   coupons.test.js); checkout never applies one, so neither side discounts. */
+test('an unknown code is worth nothing on either side', () => {
   const cart = [item(70.99, 2)];
   for (const code of ['NOPE', '', '   ', 'DROP TABLE', '01;--']) {
     const shown = checkoutTotals(cart, { couponCode: code });

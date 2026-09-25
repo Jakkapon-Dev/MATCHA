@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Plus, Sparkles, Calendar, AlertCircle } from 'lucide-react';
+import { X, Plus, Sparkles, Calendar, AlertCircle, Tag as TagIcon, Image as ImageIcon } from 'lucide-react';
 import { webpSrc } from '../../utils/imageFallback';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 
@@ -128,7 +128,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-xs animate-fade-in select-none">
-      <div className="bg-matcha-bg border border-matcha-border rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
+      <div role="dialog" aria-modal="true" aria-labelledby="add-garment-title" className="bg-matcha-bg border border-matcha-border rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl relative">
         
         {/* Modal Header */}
         <div className="sticky top-0 bg-matcha-bg/95 backdrop-blur-md px-6 py-5 border-b border-matcha-border flex items-center justify-between z-10">
@@ -137,13 +137,14 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
               <Sparkles size={14} />
               <span>Admin Inventory Control</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black uppercase text-matcha-text tracking-tight">
+            <h2 id="add-garment-title" className="text-xl sm:text-2xl font-black uppercase text-matcha-text tracking-tight">
               Add New Garment Release
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
+            aria-label="Close"
             className="p-2 rounded-xl text-matcha-muted hover:text-matcha-text hover:bg-matcha-border/40 transition-colors cursor-pointer"
           >
             <X size={20} />

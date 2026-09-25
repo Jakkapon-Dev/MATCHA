@@ -28,7 +28,9 @@ export function resolveLookbooks(looks, products) {
   const productMap = new Map(products.flatMap(p => [[String(p._id), p], [p.id, p]]));
   const fallbackMap = new Map(defaults.flatMap(s => s.shoppableItems.map(i => [i.id, i])));
   return looks.filter(l => l.published).map(look => {
-    const items = look.items.map(link => {
+    // A look saved before hotspots existed has no `items` at all, and .lean()
+    // does not apply schema defaults, so treat it as a look with no pins.
+    const items = (look.items ?? []).map(link => {
       const product = productMap.get(link.productId);
       const variant = product?.variants?.find(v => v.color === link.color);
       const colorMatches = !link.color || product?.color === link.color || Boolean(variant);

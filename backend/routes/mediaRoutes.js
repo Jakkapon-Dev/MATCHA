@@ -82,7 +82,7 @@ router.get('/admin/media/products', asyncRoute(async (req, res) => {
   const page = Math.max(1, Math.min(10000, Number.parseInt(req.query.page, 10) || 1));
   const query = search ? { $or: [{ name: new RegExp(search, 'i') }, { id: new RegExp(search, 'i') }] } : {};
   const [data, total] = await Promise.all([
-    Product.find(query).sort({ name: 1 }).skip((page - 1) * 40).limit(40).select('id name image color variants gallery mediaRevision quantity sizes').lean(),
+    Product.find(query).sort({ name: 1 }).skip((page - 1) * 40).limit(40).select('id name image color variants gallery mediaRevision quantity sizes price category').lean(),
     Product.countDocuments(query)
   ]);
   res.json({ success: true, data, total, page });

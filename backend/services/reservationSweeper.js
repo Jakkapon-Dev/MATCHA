@@ -35,6 +35,7 @@ import mongoose from 'mongoose';
 import Order from '../models/Order.js';
 import { stripe } from '../config/stripe.js';
 import { releaseStock } from '../routes/orderRoutes.js';
+import { releaseCoupon } from './coupons.js';
 import { AWAITING_PAYMENT } from '../config/paymentStates.js';
 
 let sweepTimer = null;
@@ -104,6 +105,7 @@ export async function expireOrder(order, { gateway = stripe } = {}) {
       );
       if (!claimed) return;
       await releaseStock(order.items, session);
+      await releaseCoupon(order, { session });
       released = true;
     });
     return released;

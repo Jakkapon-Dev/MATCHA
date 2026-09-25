@@ -13,7 +13,7 @@
 import { describe, test, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
-import { COUPONS, couponFor, normaliseCode } from './coupons';
+import { normaliseCode, storePendingCoupon, takePendingCoupon } from './coupons';
 
 // vitest runs with the frontend package as its root.
 const srcFile = (rel) => readFileSync(path.resolve(process.cwd(), 'src', rel), 'utf8');
@@ -23,26 +23,32 @@ const srcFile = (rel) => readFileSync(path.resolve(process.cwd(), 'src', rel), '
 const withoutComments = (source) =>
   source.replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '');
 
-const WORKING_CODES = Object.keys(COUPONS);
-
 describe('promo codes', () => {
-  test('the codes this file knows about are still the ones under test', () => {
-    // If a code is added, this test is the reminder to check it is not being
-    // named in user-facing copy.
-    expect(WORKING_CODES.length).toBeGreaterThan(0);
-    expect(WORKING_CODES).toContain('FREESHIP');
+  /* The browser used to keep its own copy of the coupon table and do the
+     discount arithmetic itself. Coupons now live in MongoDB and are priced by
+     POST /api/coupons/quote, so there is no table here to drift from the
+     server — and no discount value for anyone to read out of the bundle. */
+  test('the browser holds no coupon table or discount arithmetic', () => {
+    const couponsSource = withoutComments(srcFile('config/coupons.js'));
+    expect(couponsSource).not.toMatch(/export (const|function) (COUPONS|couponFor|discountFor)/);
+    expect(couponsSource).not.toContain('MATCHA15');
+    const paymentPage = withoutComments(srcFile('pages/PaymentPage.jsx'));
+    expect(paymentPage).toContain('api.quoteCoupon');
+    expect(paymentPage).not.toMatch(/couponFor|discountFor/);
   });
 
-  test('an unknown code is simply unknown', () => {
-    expect(couponFor(normaliseCode('BOGUSXYZ'))).toBeFalsy();
-    expect(couponFor(normaliseCode(''))).toBeFalsy();
-    // Guessable sequences removed in PR #96 must stay gone.
-    expect(couponFor(normaliseCode('01'))).toBeFalsy();
-    expect(couponFor(normaliseCode('02'))).toBeFalsy();
+  test('codes are normalised the way the server normalises them', () => {
+    expect(normaliseCode(' matcha15 ')).toBe('MATCHA15');
+    expect(normaliseCode(null)).toBe('');
   });
 
-  test('a working code is still accepted, whatever case it is typed in', () => {
-    expect(couponFor(normaliseCode(' matcha15 '))).toBeTruthy();
+  test('a held code comes back once, as a code only, and junk is dropped', () => {
+    expect(storePendingCoupon(' matcha15 ')).toBe(true);
+    expect(takePendingCoupon()).toBe('MATCHA15');
+    expect(takePendingCoupon()).toBeNull();
+    // A value left by an older version of the site, or edited by hand.
+    localStorage.setItem('matcha_applied_coupon', '{"discount":99}');
+    expect(takePendingCoupon()).toBeNull();
   });
 });
 

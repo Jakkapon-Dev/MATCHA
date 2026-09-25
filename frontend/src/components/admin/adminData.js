@@ -63,6 +63,9 @@ export function normalizeOrder(order) {
     address: [order.customer?.address, order.customer?.city, order.customer?.zipCode, order.customer?.country].filter(Boolean).join(', ') || null,
     items: order.items?.reduce((sum, item) => sum + item.quantity, 0) || 0,
     total: order.total ?? 0,
+    discount: Number(order.discount) || 0,
+    // The coupon as it was when the order was placed — never the live coupon.
+    coupon: order.coupon ? { code: order.coupon.code, type: order.coupon.type, value: order.coupon.value, discountAmount: Number(order.coupon.discountAmount) || 0 } : null,
     status: orderStatusLabel(order.status),
     paymentStatus: paymentLabel(order.paymentStatus),
     date: order.createdAt?.split('T')[0] || ''

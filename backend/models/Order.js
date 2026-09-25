@@ -91,6 +91,26 @@ const orderSchema = new Schema(
       type: String,
       default: null
     },
+    /* The coupon as it was when this order was placed. Order history reads
+       this and never the live Coupon, so an administrator editing or
+       disabling a code later cannot change what an old order says it was
+       charged. `couponId` and `userKey` let a cancelled order hand its use
+       back. Orders placed before coupons were stored have no snapshot. */
+    coupon: {
+      type: new Schema(
+        {
+          couponId: { type: Schema.Types.ObjectId, default: null },
+          code: { type: String, required: true },
+          type: { type: String, required: true },
+          value: { type: Number, default: 0 },
+          discountAmount: { type: Number, min: 0, default: 0 },
+          freeShipping: { type: Boolean, default: false },
+          userKey: { type: String, default: null }
+        },
+        { _id: false }
+      ),
+      default: null
+    },
     paymentMethod: {
       type: String,
       required: true,
@@ -122,9 +142,13 @@ const orderSchema = new Schema(
       enum: PAYMENT_STATES,
       default: 'unpaid'
     },
+    /* Absent — not null — until a PaymentIntent exists. The unique sparse
+       index below skips documents without the field but does index an
+       explicit null, so a null default made every second order that never
+       reached Stripe (cash on delivery, an abandoned card checkout) fail with
+       a duplicate key. Every reader tests it for truthiness. */
     stripePaymentIntentId: {
-      type: String,
-      default: null
+      type: String
     },
     paymentAmount: {
       type: Number,
