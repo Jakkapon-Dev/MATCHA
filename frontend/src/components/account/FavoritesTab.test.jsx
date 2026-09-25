@@ -15,9 +15,9 @@
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor, cleanup } from '@testing-library/react';
+import { render, screen, waitFor, cleanup, fireEvent } from '@testing-library/react';
 
-import FavoritesTab, { readWishlistIds, matchSavedProducts, WISHLIST_STORAGE_KEY } from './FavoritesTab';
+import FavoritesTab, { readWishlistIds, matchSavedProducts, sizesFor, WISHLIST_STORAGE_KEY } from './FavoritesTab';
 
 vi.mock('../../services/api', () => ({
   api: { getProducts: vi.fn() }
@@ -160,10 +160,12 @@ describe('FavoritesTab', () => {
       expect(screen.getByText('MatchA Autumn Jeans')).toBeTruthy();
     });
 
+    fireEvent.change(screen.getByLabelText('account.favoritesSizeLabel'), { target: { value: 'L' } });
     screen.getByTitle('account.addToCart').click();
     expect(addToCart).toHaveBeenCalledTimes(1);
 
     const sent = addToCart.mock.calls[0][0];
+    expect(sent.size).toBe('L');
     expect(sent.id).toBe('AUT-BOT-004');
     expect(sent.price).toBe(70.99);
     expect(sent.sizes).toEqual(['S', 'M', 'L', 'XL', 'XXL']);
@@ -177,8 +179,9 @@ describe('FavoritesTab', () => {
     render(<FavoritesTab />);
 
     await waitFor(() => expect(screen.getByText('MatchA Autumn Jeans')).toBeTruthy());
+    fireEvent.change(screen.getByLabelText('account.favoritesSizeLabel'), { target: { value: 'M' } });
     screen.getByTitle('account.addToCart').click();
-    expect(addToCart).toHaveBeenCalledWith(expect.objectContaining({ id: 'AUT-BOT-004' }), 1);
+    expect(addToCart).toHaveBeenCalledWith(expect.objectContaining({ id: 'AUT-BOT-004', size: 'M' }), 1);
   });
 
   test('when the catalogue cannot be reached nothing buyable is rendered', async () => {
@@ -201,5 +204,60 @@ describe('FavoritesTab', () => {
     });
     expect(screen.queryByText('MatchA Autumn Jeans')).toBeNull();
     expect(api.getProducts).not.toHaveBeenCalled();
+  });
+});
+
+/* C4 — Add to bag used to put the first listed size (S) in the bag without
+   asking. The shopper chooses; nothing is guessed. */
+describe('choosing a size in the saved archive', () => {
+  test('pressing Add to bag without a size adds nothing and asks for one', async () => {
+    setWishlist([{ id: 'AUT-BOT-004' }]);
+    render(<FavoritesTab />);
+    await waitFor(() => expect(screen.getByText('MatchA Autumn Jeans')).toBeTruthy());
+
+    expect(screen.getByLabelText('account.favoritesSizeLabel').value).toBe('');
+    screen.getByTitle('account.addToCart').click();
+
+    expect(addToCart).not.toHaveBeenCalled();
+    expect((await screen.findByRole('alert')).textContent).toBe('account.favoritesChooseSize');
+  });
+
+  test('the chosen size is the one that goes in the bag', async () => {
+    setWishlist([{ id: 'AUT-BOT-004' }]);
+    render(<FavoritesTab />);
+    await waitFor(() => expect(screen.getByText('MatchA Autumn Jeans')).toBeTruthy());
+
+    fireEvent.change(screen.getByLabelText('account.favoritesSizeLabel'), { target: { value: 'XL' } });
+    screen.getByTitle('account.addToCart').click();
+
+    expect(addToCart).toHaveBeenCalledTimes(1);
+    expect(addToCart.mock.calls[0][0].size).toBe('XL');
+  });
+
+  test('a garment sold in one size is preselected', async () => {
+    api.getProducts.mockResolvedValue({ data: [{ ...CATALOGUE[0], sizes: ['OS'] }] });
+    setWishlist([{ id: 'AUT-BOT-004' }]);
+    render(<FavoritesTab />);
+    await waitFor(() => expect(screen.getByText('MatchA Autumn Jeans')).toBeTruthy());
+
+    screen.getByTitle('account.addToCart').click();
+    expect(addToCart.mock.calls[0][0].size).toBe('OS');
+  });
+
+  test('sizes with no stock are not offered', () => {
+    expect(sizesFor({ sizes: ['S', 'M', 'L'], sizeStock: [{ size: 'S', stock: 0 }, { size: 'M', stock: 2 }, { size: 'L', stock: 0 }] })).toEqual(['M']);
+    expect(sizesFor({ sizes: ['S', 'M'] })).toEqual(['S', 'M']);
+    expect(sizesFor({})).toEqual([]);
+  });
+
+  test('a garment with nothing left to sell cannot be added', async () => {
+    api.getProducts.mockResolvedValue({ data: [{ ...CATALOGUE[0], sizeStock: [{ size: 'S', stock: 0 }] }] });
+    setWishlist([{ id: 'AUT-BOT-004' }]);
+    render(<FavoritesTab />);
+    await waitFor(() => expect(screen.getByText('MatchA Autumn Jeans')).toBeTruthy());
+
+    expect(screen.getByTitle('account.addToCart').disabled).toBe(true);
+    screen.getByTitle('account.addToCart').click();
+    expect(addToCart).not.toHaveBeenCalled();
   });
 });

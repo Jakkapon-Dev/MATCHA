@@ -47,6 +47,80 @@ export function matchSavedProducts(ids, products) {
     });
 }
 
+/* The size is the shopper's to choose. Add to bag used to hand the garment over
+   with no size, and the cart quietly took the first one listed (S). As in
+   ProductModal, only a garment sold in a single size is preselected; otherwise
+   the button asks for a size instead of guessing one. */
+export function sizesFor(item) {
+  const list = Array.isArray(item?.sizes) ? item.sizes.filter(Boolean) : [];
+  if (!Array.isArray(item?.sizeStock) || item.sizeStock.length === 0) return list;
+  const inStock = new Set(item.sizeStock.filter((b) => Number(b?.stock) > 0).map((b) => b.size));
+  return list.filter((size) => inStock.has(size));
+}
+
+function SavedGarment({ item, addToCart, t }) {
+  const sizes = sizesFor(item);
+  const [size, setSize] = useState(sizes.length === 1 ? sizes[0] : '');
+  const [needsSize, setNeedsSize] = useState(false);
+
+  const add = () => {
+    if (!size || !sizes.includes(size)) {
+      setNeedsSize(true);
+      return;
+    }
+    setNeedsSize(false);
+    // One per press: the catalogue record's `quantity` is its stock.
+    addToCart({ ...item, size }, 1);
+  };
+
+  return (
+    <div className="p-4 border border-matcha-border bg-matcha-bg/40 flex items-center justify-between gap-3">
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="w-16 h-20 bg-white border border-matcha-border overflow-hidden shrink-0">
+          <img
+            src={webpSrc(item.image)} data-original-src={item.image}
+            loading="lazy"
+            decoding="async"
+            alt={item.name}
+            onError={handleImageError}
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div className="min-w-0">
+          <h4 className="text-xs font-bold text-[#0A0A0A] font-mono truncate">{item.name}</h4>
+          <div className="text-[11px] font-mono text-matcha-muted mt-0.5">${item.price} • {item.color}</div>
+          <select
+            aria-label={t('account.favoritesSizeLabel')}
+            aria-invalid={needsSize || undefined}
+            value={size}
+            onChange={(e) => { setSize(e.target.value); setNeedsSize(false); }}
+            disabled={sizes.length === 0}
+            className={`mt-2 text-[11px] font-mono border bg-white px-2 py-1 ${needsSize ? 'border-red-500' : 'border-matcha-border'}`}
+          >
+            <option value="">{sizes.length === 0 ? t('account.favoritesSoldOut') : t('account.favoritesSizeLabel')}</option>
+            {sizes.map((s) => <option key={s} value={s}>{s}</option>)}
+          </select>
+          {needsSize && (
+            <p role="alert" className="text-[11px] font-mono text-red-600 mt-1">{t('account.favoritesChooseSize')}</p>
+          )}
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2 shrink-0">
+        {/* CartContext owns cart persistence and duplicate-item behavior. */}
+        <button
+          onClick={add}
+          disabled={sizes.length === 0}
+          className="p-2.5 bg-matcha-primary hover:bg-matcha-primary-dark text-white transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+          title={t('account.addToCart')}
+        >
+          <ShoppingBag size={14} />
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function FavoritesTab({ favorites = null }) {
   const { t } = useLanguage();
   const { addToCart } = useCart();
@@ -119,36 +193,7 @@ export default function FavoritesTab({ favorites = null }) {
       {items.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {items.map((item) => (
-            <div key={item._id || item.id} className="p-4 border border-matcha-border bg-matcha-bg/40 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-16 h-20 bg-white border border-matcha-border overflow-hidden shrink-0">
-                  <img
-                    src={webpSrc(item.image)} data-original-src={item.image}
-                    loading="lazy"
-                    decoding="async"
-                    alt={item.name}
-                    onError={handleImageError}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div className="min-w-0">
-                  <h4 className="text-xs font-bold text-[#0A0A0A] font-mono truncate">{item.name}</h4>
-                  <div className="text-[11px] font-mono text-matcha-muted mt-0.5">${item.price} • {item.color}</div>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-2 shrink-0">
-                {/* CartContext owns cart persistence and duplicate-item behavior.
-                    One per press: the catalogue record's `quantity` is its stock. */}
-                <button
-                  onClick={() => addToCart(item, 1)}
-                  className="p-2.5 bg-matcha-primary hover:bg-matcha-primary-dark text-white transition-colors cursor-pointer"
-                  title={t('account.addToCart')}
-                >
-                  <ShoppingBag size={14} />
-                </button>
-              </div>
-            </div>
+            <SavedGarment key={item._id || item.id} item={item} addToCart={addToCart} t={t} />
           ))}
         </div>
       )}
