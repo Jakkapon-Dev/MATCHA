@@ -138,7 +138,7 @@ export function stockKeyFor(product, requestedSize) {
    order over a migration that has not been run, those fall back to the whole
    product's `stock` under the same kind of condition, which is still a real
    check — just a coarser one. */
-async function reserveStock(validatedItems, productCache, session) {
+export async function reserveStock(validatedItems, productCache, session) {
   // Two cart lines can name the same garment and size; they come out of one
   // bucket, so they are counted as one draw on it.
   const wanted = new Map();
@@ -277,12 +277,29 @@ router.post('/', orderLimiter, async (req, res) => {
       });
     }
 
+    /* A line the catalogue does not know is refused here, before any price is
+       worked out. The price used to fall back to whatever the browser sent, or
+       $45, and only the stock reservation further down happened to stop it —
+       and only when MongoDB was connected. The price is the server's or there
+       is no order. */
+    const unknown = items.find((item) => {
+      const matched = productCache.get(item?.productId || item?.id);
+      return !matched || !Number.isFinite(Number(matched.price)) || Number(matched.price) < 0;
+    });
+    if (unknown) {
+      return res.status(400).json({
+        success: false,
+        message: 'มีสินค้าในตะกร้าที่ไม่พบในระบบ กรุณาลบออกแล้วลองใหม่อีกครั้ง',
+        productId: typeof (unknown?.productId || unknown?.id) === 'string' ? (unknown.productId || unknown.id) : null
+      });
+    }
+
     let subtotal = 0;
 
     const validatedItems = items.map(item => {
-      const pId = item.productId || item.id || 'SKU-UNKNOWN';
+      const pId = item.productId || item.id;
       const matched = productCache.get(pId);
-      const actualPrice = matched ? Number(matched.price) : (Number(item.price) || 45.0);
+      const actualPrice = Number(matched.price);
       const qty = Math.max(1, parseInt(item.quantity, 10) || 1);
 
       subtotal += actualPrice * qty;
