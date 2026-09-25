@@ -341,6 +341,23 @@ test('a phone number written with dashes is the same number', async () => {
   );
 });
 
+test('C1. an order cannot carry an email nobody can write to', async () => {
+  for (const email of ['not-an-email', 'a@b', '@example.com', 'two words@example.com', 'x@y.', { $ne: null }]) {
+    const res = await post(orderWith({ email }));
+    assert.equal(res.status, 400, `refused: ${JSON.stringify(email)}`);
+    const body = await res.json();
+    assert.equal(body.success, false);
+    assert.equal(body.field, 'email');
+  }
+});
+
+test('C1. a valid email is kept, lower-cased and trimmed', async () => {
+  const res = await post(orderWith({ email: '  Buyer.One@Example.COM ' }));
+  assert.equal(res.status, 201);
+  const { data } = await res.json();
+  assert.equal(data.customer.email, 'buyer.one@example.com');
+});
+
 test('a postal code of the wrong length is refused', async () => {
   for (const zip of ['1011', '101100', '1011a']) {
     const res = await post(orderWith({ zipCode: zip }));

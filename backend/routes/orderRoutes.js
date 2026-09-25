@@ -12,7 +12,7 @@ import { isDemo } from '../config/storeMode.js';
 import { sendOrderConfirmation } from '../services/email.js';
 import { normaliseCode, discountFor, isFreeShippingCoupon } from '../config/coupons.js';
 import { memoryNotifications } from './notificationRoutes.js';
-import { normalizePhone, isValidThaiPhone, isValidPostalCode } from '../utils/contactFormat.js';
+import { normalizePhone, isValidThaiPhone, isValidPostalCode, isValidEmail } from '../utils/contactFormat.js';
 import { dispatchOrderNotification } from '../services/notificationService.js';
 import { PAYMENT_STATES, initialPaymentStatus, paymentDeadlineFor } from '../config/paymentStates.js';
 
@@ -377,6 +377,13 @@ router.post('/', orderLimiter, async (req, res) => {
        nowhere but order with it. Only what the browser actually sent is
        judged — the fallbacks below are the server's own and are not the
        shopper's to get wrong. */
+    if (customer.email != null && (typeof customer.email !== 'string' || (customer.email.trim() && !isValidEmail(customer.email)))) {
+      return res.status(400).json({
+        success: false,
+        message: 'อีเมลไม่ถูกต้อง กรุณากรอกอีเมลให้ถูกต้อง เช่น name@example.com',
+        field: 'email'
+      });
+    }
     if (customer.phone != null && String(customer.phone).trim() && !isValidThaiPhone(customer.phone)) {
       return res.status(400).json({
         success: false,
