@@ -10,9 +10,9 @@ import Media from '../models/MediaAsset.js';
 import Lookbook from '../models/Lookbook.js';
 import DefaultProduct from '../models/Product.js';
 import { MAX_BYTES, storeImage, storageRoot, isManagedUrl, deleteImage } from '../services/mediaStorage.js';
-import { authRequired as defaultAuthRequired, adminOnly as defaultAdminOnly } from '../middleware/auth.js';
+import { getAuthGuards, setAuthGuards } from '../middleware/auth.js';
 import errorHandler from '../middleware/errorHandler.js';
-import { allLooks } from './lookbookRoutes.js';
+import { assertActiveUrls, usage } from '../services/mediaService.js';
 import { importLookbookMedia } from '../services/importLookbookMedia.js';
 import { escapeRegex } from '../utils/regex.js';
 import { requireDbReady } from '../middleware/dbGuard.js';
@@ -23,14 +23,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const getProductModel = () => mongoose.models.Product || DefaultProduct;
 const Product = new Proxy({}, { get: (_, prop) => getProductModel()[prop] });
 
-let customAuthGuards = null;
-export function setAuthGuards(g) {
-  customAuthGuards = g;
-}
-export function getAuthGuards() {
-  if (customAuthGuards) return customAuthGuards;
-  return { authRequired: defaultAuthRequired, adminOnly: defaultAdminOnly };
-}
+export { setAuthGuards, getAuthGuards };
 const authRequired = (req, res, next) => getAuthGuards().authRequired(req, res, next);
 const adminOnly = (req, res, next) => getAuthGuards().adminOnly(req, res, next);
 
@@ -114,15 +107,7 @@ router.post('/admin/media', rateLimit({ windowMs: 60_000, limit: 20, standardHea
   res.status(201).json({ success: true, data: asset });
 }));
 
-export async function usage(asset) {
-  const urls = [asset.url, asset.thumbnailUrl, asset.sourcePath].filter(Boolean);
-  const [products, looks] = await Promise.all([
-    Product.find({ $or: [{ image: { $in: urls } }, { 'gallery.url': { $in: urls } }, { 'variants.image': { $in: urls } }] }).select('id name').lean(),
-    Lookbook.find({ $or: [{ heroImage: { $in: urls } }, { 'editorial.detailImages': { $in: urls } }] }).select('id title').lean()
-  ]);
-  const inherited = (await allLooks()).filter(l => urls.includes(l.heroImage) || l.editorial?.detailImages?.some(u => urls.includes(u)));
-  return [...products.map(p => ({ type: 'product', id: p.id, name: p.name })), ...new Map([...looks, ...inherited].map(l => [l.id, { type: 'lookbook', id: l.id, name: l.title }])).values()];
-}
+export { usage };
 
 router.get('/admin/media/:id/usage', asyncRoute(async (req, res) => {
   const asset = await Media.findById(objectId.parse(req.params.id)).lean();
@@ -158,13 +143,7 @@ router.delete('/admin/media/:id', asyncRoute(async (req, res) => {
   res.json({ success: true, message: 'ลบรูปภาพถาวรเรียบร้อยแล้ว' });
 }));
 
-export async function assertActiveUrls(urls) {
-  const managed = urls.filter(isManagedUrl);
-  const assets = await Media.find({ url: { $in: managed }, archived: false }).select('url').lean();
-  if (managed.some(u => !assets.some(a => a.url === u))) {
-    throw Object.assign(new Error('รูปถูกเก็บเข้าคลังแล้วหรือไม่พบรูป กรุณาเลือกใหม่'), { status: 400 });
-  }
-}
+export { assertActiveUrls };
 
 router.put('/admin/media/products/:id/gallery', asyncRoute(async (req, res) => {
   const input = galleryInput.parse(req.body);

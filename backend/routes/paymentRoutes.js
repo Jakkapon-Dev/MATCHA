@@ -5,7 +5,7 @@ import rateLimit from 'express-rate-limit';
 import Order from '../models/Order.js';
 import { stripe } from '../config/stripe.js';
 import { usdToThb, usdToThbSatang } from '../config/currency.js';
-import { ownsOrder } from './orderRoutes.js';
+import { ownsOrder } from '../services/orderAccess.js';
 import { canAcceptPayment, isStripeMethod, paymentDeadlineFor } from '../config/paymentStates.js';
 
 const router = express.Router();

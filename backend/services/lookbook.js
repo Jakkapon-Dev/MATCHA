@@ -1,6 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import mongoose from 'mongoose';
+import Lookbook from '../models/Lookbook.js';
+import DefaultProduct from '../models/Product.js';
+
+const getProductModel = () => mongoose.models.Product || DefaultProduct;
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const defaults = JSON.parse(fs.readFileSync(path.join(__dirname, '../../frontend/src/data/editorialSpreads.json'), 'utf8'));
@@ -56,4 +61,19 @@ export function resolveLookbooks(looks, products) {
   });
 }
 
-export default { defaultLookbooks, resolveLookbooks, defaults };
+export async function allLooks() {
+  const saved = await Lookbook.find().sort({ id: 1 }).lean();
+  const byId = new Map(saved.map(l => [l.id, l]));
+  return defaultLookbooks().map(l => byId.get(l.id) || l).concat(saved.filter(l => !defaults.some(d => d.id === l.id)));
+}
+
+export async function findLinkedProducts(items) {
+  const Product = getProductModel();
+  const ids = [...new Set(items.map(i => i.productId))];
+  const objectIds = ids.filter(id => mongoose.Types.ObjectId.isValid(id));
+  return Product.find({ $or: [{ id: { $in: ids } }, { _id: { $in: objectIds } }] })
+    .select('id name price category color colorHex image variants sizes sizeStock stock quantity gallery mediaRevision specs')
+    .lean();
+}
+
+export default { defaultLookbooks, resolveLookbooks, defaults, allLooks, findLinkedProducts };
