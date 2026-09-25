@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext.jsx';
 import { fetchAddressBook, readAddressBook, rememberAddress, formatAddressArea } from '../../features/account/addressBook';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { Truck, CheckCircle2, PlusCircle, ArrowLeft, ArrowRight, ShieldCheck, Building2, Home } from 'lucide-react';
+import { normalizePhone, isValidThaiPhone, normalizePostalCode, isValidPostalCode } from '../../utils/contactValidation.js';
 
 
 export default function ShippingStep({
@@ -134,9 +135,10 @@ export default function ShippingStep({
      order API and were stored as the details the courier would have used. The
      phone is judged on its digits, because 081-000-0000 and 0810000000 are the
      same number and both are worth accepting. */
-  const phoneDigits = String(formData.phone ?? '').replace(/[\s()-]/g, '').trim();
-  const phoneMalformed = Boolean(phoneDigits) && !/^0[0-9]{8,9}$/.test(phoneDigits);
-  const postalMalformed = Boolean(formData.zipCode?.trim()) && !/^[0-9]{5}$/.test(formData.zipCode.trim());
+  const phoneDigits = normalizePhone(formData.phone);
+  const phoneMalformed = Boolean(phoneDigits) && !isValidThaiPhone(phoneDigits);
+  const postalDigits = normalizePostalCode(formData.zipCode);
+  const postalMalformed = Boolean(postalDigits) && !isValidPostalCode(postalDigits);
   // The button is type="button", so the browser's own check on type="email"
   // never ran and "not-an-email" went through to payment.
   const emailMalformed = Boolean(formData.email?.trim()) && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim());
