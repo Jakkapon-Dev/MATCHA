@@ -10,7 +10,7 @@ const LEGAL_DOCS = {
     title: 'Privacy Policy',
     titleTh: 'นโยบายความเป็นส่วนตัวและสิทธิในข้อมูล',
     icon: ShieldCheck,
-    updated: 'September 21, 2026 (v1.1)',
+    updated: 'September 25, 2026 (v1.2)',
     sections: [
       {
         heading: '1. ข้อมูลที่เราจัดเก็บจริง (Data We Actually Collect)',
@@ -18,11 +18,11 @@ const LEGAL_DOCS = {
       },
       {
         heading: '2. ผู้ประมวลผลข้อมูลและโครงสร้างพื้นฐาน (Sub-processors & Cloud Infrastructure)',
-        content: 'ระบบใช้บริการคลาวด์มาตรฐานสากลในการประมวลผลและจัดเก็บข้อมูลอย่างปลอดภัย: (1) Google Firebase Authentication สำหรับการระบุตัวตนและตรวจสอบสิทธิ์เข้าใช้งาน (Google Sign-In / Email verification), (2) MongoDB Atlas สำหรับฐานข้อมูลหลักในการจัดเก็บบัญชีผู้ใช้ คำสั่งซื้อ และสมุดที่อยู่, (3) Cloudinary สำหรับจัดเก็บและแปลงขนาดรูปภาพโปรไฟล์และมีเดีย, (4) Render Services Inc. สำหรับโฮสต์เซิร์ฟเวอร์ Backend API (Node.js/Express) พร้อมบันทึก Application Log, และ (5) Vercel Inc. สำหรับโฮสต์เว็บแอปพลิเคชันส่วนหน้า (Edge CDN Delivery)'
+        content: 'ระบบใช้บริการคลาวด์มาตรฐานสากลในการประมวลผลและจัดเก็บข้อมูลอย่างปลอดภัย: (1) Google Firebase Authentication สำหรับการระบุตัวตนและตรวจสอบสิทธิ์เข้าใช้งาน (Google Sign-In / Email verification), (2) MongoDB Atlas สำหรับฐานข้อมูลหลักในการจัดเก็บบัญชีผู้ใช้ ตะกร้าสินค้า คำสั่งซื้อ และสมุดที่อยู่, (3) Stripe สำหรับรับชำระเงินด้วยบัตรและ PromptPay (ข้อมูลบัตรถูกกรอกและประมวลผลบนระบบของ Stripe โดยตรง MatchA ไม่จัดเก็บเลขบัตร), (4) Resend สำหรับส่งอีเมลยืนยันคำสั่งซื้อและอีเมลแจ้งเตือนของระบบ, (5) Cloudinary สำหรับจัดเก็บและแปลงขนาดรูปภาพโปรไฟล์และมีเดีย, (6) Render Services Inc. สำหรับโฮสต์เซิร์ฟเวอร์ Backend API (Node.js/Express) พร้อมบันทึก Application Log, และ (7) Vercel Inc. สำหรับโฮสต์เว็บแอปพลิเคชันส่วนหน้า (Edge CDN Delivery)'
       },
       {
         heading: '3. การจัดเก็บข้อมูลบนอุปกรณ์ของผู้ใช้ (Cookies & Local Storage Disclosure)',
-        content: 'เว็บไซต์ MatchA ไม่ใช้คุกกี้เพื่อการติดตามพฤติกรรมข้ามเว็บไซต์ (No third-party tracking cookies) แต่ใช้พื้นที่จัดเก็บในเบราว์เซอร์ (LocalStorage / SessionStorage) เท่าที่จำเป็นต่อการทำงานของระบบ ได้แก่: `matcha_token` (เก็บบันทึกสถานะการเข้าสู่ระบบอย่างปลอดภัย), `matcha_cart` (บันทึกสินค้าในตะกร้าช้อปปิ้ง), `matcha_guest_session` (รหัสเซสชันสำหรับเชื่อมโยงคำสั่งซื้อของผู้ใช้ทั่วไป), `matcha_lang` (ภาษาที่เลือกใช้งาน), และ `matcha_personal_color` (ผลลัพธ์การจับคู่สีเสื้อผ้า)'
+        content: 'เว็บไซต์ MatchA ไม่ใช้คุกกี้เพื่อการติดตามพฤติกรรมข้ามเว็บไซต์ (No third-party tracking cookies) แต่ใช้พื้นที่จัดเก็บในเบราว์เซอร์ (LocalStorage / SessionStorage) เท่าที่จำเป็นต่อการทำงานของระบบ ได้แก่: `matcha_token` และ `matcha_user` (สถานะการเข้าสู่ระบบและข้อมูลโปรไฟล์พื้นฐาน เช่น ชื่อ อีเมล และระดับสมาชิก), `matcha_guest_id` (รหัสสุ่มสำหรับเชื่อมโยงตะกร้าและคำสั่งซื้อของผู้ที่ยังไม่เข้าสู่ระบบ), `matcha_cart` และ `matcha_demo_cart` (สินค้าในตะกร้า), `matcha_wishlist` (รายการสินค้าที่บันทึกไว้), `matcha_saved_looks` (ลุคที่บันทึกจากหน้า Lookbook), `matcha:addresses:` ตามด้วยรหัสบัญชี (สำเนาสมุดที่อยู่ของบัญชีเพื่อให้หน้าชำระเงินแสดงผลได้เร็ว), `matcha_applied_coupon` (คูปองที่กดรับไว้ รอใช้ตอนชำระเงิน), `matcha_personal_color` และ `matcha_personal_color_reading` (ผลวิเคราะห์ Personal Color), `matcha_verify_cooldown_until` (ระยะรอก่อนส่งอีเมลยืนยันซ้ำ) และ `matcha:lang` (ภาษาที่เลือกใช้งาน) เมื่อออกจากระบบ ระบบจะลบข้อมูลการเข้าสู่ระบบ ตะกร้าที่แสดงบนหน้าจอ รายการสินค้าที่บันทึกไว้ และลุคที่บันทึกไว้ออกจากเบราว์เซอร์นั้น'
       },
       {
         heading: '4. ความยินยอมด้านการตลาด (Marketing Consent — Opt-In)',
