@@ -11,6 +11,7 @@ import { authRequired, adminOnly } from '../middleware/auth.js';
 import { THAI_PHONE_RE, POSTAL_CODE_RE } from '../utils/contactFormat.js';
 import { MAX_BYTES, storeImage, deleteImage } from '../services/mediaStorage.js';
 import { escapeRegex } from '../utils/regex.js';
+import { requireDbReady } from '../middleware/dbGuard.js';
 
 const router = express.Router();
 const fields = '_id name email role tier createdAt';
@@ -24,12 +25,7 @@ const avatarRateLimit = rateLimit({ windowMs: 60_000, limit: 10, standardHeaders
 router.use(authRequired);
 
 // DB readiness middleware
-const checkDbReady = (req, res, next) => {
-  if (mongoose.connection.readyState !== 1) {
-    return res.status(503).json({ success: false, message: 'Member database unavailable' });
-  }
-  next();
-};
+const checkDbReady = requireDbReady({ message: 'Member database unavailable' });
 
 /* Shared with checkout. These two rules used to live only here, which is how
    POST /api/orders came to accept contact details the address book refuses. */
