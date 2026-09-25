@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import useChangeMotion from '../hooks/useChangeMotion';
 import { handleImageError, webpSrc } from '../utils/imageFallback';
 import {
@@ -13,11 +13,11 @@ import {
 } from 'lucide-react';
 import { useToast } from '../context/ToastContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
-// Same contrast and edge rules the catalogue's dye bars use, so a colour named
-// on itself is legible here exactly as it is there.
-import { inkOn, needsEdge, dyesForSeason } from '../utils/dye';
+import { dyesForSeason } from '../utils/dye';
 import { useDyeArchive } from '../features/catalog/useDyeArchive';
 import { QUIZ_QUESTIONS } from '../features/personalColor/quizQuestions';
+import PaletteBand from '../features/personalColor/PaletteBand';
+import ColorAxis, { SEASON_AXIS } from '../features/personalColor/ColorAxis';
 
 // 4 Master Personal Color Profiles with Grounded Theory
 const SEASONS = ['Spring', 'Summer', 'Autumn', 'Winter'];
@@ -43,26 +43,7 @@ const readStoredSeason = () => {
   }
 };
 
-/* The undertone axis, and what it can honestly resolve.
 
-   Questions 1–4 each contribute +2 warm, +2 cool or nothing, so the difference
-   between the two totals lands on one of nine steps from −8 to +8. That is a
-   real axis and it is drawn as one.
-
-   Depth is a different matter: only question 5 speaks to it, and only through
-   SEASON_DEPTH, so it resolves to Light or Deep and nothing in between. It is
-   drawn as two bands rather than a second continuous axis — a dot floating in
-   a smooth 2D field would claim a precision this quiz never measured. */
-const UNDERTONE_MAX = 8;
-const UNDERTONE_STEPS = UNDERTONE_MAX + 1; // −8, −6 … +6, +8
-
-// Where each season sits on the board, so the reading can be placed in it.
-const SEASON_AXIS = {
-  Spring: { tone: 'Warm', depth: 'Light' },
-  Summer: { tone: 'Cool', depth: 'Light' },
-  Autumn: { tone: 'Warm', depth: 'Deep' },
-  Winter: { tone: 'Cool', depth: 'Deep' },
-};
 
 const readStoredReading = () => {
   try {
@@ -75,186 +56,7 @@ const readStoredReading = () => {
   }
 };
 
-/* The palette, at the size the subject deserves.
 
-   This page is called the Colour Lab and it used to show colour as six 20px
-   dots parked in a panel in the corner — measured, 0.19% of the page was
-   actually coloured, against twenty-five rounded chrome containers. The answer
-   to "which colours are you" is the whole point of the quiz, so here it is the
-   largest thing on the page: solid blocks carrying their own name and value,
-   using the ink rule the catalogue's dye bars and the lookbook's palettes use,
-   so all three pages describe colour the same way. */
-function PaletteBand({ palette, innerRef, emptyLabel }) {
-  if (!palette.length) {
-    return (
-      <p ref={innerRef} className="max-w-[54ch] text-sm text-[#0A0A0A]/75">
-        {emptyLabel}
-      </p>
-    );
-  }
-
-  return (
-    <div ref={innerRef} className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6">
-      {palette.map((colour) => (
-        <Link
-          key={colour.name}
-          to={`/catalog?dye=${encodeURIComponent(colour.name)}`}
-          aria-label={`${colour.name}, ${colour.count} ${colour.count === 1 ? 'garment' : 'garments'}`}
-          className="group aspect-square sm:aspect-3/4 flex flex-col justify-end p-3 sm:p-4 outline-hidden focus-visible:ring-2 focus-visible:ring-[#0A0A0A] focus-visible:ring-inset"
-          style={{
-            backgroundColor: colour.hex,
-            color: inkOn(colour.hex),
-            // Pure white and the palest creams would otherwise dissolve into
-            // the page and read as a missing swatch rather than a pale one.
-            boxShadow: needsEdge(colour.hex) ? 'inset 0 0 0 1px #DCDCDC' : undefined,
-          }}
-        >
-          <span className="font-mono text-[11px] uppercase tracking-wider leading-tight group-hover:underline underline-offset-4">
-            {colour.name}
-          </span>
-          {/* How many garments carry it, rather than the hex — a number the
-              visitor can act on instead of one only a screen can use. */}
-          <span className="font-mono text-[10px] opacity-70 mt-0.5 tabular-nums">
-            {colour.count}
-          </span>
-        </Link>
-      ))}
-    </div>
-  );
-}
-
-/* The reading, drawn at the resolution the quiz actually has.
-
-   Across: questions 1–4 each push +2 warm, +2 cool or nothing, so the result
-   lands on one of nine ticks. Those ticks are drawn, and the marker sits on
-   one of them — not between them, because nothing between them can be
-   measured.
-
-   Down: only question 5 speaks to depth, and only as Light or Deep. So depth
-   is two bands, and the visitor's band is the one filled in. Drawing this as a
-   second smooth axis with a dot floating in a field would look more scientific
-   and would be a lie about the instrument. */
-function ColorAxis({ season, reading, dyes }) {
-  const { t } = useLanguage();
-  const axis = SEASON_AXIS[season];
-  const depth = reading?.depth || axis.depth;
-
-  // −8 … +8 in steps of 2. Negative is cool, positive is warm.
-  const diff = reading ? reading.warm - reading.cool : null;
-  const tickIndex = diff === null ? null : (diff + UNDERTONE_MAX) / 2;
-
-  const rows = ['Light', 'Deep'];
-  const columns = ['Cool', 'Warm'];
-
-  // Which of the four seasons owns a given cell of the board.
-  const seasonAt = (tone, band) =>
-    Object.keys(SEASON_AXIS).find(
-      (key) => SEASON_AXIS[key].tone === tone && SEASON_AXIS[key].depth === band
-    );
-
-  return (
-    <div className="space-y-4">
-      <div className="border border-matcha-border">
-        {rows.map((band) => (
-          <div key={band} className="grid grid-cols-2 border-b border-matcha-border last:border-b-0">
-            {columns.map((tone) => {
-              const cellSeason = seasonAt(tone, band);
-              const isYours = cellSeason === season;
-              const inBand = band === depth;
-              return (
-                <div
-                  key={tone}
-                  className={`relative p-4 sm:p-5 border-r border-matcha-border last:border-r-0 transition-colors ${
-                    isYours ? 'bg-[#0A0A0A] text-matcha-bg' : inBand ? 'bg-white' : ''
-                  }`}
-                >
-                  <span className={`font-mono text-[10px] uppercase tracking-[0.18em] block ${
-                    isYours ? 'text-matcha-bg/60' : 'text-[#999999]'
-                  }`}>
-                    {tone} · {band}
-                  </span>
-                  <span className={`font-bold text-lg sm:text-xl block mt-1 ${
-                    isYours ? 'text-matcha-bg' : 'text-matcha-muted'
-                  }`}>
-                    {cellSeason}
-                  </span>
-
-                  {/* Every season's own colours, so the board is itself a
-                      comparison rather than four labelled boxes. */}
-                  <span className="flex mt-3 h-2">
-                    {dyesForSeason(dyes, cellSeason).map((c) => (
-                      <span key={c.name} className="flex-1" style={{ backgroundColor: c.hex }} />
-                    ))}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-
-      {/* The undertone scale, with the answer standing on its tick. */}
-      <div>
-        <div className="flex justify-between font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-muted mb-2">
-          <span>Cool</span>
-          <span className="text-[#0A0A0A]">Undertone</span>
-          <span>Warm</span>
-        </div>
-
-        <div className="flex items-end gap-1" role="img" aria-label={
-          diff === null
-            ? t('quiz.undertoneAria', { tone: axis.tone })
-            : t('quiz.undertoneLevelAria', {
-                tone: t(diff > 0 ? 'quiz.warm' : diff < 0 ? 'quiz.cool' : 'quiz.balanced'),
-                score: Math.abs(diff),
-                max: UNDERTONE_MAX,
-              })
-        }>
-          {Array.from({ length: UNDERTONE_STEPS }).map((_, i) => {
-            const isMark = i === tickIndex;
-            const isMiddle = i === (UNDERTONE_STEPS - 1) / 2;
-            return (
-              <span
-                key={i}
-                className={`flex-1 transition-all ${
-                  isMark ? 'h-10 bg-matcha-accent' : isMiddle ? 'h-5 bg-[#999999]' : 'h-3 bg-matcha-border'
-                }`}
-              />
-            );
-          })}
-        </div>
-
-        {diff === null ? (
-          <p className="mt-3 font-mono text-[11px] text-matcha-muted">
-            {t('quiz.savedNote')}
-          </p>
-        ) : (
-          <div className="mt-3 flex flex-wrap items-baseline gap-x-6 gap-y-1 font-mono text-[11px] text-matcha-muted">
-            <span>
-              {t('quiz.warm')} <span className="text-[#0A0A0A] tabular-nums">{reading.warm}</span>
-              <span className="mx-1.5">·</span>
-              {t('quiz.cool')} <span className="text-[#0A0A0A] tabular-nums">{reading.cool}</span>
-              <span className="mx-1.5">·</span>
-              {t('quiz.outOf')} <span className="text-[#0A0A0A] tabular-nums">{UNDERTONE_MAX}</span>
-            </span>
-            <span>
-              {t('quiz.depthFromQ5', { depth })}
-            </span>
-          </div>
-        )}
-
-        {/* A tie is the one result worth saying out loud: it means the
-            undertone questions did not decide this, question 5 did. */}
-        {diff === 0 && (
-          <p className="mt-2 text-sm text-[#0A0A0A] leading-relaxed max-w-prose">
-            {t('quiz.tiedScores')}{' '}
-            {t('quiz.compareOther', { season: seasonAt(axis.tone === 'Warm' ? 'Cool' : 'Warm', depth) })}
-          </p>
-        )}
-      </div>
-    </div>
-  );
-}
 
 export default function PersonalColorPage() {
   const navigate = useNavigate();
