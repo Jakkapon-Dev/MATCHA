@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import couponRoutes from '../routes/couponRoutes.js';
-import { extractAuthUser, optionalAuth } from '../middleware/auth.js';
+import { extractAuthUser } from '../middleware/auth.js';
 import { ownsOrder } from '../routes/orderRoutes.js';
 import { getJwtSecret } from '../middleware/auth.js';
 
@@ -188,36 +188,4 @@ test('ownsOrder: authorization checks with optional auth', () => {
   // 6. Invalid token or demo-offline-token does not grant access
   assert.equal(ownsOrder({ headers: { authorization: 'Bearer invalid.token' } }, sampleOrder), false);
   assert.equal(ownsOrder({ headers: { authorization: 'Bearer demo-offline-token' } }, sampleOrder), false);
-});
-
-test('optionalAuth middleware: attaches decoded user to req.user when valid token present, leaves undefined otherwise', () => {
-  // Missing header
-  const req1 = { headers: {} };
-  let called1 = false;
-  optionalAuth(req1, {}, () => { called1 = true; });
-  assert.equal(called1, true);
-  assert.equal(req1.user, undefined);
-
-  // Demo offline token
-  const req2 = { headers: { authorization: 'Bearer demo-offline-token' } };
-  let called2 = false;
-  optionalAuth(req2, {}, () => { called2 = true; });
-  assert.equal(called2, true);
-  assert.equal(req2.user, undefined);
-
-  // Invalid token
-  const req3 = { headers: { authorization: 'Bearer bad.token.here' } };
-  let called3 = false;
-  optionalAuth(req3, {}, () => { called3 = true; });
-  assert.equal(called3, true);
-  assert.equal(req3.user, undefined);
-
-  // Valid token
-  const token = jwt.sign({ id: 'u_opt_1', role: 'Member' }, getJwtSecret());
-  const req4 = { headers: { authorization: `Bearer ${token}` } };
-  let called4 = false;
-  optionalAuth(req4, {}, () => { called4 = true; });
-  assert.equal(called4, true);
-  assert.equal(req4.user?.id, 'u_opt_1');
-  assert.equal(req4.user?.role, 'Member');
 });

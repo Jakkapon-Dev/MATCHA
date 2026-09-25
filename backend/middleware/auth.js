@@ -123,15 +123,6 @@ export const extractAuthUser = (req) => {
   }
 };
 
-// Optional auth middleware: attaches decoded token payload to req.user if a valid token is provided
-export function optionalAuth(req, res, next) {
-  const user = extractAuthUser(req);
-  if (user) {
-    req.user = user;
-  }
-  next();
-}
-
 export default { 
   requireAuth, 
   requireRole, 
@@ -140,5 +131,4 @@ export default {
   adminOnly,
   requireVerifiedEmail,
   extractAuthUser,
-  optionalAuth,
 };
