@@ -3,11 +3,12 @@ import mongoose from 'mongoose';
 import { z } from 'zod';
 import Lookbook from '../models/Lookbook.js';
 import DefaultProduct from '../models/Product.js';
-import { defaultLookbooks, resolveLookbooks, defaults } from '../services/lookbook.js';
+import { defaultLookbooks, resolveLookbooks, defaults, allLooks, findLinkedProducts } from '../services/lookbook.js';
 import { isDemo, demoProduct } from '../config/storeMode.js';
 import errorHandler from '../middleware/errorHandler.js';
 import { requireDbReady } from '../middleware/dbGuard.js';
-import { assertActiveUrls, getAuthGuards } from './mediaRoutes.js';
+import { assertActiveUrls } from '../services/mediaService.js';
+import { getAuthGuards } from '../middleware/auth.js';
 
 const getProductModel = () => mongoose.models.Product || DefaultProduct;
 const authRequired = (req, res, next) => getAuthGuards().authRequired(req, res, next);
@@ -37,20 +38,7 @@ const lookInput = z.object({
 // ฐานข้อมูลต้องพร้อมใช้งาน
 router.use(['/lookbooks', '/admin/lookbooks'], requireDbReady);
 
-export async function allLooks() {
-  const saved = await Lookbook.find().sort({ id: 1 }).lean();
-  const byId = new Map(saved.map(l => [l.id, l]));
-  return defaultLookbooks().map(l => byId.get(l.id) || l).concat(saved.filter(l => !defaults.some(d => d.id === l.id)));
-}
-
-export async function findLinkedProducts(items) {
-  const Product = getProductModel();
-  const ids = [...new Set(items.map(i => i.productId))];
-  const objectIds = ids.filter(id => mongoose.Types.ObjectId.isValid(id));
-  return Product.find({ $or: [{ id: { $in: ids } }, { _id: { $in: objectIds } }] })
-    .select('id name price category color colorHex image variants sizes sizeStock stock quantity gallery mediaRevision specs')
-    .lean();
-}
+export { allLooks, findLinkedProducts };
 
 // Public Lookbooks API
 router.get('/lookbooks', asyncRoute(async (req, res) => {

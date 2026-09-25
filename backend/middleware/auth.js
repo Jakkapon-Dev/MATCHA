@@ -123,6 +123,15 @@ export const extractAuthUser = (req) => {
   }
 };
 
+let customAuthGuards = null;
+export function setAuthGuards(g) {
+  customAuthGuards = g;
+}
+export function getAuthGuards() {
+  if (customAuthGuards) return customAuthGuards;
+  return { authRequired, adminOnly };
+}
+
 export default { 
   requireAuth, 
   requireRole, 
@@ -131,4 +140,6 @@ export default {
   adminOnly,
   requireVerifiedEmail,
   extractAuthUser,
+  setAuthGuards,
+  getAuthGuards,
 };
