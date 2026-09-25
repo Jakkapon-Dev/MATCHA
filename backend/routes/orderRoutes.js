@@ -403,7 +403,7 @@ router.post('/', orderLimiter, async (req, res) => {
     const customerPayload = {
       firstName: customer.firstName || (authUser?.name ? authUser.name.split(' ')[0] : 'Guest'),
       lastName: customer.lastName || (authUser?.name ? authUser.name.split(' ').slice(1).join(' ') || 'Customer' : 'Shopper'),
-      email: (customer.email || authUser?.email || 'guest@matcha-archive.com').toLowerCase().trim(),
+      email: ((typeof customer.email === 'string' && customer.email.trim()) || authUser?.email || 'guest@matcha-archive.com').toLowerCase().trim(),
       phone: customer.phone ? normalizePhone(customer.phone) : '0812345678',
       address: customer.address || 'MatchA Customer Residence',
       city: customer.city || 'Bangkok',

@@ -351,6 +351,13 @@ test('C1. an order cannot carry an email nobody can write to', async () => {
   }
 });
 
+test('C1. a blank email falls back to the server default, never an empty one', async () => {
+  const res = await post(orderWith({ email: '   ' }));
+  assert.equal(res.status, 201);
+  const { data } = await res.json();
+  assert.equal(data.customer.email, 'guest@matcha-archive.com');
+});
+
 test('C1. a valid email is kept, lower-cased and trimmed', async () => {
   const res = await post(orderWith({ email: '  Buyer.One@Example.COM ' }));
   assert.equal(res.status, 201);
