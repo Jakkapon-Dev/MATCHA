@@ -8,7 +8,7 @@ import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import { apiErrorText } from '../services/api';
-import { Plus, BarChart3, Layers, Search, ExternalLink, ChevronRight, Download, FileSpreadsheet, FileJson, ChevronDown, LayoutDashboard, Boxes, ClipboardList, UserCheck, HardDrive, LogOut, Bell, CheckCheck, RefreshCw } from 'lucide-react';
+import { Plus, BarChart3, Layers, Search, ExternalLink, ChevronRight, Download, FileSpreadsheet, FileJson, ChevronDown, LayoutDashboard, Boxes, ClipboardList, UserCheck, HardDrive, LogOut, Bell, CheckCheck, RefreshCw, MapPin } from 'lucide-react';
 import { webpSrc } from '../utils/imageFallback';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
@@ -365,6 +365,7 @@ export default function AdminPage() {
   // Nav Items
   const navTabs = [
     { id: 'media', label: t('admin.tabMedia'), icon: Layers, badge: null },
+    { id: 'lookbook', label: 'Lookbook Hotspots', icon: MapPin, badge: null },
     { id: 'dashboard', label: 'Overview', icon: LayoutDashboard, badge: null },
     /* Each badge counts what its label names, across the whole shop.
 
@@ -698,7 +699,8 @@ export default function AdminPage() {
               {mutationNotice && <p role={mutationNotice.error ? 'alert' : 'status'} className={mutationNotice.error ? 'text-red-800' : 'text-green-900'}>{mutationNotice.error && `${t('errors.saveFailed')}: `}{mutationNotice.text}</p>}
             </div>
           )}
-          {activeTab === 'media' && <MediaManager />}
+          {activeTab === 'media' && <MediaManager key="media" />}
+          {activeTab === 'lookbook' && <MediaManager key="lookbook" initialTab="looks" />}
           {activeTab === 'dashboard' && (
             <DashboardTab status={status} errors={errors} totalRevenue={totalRevenue} orders={orders} totalOrdersCount={totalOrdersCount} paidOrdersCount={paidOrdersCount} totalStockUnits={totalStockUnits} totalProductsCount={totalProductsCount} vipMembersCount={vipMembersCount} lowStockCount={lowStockCount} monthlyData={monthlyData} categoryDistribution={categoryDistribution} setActiveTab={setActiveTab} />
           )}
