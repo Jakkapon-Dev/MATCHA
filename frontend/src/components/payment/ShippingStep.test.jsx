@@ -78,3 +78,48 @@ describe('ShippingStep delivery prices', () => {
     expect(premium.textContent).toContain('$25.00'); // struck through, for reference
   });
 });
+
+describe('ShippingStep phone', () => {
+  test.each(['081234', '08123456789', '1812345678', '081abcdefg', '+66812345678'])('%s is rejected as malformed', (phone) => {
+    renderWith({ ...VALID, phone });
+    expect(continueButton().disabled).toBe(true);
+    const input = document.getElementById('shipping-phone');
+    expect(input.getAttribute('aria-invalid')).toBe('true');
+    expect(screen.getByText('checkout.phoneInvalid')).toBeTruthy();
+  });
+
+  test.each(['0812345678', '021234567', '081-234-5678', '081 234 5678', '(02) 123-4567'])('%s is accepted', (phone) => {
+    renderWith({ ...VALID, phone });
+    expect(continueButton().disabled).toBe(false);
+    expect(screen.queryByText('checkout.phoneInvalid')).toBeNull();
+  });
+
+  test('empty phone disables continue without showing format error', () => {
+    renderWith({ ...VALID, phone: '' });
+    expect(continueButton().disabled).toBe(true);
+    expect(screen.queryByText('checkout.phoneInvalid')).toBeNull();
+  });
+});
+
+describe('ShippingStep postal code', () => {
+  test.each(['1011', '101100', '1011A', '10 110'])('%s is rejected as malformed', (zipCode) => {
+    renderWith({ ...VALID, zipCode });
+    expect(continueButton().disabled).toBe(true);
+    const input = document.getElementById('shipping-zipCode');
+    expect(input.getAttribute('aria-invalid')).toBe('true');
+    expect(screen.getByText('checkout.postalInvalid')).toBeTruthy();
+  });
+
+  test.each(['10110', ' 10110 '])('%s is accepted', (zipCode) => {
+    renderWith({ ...VALID, zipCode });
+    expect(continueButton().disabled).toBe(false);
+    expect(screen.queryByText('checkout.postalInvalid')).toBeNull();
+  });
+
+  test('empty postal code disables continue without showing format error', () => {
+    renderWith({ ...VALID, zipCode: '' });
+    expect(continueButton().disabled).toBe(true);
+    expect(screen.queryByText('checkout.postalInvalid')).toBeNull();
+  });
+});
+
