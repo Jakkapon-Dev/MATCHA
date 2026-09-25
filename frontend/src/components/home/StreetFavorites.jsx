@@ -9,6 +9,7 @@ import { webpSrc } from '../../utils/imageFallback';
 // does on the catalogue page.
 import { wash, inkOn, needsEdge } from '../../utils/dye';
 import { useLanguage } from '../../context/LanguageContext.jsx';
+import { taxonomyLabel } from '../../utils/taxonomy';
 
 /* The home rail's product card, speaking the catalogue's language.
 
@@ -79,8 +80,8 @@ function StreetFavoriteCard({ item, onAddToCart, onQuickView }) {
     >
       {/* Tag and category, set as the plain marginalia they are. */}
       <div className="flex justify-between items-baseline gap-2 px-3 pt-3 pb-2 font-mono text-[10px] uppercase tracking-wider">
-        <span className="text-matcha-accent truncate">{item.tag || item.season}</span>
-        <span className="text-matcha-muted truncate">{item.category}</span>
+        <span className="text-matcha-accent truncate">{item.tag ? taxonomyLabel(t, 'tag', item.tag) : taxonomyLabel(t, 'season', item.season)}</span>
+        <span className="text-matcha-muted truncate">{taxonomyLabel(t, 'category', item.category)}</span>
       </div>
 
       {/* The garment on its own dye. Every product here is shot on white, so

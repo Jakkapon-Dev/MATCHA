@@ -13,6 +13,25 @@ const PAYMENT_LABELS = {
 
 export const paymentLabel = value => PAYMENT_LABELS[value] || titleCase(value);
 
+/* The order statuses an admin can set, as the status control shows them.
+
+   Stored rows do not all agree on case — "pending" next to "Processing" and
+   "Delivered" — and older ones carry "completed", which is not one of these.
+   titleCase only raised the first letter, so "completed" became "Completed",
+   matched no option, and the status control fell back to showing Pending: an
+   admin read a finished order as untouched. Statuses are now matched without
+   regard to case, and one outside the list is shown as it is, not as Pending. */
+export const ORDER_STATUSES = ['Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
+const ORDER_STATUS_BY_KEY = Object.fromEntries(ORDER_STATUSES.map((label) => [label.toLowerCase(), label]));
+
+export const orderStatusLabel = (value) => {
+  const key = String(value ?? '').trim().toLowerCase();
+  if (!key) return 'Unknown';
+  return ORDER_STATUS_BY_KEY[key] || key[0].toUpperCase() + key.slice(1);
+};
+
+export const isKnownOrderStatus = (label) => ORDER_STATUSES.includes(label);
+
 export function normalizeProduct(product) {
   /* Kept as its own field so the inventory table can offer the sizes that
      actually exist. A product with buckets can only be restocked per size —
@@ -44,7 +63,7 @@ export function normalizeOrder(order) {
     address: [order.customer?.address, order.customer?.city, order.customer?.zipCode, order.customer?.country].filter(Boolean).join(', ') || null,
     items: order.items?.reduce((sum, item) => sum + item.quantity, 0) || 0,
     total: order.total ?? 0,
-    status: titleCase(order.status),
+    status: orderStatusLabel(order.status),
     paymentStatus: paymentLabel(order.paymentStatus),
     date: order.createdAt?.split('T')[0] || ''
   };

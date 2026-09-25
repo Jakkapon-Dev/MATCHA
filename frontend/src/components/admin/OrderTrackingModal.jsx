@@ -3,6 +3,7 @@ import { X, Clock, RotateCcw, ArrowRightLeft, Check } from 'lucide-react';
 import { useToast } from '../../context/ToastContext.jsx';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
 import { useLanguage } from '../../context/LanguageContext.jsx';
+import { ORDER_STATUSES, isKnownOrderStatus } from './adminData';
 
 export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateStatus, saveError }) {
   const { t } = useLanguage();
@@ -390,11 +391,13 @@ export default function OrderTrackingModal({ isOpen, onClose, order, onUpdateSta
                 onChange={(e) => setCurrentStatus(e.target.value)}
                 className="px-3 py-1.5 rounded-xl border border-matcha-border bg-white font-mono text-xs font-bold text-matcha-text outline-none cursor-pointer focus:border-matcha-primary shadow-2xs"
               >
-                <option value="Pending">Pending</option>
-                <option value="Processing">Processing</option>
-                <option value="Shipped">Shipped</option>
-                <option value="Delivered">Delivered</option>
-                <option value="Cancelled">Cancelled</option>
+                {!isKnownOrderStatus(currentStatus) && (
+                  // A stored status outside the list is shown, not replaced by Pending.
+                  <option value={currentStatus} disabled>{currentStatus}</option>
+                )}
+                {ORDER_STATUSES.map((status) => (
+                  <option key={status} value={status}>{status}</option>
+                ))}
               </select>
             </div>
 

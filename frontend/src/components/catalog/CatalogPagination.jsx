@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 /* Page navigation for the catalogue.
 
@@ -17,6 +18,7 @@ export default function CatalogPagination({
   startIndex,
   endIndex,
 }) {
+  const { t } = useLanguage();
   // A single-page result set needs no navigation or range summary.
   if (totalPages <= 1) return null;
 
@@ -26,21 +28,17 @@ export default function CatalogPagination({
 
   return (
     <nav
-      aria-label="Catalogue pages"
+      aria-label={t('catalog.pagesAria')}
       className="mt-16 pt-6 border-t border-matcha-border flex flex-col sm:flex-row items-baseline justify-between gap-4 font-mono text-xs text-matcha-muted"
     >
-      <p>
-        Showing <span className="text-[#0A0A0A]">{startIndex}</span>–
-        <span className="text-[#0A0A0A]">{endIndex}</span> of{' '}
-        <span className="text-[#0A0A0A]">{totalItems}</span>
-      </p>
+      <p>{t('catalog.range', { start: startIndex, end: endIndex, total: totalItems })}</p>
 
       <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={() => step(-1)}
           disabled={currentPage === 1}
-          aria-label="Previous page"
+          aria-label={t('catalog.prevPage')}
           className={arrow}
         >
           <ChevronLeft size={15} />
@@ -69,7 +67,7 @@ export default function CatalogPagination({
           type="button"
           onClick={() => step(1)}
           disabled={currentPage === totalPages}
-          aria-label="Next page"
+          aria-label={t('catalog.nextPage')}
           className={arrow}
         >
           <ChevronRight size={15} />

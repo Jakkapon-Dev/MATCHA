@@ -304,7 +304,6 @@ function AppContent() {
                   navigate('/catalog');
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
-                onSubscribe={(email) => showToast(`Subscribed ${email} to VIP Drop List! 📩`)}
               />
             }
           />

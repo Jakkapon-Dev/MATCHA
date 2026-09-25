@@ -220,6 +220,9 @@ backend/scripts/*
 !backend/scripts/migrate-legacy-users-firebase.mjs
 !backend/scripts/backup-mongodb.mjs
 !backend/scripts/restore-mongodb-test.mjs
+# Gives the LOOK-* garments sizes and restores LOOK-06-SHORTS. Not yet applied
+# to the live data; dry run by default and idempotent.
+!backend/scripts/migrateLookbookInventory.mjs
 
 # Local & AI Assistant Configurations
 CLAUDE.md

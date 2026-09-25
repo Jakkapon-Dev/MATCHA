@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useLanguage } from '../context/LanguageContext.jsx';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   ShoppingBag, 
   Check, 
@@ -13,11 +13,13 @@ import {
   Scissors,
   Briefcase
 } from 'lucide-react';
+import useStreetProducts from '../hooks/useStreetProducts';
 import { productsData } from '../data/productsData';
 import { useCart } from '../context/CartContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { handleImageError, webpSrc } from '../utils/imageFallback';
 import { computeOutfitSynergy } from '../utils/fashionTheory';
+import { taxonomyLabel } from '../utils/taxonomy';
 // กฎสีชุดเดียวกับที่แค็ตตาล็อกและ Color Lab ใช้
 import { wash, inkOn, needsEdge } from '../utils/dye';
 import useChangeMotion from '../hooks/useChangeMotion';
@@ -120,20 +122,63 @@ export default function MixMatchStudioPage() {
   const initialPreset = useMemo(() => getPresetForSeason(userSeason), [userSeason]);
   const pickById = (id, fallback) => productsData.find((p) => p.id === id) || fallback;
 
-  // Selected Outfit Slots (4-Slot Architecture)
-  const [selectedTop, setSelectedTop] = useState(() => pickById(initialPreset.topId, tops[0] || productsData[0]));
-  const [selectedBottom, setSelectedBottom] = useState(() => pickById(initialPreset.bottomId, bottoms[0] || productsData[1]));
-  const [selectedFootwear, setSelectedFootwear] = useState(() => pickById(initialPreset.footwearId, footwear[0] || productsData[2]));
-  const [selectedAccessory, setSelectedAccessory] = useState(() => pickById(initialPreset.accessoryId, accessories[0] || productsData[3]));
-  const [activeSlotTab, setActiveSlotTab] = useState('tops'); // 'tops' | 'bottoms' | 'footwear' | 'accessories'
-  const [activePresetId, setActivePresetId] = useState(initialPreset.id);
-  const [justAddedBundle, setJustAddedBundle] = useState(false);
-  const [selectedSizes, setSelectedSizes] = useState({
-    tops: 'M',
-    bottoms: '32',
-    footwear: 'EU 41',
-    accessories: 'OS'
+  /* A lookbook spread sends its pieces here. The studio used to ignore them and
+     open on the season preset, with "Showing the look you picked" above a look
+     nobody had picked. Each piece now takes the slot its category belongs to;
+     a slot the spread has nothing for keeps the preset's garment. */
+  const location = useLocation();
+  const [lookbookLook] = useState(() => {
+    const look = location.state?.lookbookLook;
+    return look && Array.isArray(look.productIds) ? look : null;
   });
+  const lookPieces = useMemo(() => {
+    const pieces = {};
+    (lookbookLook?.productIds || []).forEach((id) => {
+      const product = productsData.find((p) => p.id === id);
+      if (!product) return;
+      const key = (product.category === 'Tops' || product.category === 'Outerwear') ? 'tops'
+        : product.category === 'Bottoms' ? 'bottoms'
+          : product.category === 'Shoes' ? 'footwear' : 'accessories';
+      if (!pieces[key]) pieces[key] = product;
+    });
+    return pieces;
+  }, [lookbookLook]);
+
+  // Selected Outfit Slots (4-Slot Architecture)
+  const [selectedTop, setSelectedTop] = useState(() => lookPieces.tops || pickById(initialPreset.topId, tops[0] || productsData[0]));
+  const [selectedBottom, setSelectedBottom] = useState(() => lookPieces.bottoms || pickById(initialPreset.bottomId, bottoms[0] || productsData[1]));
+  const [selectedFootwear, setSelectedFootwear] = useState(() => lookPieces.footwear || pickById(initialPreset.footwearId, footwear[0] || productsData[2]));
+  const [selectedAccessory, setSelectedAccessory] = useState(() => lookPieces.accessories || pickById(initialPreset.accessoryId, accessories[0] || productsData[3]));
+  const [activeSlotTab, setActiveSlotTab] = useState('tops'); // 'tops' | 'bottoms' | 'footwear' | 'accessories'
+  const [activePresetId, setActivePresetId] = useState(lookbookLook ? null : initialPreset.id);
+  // Whether the shopper chose the active preset, or the page chose it for them.
+  const [presetPicked, setPresetPicked] = useState(false);
+  const [showingLookbook, setShowingLookbook] = useState(Boolean(lookbookLook));
+  const [justAddedBundle, setJustAddedBundle] = useState(false);
+  /* No size is chosen for the shopper. This used to start at
+     { tops: 'M', bottoms: '32', footwear: 'EU 41' } — and no bottom in the
+     archive is cut in a 32, so every bundle put its trousers in the bag in a
+     size the order API has no stock bucket for. A slot's size is the one picked
+     for it, and only while the garment in the slot is made in it. */
+  const [selectedSizes, setSelectedSizes] = useState({});
+
+  // The live catalogue is where sizes and stock are kept. The static list
+  // still supplies the studio's order and editorial copy.
+  const { products: liveProducts } = useStreetProducts();
+  const liveById = useMemo(() => new Map(liveProducts.map((p) => [p.id, p])), [liveProducts]);
+  const sizesFor = (item) => {
+    const live = item && liveById.get(item.id);
+    return ((live ? live.sizes : item?.sizes) || []).filter(Boolean);
+  };
+  const inStockFor = (item) => {
+    const live = item && liveById.get(item.id);
+    return Boolean(live ? live.inStock !== false : item?.inStock);
+  };
+  const sizeFor = (slotKey, item) => {
+    const sizes = sizesFor(item);
+    if (sizes.length === 1) return sizes[0];
+    return sizes.includes(selectedSizes[slotKey]) ? selectedSizes[slotKey] : null;
+  };
   const outfitMotionRef = useChangeMotion([selectedTop?.id, selectedBottom?.id, selectedFootwear?.id, selectedAccessory?.id].join('|'), 'outfit');
   const pickerMotionRef = useChangeMotion(activeSlotTab, 'grid');
 
@@ -183,6 +228,8 @@ export default function MixMatchStudioPage() {
     setSelectedFootwear(f);
     setSelectedAccessory(a);
     setActivePresetId(preset.id);
+    setPresetPicked(true);
+    setShowingLookbook(false);
   };
 
   // Randomize Outfit
@@ -199,14 +246,21 @@ export default function MixMatchStudioPage() {
     setSelectedFootwear(pickRandom(footwear));
     setSelectedAccessory(pickRandom(accessories));
     setActivePresetId(null);
+    setShowingLookbook(false);
   };
 
   // Pricing & Combo Discount (12% Full 4-Piece Bundle Discount)
   // ราคาที่โชว์ต้องเท่ากับที่จะโดนตัดจริง จึงนับเฉพาะชิ้นที่ยังมีของ
   // และส่วนลดจะใช้ได้ก็ต่อเมื่อซื้อครบทั้ง 4 ชิ้นจริง ๆ ตามเงื่อนไข bundle
+  const slotOf = (item) => (item.category === 'Tops' || item.category === 'Outerwear') ? 'tops' :
+    item.category === 'Bottoms' ? 'bottoms' :
+      item.category === 'Shoes' ? 'footwear' : 'accessories';
   const itemsInOutfit = [selectedTop, selectedBottom, selectedFootwear, selectedAccessory].filter(Boolean);
-  const buyableItems = itemsInOutfit.filter((item) => item.inStock);
-  const outOfStockItems = itemsInOutfit.filter((item) => !item.inStock);
+  // A garment with no size on record cannot be ordered, the same answer the
+  // catalogue gives, so it is left out like a sold-out one.
+  const buyableItems = itemsInOutfit.filter((item) => inStockFor(item) && sizesFor(item).length > 0);
+  const outOfStockItems = itemsInOutfit.filter((item) => !buyableItems.includes(item));
+  const needsSize = buyableItems.filter((item) => !sizeFor(slotOf(item), item));
   const isCompleteBundle = buyableItems.length === 4;
   const bundleSubtotal = buyableItems.reduce((sum, item) => sum + Number(item.price), 0);
   const comboDiscount = isCompleteBundle ? bundleSubtotal * BUNDLE_DISCOUNT_RATE : 0;
@@ -225,16 +279,17 @@ export default function MixMatchStudioPage() {
       showToast(t('mixMatch.allSoldOut'), 'error');
       return;
     }
+    if (needsSize.length > 0) {
+      showToast(t('mixMatch.chooseSizes', { names: needsSize.map((i) => i.name).join(', ') }), 'info');
+      setActiveSlotTab(slotOf(needsSize[0]));
+      return;
+    }
 
     setJustAddedBundle(true);
     setTimeout(() => setJustAddedBundle(false), 1200);
 
     buyableItems.forEach(item => {
-      const slotKey = (item.category === 'Tops' || item.category === 'Outerwear') ? 'tops' :
-                      item.category === 'Bottoms' ? 'bottoms' :
-                      item.category === 'Shoes' ? 'footwear' : 'accessories';
-
-      const chosenSize = selectedSizes[slotKey] || item.sizes?.[0] || (item.category === 'Accessories' ? 'OS' : item.category === 'Shoes' ? 'EU 40' : 'M');
+      const chosenSize = sizeFor(slotOf(item), item);
 
       addToCart({
         ...item,
@@ -286,7 +341,7 @@ export default function MixMatchStudioPage() {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="max-w-2xl">
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase text-[#0A0A0A] tracking-[-0.02em] leading-[0.95]">
-              Mix &amp; Match Fashion Studio
+              {t('studio.title')}
             </h1>
             <p className="text-matcha-muted text-xs sm:text-sm mt-3 leading-relaxed">
               {t('mixMatch.heroBody')}
@@ -320,7 +375,11 @@ export default function MixMatchStudioPage() {
                 ? t('mixMatch.presetsForYou', { season: userSeason })
                 : t('mixMatch.presetsPopular')}
             </span>
-            {activePresetId && (
+            {showingLookbook ? (
+              <span className="text-[10px] font-mono text-matcha-primary font-bold bg-matcha-bg px-2.5 py-0.5 ">
+                {t('mixMatch.showingLookbook', { title: lookbookLook.title })}
+              </span>
+            ) : activePresetId && presetPicked && (
               <span className="text-[10px] font-mono text-matcha-primary font-bold bg-matcha-bg px-2.5 py-0.5 ">
                 {t('mixMatch.showingLook')}
               </span>
@@ -347,14 +406,14 @@ export default function MixMatchStudioPage() {
                       {preset.name}
                     </span>
                     <span
-                      title={`Color Harmony: ${preset.harmonyType}`}
+                      title={t('studio.harmonyTitle', { type: preset.harmonyType })}
                       className={`text-[10px] font-bold px-2 py-0.5  transition-colors shrink-0 ${
                         isActive
                           ? 'bg-matcha-primary text-white '
                           : 'bg-matcha-bg text-matcha-primary'
                       }`}
                     >
-                      {PRESET_HARMONY[preset.id]}% Harmony
+                      {t('studio.harmonyChip', { score: PRESET_HARMONY[preset.id] })}
                     </span>
                   </div>
                   <p className={`text-[11px] line-clamp-2 leading-relaxed transition-colors ${
@@ -409,11 +468,13 @@ export default function MixMatchStudioPage() {
                 the way the catalogue shows it. */}
             <div ref={outfitMotionRef} className="grid grid-cols-2 gap-px bg-matcha-border border border-matcha-border">
               {[
-                { key: 'tops', item: selectedTop, Icon: Shirt, label: '1. Upper Body (30%)', sizes: ['S', 'M', 'L', 'XL', 'XXL'] },
-                { key: 'bottoms', item: selectedBottom, Icon: Shirt, label: '2. Lower Body (60% Base)', sizes: ['30', '32', '34', '36'] },
-                { key: 'footwear', item: selectedFootwear, Icon: Footprints, label: '3. Footwear Anchor (5%)', sizes: ['EU 38', 'EU 39', 'EU 40', 'EU 41'] },
-                { key: 'accessories', item: selectedAccessory, Icon: Briefcase, label: '4. Accent Accessory (5%)', sizes: ['OS'] },
-              ].map(({ key, item, Icon, label, sizes }) => {
+                { key: 'tops', item: selectedTop, Icon: Shirt, label: t('studio.slot.tops') },
+                { key: 'bottoms', item: selectedBottom, Icon: Shirt, label: t('studio.slot.bottoms') },
+                { key: 'footwear', item: selectedFootwear, Icon: Footprints, label: t('studio.slot.footwear') },
+                { key: 'accessories', item: selectedAccessory, Icon: Briefcase, label: t('studio.slot.accessories') },
+              ].map(({ key, item, Icon, label }) => {
+                const sizes = sizesFor(item);
+                const chosen = sizeFor(key, item);
                 const active = activeSlotTab === key;
                 const hex = item?.colorHex || '#DCDCDC';
                 return (
@@ -441,7 +502,7 @@ export default function MixMatchStudioPage() {
                         onError={handleImageError}
                         className="absolute inset-0 w-full h-full object-contain object-center mix-blend-multiply"
                       />
-                      {item && !item.inStock && (
+                      {item && !inStockFor(item) && (
                         <div className="absolute inset-0 bg-matcha-bg/70 flex items-center justify-center">
                           <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#0A0A0A]">{t('mixMatch.soldOut')}</span>
                         </div>
@@ -472,16 +533,22 @@ export default function MixMatchStudioPage() {
                         className="flex flex-wrap items-center gap-1 mt-1.5"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        {(item?.sizes || sizes).map((sz) => (
+                        {sizes.length === 0 && (
+                          <span className={`font-mono text-[9px] ${active ? 'text-matcha-bg/70' : 'text-matcha-muted'}`}>
+                            {t('mixMatch.noSizes')}
+                          </span>
+                        )}
+                        {sizes.map((sz) => (
                           <button
                             key={sz}
                             type="button"
+                            aria-pressed={chosen === sz}
                             onClick={() => setSelectedSizes(prev => ({ ...prev, [key]: sz }))}
                             /* On the inverted caption the usual black chip
                                would vanish, so the selected size flips to
                                light on the dark strip. */
                             className={`px-1.5 py-0.5 font-mono text-[9px] whitespace-nowrap transition-colors cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-accent ${
-                              selectedSizes[key] === sz
+                              chosen === sz
                                 ? (active ? 'bg-matcha-bg text-[#0A0A0A]' : 'bg-[#0A0A0A] text-matcha-bg')
                                 : (active ? 'bg-matcha-bg/15 text-matcha-bg/70 hover:bg-matcha-bg/25' : 'bg-matcha-bg text-matcha-muted hover:bg-matcha-border')
                             }`}
@@ -500,7 +567,7 @@ export default function MixMatchStudioPage() {
             <div className="p-4  bg-matcha-bg border border-matcha-border space-y-3">
               <div className="flex items-center justify-between text-xs font-mono font-bold">
                 <span className="uppercase text-matcha-muted">{t('mixMatch.harmony')}:</span>
-                <span className="text-matcha-primary font-black text-sm">{harmonyScore}% Synergy</span>
+                <span className="text-matcha-primary font-black text-sm">{t('studio.synergy', { score: harmonyScore })}</span>
               </div>
               <div className="w-full h-2  bg-white border border-matcha-border overflow-hidden">
                 <div 
@@ -515,7 +582,7 @@ export default function MixMatchStudioPage() {
                   {synergy.harmonyType}
                 </span>
                 <span className="text-matcha-muted">
-                  {synergy.dominantSeason} Capsule
+                  {t('studio.capsule', { season: taxonomyLabel(t, 'season', synergy.dominantSeason) })}
                 </span>
               </div>
 
@@ -572,7 +639,7 @@ export default function MixMatchStudioPage() {
               {/* Detected Itten Optical Contrasts & Delta E */}
               <div className="pt-2 border-t border-matcha-border/60 space-y-1.5">
                 <span className="text-[10px] font-mono font-bold uppercase text-matcha-muted block">
-                  Optical Contrasts (Johannes Itten):
+                  {t('studio.contrasts')}
                 </span>
                 <div className="flex flex-wrap gap-1.5">
                   {synergy.ittenContrasts && synergy.ittenContrasts.map((contrast) => (
@@ -584,7 +651,7 @@ export default function MixMatchStudioPage() {
                       {contrast.name}: {contrast.badge}
                     </span>
                   ))}
-                  <span className="text-[9px] font-mono px-2 py-0.5  bg-white border border-matcha-border text-matcha-muted" title="CIELAB Color Distance (ΔE)">
+                  <span className="text-[9px] font-mono px-2 py-0.5  bg-white border border-matcha-border text-matcha-muted" title={t('studio.deltaTitle')}>
                     ΔE: {synergy.deltaE}
                   </span>
                 </div>
@@ -605,7 +672,7 @@ export default function MixMatchStudioPage() {
             <div className="space-y-3 pt-2">
               <div className="flex items-baseline justify-between font-mono">
                 <span className="text-xs text-matcha-muted uppercase font-bold">
-                  Total Bundle ({buyableItems.length} Item{buyableItems.length === 1 ? '' : 's'}):
+                  {buyableItems.length === 1 ? t('studio.totalOne') : t('studio.total', { count: buyableItems.length })}
                 </span>
                 <div className="text-right">
                   {isCompleteBundle && (
@@ -619,6 +686,12 @@ export default function MixMatchStudioPage() {
                 <p className="text-[10px] font-mono text-[#B42318] bg-[#FEE4E2] px-2.5 py-1.5  leading-relaxed">
                   {t('mixMatch.outOfStockNote', { names: outOfStockItems.map((i) => i.name).join(', ') })}
                   {t('mixMatch.bundleNeedsFour', { percent: BUNDLE_DISCOUNT_PERCENT })}
+                </p>
+              )}
+
+              {needsSize.length > 0 && (
+                <p role="status" className="text-[10px] font-mono text-[#0A0A0A] bg-matcha-bg border border-matcha-border px-2.5 py-1.5 leading-relaxed">
+                  {t('mixMatch.chooseSizes', { names: needsSize.map((i) => i.name).join(', ') })}
                 </p>
               )}
 
@@ -640,8 +713,8 @@ export default function MixMatchStudioPage() {
                     <ShoppingBag size={16} />
                     <span>
                       {isCompleteBundle
-                        ? `Add Complete Outfit (4 Pcs) • $${finalBundleTotal.toFixed(2)}`
-                        : `Add ${buyableItems.length} Available Pcs • $${finalBundleTotal.toFixed(2)}`}
+                        ? t('studio.addComplete', { price: finalBundleTotal.toFixed(2) })
+                        : t('studio.addAvailable', { count: buyableItems.length, price: finalBundleTotal.toFixed(2) })}
                     </span>
                   </>
                 )}
@@ -670,7 +743,7 @@ export default function MixMatchStudioPage() {
                 }`}
               >
                 <Shirt size={14} />
-                <span>1. Tops ({tops.length})</span>
+                <span>{t('studio.tab.tops', { count: tops.length })}</span>
               </button>
 
               <button
@@ -682,7 +755,7 @@ export default function MixMatchStudioPage() {
                 }`}
               >
                 <Scissors size={14} />
-                <span>2. Bottoms ({bottoms.length})</span>
+                <span>{t('studio.tab.bottoms', { count: bottoms.length })}</span>
               </button>
 
               <button
@@ -694,7 +767,7 @@ export default function MixMatchStudioPage() {
                 }`}
               >
                 <Footprints size={14} />
-                <span>3. Shoes ({footwear.length})</span>
+                <span>{t('studio.tab.footwear', { count: footwear.length })}</span>
               </button>
 
               <button
@@ -706,7 +779,7 @@ export default function MixMatchStudioPage() {
                 }`}
               >
                 <Briefcase size={14} />
-                <span>4. Bags &amp; Accs ({accessories.length})</span>
+                <span>{t('studio.tab.accessories', { count: accessories.length })}</span>
               </button>
             </div>
 
@@ -761,7 +834,7 @@ export default function MixMatchStudioPage() {
                         </div>
                       )}
                       <span className="absolute bottom-2 left-2 text-[9px] font-mono px-2 py-0.5 bg-white/90  backdrop-blur-xs font-bold text-matcha-text">
-                        {item.season}
+                        {taxonomyLabel(t, 'season', item.season)}
                       </span>
                       {!item.inStock && (
                         <span className="absolute top-2 left-2 text-[9px] font-mono px-2 py-0.5 bg-[#B42318] text-white  font-bold">

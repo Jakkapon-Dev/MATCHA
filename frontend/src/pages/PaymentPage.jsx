@@ -61,7 +61,7 @@ const initialCardData = {
 export default function PaymentPage() {
   const { t, lang } = useLanguage();
   const navigate = useNavigate();
-  const { cartItems, clearCart } = useCart();
+  const { cartItems, clearCart, cartReady } = useCart();
   const { showToast } = useToast();
   const { isDemo } = useStoreMode();
 
@@ -99,10 +99,15 @@ export default function PaymentPage() {
     // Keep the checkout route alive long enough for "View your orders" to
     // navigate away; otherwise this guard wins the same tick and sends the
     // customer back to an empty cart.
+    //
+    // Not before the cart has read the bag for the real store mode, though:
+    // until the mode arrives it holds the demo fallback's bag, which is empty,
+    // and opening or refreshing /payment with a full bag bounced to /cart.
+    if (!cartReady) return;
     if (cartItems.length === 0 && !showSuccessModal && !createdOrder) {
       navigate('/cart');
     }
-  }, [cartItems, showSuccessModal, createdOrder, navigate]);
+  }, [cartReady, cartItems, showSuccessModal, createdOrder, navigate]);
 
   useEffect(() => {
     const pending = takePendingCoupon();
@@ -124,6 +129,15 @@ export default function PaymentPage() {
   const discount = Math.round((discountFor(appliedCoupon, subtotal) + bundleDiscountFor(cartItems)) * 100) / 100;
 
   const total = Math.max(0, subtotal + shippingCost - discount);
+
+  /* Each delivery option priced for this bag. The cards used to show the list
+     rate — $12 and $25 — while the summary beside them said Free, because an
+     order over the threshold ships free by every method. */
+  const shippingOptionsForBag = SHIPPING_OPTIONS.map((option) => ({
+    ...option,
+    listPrice: option.price,
+    price: shippingCostFor(subtotal, option.id, { freeShippingCoupon: appliedCoupon?.type === 'free_shipping' })
+  }));
 
   const handleApplyCoupon = (e) => {
     e.preventDefault();
@@ -440,7 +454,7 @@ export default function PaymentPage() {
               <ShippingStep
                 formData={formData}
                 onFormChange={setFormData}
-                shippingOptions={SHIPPING_OPTIONS}
+                shippingOptions={shippingOptionsForBag}
                 selectedShipping={selectedShipping}
                 onSelectShipping={setSelectedShipping}
                 onNext={() => {

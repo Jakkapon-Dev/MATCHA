@@ -92,7 +92,7 @@ export default function FavoritesTab({ favorites = null }) {
         <div className="flex items-center gap-2">
           <Heart size={18} className="text-matcha-accent fill-matcha-accent" />
           <h2 className="text-base font-extrabold uppercase tracking-tight text-[#0A0A0A]">
-            Saved Wishlist &amp; Look Archive ({items.length})
+            {t('accountUi.favoritesTitle', { count: items.length })}
           </h2>
         </div>
       </div>
@@ -138,9 +138,10 @@ export default function FavoritesTab({ favorites = null }) {
               </div>
 
               <div className="flex flex-col gap-2 shrink-0">
-                {/* CartContext owns cart persistence and duplicate-item behavior. */}
+                {/* CartContext owns cart persistence and duplicate-item behavior.
+                    One per press: the catalogue record's `quantity` is its stock. */}
                 <button
-                  onClick={() => addToCart(item)}
+                  onClick={() => addToCart(item, 1)}
                   className="p-2.5 bg-matcha-primary hover:bg-matcha-primary-dark text-white transition-colors cursor-pointer"
                   title={t('account.addToCart')}
                 >

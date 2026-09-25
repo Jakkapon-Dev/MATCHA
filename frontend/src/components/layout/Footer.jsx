@@ -45,8 +45,8 @@ export default function Footer() {
           <div>
             <h3 className="font-bold text-white text-sm uppercase tracking-wider mb-3">{t('footer.follow')}</h3>
             <ul className="space-y-2 font-mono text-[#999999]">
-              <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram (opens in new tab)" className="hover:text-white transition-colors outline-hidden focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-xs">Instagram</a></li>
-              <li><a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" aria-label="TikTok (opens in new tab)" className="hover:text-white transition-colors outline-hidden focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-xs">TikTok</a></li>
+              <li><a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label={t('a11y.opensInNewTab', { name: 'Instagram' })} className="hover:text-white transition-colors outline-hidden focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-xs">Instagram</a></li>
+              <li><a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" aria-label={t('a11y.opensInNewTab', { name: 'TikTok' })} className="hover:text-white transition-colors outline-hidden focus-visible:outline-2 focus-visible:outline-white focus-visible:outline-offset-2 rounded-xs">TikTok</a></li>
             </ul>
           </div>
 

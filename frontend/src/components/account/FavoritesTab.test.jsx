@@ -138,7 +138,7 @@ describe('FavoritesTab', () => {
       expect(screen.getByText('MatchA Autumn Jeans')).toBeTruthy();
     });
     expect(screen.getByText('MatchA Spring Shirts')).toBeTruthy();
-    expect(screen.getByText(/Saved Wishlist .* \(2\)/)).toBeTruthy();
+    expect(screen.getByText('accountUi.favoritesTitle')).toBeTruthy();
   });
 
   test('a saved garment that has left the archive is not offered for sale', async () => {
@@ -149,7 +149,7 @@ describe('FavoritesTab', () => {
       expect(screen.getByText('MatchA Autumn Jeans')).toBeTruthy();
     });
     expect(screen.queryByText(/Pleated Relaxed Trousers/)).toBeNull();
-    expect(screen.getByText(/Saved Wishlist .* \(1\)/)).toBeTruthy();
+    expect(screen.getByText('accountUi.favoritesTitle')).toBeTruthy();
   });
 
   test('the bag receives the catalogue garment, not the thin saved record', async () => {
@@ -167,6 +167,18 @@ describe('FavoritesTab', () => {
     expect(sent.id).toBe('AUT-BOT-004');
     expect(sent.price).toBe(70.99);
     expect(sent.sizes).toEqual(['S', 'M', 'L', 'XL', 'XXL']);
+  });
+
+  /* GET /api/products puts the stock count in `quantity`. Handed over as it
+     was, a garment with 47 in stock went into the bag 47 times. */
+  test('adding a saved garment asks for one, whatever its stock', async () => {
+    api.getProducts.mockResolvedValue({ data: [{ ...CATALOGUE[0], quantity: 47, stock: 47 }] });
+    setWishlist([{ id: 'AUT-BOT-004' }]);
+    render(<FavoritesTab />);
+
+    await waitFor(() => expect(screen.getByText('MatchA Autumn Jeans')).toBeTruthy());
+    screen.getByTitle('account.addToCart').click();
+    expect(addToCart).toHaveBeenCalledWith(expect.objectContaining({ id: 'AUT-BOT-004' }), 1);
   });
 
   test('when the catalogue cannot be reached nothing buyable is rendered', async () => {

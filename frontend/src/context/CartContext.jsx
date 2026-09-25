@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useMemo, useCall
 import { useToast } from './ToastContext.jsx';
 import { api } from '../services/api';
 import { useStoreMode } from './StoreModeContext.jsx';
+import { useAuth } from './AuthContext.jsx';
 import { shippingCostFor, FREE_SHIPPING_THRESHOLD } from '../config/shipping';
 
 const CART_CONTEXT_KEY = Symbol.for('matcha.cart.context');
@@ -68,6 +69,23 @@ export function CartProvider({ children }) {
   const cartItemsRef = useRef(cartItems);
   useEffect(() => { cartItemsRef.current = cartItems; }, [cartItems]);
 
+  /* Server writes go out one at a time, in the order the shopper made them.
+
+     A PUT carries the quantity the line should end at, so the server keeps
+     whichever PUT it applies last. Fired together, requests reach it in any
+     order: five presses of − showed 1 in the bag and left 7 on the server.
+     Chaining them keeps the server's order the shopper's order, and a quantity
+     still waiting to be sent is replaced by the newer one rather than queued
+     behind it, so a burst of presses costs one request per line in flight. */
+  const syncChainRef = useRef(Promise.resolve());
+  const pendingQtyRef = useRef(new Map());
+  const enqueueSync = useCallback((task) => {
+    syncChainRef.current = syncChainRef.current.then(task, task);
+    return syncChainRef.current;
+  }, []);
+  // Bumped by every local change, so a server answer can tell it is out of date.
+  const localEditsRef = useRef(0);
+
   // Sync cart items to localStorage on any change
   useEffect(() => {
     // Never write to a key whose contents have not been read yet.
@@ -79,8 +97,84 @@ export function CartProvider({ children }) {
     }
   }, [cartItems, storageKey, loadedKey]);
 
+  /* A signed-in shopper's bag is the one on the server.
+
+     The browser used to write every change to the server and never read it
+     back. Signing in merged the pre-sign-in basket into the account there, and
+     the page went on showing whatever this browser happened to hold — nothing
+     from another device, nothing that had been in the account before. Now the
+     account's cart is read after sign-in (from the merge's answer) and on every
+     load while signed in, and replaces what storage held.
+
+     Signing out, or another account signing in, empties the bag on screen. The
+     account keeps its cart on the server; the next person at this browser does
+     not see it. */
+  const { currentUser } = useAuth();
+  const { ready: storeReady } = useStoreMode();
+  const userId = currentUser?.id || null;
+  const cartOwnerRef = useRef(undefined); // whose bag state holds; undefined until known
+
+  useEffect(() => {
+    if (!storeReady || loadedKey !== storageKey) return;
+    const previous = cartOwnerRef.current;
+    if (previous === userId) return;
+    cartOwnerRef.current = userId;
+
+    if (previous) {
+      // The last shopper's bag, not the next one's. Only the screen is cleared.
+      pendingQtyRef.current.clear();
+      cartItemsRef.current = [];
+      setCartItems([]);
+    }
+    if (!userId) return;
+
+    const justSignedIn = previous === null;
+    const hydrate = (request) => enqueueSync(async () => {
+      const editsBefore = localEditsRef.current;
+      let res;
+      try {
+        res = await request();
+      } catch (err) {
+        console.warn('Server cart not loaded; keeping this browser\'s bag:', err.message);
+        return;
+      }
+      if (cartOwnerRef.current !== userId) return;
+      // The server answered from a store that is not up (see cartRoutes).
+      if (!res?.success || res.data?.available === false || !Array.isArray(res.data?.items)) return;
+      if (localEditsRef.current !== editsBefore) {
+        // Changed while the request was out: those writes are queued behind this
+        // one, so read again once they have landed.
+        hydrate(() => api.getCart());
+        return;
+      }
+      const local = new Map(cartItemsRef.current.map((item) => [getCartKey(item), item]));
+      const next = res.data.items.map((line) => {
+        const known = local.get(line.itemId);
+        return known
+          ? { ...known, quantity: line.quantity }
+          : { ...line, id: line.productId, quantity: line.quantity };
+      });
+      cartItemsRef.current = next;
+      setCartItems(next);
+    });
+
+    hydrate(justSignedIn ? () => api.mergeGuestCart() : () => api.getCart());
+  }, [userId, storeReady, loadedKey, storageKey, enqueueSync]);
+
   const addToCart = useCallback((product, customQty) => {
-    const amount = customQty || product.quantity || 1;
+    localEditsRef.current += 1;
+    /* How many to buy, and never how many are in stock.
+
+       A product as the API returns it carries `quantity` — the stock count. The
+       saved archive handed one straight in and a garment with 47 in stock went
+       into the bag 47 times. A quantity counts only when the caller says so:
+       the second argument, or a cart line it built by choosing a size. A bare
+       product record gets one. */
+    const explicit = parseInt(customQty, 10);
+    const lineQty = parseInt(product.quantity, 10);
+    const amount = explicit > 0 ? explicit
+      : product.size && lineQty > 0 ? lineQty
+        : 1;
     const resolvedSize = resolveDefaultSize(product);
     const resolvedProduct = {
       ...product,
@@ -89,18 +183,29 @@ export function CartProvider({ children }) {
     };
     const key = getCartKey(resolvedProduct);
 
-    setCartItems((prev) => {
-      const idx = prev.findIndex((item) => getCartKey(item) === key);
-      if (idx > -1) {
-        const next = [...prev];
-        next[idx] = { ...next[idx], quantity: (next[idx].quantity || 1) + amount };
-        return next;
-      }
-      return [...prev, resolvedProduct];
-    });
+    // Worked out from the ref, as updateQty does, so an add and a press on +
+    // in the same tick both count.
+    const prev = cartItemsRef.current;
+    const idx = prev.findIndex((item) => getCartKey(item) === key);
+    const next = [...prev];
+    if (idx > -1) {
+      next[idx] = { ...next[idx], quantity: (next[idx].quantity || 1) + amount };
+    } else {
+      next.push(resolvedProduct);
+    }
+    cartItemsRef.current = next;
+    setCartItems(next);
+
+    // A quantity for this line is already waiting to go out: send the new
+    // total with it instead of an increment that would land after it.
+    const pending = pendingQtyRef.current;
+    if (idx > -1 && pending.has(key)) {
+      pending.set(key, next[idx].quantity);
+      return;
+    }
 
     // Background sync to backend MongoDB Cart API (Task 8.5)
-    api.addToCart({
+    const payload = {
       itemId: key,
       productId: resolvedProduct.id || resolvedProduct._id || 'SKU-ITEM',
       name: resolvedProduct.name || 'MatchA Item',
@@ -109,10 +214,11 @@ export function CartProvider({ children }) {
       size: resolvedSize,
       color: resolvedProduct.color || 'Default',
       image: resolvedProduct.image || ''
-    }).catch((err) => {
+    };
+    enqueueSync(() => api.addToCart(payload).catch((err) => {
       console.warn('Backend cart sync note:', err.message);
-    });
-  }, []);
+    }));
+  }, [enqueueSync]);
 
   /* The new quantity is worked out from the current items and then applied,
      rather than captured out of the updater as it runs.
@@ -128,6 +234,7 @@ export function CartProvider({ children }) {
      server settling on 1 while the shopper saw 10, with nothing to reveal the
      disagreement because every screen reads local state. */
   const updateQty = useCallback((key, delta) => {
+    localEditsRef.current += 1;
     const items = cartItemsRef.current;
     const current = items.find((item) => getCartKey(item) === key);
     if (!current) return;
@@ -147,31 +254,46 @@ export function CartProvider({ children }) {
     setCartItems(nextItems);
 
     // Background sync to backend MongoDB Cart API (Task 8.6)
-    api.updateCartItem(key, nextQty).catch((err) => {
-      console.warn('Backend cart update note:', err.message);
+    const pending = pendingQtyRef.current;
+    const alreadyQueued = pending.has(key);
+    pending.set(key, nextQty);
+    if (alreadyQueued) return;
+    enqueueSync(() => {
+      if (!pending.has(key)) return undefined; // removed before it was sent
+      const quantity = pending.get(key);
+      pending.delete(key);
+      return api.updateCartItem(key, quantity).catch((err) => {
+        console.warn('Backend cart update note:', err.message);
+      });
     });
-  }, []);
+  }, [enqueueSync]);
 
   const removeItem = useCallback((key) => {
-    setCartItems((prev) => prev.filter((item) => getCartKey(item) !== key));
+    localEditsRef.current += 1;
+    const next = cartItemsRef.current.filter((item) => getCartKey(item) !== key);
+    cartItemsRef.current = next;
+    setCartItems(next);
+    pendingQtyRef.current.delete(key);
 
     // Background sync to backend MongoDB Cart API (Task 8.7)
-    api.deleteCartItem(key).catch((err) => {
+    enqueueSync(() => api.deleteCartItem(key).catch((err) => {
       console.warn('Backend cart delete note:', err.message);
-    });
-  }, []);
+    }));
+  }, [enqueueSync]);
 
   const clearCart = useCallback(() => {
+    localEditsRef.current += 1;
     // The ref is reset with the state: updateQty reads it synchronously, so
     // leaving it holding the old items would let the next press compute a
     // quantity from a bag that no longer exists.
     cartItemsRef.current = [];
     setCartItems([]);
+    pendingQtyRef.current.clear();
 
-    api.clearCart().catch((err) => {
+    enqueueSync(() => api.clearCart().catch((err) => {
       console.warn('Backend cart clear note:', err.message);
-    });
-  }, []);
+    }));
+  }, [enqueueSync]);
 
   // Computed summary values
   const subtotal = useMemo(() => {
@@ -194,7 +316,13 @@ export function CartProvider({ children }) {
     return Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
   }, [subtotal]);
 
+  /* True once the bag on screen is the one for the store's real mode. Before
+     that it is the demo fallback's (usually empty), and nothing should decide
+     the bag is empty from it. */
+  const cartReady = Boolean(storeReady) && loadedKey === storageKey;
+
   const value = {
+    cartReady,
     cartItems,
     setCartItems,
     addToCart,

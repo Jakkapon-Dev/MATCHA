@@ -2,6 +2,8 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, ShieldCheck, FileText, Truck, RotateCcw, Eye } from 'lucide-react';
 import PreviewBadge from '../components/ui/PreviewBadge';
+import NotFoundPage from './NotFoundPage';
+import { useLanguage } from '../context/LanguageContext.jsx';
 
 const LEGAL_DOCS = {
   privacy: {
@@ -116,7 +118,11 @@ const LEGAL_DOCS = {
 
 export default function LegalPage() {
   const { topic = 'privacy' } = useParams();
-  const docKey = LEGAL_DOCS[topic] ? topic : 'privacy';
+  const { t, lang } = useLanguage();
+  // /legal/anything used to show the Privacy Policy, so a mistyped or retired
+  // policy link looked like it had worked. Only /legal itself means privacy.
+  if (!Object.hasOwn(LEGAL_DOCS, topic)) return <NotFoundPage />;
+  const docKey = topic;
   const doc = LEGAL_DOCS[docKey];
   const Icon = doc.icon;
 
@@ -131,9 +137,9 @@ export default function LegalPage() {
             className="inline-flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-wider text-matcha-text hover:text-matcha-accent transition-colors"
           >
             <ArrowLeft size={14} />
-            <span>Back to Store</span>
+            <span>{t('legalUi.back')}</span>
           </Link>
-          <PreviewBadge label="OFFICIAL POLICY DRAFT" />
+          <PreviewBadge label={t('legalUi.draftBadge')} />
         </div>
 
         {/* Tab Navigation */}
@@ -148,7 +154,7 @@ export default function LegalPage() {
                   : 'bg-white text-matcha-muted hover:bg-matcha-border/50 hover:text-black'
               }`}
             >
-              {item.title}
+              {lang === 'th' ? item.titleTh : item.title}
             </Link>
           ))}
         </div>
@@ -161,15 +167,21 @@ export default function LegalPage() {
             </div>
             <div>
               <h1 className="text-2xl font-black uppercase text-matcha-text tracking-tight">
-                {doc.title}
+                {lang === 'th' ? doc.titleTh : doc.title}
               </h1>
               <p className="text-xs font-mono text-matcha-muted">
-                {doc.titleTh} • Effective Date: {doc.updated}
+                {t('legalUi.effective', { date: doc.updated })}
               </p>
             </div>
           </div>
 
           <div className="h-px bg-matcha-border my-6" />
+
+          {/* The policies are written in Thai; English readers are told so
+              rather than handed a legal text nobody has reviewed in English. */}
+          {lang === 'en' && (
+            <p className="mb-6 text-xs font-mono text-matcha-muted">{t('legalUi.thaiOnly')}</p>
+          )}
 
           <div className="space-y-6 text-sm text-[#333333] leading-relaxed">
             {doc.sections.map((sec, idx) => (
@@ -185,7 +197,7 @@ export default function LegalPage() {
           </div>
 
           <div className="mt-10 pt-6 border-t border-matcha-border text-center text-xs font-mono text-[#888888]">
-            For inquiries regarding our policies, reach out to <a href="mailto:contact@matcha-archive.com" className="text-matcha-primary font-bold underline">contact@matcha-archive.com</a>
+            {t('legalUi.inquiries')} <a href="mailto:contact@matcha-archive.com" className="text-matcha-primary font-bold underline">contact@matcha-archive.com</a>
           </div>
         </div>
 

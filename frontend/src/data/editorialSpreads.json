@@ -13,6 +13,7 @@
     "stylist": "Aoi Murakami",
     "leadQuote": "“Garments engineered to breathe with the urban rhythm, dyed with organic matcha pigments.”",
     "narrative": "สำรวจการตัดเย็บที่ผสมผสานความแม่นยำทางสถาปัตยกรรมเข้ากับความนุ่มนวลของเส้นใยธรรมชาติ โทนสีมัทฉะเอิร์ธและน้ำตาลดินเผาช่วยขับผิวโทนอุ่นให้ดูสุขุม เปล่งประกายท่ามกลางโครงสร้างคอนกรีตสูงเสียดฟ้า",
+    "narrativeEn": "Tailoring that marries architectural precision with the softness of natural fibres. Matcha-earth and terracotta tones settle warm skin into a composed glow among the concrete towers.",
     "heroImage": "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_standing_on_skyscraper_roo_001.jpeg",
     "detailImages": [
       "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_standing_in_jacket_001.jpeg",
@@ -55,7 +56,7 @@
         "title": "Metallic Silver Bustier Top",
         "category": "Tops",
         "price": 44,
-        "color": "Metallic Silver",
+        "color": "Silver",
         "productId": "LOOK-01-CROP",
         "image": "/images/lookbook_flatlay/01-crop.png"
       },
@@ -85,7 +86,7 @@
         "name": "Metallic Silver Bustier Top",
         "price": 44,
         "category": "Tops",
-        "color": "Metallic Silver",
+        "color": "Silver",
         "image": "/images/lookbook_flatlay/01-crop.png"
       },
       {
@@ -112,6 +113,7 @@
     "stylist": "Sora Tanaka",
     "leadQuote": "“Lightness is not the absence of weight, but the perfection of balance.”",
     "narrative": "สัมผัสการพลิกโฉมเบลเซอร์แบบดั้งเดิมด้วยผ้าลินินเนื้อบางเบาโทนพีชคอรัลและเขียวใบชาอ่อน ความสมดุลระหว่างโครงทรงเรขาคณิตและเส้นใยธรรมชาติ ออกแบบมาเพื่อขับผิวกลุ่ม Spring ให้ดูสดชื่นเป็นธรรมชาติ",
+    "narrativeEn": "The traditional blazer reworked in light linen, in peach coral and pale tea green. Geometric structure balanced against natural fibre, cut to keep Spring complexions fresh and natural.",
     "heroImage": "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_adjusting_linen_blazer_001.jpeg",
     "detailImages": [
       "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_adjusting_sunglasses_001.jpeg",
@@ -143,7 +145,7 @@
         "title": "Ivory Linen Tailored Blazer",
         "category": "Outerwear",
         "price": 110,
-        "color": "Warm Ivory",
+        "color": "Ivory",
         "productId": "LOOK-02-BLAZER",
         "image": "/images/lookbook_flatlay/02-blazer.png"
       },
@@ -154,7 +156,7 @@
         "title": "Relaxed Linen Shirt",
         "category": "Tops",
         "price": 38,
-        "color": "Warm Ivory",
+        "color": "Ivory",
         "productId": "LOOK-02-SHIRT",
         "image": "/images/lookbook_flatlay/02-shirt.png"
       },
@@ -165,7 +167,7 @@
         "title": "Straight Linen Trousers",
         "category": "Bottoms",
         "price": 82,
-        "color": "Warm Ivory",
+        "color": "Ivory",
         "productId": "LOOK-02-TROUSERS",
         "image": "/images/lookbook_flatlay/02-trousers.png"
       }
@@ -176,7 +178,7 @@
         "name": "Ivory Linen Tailored Blazer",
         "price": 110,
         "category": "Outerwear",
-        "color": "Warm Ivory",
+        "color": "Ivory",
         "image": "/images/lookbook_flatlay/02-blazer.png"
       },
       {
@@ -184,7 +186,7 @@
         "name": "Relaxed Linen Shirt",
         "price": 38,
         "category": "Tops",
-        "color": "Warm Ivory",
+        "color": "Ivory",
         "image": "/images/lookbook_flatlay/02-shirt.png"
       },
       {
@@ -192,7 +194,7 @@
         "name": "Straight Linen Trousers",
         "price": 82,
         "category": "Bottoms",
-        "color": "Warm Ivory",
+        "color": "Ivory",
         "image": "/images/lookbook_flatlay/02-trousers.png"
       }
     ]
@@ -211,6 +213,7 @@
     "stylist": "Chloe Bennett",
     "leadQuote": "“When sea breeze meets washed indigo, effortless elegance takes form.”",
     "narrative": "แรงบันดาลใจจากขอบฟ้าและคลื่นทะเลชายฝั่งเอโนชิมะ เสื้อเชิ้ตผ้าโปร่งระบายอากาศคู่กางเกงลินินขาสั้น เสริมอันเดอร์โทนผิวกลุ่ม Summer ให้ดูผุดผ่อง นุ่มนวล และน่าค้นหาในทุกมุมมอง",
+    "narrativeEn": "Drawn from the horizon and the surf along the Enoshima coast: an airy shirt with linen shorts, lifting Summer undertones so the skin reads clear, soft and quietly compelling from every angle.",
     "heroImage": "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_leaning_against_driftwood_001.jpeg",
     "detailImages": [
       "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_walking_across_glass_bridge_001.jpeg",
@@ -264,7 +267,7 @@
         "title": "Ivory Ankle Trousers",
         "category": "Bottoms",
         "price": 54,
-        "color": "Ivory Cream",
+        "color": "Ivory",
         "productId": "LOOK-03-TROUSERS",
         "image": "/images/lookbook_flatlay/03-trousers.png"
       }
@@ -291,7 +294,7 @@
         "name": "Ivory Ankle Trousers",
         "price": 54,
         "category": "Bottoms",
-        "color": "Ivory Cream",
+        "color": "Ivory",
         "image": "/images/lookbook_flatlay/03-trousers.png"
       }
     ]
@@ -310,6 +313,7 @@
     "stylist": "Ren Kuroda",
     "leadQuote": "“Precision cuts for an era where fashion becomes functional armor.”",
     "narrative": "โครงสร้างเสื้อโค้ตหนาพิเศษกันละอองน้ำ ผสานกับกางเกงคาร์โก้เทคนิคัลสีดำชาร์โคล โทนสีคอนทราสต์ชัดเจนออกแบบเฉพาะสำหรับผิวกลุ่ม Winter ที่ต้องการความโดดเด่น คมคาย และทรงพลังในทุกสภาพอากาศ",
+    "narrativeEn": "An extra-heavy, water-resistant coat over charcoal technical cargo trousers. High-contrast tones made for Winter complexions that want to stand out — sharp and strong in any weather.",
     "heroImage": "/images/location_lifestyle/cyber_techwear/autumn/location_cyber_techwear_autumn_standing_between_mirrored_001.jpeg",
     "detailImages": [
       "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_standing_between_concrete_001.jpeg",
@@ -341,7 +345,7 @@
         "title": "Copper Sequin Tailored Blazer",
         "category": "Outerwear",
         "price": 145,
-        "color": "Copper Bronze",
+        "color": "Copper",
         "productId": "LOOK-04-BLAZER",
         "image": "/images/lookbook_flatlay/04-blazer.png"
       },
@@ -352,7 +356,7 @@
         "title": "Copper Sequin Wide-Leg Trousers",
         "category": "Bottoms",
         "price": 96,
-        "color": "Copper Bronze",
+        "color": "Copper",
         "productId": "LOOK-04-TROUSERS",
         "image": "/images/lookbook_flatlay/04-trousers.png"
       }
@@ -363,7 +367,7 @@
         "name": "Copper Sequin Tailored Blazer",
         "price": 145,
         "category": "Outerwear",
-        "color": "Copper Bronze",
+        "color": "Copper",
         "image": "/images/lookbook_flatlay/04-blazer.png"
       },
       {
@@ -371,7 +375,7 @@
         "name": "Copper Sequin Wide-Leg Trousers",
         "price": 96,
         "category": "Bottoms",
-        "color": "Copper Bronze",
+        "color": "Copper",
         "image": "/images/lookbook_flatlay/04-trousers.png"
       }
     ]
@@ -390,6 +394,7 @@
     "stylist": "Aoi Murakami",
     "leadQuote": "“Heavyweight textures tell the story of time and craftsmanship.”",
     "narrative": "ฮู้ดดี้ผ้าฟลีซหนาพิเศษย้อมสีแร่ธาตุธรรมชาติ สวมทับกับกางเกงยีนส์ขากว้าง ความดิบเท่ที่เข้ากันได้ดีกับสีสนิมและคอนกรีตเก่า สะท้อนสไตล์สตรีทแวร์ญี่ปุ่นที่ใส่ได้ทุกวัน",
+    "narrativeEn": "An extra-heavy fleece hoodie dyed with natural minerals, over wide-leg jeans. Raw and easy against rust and weathered concrete — Japanese streetwear to wear every day.",
     "heroImage": "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_standing_among_basalt_columns_001.jpeg",
     "detailImages": [
       "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_standing_near_rusted_gears_001.jpeg",
@@ -421,7 +426,7 @@
         "title": "Charcoal Cable-Knit Sweater",
         "category": "Tops",
         "price": 110,
-        "color": "Charcoal Marl",
+        "color": "Charcoal",
         "productId": "LOOK-05-SWEATER",
         "image": "/images/lookbook_flatlay/05-sweater.png"
       },
@@ -432,7 +437,7 @@
         "title": "Washed Tapered Cargo Pants",
         "category": "Bottoms",
         "price": 92,
-        "color": "Dark Brown Charcoal",
+        "color": "Charcoal",
         "productId": "LOOK-05-CARGO",
         "image": "/images/lookbook_flatlay/05-cargo.png"
       }
@@ -443,7 +448,7 @@
         "name": "Charcoal Cable-Knit Sweater",
         "price": 110,
         "category": "Tops",
-        "color": "Charcoal Marl",
+        "color": "Charcoal",
         "image": "/images/lookbook_flatlay/05-sweater.png"
       },
       {
@@ -451,7 +456,7 @@
         "name": "Washed Tapered Cargo Pants",
         "price": 92,
         "category": "Bottoms",
-        "color": "Dark Brown Charcoal",
+        "color": "Charcoal",
         "image": "/images/lookbook_flatlay/05-cargo.png"
       }
     ]
@@ -470,6 +475,7 @@
     "stylist": "Sora Tanaka",
     "leadQuote": "“Fashion is a dialogue between architecture and human movement.”",
     "narrative": "การจับคู่สีพีชคอรัลและเขียวมัทฉะอ่อนบนโครงสร้างกระจกใส เน้นความโปร่งโล่งสบายตาและพลังบวกที่ขับให้ใบหน้าดูสว่างมีออร่าในวันแดดอ่อนของฤดูใบไม้ผลิ",
+    "narrativeEn": "Peach coral with soft matcha green under a glass canopy: open, easy on the eye, and bright enough to light the face on a mild spring day.",
     "heroImage": "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_leaning_against_glass_wall_001.jpeg",
     "detailImages": [
       "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_leaning_against_glass_railing_001.jpeg",

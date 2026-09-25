@@ -2404,13 +2404,33 @@ export const productsData = [
     "tag": "Editorial",
     "image": "/api/media/files/e28b8228-40c3-4069-98ab-9bd7fa51046f.webp",
     "category": "Bottoms",
-    "subCategory": "",
+    "subCategory": "Cargo Pants",
     "season": "Autumn",
     "color": "Black",
     "colorHex": "#1C1B1E",
     "fit": "Regular",
-    "sizes": [],
-    "variants": [],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "variants": [
+      {
+        "color": "Black",
+        "colorHex": "#1C1B1E",
+        "image": "/api/media/files/e28b8228-40c3-4069-98ab-9bd7fa51046f.webp"
+      }
+    ],
+    "sizeStock": [
+      { "size": "S", "stock": 10 },
+      { "size": "M", "stock": 10 },
+      { "size": "L", "stock": 10 },
+      { "size": "XL", "stock": 10 },
+      { "size": "XXL", "stock": 10 }
+    ],
+    "stock": 50,
     "inStock": true,
     "rating": 4.5,
     "reviewsCount": 0,
@@ -2426,13 +2446,33 @@ export const productsData = [
     "tag": "Editorial",
     "image": "/api/media/files/65edaccf-e880-4050-8a44-b67cafd02af0.webp",
     "category": "Tops",
-    "subCategory": "",
+    "subCategory": "Crop Tops",
     "season": "Autumn",
     "color": "Silver",
     "colorHex": "#C0C0C0",
     "fit": "Regular",
-    "sizes": [],
-    "variants": [],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "variants": [
+      {
+        "color": "Silver",
+        "colorHex": "#C0C0C0",
+        "image": "/api/media/files/65edaccf-e880-4050-8a44-b67cafd02af0.webp"
+      }
+    ],
+    "sizeStock": [
+      { "size": "S", "stock": 10 },
+      { "size": "M", "stock": 10 },
+      { "size": "L", "stock": 10 },
+      { "size": "XL", "stock": 10 },
+      { "size": "XXL", "stock": 10 }
+    ],
+    "stock": 50,
     "inStock": true,
     "rating": 4.5,
     "reviewsCount": 0,
@@ -2448,13 +2488,33 @@ export const productsData = [
     "tag": "Editorial",
     "image": "/api/media/files/2e1232ed-168e-479b-9e97-014d50044ac3.webp",
     "category": "Outerwear",
-    "subCategory": "",
+    "subCategory": "Jackets",
     "season": "Autumn",
     "color": "Iridescent Lilac",
     "colorHex": "#A9A0C4",
     "fit": "Regular",
-    "sizes": [],
-    "variants": [],
+    "sizes": [
+      "S",
+      "M",
+      "L",
+      "XL",
+      "XXL"
+    ],
+    "variants": [
+      {
+        "color": "Iridescent Lilac",
+        "colorHex": "#A9A0C4",
+        "image": "/api/media/files/2e1232ed-168e-479b-9e97-014d50044ac3.webp"
+      }
+    ],
+    "sizeStock": [
+      { "size": "S", "stock": 10 },
+      { "size": "M", "stock": 10 },
+      { "size": "L", "stock": 10 },
+      { "size": "XL", "stock": 10 },
+      { "size": "XXL", "stock": 10 }
+    ],
+    "stock": 50,
     "inStock": true,
     "rating": 4.5,
     "reviewsCount": 0,

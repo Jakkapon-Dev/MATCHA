@@ -64,7 +64,7 @@ export default function ProfileTab({
         <div className="flex items-center gap-2">
           <User size={18} className="text-matcha-primary" />
           <h2 className="text-base font-extrabold uppercase tracking-tight text-[#0A0A0A]">
-            Personal Details & Membership
+            {t('accountUi.profileTitle')}
           </h2>
         </div>
         {saveSuccess && (

@@ -16,16 +16,11 @@ export default function JoinDropList({ onSubscribe }) {
     // The browser validates the email format through type="email" and required; this
     // guard also prevents programmatic submissions with an empty value.
     if (!email || !email.trim()) return;
-    try {
-      const existing = JSON.parse(localStorage.getItem('matcha_subscribers') || '[]');
-      if (!existing.includes(email.trim())) {
-        existing.push(email.trim());
-        localStorage.setItem('matcha_subscribers', JSON.stringify(existing));
-      }
-    } catch (err) {
-      console.warn('LocalStorage save failed:', err);
-    }
-    // Switch to the success panel immediately, then let the parent persist the address.
+    /* There is no mailing list behind this form: no endpoint, no provider, and
+       nothing in the product brief asks for one. It used to promise drops "to
+       your inbox" and file the address in localStorage, where nobody would ever
+       read it. The address is no longer kept, the copy says the list is not live
+       yet, and what the form really gives — the 15% code — is what it shows. */
     setSubscribed(true);
     showToast(t('drop.toast'), 'success');
     if (onSubscribe) onSubscribe(email);

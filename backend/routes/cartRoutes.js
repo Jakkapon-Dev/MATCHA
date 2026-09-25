@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 
-import Cart from '../models/Cart.js';
+import Cart, { cartExpiryFor } from '../models/Cart.js';
 import { getJwtSecret } from '../middleware/auth.js';
 
 const router = express.Router();
@@ -36,14 +36,64 @@ function resolveOwner(req) {
 
 // ฐานข้อมูลหลุดเมื่อไร ตะกร้าฝั่งเบราว์เซอร์ยังทำงานได้เองอยู่แล้ว ที่นี่จึงตอบตะกร้าว่าง
 // แทนการโยน error เพื่อไม่ให้หน้าเว็บขึ้นข้อความแดงโดยไม่จำเป็น
+// `available: false` บอกหน้าเว็บว่ารายการว่างนี้ไม่ใช่ตะกร้าจริง ห้ามเอาไปทับตะกร้าในเบราว์เซอร์
 const dbReady = () => mongoose.connection.readyState === 1;
-const emptyCart = (res) => res.json({ success: true, data: { items: [] }, message: 'ตะกร้าฝั่งเซิร์ฟเวอร์ยังไม่พร้อมใช้งาน' });
+const emptyCart = (res) => res.json({ success: true, data: { items: [], available: false }, message: 'ตะกร้าฝั่งเซิร์ฟเวอร์ยังไม่พร้อมใช้งาน' });
 
-async function findOrCreateCart(owner) {
-  const query = owner.userId ? { userId: owner.userId } : { guestId: owner.guestId };
-  const existing = await Cart.findOne(query);
-  if (existing) return existing;
-  return new Cart({ ...query, items: [] });
+/* Every write below is a single atomic update against the owner's document.
+
+   These routes used to read the cart, change it in memory and save it back.
+   Requests that overlap — Add The Whole Look sends one per garment, and rapid
+   presses on + send one per press — each read the same starting cart. Against
+   an empty cart every one of them decided to create the document, the unique
+   owner index let the first through and the rest failed with E11000 (500);
+   against an existing cart the last save simply overwrote the others. Letting
+   MongoDB apply each change to the stored document removes the window. */
+const ownerQuery = (owner) => (owner.userId ? { userId: owner.userId } : { guestId: owner.guestId });
+const isDuplicateKey = (err) => err?.code === 11000;
+
+async function ensureCart(owner) {
+  const query = ownerQuery(owner);
+  const update = {
+    $setOnInsert: { userId: owner.userId || null, guestId: owner.guestId || null, items: [] },
+    $set: { expiresAt: cartExpiryFor(owner) }
+  };
+  try {
+    await Cart.updateOne(query, update, { upsert: true });
+  } catch (err) {
+    // Two upserts racing on the unique owner index: the other one created it.
+    if (!isDuplicateKey(err)) throw err;
+    await Cart.updateOne(query, { $set: update.$set });
+  }
+}
+
+async function readItems(owner) {
+  const cart = await Cart.findOne(ownerQuery(owner)).lean();
+  return cart?.items || [];
+}
+
+/* Adds `quantity` of a line, or creates the line. Increment when the line is
+   there; otherwise push only while it is still absent. If a concurrent request
+   pushed it in between, the push matches nothing and the increment is tried
+   again, so the quantity is counted once and the line is never duplicated. */
+async function addLine(owner, line) {
+  const query = ownerQuery(owner);
+  const expiresAt = cartExpiryFor(owner);
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    const inc = await Cart.updateOne(
+      { ...query, 'items.itemId': line.itemId },
+      { $inc: { 'items.$.quantity': line.quantity }, $set: { expiresAt } }
+    );
+    if (inc.matchedCount === 1) return;
+
+    const push = await Cart.updateOne(
+      { ...query, 'items.itemId': { $ne: line.itemId } },
+      { $push: { items: line }, $set: { expiresAt } },
+      { runValidators: true }
+    );
+    if (push.matchedCount === 1) return;
+  }
+  throw new Error(`Could not add ${line.itemId} to the cart`);
 }
 
 const requireOwner = (req, res, next) => {
@@ -59,8 +109,7 @@ const requireOwner = (req, res, next) => {
 router.get('/', requireOwner, async (req, res) => {
   if (!dbReady()) return emptyCart(res);
   try {
-    const cart = await findOrCreateCart(req.cartOwner);
-    res.json({ success: true, data: { items: cart.items } });
+    res.json({ success: true, data: { items: await readItems(req.cartOwner) } });
   } catch (err) {
     console.error('Error reading cart:', err);
     res.status(500).json({ success: false, message: 'อ่านตะกร้าไม่สำเร็จ กรุณาลองใหม่' });
@@ -76,27 +125,19 @@ router.post('/', requireOwner, async (req, res) => {
       return res.status(400).json({ success: false, message: 'ข้อมูลสินค้าไม่ครบ ไม่สามารถเพิ่มลงตะกร้าได้' });
     }
 
-    const cart = await findOrCreateCart(req.cartOwner);
-    const quantity = Math.max(1, parseInt(item.quantity, 10) || 1);
-    const existing = cart.items.find((i) => i.itemId === item.itemId);
+    await ensureCart(req.cartOwner);
+    await addLine(req.cartOwner, {
+      itemId: item.itemId,
+      productId: item.productId,
+      name: item.name || 'MatchA Garment',
+      price: Number(item.price) || 0,
+      quantity: Math.max(1, parseInt(item.quantity, 10) || 1),
+      size: item.size || 'default',
+      color: item.color || 'Default',
+      image: item.image || ''
+    });
 
-    if (existing) {
-      existing.quantity += quantity;
-    } else {
-      cart.items.push({
-        itemId: item.itemId,
-        productId: item.productId,
-        name: item.name || 'MatchA Garment',
-        price: Number(item.price) || 0,
-        quantity,
-        size: item.size || 'default',
-        color: item.color || 'Default',
-        image: item.image || ''
-      });
-    }
-
-    await cart.save();
-    res.status(201).json({ success: true, data: { items: cart.items } });
+    res.status(201).json({ success: true, data: { items: await readItems(req.cartOwner) } });
   } catch (err) {
     console.error('Error adding to cart:', err);
     res.status(500).json({ success: false, message: 'เพิ่มสินค้าลงตะกร้าไม่สำเร็จ กรุณาลองใหม่' });
@@ -109,20 +150,22 @@ router.put('/:itemId', requireOwner, async (req, res) => {
   try {
     const { itemId } = req.params;
     const quantity = parseInt(req.body?.quantity, 10);
-    const cart = await findOrCreateCart(req.cartOwner);
+    const query = ownerQuery(req.cartOwner);
+    const expiresAt = cartExpiryFor(req.cartOwner);
 
     if (!Number.isFinite(quantity) || quantity <= 0) {
-      cart.items = cart.items.filter((i) => i.itemId !== itemId);
+      await Cart.updateOne(query, { $pull: { items: { itemId } }, $set: { expiresAt } });
     } else {
-      const target = cart.items.find((i) => i.itemId === itemId);
-      if (!target) {
+      const result = await Cart.updateOne(
+        { ...query, 'items.itemId': itemId },
+        { $set: { 'items.$.quantity': quantity, expiresAt } }
+      );
+      if (result.matchedCount === 0) {
         return res.status(404).json({ success: false, message: 'ไม่พบสินค้าชิ้นนี้ในตะกร้า' });
       }
-      target.quantity = quantity;
     }
 
-    await cart.save();
-    res.json({ success: true, data: { items: cart.items } });
+    res.json({ success: true, data: { items: await readItems(req.cartOwner) } });
   } catch (err) {
     console.error('Error updating cart item:', err);
     res.status(500).json({ success: false, message: 'ปรับจำนวนสินค้าไม่สำเร็จ กรุณาลองใหม่' });
@@ -133,10 +176,11 @@ router.put('/:itemId', requireOwner, async (req, res) => {
 router.delete('/:itemId', requireOwner, async (req, res) => {
   if (!dbReady()) return emptyCart(res);
   try {
-    const cart = await findOrCreateCart(req.cartOwner);
-    cart.items = cart.items.filter((i) => i.itemId !== req.params.itemId);
-    await cart.save();
-    res.json({ success: true, data: { items: cart.items } });
+    await Cart.updateOne(
+      ownerQuery(req.cartOwner),
+      { $pull: { items: { itemId: req.params.itemId } }, $set: { expiresAt: cartExpiryFor(req.cartOwner) } }
+    );
+    res.json({ success: true, data: { items: await readItems(req.cartOwner) } });
   } catch (err) {
     console.error('Error deleting cart item:', err);
     res.status(500).json({ success: false, message: 'ลบสินค้าออกจากตะกร้าไม่สำเร็จ กรุณาลองใหม่' });
@@ -148,9 +192,10 @@ router.delete('/:itemId', requireOwner, async (req, res) => {
 router.delete('/', requireOwner, async (req, res) => {
   if (!dbReady()) return emptyCart(res);
   try {
-    const cart = await findOrCreateCart(req.cartOwner);
-    cart.items = [];
-    await cart.save();
+    await Cart.updateOne(
+      ownerQuery(req.cartOwner),
+      { $set: { items: [], expiresAt: cartExpiryFor(req.cartOwner) } }
+    );
     res.json({ success: true, data: { items: [] } });
   } catch (err) {
     console.error('Error clearing cart:', err);
@@ -168,24 +213,19 @@ router.post('/merge', requireOwner, async (req, res) => {
       return res.status(401).json({ success: false, message: 'ต้องเข้าสู่ระบบก่อนจึงจะรวมตะกร้าได้' });
     }
 
-    const guestId = String(req.headers['x-guest-id'] || '').trim();
-    const userCart = await findOrCreateCart({ userId, guestId: null });
-    const guestCart = guestId ? await Cart.findOne({ guestId }) : null;
+    const owner = { userId, guestId: null };
+    await ensureCart(owner);
 
-    if (guestCart?.items?.length) {
-      guestCart.items.forEach((incoming) => {
-        const existing = userCart.items.find((i) => i.itemId === incoming.itemId);
-        if (existing) {
-          existing.quantity += incoming.quantity;
-        } else {
-          userCart.items.push(incoming);
-        }
-      });
-      await guestCart.deleteOne();
+    /* The guest cart is claimed by deleting it in the same operation that reads
+       it, so a second merge arriving at the same time finds nothing to add and
+       the guest's quantities are counted into the account exactly once. */
+    const guestId = String(req.headers['x-guest-id'] || '').trim();
+    const guestCart = guestId ? await Cart.findOneAndDelete({ guestId }).lean() : null;
+    for (const incoming of guestCart?.items || []) {
+      await addLine(owner, incoming);
     }
 
-    await userCart.save();
-    res.json({ success: true, data: { items: userCart.items } });
+    res.json({ success: true, data: { items: await readItems(owner) } });
   } catch (err) {
     console.error('Error merging cart:', err);
     res.status(500).json({ success: false, message: 'รวมตะกร้าไม่สำเร็จ กรุณาลองใหม่' });

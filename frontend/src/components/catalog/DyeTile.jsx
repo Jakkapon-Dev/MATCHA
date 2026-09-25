@@ -4,6 +4,9 @@ import { flyToCart } from '../../utils/flyToCart';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
 import { useCart } from '../../context/CartContext.jsx';
 import { wash, needsEdge } from '../../utils/dye';
+import { useLanguage } from '../../context/LanguageContext.jsx';
+import { describeProduct } from '../../utils/productCopy';
+import { taxonomyLabel } from '../../utils/taxonomy';
 
 /* One garment, standing on its own dye.
 
@@ -19,6 +22,8 @@ import { wash, needsEdge } from '../../utils/dye';
    misreports what you would receive. */
 
 export default function DyeTile({ product, variant, onAddToCart, onQuickView }) {
+  const { t, lang } = useLanguage();
+  const labels = [taxonomyLabel(t, 'tag', product?.tag), taxonomyLabel(t, 'season', product?.season), taxonomyLabel(t, 'category', product?.category)].filter(Boolean);
   const tileRef = useRef(null);
   const [justAdded, setJustAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
@@ -135,15 +140,20 @@ export default function DyeTile({ product, variant, onAddToCart, onQuickView }) 
           <span className="truncate">{active?.color}</span>
         </span>
         <span aria-hidden="true">/</span>
-        <span>{[product?.tag, product?.season, product?.category].filter(Boolean).slice(0, 2).join(' · ')}</span>
+        <span>{labels.slice(0, 2).join(' · ')}</span>
       </div>
 
       <p className="mt-4 line-clamp-2 min-h-[2.75rem] text-sm leading-relaxed text-[#555851]">
-        {product?.descriptionEn || product?.description || `${product?.fit || 'Signature'} ${product?.category || 'piece'} selected for the ${product?.season || 'MatchA'} palette.`}
+        {/* Thai readers were shown descriptionEn first. */}
+        {describeProduct(product, lang) || t('catalog.tile.fallbackDescription', {
+          fit: taxonomyLabel(t, 'fit', product?.fit) || t('catalog.tile.signature'),
+          category: taxonomyLabel(t, 'category', product?.category) || t('catalog.tile.piece'),
+          season: taxonomyLabel(t, 'season', product?.season) || 'MatchA'
+        })}
       </p>
 
-      <div className="sr-only" aria-label="Product tags">
-        {[product?.tag, product?.season, product?.category].filter(Boolean).slice(0, 3).map((tag) => (
+      <div className="sr-only" aria-label={t('catalog.tile.tagsAria')}>
+        {labels.slice(0, 3).map((tag) => (
           <span key={tag} className="border border-matcha-border px-2 py-1 font-mono text-[9px] uppercase tracking-wider text-matcha-muted">
             {tag}
           </span>
@@ -151,23 +161,23 @@ export default function DyeTile({ product, variant, onAddToCart, onQuickView }) 
       </div>
 
       <div className="mt-auto flex items-stretch gap-2 pt-5">
-          <div className="flex shrink-0 items-center border border-[#0A0A0A] bg-transparent" aria-label="Quantity selector">
+          <div className="flex shrink-0 items-center border border-[#0A0A0A] bg-transparent" aria-label={t('catalog.tile.qtyAria')}>
             <button
               type="button"
               onClick={() => setQuantity((value) => Math.max(1, value - 1))}
               disabled={quantity === 1}
               className="p-2.5 text-[#0A0A0A] disabled:opacity-30"
-              aria-label="Decrease quantity"
+              aria-label={t('catalog.tile.decrease')}
             >
               <Minus size={12} />
             </button>
-            <span className="min-w-7 text-center font-mono text-xs font-bold tabular-nums" aria-label={`Quantity ${quantity}`}>{quantity}</span>
+            <span className="min-w-7 text-center font-mono text-xs font-bold tabular-nums" aria-label={t('catalog.tile.qtyValue', { n: quantity })}>{quantity}</span>
             <button
               type="button"
               onClick={() => setQuantity((value) => Math.min(10, value + 1))}
               disabled={quantity === 10}
               className="p-2.5 text-[#0A0A0A] disabled:opacity-30"
-              aria-label="Increase quantity"
+              aria-label={t('catalog.tile.increase')}
             >
               <Plus size={12} />
             </button>
@@ -180,12 +190,12 @@ export default function DyeTile({ product, variant, onAddToCart, onQuickView }) 
           className="flex min-w-0 flex-1 items-center justify-center gap-2 bg-matcha-accent px-3 py-3 font-mono text-[10px] font-bold uppercase tracking-wider text-white transition-colors hover:bg-[#a81717] disabled:cursor-not-allowed disabled:bg-matcha-border disabled:text-matcha-muted"
         >
           {justAdded ? <Check size={13} /> : <ShoppingBag size={13} />}
-          <span>{justAdded ? 'Added to cart' : inStock ? 'Add to cart' : 'Sold out'}</span>
+          <span>{justAdded ? t('catalog.tile.added') : inStock ? t('catalog.tile.addToCart') : t('catalog.tile.soldOut')}</span>
         </button>
       </div>
       {needsSizeChoice && inStock && (
         <p className="mt-2 font-mono text-[9px] uppercase tracking-wider text-matcha-muted">
-          Size selected in quick view
+          {t('catalog.tile.sizeInQuickView')}
         </p>
       )}
       </div>

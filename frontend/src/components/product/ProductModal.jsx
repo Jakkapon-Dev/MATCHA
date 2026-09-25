@@ -14,7 +14,9 @@ import {
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
 import { wash, inkOn, needsEdge } from '../../utils/dye';
 import { describeProduct } from '../../utils/productCopy';
+import { localizeSpecs } from '../../utils/specCopy';
 import { useCart } from '../../context/CartContext.jsx';
+import useDialogFocus from '../../hooks/useDialogFocus';
 import { useToast } from '../../context/ToastContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, FREE_SHIPPING_THRESHOLD } from '../../config/shipping';
@@ -44,7 +46,14 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
   const [selectedSize, setSelectedSize] = useState(
     sizeList.length === 1 ? sizeList[0] : null
   );
-  const [quantity, setQuantity] = useState(1);
+  /* The catalogue card has its own quantity stepper, and choosing a size opens
+     this modal. The card sends what was chosen as `initialQuantity`; this used
+     to start at 1 regardless, so three on the card became one in the bag. */
+  const startingQuantity = (p) => {
+    const n = parseInt(p?.initialQuantity, 10);
+    return n > 0 ? n : 1;
+  };
+  const [quantity, setQuantity] = useState(() => startingQuantity(product));
 
   const isInitiallyWishlisted = () => {
     try {
@@ -114,14 +123,14 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
   // marked as sample data each value carries a tag saying so, because a fabric
   // composition or a certification is a claim and should never look verified
   // when nobody has verified it.
-  const specs = product?.specs || {};
+  const specs = localizeSpecs(product?.specs, lang) || {};
   const isSampleSpec = specs.isSampleData === true;
   const specRows = [
-    { label: t('product.specs.fabric'), value: specs.fabricComposition },
-    { label: t('product.specs.model'), value: specs.modelMeasurements },
-    { label: t('product.specs.origin'), value: specs.countryOfOrigin },
+    { label: t('specs.fabric'), value: specs.fabricComposition },
+    { label: t('specs.model'), value: specs.modelMeasurements },
+    { label: t('specs.origin'), value: specs.countryOfOrigin },
     {
-      label: t('product.specs.certs'),
+      label: t('specs.certs'),
       value: Array.isArray(specs.certifications) ? specs.certifications.join(', ') : specs.certifications,
     },
   ];
@@ -136,7 +145,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
       setActiveVariant(initialVariant);
       const list = Array.isArray(product.sizes) ? product.sizes.filter(Boolean) : [];
       setSelectedSize(list.length === 1 ? list[0] : null);
-      setQuantity(1);
+      setQuantity(startingQuantity(product));
       setShowFitGuide(false);
       setActiveAccordion(null);
       setNeedsSize(false);
@@ -163,6 +172,9 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
       document.body.style.overflow = originalOverflow || 'unset';
     };
   }, [product, onClose]);
+
+  const dialogRef = useRef(null);
+  useDialogFocus(dialogRef, Boolean(product));
 
   // No selected product means there is no modal or backdrop to render.
   if (!product) return null;
@@ -233,6 +245,8 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
       onClick={onClose}
     >
       <div 
+        ref={dialogRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby="product-modal-title"
@@ -485,7 +499,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
 
                   <div className="flex items-center justify-between font-mono">
                     <span className="font-bold text-matcha-text uppercase">
-                      {product.specs?.sizeGuide?.system || t('product.fitGuide')}
+                      {specs.sizeGuide?.system || t('product.fitGuide')}
                     </span>
                     <span className="text-[10px] text-matcha-muted">{t('product.unitCm')}</span>
                   </div>
@@ -503,7 +517,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-matcha-border/50">
-                          {product.specs?.sizeGuide?.rows?.map((r, i) => (
+                          {specs.sizeGuide?.rows?.map((r, i) => (
                             <tr key={i} className={selectedSize === r.size ? 'bg-matcha-primary/10 font-bold text-matcha-primary' : 'text-matcha-text'}>
                               <td className="py-1.5 px-2">{r.size}</td>
                               <td className="py-1.5 px-2">{r.usMen}</td>
@@ -517,10 +531,10 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   ) : product.category === 'Accessories' ? (
                     <div className="p-3 bg-matcha-bg border border-matcha-border space-y-1.5">
                       <div className="font-bold text-matcha-text text-xs">
-                        {t('product.dimensions')}: <span className="text-[#0A0A0A]">{product.specs?.sizeGuide?.dimensionText || 'One Size (OS)'}</span>
+                        {t('product.dimensions')}: <span className="text-[#0A0A0A]">{specs.sizeGuide?.dimensionText || 'One Size (OS)'}</span>
                       </div>
                       <p className="text-[11px] text-matcha-muted leading-relaxed">
-                        {product.specs?.sizeGuide?.note || t('product.oneSizeNote')}
+                        {specs.sizeGuide?.note || t('product.oneSizeNote')}
                       </p>
                     </div>
                   ) : (
@@ -528,13 +542,13 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                       <table className="w-full text-left font-mono text-[10px] sm:text-xs border-collapse">
                         <thead>
                           <tr className="border-b border-matcha-border text-matcha-muted bg-matcha-bg">
-                            {product.specs?.sizeGuide?.headers?.map((h, i) => (
+                            {specs.sizeGuide?.headers?.map((h, i) => (
                               <th key={i} className="py-1.5 px-2">{h}</th>
                             ))}
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-matcha-border/50">
-                          {product.specs?.sizeGuide?.rows?.map((r, i) => (
+                          {specs.sizeGuide?.rows?.map((r, i) => (
                             <tr key={i} className={selectedSize === r.size ? 'bg-matcha-primary/10 font-bold text-matcha-primary' : 'text-matcha-text'}>
                               <td className="py-1.5 px-2">{r.size}</td>
                               {r.chest && <td className="py-1.5 px-2">{r.chest}</td>}
@@ -550,9 +564,9 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                   )}
 
                   {/* Measurement Instruction */}
-                  {product.specs?.sizeGuide?.measureInstruction && (
+                  {specs.sizeGuide?.measureInstruction && (
                     <div className="pt-2 border-t border-matcha-border/60 text-[10px] text-matcha-muted leading-relaxed">
-                      <strong className="text-[#0A0A0A]">{t('product.measure')}:</strong> {product.specs.sizeGuide.measureInstruction}
+                      <strong className="text-[#0A0A0A]">{t('product.measure')}:</strong> {specs.sizeGuide.measureInstruction}
                     </div>
                   )}
                 </div>
@@ -579,13 +593,13 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                 {activeAccordion === 'materials' && (
                   <div className="px-4 pb-3.5 pt-1 space-y-2 text-matcha-muted font-mono text-[11px] bg-matcha-bg/40 animate-fade-in">
                     <div>
-                      <span className="font-bold text-[#0A0A0A]">{t('product.silhouette')}:</span> {product.specs?.silhouette || product.fit || 'Relaxed Fit'}
+                      <span className="font-bold text-[#0A0A0A]">{t('product.silhouette')}:</span> {specs.silhouette || product.fit || 'Relaxed Fit'}
                     </div>
                     <div>
-                      <span className="font-bold text-[#0A0A0A]">{t('product.fitDetails')}:</span> {product.specs?.fitDetails || '—'}
+                      <span className="font-bold text-[#0A0A0A]">{t('product.fitDetails')}:</span> {specs.fitDetails || '—'}
                     </div>
                     <div>
-                      <span className="font-bold text-[#0A0A0A]">{t('product.materialHint')}:</span> {product.specs?.materialHint || '—'}
+                      <span className="font-bold text-[#0A0A0A]">{t('product.materialHint')}:</span> {specs.materialHint || '—'}
                     </div>
                     <div className="p-2 bg-matcha-bg border-l-2 border-matcha-accent text-[#0A0A0A] text-[10px]">
                       <strong>{t('product.fibreLabel')}:</strong> {t('product.fibrePending')}
@@ -610,7 +624,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                 </button>
                 {activeAccordion === 'care' && (
                   <div className="px-4 pb-3.5 pt-1 space-y-1.5 text-matcha-muted font-mono text-[11px] bg-matcha-bg/40 animate-fade-in">
-                    {(product.specs?.careInstructions || t('product.careDefaults')).map((item, idx) => (
+                    {(specs.careInstructions || t('product.careDefaults')).map((item, idx) => (
                       <div key={idx} className="flex items-start gap-1.5">
                         <span className="text-matcha-primary font-bold">✓</span>
                         <span>{item}</span>
@@ -639,7 +653,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                     <div className="flex items-center justify-between py-1 border-b border-matcha-border/40">
                       <span className="font-bold text-[#0A0A0A]">{t('product.specStatus')}:</span>
                       <span className="px-2 py-0.5 bg-[#0A0A0A] text-matcha-bg font-bold text-[10px]">
-                        {product.specs?.statusLabel || t('product.sampleBadge')}
+                        {specs.statusLabel || t('product.sampleBadge')}
                       </span>
                     </div>
                     {specRows.map(({ label, value }, i) => (
