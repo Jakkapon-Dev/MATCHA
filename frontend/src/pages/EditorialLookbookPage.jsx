@@ -25,6 +25,7 @@ import { inkOn } from '../utils/dye';
 import { useCart } from '../context/CartContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
 import { useLanguage } from '../context/LanguageContext.jsx';
+import { formatCurrency } from '../utils/currency.js';
 
 /* The emoji that used to sit in front of each of these undid the rest of the
    page: a magazine masthead and a weather sticker cannot share a line. The
@@ -129,7 +130,7 @@ function HotspotPin({ hs, style, active, pinned, added, disabled, onHover, onFoc
                 {title}
               </div>
               <div className="text-xs font-mono text-[#0A0A0A] mt-0.5 font-bold">
-                ${Number(hs.price || 0).toFixed(2)}
+                {formatCurrency(hs.price)}
               </div>
             </div>
           </div>
@@ -737,7 +738,7 @@ export default function EditorialLookbookPage() {
                         <div className="min-w-0 flex-1">
                           <div className="text-xs font-bold text-[#0A0A0A] truncate">{item.name}</div>
                           <div className="text-[11px] font-mono text-matcha-muted">
-                            {item.color} · ${item.price.toFixed(2)}
+                            {item.color} · {formatCurrency(item.price)}
                           </div>
                         </div>
                         <button
@@ -914,7 +915,7 @@ export default function EditorialLookbookPage() {
                             />
                             <div className="min-w-0 flex-1">
                               <span className="text-xs font-bold text-[#0A0A0A] block truncate">{item.name}</span>
-                              <span className="text-[11px] font-mono text-matcha-muted">${item.price.toFixed(2)}</span>
+                              <span className="text-[11px] font-mono text-matcha-muted">{formatCurrency(item.price)}</span>
                             </div>
                             <button
                               type="button"
@@ -1073,7 +1074,7 @@ export default function EditorialLookbookPage() {
                             />
                             <div className="min-w-0 flex-1">
                               <div className="text-xs font-bold text-[#0A0A0A] truncate">{item.name}</div>
-                              <div className="text-[11px] font-mono text-matcha-muted">${item.price.toFixed(2)}</div>
+                              <div className="text-[11px] font-mono text-matcha-muted">{formatCurrency(item.price)}</div>
                             </div>
                             <button
                               type="button"

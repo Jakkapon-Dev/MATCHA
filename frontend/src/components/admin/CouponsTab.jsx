@@ -3,6 +3,7 @@ import { Plus, Pencil, Power, TicketPercent } from 'lucide-react';
 import { api, apiErrorText } from '../../services/api';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import CouponFormModal from './CouponFormModal';
+import { formatCurrency } from '../../utils/currency.js';
 
 const STATUSES = [
   { id: 'all', label: 'All' },
@@ -22,12 +23,11 @@ const STATUS_TONE = {
 const STATUS_LABEL = Object.fromEntries(STATUSES.map(s => [s.id, s.label]));
 
 const formatDate = (value) => (value ? new Date(value).toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—');
-const money = (n) => `$${Number(n).toFixed(2)}`;
 
 function discountDetail(c) {
   const parts = [];
-  if (c.type === 'percentage' && c.maxDiscountAmount != null) parts.push(`max ${money(c.maxDiscountAmount)}`);
-  if (c.minOrderAmount > 0) parts.push(`min ${money(c.minOrderAmount)}`);
+  if (c.type === 'percentage' && c.maxDiscountAmount != null) parts.push(`max ${formatCurrency(c.maxDiscountAmount)}`);
+  if (c.minOrderAmount > 0) parts.push(`min ${formatCurrency(c.minOrderAmount)}`);
   const scope = [...(c.applicableCategories || []), ...(c.applicableProducts?.length ? [`${c.applicableProducts.length} product${c.applicableProducts.length > 1 ? 's' : ''}`] : [])];
   if (scope.length) parts.push(scope.join(', '));
   return parts.join(' · ');

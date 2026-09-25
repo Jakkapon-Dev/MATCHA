@@ -1,6 +1,7 @@
 import React from 'react';
 import AdminDataState from './AdminDataState';
 import AdminPagination from './AdminPagination';
+import { formatCurrency } from '../../utils/currency.js';
 
 export default function MembersTab({ status, errors, setMemberTierFilter, memberTierFilter, filteredMembers, handleToggleVIPTier, saving, isDemo, pagination, onPageChange }) {
   return (<AdminDataState resources={["members"]} status={status} errors={errors}>
@@ -42,7 +43,7 @@ export default function MembersTab({ status, errors, setMemberTierFilter, member
                           <td className="p-4 font-bold text-matcha-primary">{mem.id}</td>
                           <td className="p-4 font-bold text-matcha-text">{mem.name}</td>
                           <td className="p-4 text-matcha-muted">{mem.email}</td>
-                          <td className="p-4 font-bold text-matcha-primary">${mem.totalSpent.toFixed(2)}</td>
+                          <td className="p-4 font-bold text-matcha-primary">{formatCurrency(mem.totalSpent)}</td>
                           <td className="p-4">
                             <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold ${
                               mem.tier.includes('VIP')

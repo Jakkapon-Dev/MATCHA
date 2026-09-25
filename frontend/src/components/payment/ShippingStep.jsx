@@ -4,6 +4,7 @@ import { fetchAddressBook, readAddressBook, rememberAddress, formatAddressArea }
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { Truck, CheckCircle2, PlusCircle, ArrowLeft, ArrowRight, ShieldCheck, Building2, Home } from 'lucide-react';
 import { normalizePhone, isValidThaiPhone, normalizePostalCode, isValidPostalCode } from '../../utils/contactValidation.js';
+import { formatCurrency } from '../../utils/currency.js';
 
 
 export default function ShippingStep({
@@ -459,9 +460,9 @@ export default function ShippingStep({
 
                 <div className="text-right pl-7 sm:pl-0 font-mono font-bold text-sm text-matcha-primary">
                   {option.price === 0 && option.listPrice > 0 && (
-                    <span className="mr-1.5 line-through opacity-50">${option.listPrice.toFixed(2)}</span>
+                    <span className="mr-1.5 line-through opacity-50">{formatCurrency(option.listPrice)}</span>
                   )}
-                  {option.price === 0 ? 'Free' : `$${option.price.toFixed(2)}`}
+                  {option.price === 0 ? 'Free' : formatCurrency(option.price)}
                 </div>
               </div>
             );

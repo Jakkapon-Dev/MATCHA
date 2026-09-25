@@ -20,6 +20,7 @@ import useDialogFocus from '../../hooks/useDialogFocus';
 import { useToast } from '../../context/ToastContext.jsx';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { SHIPPING_OPTIONS as SHIPPING_RATES, FREE_SHIPPING_THRESHOLD } from '../../config/shipping';
+import { formatCurrency } from '../../utils/currency.js';
 
 export default function ProductModal({ product, onClose, onAddToCart, onToggleWishlist, isWishlisted = false }) {
   const { addToCart: contextAddToCart } = useCart();
@@ -396,11 +397,11 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
               <div className="flex items-center gap-4 mt-2 flex-wrap">
                 <div className="flex items-baseline gap-2 font-mono">
                   <span className="text-2xl sm:text-3xl font-black text-[#0A0A0A]">
-                    ${itemPrice.toFixed(2)}
+                    {formatCurrency(itemPrice)}
                   </span>
                   {product.originalPrice && (
                     <span className="text-sm line-through text-matcha-muted">
-                      ${(typeof product.originalPrice === 'number' ? product.originalPrice : Number(product.originalPrice)).toFixed(2)}
+                      {formatCurrency(product.originalPrice)}
                     </span>
                   )}
                 </div>
@@ -724,7 +725,7 @@ export default function ProductModal({ product, onClose, onAddToCart, onToggleWi
                     ? t('product.soldOut')
                     : addedAnimation
                       ? t('product.added')
-                      : `${t('product.addToBag')} — $${currentTotal.toFixed(2)}`}
+                      : `${t('product.addToBag')} — ${formatCurrency(currentTotal)}`}
                 </span>
               </button>
 

@@ -22,6 +22,7 @@ import useChangeMotion from '../hooks/useChangeMotion';
 import useAdminData from '../components/admin/useAdminData';
 
 import { normalizeProduct } from '../components/admin/adminData';
+import { formatCurrency } from '../utils/currency.js';
 
 export default function AdminPage() {
   const { t } = useLanguage();
@@ -612,7 +613,7 @@ export default function AdminPage() {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center justify-between gap-1">
                                 <span className="font-bold text-matcha-text truncate">{n.orderNumber}</span>
-                                <span className="font-bold text-matcha-primary shrink-0">${Number(n.total || 0).toFixed(2)}</span>
+                                <span className="font-bold text-matcha-primary shrink-0">{formatCurrency(n.total)}</span>
                               </div>
                               <div className="text-[11px] text-matcha-muted truncate">Customer: {n.customerName}</div>
                               <div className="text-[10px] text-matcha-muted/70 mt-0.5">
