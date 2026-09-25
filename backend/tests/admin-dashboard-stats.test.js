@@ -25,6 +25,7 @@ import {
   CATEGORY_PIPELINE,
   ORDER_TOTALS_PIPELINE,
   MONTHLY_PIPELINE,
+  ORDER_STATUS_PIPELINE,
   MEMBER_PIPELINE
 } from '../services/dashboardStats.js';
 import { User } from '../services/userStore.js';
@@ -158,6 +159,39 @@ test('the monthly chart drops cancelled orders and only banks paid ones', () => 
   assert.deepEqual(sort, { $sort: { _id: 1 } });
 });
 
+/* The order-status chart puts every order in exactly one group, cancelled
+   first: a cancelled order is not trade, whatever its payment says. */
+test('the order-status groups put cancelled first, then paid, then what is still owed', () => {
+  assert.equal(ORDER_STATUS_PIPELINE.some(stage => stage.$match), false, 'every order is grouped');
+  const [{ $group }] = ORDER_STATUS_PIPELINE;
+  const [cancelled, paid, awaiting] = $group._id.$switch.branches;
+  assert.deepEqual(cancelled, { case: { $eq: ['$status', 'cancelled'] }, then: 'cancelled' });
+  assert.deepEqual(paid, { case: { $eq: ['$paymentStatus', 'paid'] }, then: 'paid' });
+  assert.deepEqual(awaiting.case.$in[1], ['unpaid', 'pending_payment', 'failed']);
+  // Orders written before the payment lifecycle carry no paymentStatus.
+  assert.deepEqual(awaiting.case.$in[0], { $ifNull: ['$paymentStatus', 'unpaid'] });
+  assert.equal($group._id.$switch.default, 'other');
+});
+
+test('collectDashboardStats reports every status group, and ignores unknown ones', async () => {
+  const empty = { aggregate: async () => [] };
+  const data = await collectDashboardStats({
+    Product: empty,
+    User: empty,
+    Order: {
+      aggregate: async (pipeline) => (pipeline === ORDER_STATUS_PIPELINE
+        ? [{ _id: 'paid', count: 15, amount: 2368.119999 }, { _id: 'cancelled', count: 3, amount: 358.96 }, { _id: 'bogus', count: 9, amount: 1 }]
+        : [])
+    }
+  });
+  assert.deepEqual(data.orderStatus, {
+    paid: { count: 15, amount: 2368.12 },
+    awaiting: { count: 0, amount: 0 },
+    cancelled: { count: 3, amount: 358.96 },
+    other: { count: 0, amount: 0 }
+  });
+});
+
 test('the category split is taken over the whole catalogue', () => {
   // A $match here would silently scope the chart to a subset.
   assert.equal(CATEGORY_PIPELINE.some(stage => stage.$match), false);
@@ -229,6 +263,12 @@ test('an empty shop reports zeroes, never an invented figure', async () => {
     totalOrders: 0,
     paidOrders: 0,
     paidRevenue: 0,
+    orderStatus: {
+      paid: { count: 0, amount: 0 },
+      awaiting: { count: 0, amount: 0 },
+      cancelled: { count: 0, amount: 0 },
+      other: { count: 0, amount: 0 }
+    },
     monthly: [],
     totalMembers: 0,
     vipMembers: 0
