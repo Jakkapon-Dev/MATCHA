@@ -2,27 +2,12 @@ import express from 'express';
 import mongoose from 'mongoose';
 import Notification from '../models/Notification.js';
 import { authRequired, adminOnly } from '../middleware/auth.js';
-import { isDemo } from '../config/storeMode.js';
+import { memoryNotifications, isDbConnected, isMemoryFallbackAllowed } from '../services/notificationStore.js';
 import { processNotificationOutbox } from '../services/notificationService.js';
 
+export { memoryNotifications, isMemoryFallbackAllowed };
+
 const router = express.Router();
-
-/* The offline demo store's notification list.
-
-   It exists only so the demo build has something to show without a database
-   behind it. A live shop must never read from it: an admin looking at a stale
-   in-memory list during an outage sees an empty badge and concludes no orders
-   came in, which is worse than being told the list is unavailable. */
-export const memoryNotifications = [];
-
-function isDbConnected() {
-  return mongoose.connection.readyState === 1 && Boolean(mongoose.connection.db);
-}
-
-/** True only for the offline demo build, never for a live or production shop. */
-export function isMemoryFallbackAllowed() {
-  return isDemo && process.env.NODE_ENV !== 'production';
-}
 
 /** A dead database is the caller's cue to retry, not a bug in the request. */
 function databaseUnavailable(res) {

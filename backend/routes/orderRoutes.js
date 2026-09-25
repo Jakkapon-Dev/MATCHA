@@ -10,7 +10,7 @@ import { authRequired, adminOnly, extractAuthUser } from '../middleware/auth.js'
 import { isDemo } from '../config/storeMode.js';
 import { sendOrderConfirmation } from '../services/email.js';
 import { normaliseCode, quoteCoupon, redeemCoupon, releaseCoupon, couponUserKey, ensureCouponIndexes, CouponError } from '../services/coupons.js';
-import { memoryNotifications } from './notificationRoutes.js';
+import { memoryNotifications } from '../services/notificationStore.js';
 import { normalizePhone, isValidThaiPhone, isValidPostalCode, isValidEmail } from '../utils/contactFormat.js';
 import { dispatchOrderNotification } from '../services/notificationService.js';
 import { PAYMENT_STATES, initialPaymentStatus, paymentDeadlineFor } from '../config/paymentStates.js';

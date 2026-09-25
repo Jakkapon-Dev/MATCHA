@@ -7,7 +7,7 @@ import { ownsOrder } from '../services/orderAccess.js';
 import { getJwtSecret } from '../middleware/auth.js';
 import { allLooks, findLinkedProducts } from '../routes/lookbookRoutes.js';
 import { assertActiveUrls, usage } from '../routes/mediaRoutes.js';
-import { memoryNotifications } from '../routes/notificationRoutes.js';
+import { memoryNotifications } from '../services/notificationStore.js';
 import Media from '../models/MediaAsset.js';
 import Lookbook from '../models/Lookbook.js';
 import DefaultProduct from '../models/Product.js';
