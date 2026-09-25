@@ -4,6 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import productRoutes from '../routes/productRoutes.js';
 import productsData from '../data/products.js';
+import { filterInMemoryProducts } from '../utils/productFilters.js';
 
 let server;
 let baseUrl;
@@ -252,4 +253,32 @@ test('in-memory: GET /api/products returns empty array with clean pagination whe
   assert.equal(body.pagination.totalPages, 1);
   assert.equal(body.pagination.hasNextPage, false);
   assert.equal(body.pagination.hasPrevPage, false);
+});
+
+test('unit: filterInMemoryProducts does not mutate the input products array', () => {
+  const original = [
+    { id: 'P2', price: 100, isFeatured: false, createdAt: '2026-01-02' },
+    { id: 'P1', price: 50, isFeatured: true, createdAt: '2026-01-01' }
+  ];
+  const snapshot = JSON.stringify(original);
+
+  const res = filterInMemoryProducts(original, { sort: 'price-asc' });
+  assert.equal(JSON.stringify(original), snapshot, 'Input array must not be mutated');
+  assert.equal(res.products[0].id, 'P1');
+  assert.equal(res.products[1].id, 'P2');
+});
+
+test('unit: filterInMemoryProducts handles empty array and missing options gracefully', () => {
+  const resEmpty = filterInMemoryProducts([]);
+  assert.deepEqual(resEmpty.products, []);
+  assert.equal(resEmpty.pagination.total, 0);
+  assert.equal(resEmpty.pagination.page, 1);
+  assert.equal(resEmpty.pagination.totalPages, 1);
+  assert.equal(resEmpty.pagination.limit, 24);
+  assert.equal(resEmpty.pagination.hasNextPage, false);
+  assert.equal(resEmpty.pagination.hasPrevPage, false);
+
+  const resUndefined = filterInMemoryProducts(undefined, undefined);
+  assert.deepEqual(resUndefined.products, []);
+  assert.equal(resUndefined.pagination.total, 0);
 });
