@@ -6,6 +6,7 @@ import DefaultProduct from '../models/Product.js';
 import { defaultLookbooks, resolveLookbooks, defaults } from '../services/lookbook.js';
 import { isDemo, demoProduct } from '../config/storeMode.js';
 import errorHandler from '../middleware/errorHandler.js';
+import { requireDbReady } from '../middleware/dbGuard.js';
 import { assertActiveUrls, getAuthGuards } from './mediaRoutes.js';
 
 const getProductModel = () => mongoose.models.Product || DefaultProduct;
@@ -34,12 +35,7 @@ const lookInput = z.object({
 }).strict();
 
 // ฐานข้อมูลต้องพร้อมใช้งาน
-router.use(['/lookbooks', '/admin/lookbooks'], (req, res, next) => {
-  if (mongoose.connection.readyState !== 1) {
-    return res.status(503).json({ success: false, message: 'ฐานข้อมูลยังไม่พร้อม กรุณาลองใหม่' });
-  }
-  next();
-});
+router.use(['/lookbooks', '/admin/lookbooks'], requireDbReady);
 
 export async function allLooks() {
   const saved = await Lookbook.find().sort({ id: 1 }).lean();

@@ -10,13 +10,11 @@ import { authRequired, adminOnly } from '../middleware/auth.js';
 import { extractAuthUser } from './orderRoutes.js';
 import { normaliseCode, quoteCoupon, couponLabel, couponUserKey, builtInCoupons, CouponError } from '../services/coupons.js';
 import { escapeRegex } from '../utils/regex.js';
+import { requireDbReady } from '../middleware/dbGuard.js';
 
 const router = express.Router();
 
-const databaseRequired = (req, res, next) => {
-  if (mongoose.connection.readyState !== 1) return res.status(503).json({ success: false, message: 'ฐานข้อมูลยังไม่พร้อม กรุณาลองใหม่' });
-  next();
-};
+const databaseRequired = requireDbReady;
 
 const CATEGORIES = Product.schema.path('category').enumValues;
 

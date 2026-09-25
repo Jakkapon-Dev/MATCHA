@@ -15,6 +15,7 @@ import errorHandler from '../middleware/errorHandler.js';
 import { allLooks } from './lookbookRoutes.js';
 import { importLookbookMedia } from '../services/importLookbookMedia.js';
 import { escapeRegex } from '../utils/regex.js';
+import { requireDbReady } from '../middleware/dbGuard.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -69,12 +70,7 @@ router.use('/media/files', (req, res, next) => {
   res.sendFile(path.join(__dirname, '../demo-media', req.path.slice(1)));
 });
 
-router.use('/admin/media', (req, res, next) => {
-  if (mongoose.connection.readyState !== 1) {
-    return res.status(503).json({ success: false, message: 'ฐานข้อมูลยังไม่พร้อม กรุณาลองใหม่' });
-  }
-  next();
-});
+router.use('/admin/media', requireDbReady);
 
 router.use('/admin/media', authRequired, adminOnly);
 
