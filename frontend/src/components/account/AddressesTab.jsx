@@ -21,6 +21,7 @@ import {
   deleteAddress,
   formatAddressArea,
 } from '../../features/account/addressBook';
+import { isValidThaiPhone, isValidPostalCode } from '../../utils/contactValidation.js';
 
 const INITIAL_FORM = {
   recipientName: '',
@@ -150,8 +151,7 @@ export default function AddressesTab({ addresses: initialAddresses }) {
       errs.recipientName = t('account.requiredFields');
     }
 
-    const cleanPhone = formData.phone.trim().replace(/[^0-9]/g, '');
-    if (!cleanPhone || !/^0[0-9]{8,9}$/.test(cleanPhone)) {
+    if (!isValidThaiPhone(formData.phone)) {
       errs.phone = t('account.invalidPhone');
     }
 
@@ -168,8 +168,7 @@ export default function AddressesTab({ addresses: initialAddresses }) {
       errs.province = t('account.requiredFields');
     }
 
-    const cleanPostal = formData.postalCode.trim();
-    if (!cleanPostal || !/^[0-9]{5}$/.test(cleanPostal)) {
+    if (!isValidPostalCode(formData.postalCode)) {
       errs.postalCode = t('account.invalidPostal');
     }
 
