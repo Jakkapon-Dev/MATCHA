@@ -11,6 +11,22 @@ export const DEFAULT_LANG = 'en';
 
 export const translations = {
   en: {
+    accountUi: {
+      menu: {
+        details: 'Personal details',
+        products: 'Order history',
+        favorites: 'Saved archive',
+        address: 'Address book',
+        payment: 'Payment methods',
+        preferences: 'Preferences',
+        logout: 'Log out',
+      },
+      adminBanner: 'Administrator privilege active',
+      adminBannerBody: 'You are viewing the customer Member Lounge',
+      profileTitle: 'Personal details & membership',
+      favoritesTitle: 'Saved wishlist & look archive ({count})',
+      preferencesTitle: 'Communication & drop preferences',
+    },
     legalUi: {
       back: 'Back to store',
       draftBadge: 'Official policy draft',
@@ -1042,6 +1058,22 @@ export const translations = {
   },
 
   th: {
+    accountUi: {
+      menu: {
+        details: 'ข้อมูลส่วนตัว',
+        products: 'ประวัติคำสั่งซื้อ',
+        favorites: 'รายการที่บันทึกไว้',
+        address: 'สมุดที่อยู่',
+        payment: 'วิธีชำระเงิน',
+        preferences: 'การตั้งค่า',
+        logout: 'ออกจากระบบ',
+      },
+      adminBanner: 'กำลังใช้สิทธิ์ผู้ดูแลระบบ',
+      adminBannerBody: 'คุณกำลังดูหน้าบัญชีสมาชิกในมุมมองของลูกค้า',
+      profileTitle: 'ข้อมูลส่วนตัวและสมาชิกภาพ',
+      favoritesTitle: 'รายการโปรดและลุคที่บันทึกไว้ ({count})',
+      preferencesTitle: 'การรับข่าวสารและการแจ้งเตือน',
+    },
     legalUi: {
       back: 'กลับไปหน้าร้าน',
       draftBadge: 'ร่างนโยบายฉบับทางการ',

@@ -93,14 +93,14 @@ export default function UserAccount() {
   }, [currentUser]);
 
   const menuItems = [
-    { id: 'details', label: 'PERSONAL DETAILS', icon: User },
-    { id: 'products', label: 'ORDER HISTORY', icon: Package },
-    { id: 'favorites', label: 'SAVED ARCHIVE', icon: Heart },
-    { id: 'address', label: 'ADDRESS BOOK', icon: MapPin },
-    { id: 'payment', label: 'PAYMENT METHODS', icon: CreditCard },
+    { id: 'details', label: t('accountUi.menu.details'), icon: User },
+    { id: 'products', label: t('accountUi.menu.products'), icon: Package },
+    { id: 'favorites', label: t('accountUi.menu.favorites'), icon: Heart },
+    { id: 'address', label: t('accountUi.menu.address'), icon: MapPin },
+    { id: 'payment', label: t('accountUi.menu.payment'), icon: CreditCard },
     { id: 'security', label: t('linkedAccounts.tabTitle') || 'LINKED ACCOUNTS', icon: ShieldCheck },
-    { id: 'preferences', label: 'PREFERENCES', icon: Sliders },
-    { id: 'logout', label: 'LOG OUT', icon: LogOut, isDanger: true }
+    { id: 'preferences', label: t('accountUi.menu.preferences'), icon: Sliders },
+    { id: 'logout', label: t('accountUi.menu.logout'), icon: LogOut, isDanger: true }
   ];
 
   const handleTabClick = (tabId) => {
@@ -217,10 +217,10 @@ export default function UserAccount() {
               </div>
               <div>
                 <div className="text-xs font-mono font-bold uppercase tracking-wider text-matcha-secondary">
-                  Administrator Privilege Active
+                  {t('accountUi.adminBanner')}
                 </div>
                 <div className="text-sm font-black">
-                  You are currently viewing the customer Member Lounge
+                  {t('accountUi.adminBannerBody')}
                 </div>
               </div>
             </div>

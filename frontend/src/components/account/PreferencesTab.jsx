@@ -13,8 +13,10 @@ import {
 } from 'lucide-react';
 import { api } from '../../services/api';
 import { useToast } from '../../context/ToastContext';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function PreferencesTab({ preferences, onTogglePreference }) {
+  const { t } = useLanguage();
   const { showToast } = useToast();
 
   // Server Marketing Consent State
@@ -130,7 +132,7 @@ export default function PreferencesTab({ preferences, onTogglePreference }) {
           <div className="flex items-center gap-2">
             <Sliders size={18} className="text-matcha-primary" />
             <h2 className="text-base font-extrabold uppercase tracking-tight text-[#0A0A0A]">
-              Communication & Drop Preferences
+              {t('accountUi.preferencesTitle')}
             </h2>
           </div>
         </div>

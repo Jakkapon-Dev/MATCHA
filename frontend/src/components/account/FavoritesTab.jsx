@@ -92,7 +92,7 @@ export default function FavoritesTab({ favorites = null }) {
         <div className="flex items-center gap-2">
           <Heart size={18} className="text-matcha-accent fill-matcha-accent" />
           <h2 className="text-base font-extrabold uppercase tracking-tight text-[#0A0A0A]">
-            Saved Wishlist &amp; Look Archive ({items.length})
+            {t('accountUi.favoritesTitle', { count: items.length })}
           </h2>
         </div>
       </div>

@@ -138,7 +138,7 @@ describe('FavoritesTab', () => {
       expect(screen.getByText('MatchA Autumn Jeans')).toBeTruthy();
     });
     expect(screen.getByText('MatchA Spring Shirts')).toBeTruthy();
-    expect(screen.getByText(/Saved Wishlist .* \(2\)/)).toBeTruthy();
+    expect(screen.getByText('accountUi.favoritesTitle')).toBeTruthy();
   });
 
   test('a saved garment that has left the archive is not offered for sale', async () => {
@@ -149,7 +149,7 @@ describe('FavoritesTab', () => {
       expect(screen.getByText('MatchA Autumn Jeans')).toBeTruthy();
     });
     expect(screen.queryByText(/Pleated Relaxed Trousers/)).toBeNull();
-    expect(screen.getByText(/Saved Wishlist .* \(1\)/)).toBeTruthy();
+    expect(screen.getByText('accountUi.favoritesTitle')).toBeTruthy();
   });
 
   test('the bag receives the catalogue garment, not the thin saved record', async () => {
