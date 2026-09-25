@@ -260,4 +260,15 @@ describe('choosing a size in the saved archive', () => {
     screen.getByTitle('account.addToCart').click();
     expect(addToCart).not.toHaveBeenCalled();
   });
+
+  test('a garment that declares no sizes is added as one piece, with nothing to choose', async () => {
+    api.getProducts.mockResolvedValue({ data: [{ ...CATALOGUE[0], sizes: [], inStock: true }] });
+    setWishlist([{ id: 'AUT-BOT-004' }]);
+    render(<FavoritesTab />);
+    await waitFor(() => expect(screen.getByText('MatchA Autumn Jeans')).toBeTruthy());
+
+    expect(screen.queryByLabelText('account.favoritesSizeLabel')).toBeNull();
+    screen.getByTitle('account.addToCart').click();
+    expect(addToCart).toHaveBeenCalledTimes(1);
+  });
 });

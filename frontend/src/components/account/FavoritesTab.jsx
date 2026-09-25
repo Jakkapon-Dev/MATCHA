@@ -60,10 +60,19 @@ export function sizesFor(item) {
 
 function SavedGarment({ item, addToCart, t }) {
   const sizes = sizesFor(item);
+  // A garment that declares no sizes is sold as one piece; the order API files
+  // it under its single bucket, so there is nothing to choose.
+  const oneSize = !(Array.isArray(item?.sizes) && item.sizes.some(Boolean));
+  const soldOut = oneSize ? item?.inStock === false : sizes.length === 0;
   const [size, setSize] = useState(sizes.length === 1 ? sizes[0] : '');
   const [needsSize, setNeedsSize] = useState(false);
 
   const add = () => {
+    if (soldOut) return;
+    if (oneSize) {
+      addToCart(item, 1);
+      return;
+    }
     if (!size || !sizes.includes(size)) {
       setNeedsSize(true);
       return;
@@ -89,17 +98,17 @@ function SavedGarment({ item, addToCart, t }) {
         <div className="min-w-0">
           <h4 className="text-xs font-bold text-[#0A0A0A] font-mono truncate">{item.name}</h4>
           <div className="text-[11px] font-mono text-matcha-muted mt-0.5">${item.price} • {item.color}</div>
-          <select
+          {!oneSize && <select
             aria-label={t('account.favoritesSizeLabel')}
             aria-invalid={needsSize || undefined}
             value={size}
             onChange={(e) => { setSize(e.target.value); setNeedsSize(false); }}
-            disabled={sizes.length === 0}
+            disabled={soldOut}
             className={`mt-2 text-[11px] font-mono border bg-white px-2 py-1 ${needsSize ? 'border-red-500' : 'border-matcha-border'}`}
           >
-            <option value="">{sizes.length === 0 ? t('account.favoritesSoldOut') : t('account.favoritesSizeLabel')}</option>
+            <option value="">{soldOut ? t('account.favoritesSoldOut') : t('account.favoritesSizeLabel')}</option>
             {sizes.map((s) => <option key={s} value={s}>{s}</option>)}
-          </select>
+          </select>}
           {needsSize && (
             <p role="alert" className="text-[11px] font-mono text-red-600 mt-1">{t('account.favoritesChooseSize')}</p>
           )}
@@ -110,7 +119,7 @@ function SavedGarment({ item, addToCart, t }) {
         {/* CartContext owns cart persistence and duplicate-item behavior. */}
         <button
           onClick={add}
-          disabled={sizes.length === 0}
+          disabled={soldOut}
           className="p-2.5 bg-matcha-primary hover:bg-matcha-primary-dark text-white transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
           title={t('account.addToCart')}
         >
