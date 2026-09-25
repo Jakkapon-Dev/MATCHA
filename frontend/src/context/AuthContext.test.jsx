@@ -34,4 +34,25 @@ describe('signing out', () => {
     act(() => { result.current.login({ id: 'u_a' }, true, 'token-a'); });
     expect(JSON.parse(localStorage.getItem('matcha_wishlist'))).toEqual([{ id: 'AUT-BOT-004' }]);
   });
+
+  test("clears A's Personal Color result, so B does not see A's season", () => {
+    const { result } = render();
+    act(() => { result.current.login({ id: 'u_a', name: 'A' }, true, 'token-a'); });
+    localStorage.setItem('matcha_personal_color', 'Autumn');
+    localStorage.setItem('matcha_personal_color_reading', JSON.stringify({ season: 'Autumn', undertone: 5 }));
+    act(() => { result.current.logout(); });
+
+    expect(localStorage.getItem('matcha_personal_color')).toBeNull();
+    expect(localStorage.getItem('matcha_personal_color_reading')).toBeNull();
+
+    act(() => { result.current.login({ id: 'u_b', name: 'B' }, true, 'token-b'); });
+    expect(localStorage.getItem('matcha_personal_color')).toBeNull();
+  });
+
+  test('signing in keeps the Personal Color result a guest just took', () => {
+    localStorage.setItem('matcha_personal_color', 'Spring');
+    const { result } = render();
+    act(() => { result.current.login({ id: 'u_a' }, true, 'token-a'); });
+    expect(localStorage.getItem('matcha_personal_color')).toBe('Spring');
+  });
 });
