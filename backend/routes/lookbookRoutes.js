@@ -59,7 +59,7 @@ export async function findLinkedProducts(items) {
 // Public Lookbooks API
 router.get('/lookbooks', asyncRoute(async (req, res) => {
   const looks = await allLooks();
-  const products = await findLinkedProducts(looks.flatMap(l => l.items));
+  const products = await findLinkedProducts(looks.flatMap(l => l.items ?? []));
   res.json({ success: true, data: resolveLookbooks(looks, isDemo ? products.map(demoProduct) : products) });
 }));
 
