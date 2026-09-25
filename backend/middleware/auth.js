@@ -111,6 +111,27 @@ export function requireVerifiedEmail(req, res, next) {
   next();
 }
 
+// Safe helper to extract auth payload from Bearer token if provided
+export const extractAuthUser = (req) => {
+  const header = req?.headers?.authorization || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  if (!token || token === 'demo-offline-token') return null;
+  try {
+    return jwt.verify(token, getJwtSecret());
+  } catch {
+    return null;
+  }
+};
+
+// Optional auth middleware: attaches decoded token payload to req.user if a valid token is provided
+export function optionalAuth(req, res, next) {
+  const user = extractAuthUser(req);
+  if (user) {
+    req.user = user;
+  }
+  next();
+}
+
 export default { 
   requireAuth, 
   requireRole, 
@@ -118,4 +139,6 @@ export default {
   authRequired,
   adminOnly,
   requireVerifiedEmail,
+  extractAuthUser,
+  optionalAuth,
 };

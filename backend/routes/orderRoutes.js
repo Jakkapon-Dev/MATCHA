@@ -1,13 +1,12 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import jwt from 'jsonwebtoken';
 import rateLimit from 'express-rate-limit';
 
 import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
 import Product, { ONE_SIZE } from '../models/Product.js';
 import productsData from '../data/products.js';
-import { getJwtSecret, authRequired, adminOnly } from '../middleware/auth.js';
+import { authRequired, adminOnly, extractAuthUser } from '../middleware/auth.js';
 import { isDemo } from '../config/storeMode.js';
 import { sendOrderConfirmation } from '../services/email.js';
 import { normaliseCode, quoteCoupon, redeemCoupon, releaseCoupon, couponUserKey, ensureCouponIndexes, CouponError } from '../services/coupons.js';
@@ -75,18 +74,6 @@ export function getProductBundleSlot(product) {
   }
   return null;
 }
-
-// Safe helper to extract auth payload if provided
-export const extractAuthUser = (req) => {
-  const header = req.headers.authorization || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
-  if (!token || token === 'demo-offline-token') return null;
-  try {
-    return jwt.verify(token, getJwtSecret());
-  } catch {
-    return null;
-  }
-};
 
 /* Who is allowed to see, or act on, one order.
 
