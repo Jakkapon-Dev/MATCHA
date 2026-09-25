@@ -9,6 +9,7 @@ import productsData from '../data/products.js';
 import { authRequired, adminOnly } from '../middleware/auth.js';
 import { extractAuthUser } from './orderRoutes.js';
 import { normaliseCode, quoteCoupon, couponLabel, couponUserKey, builtInCoupons, CouponError } from '../services/coupons.js';
+import { escapeRegex } from '../utils/regex.js';
 
 const router = express.Router();
 
@@ -17,7 +18,6 @@ const databaseRequired = (req, res, next) => {
   next();
 };
 
-const escapeRegex = str => String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const CATEGORIES = Product.schema.path('category').enumValues;
 
 /* How a coupon reads in a list: whether it can be used right now, and if not,

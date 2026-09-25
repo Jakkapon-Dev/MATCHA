@@ -14,6 +14,7 @@ import { authRequired as defaultAuthRequired, adminOnly as defaultAdminOnly } fr
 import errorHandler from '../middleware/errorHandler.js';
 import { allLooks } from './lookbookRoutes.js';
 import { importLookbookMedia } from '../services/importLookbookMedia.js';
+import { escapeRegex } from '../utils/regex.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -78,7 +79,7 @@ router.use('/admin/media', (req, res, next) => {
 router.use('/admin/media', authRequired, adminOnly);
 
 router.get('/admin/media/products', asyncRoute(async (req, res) => {
-  const search = z.string().max(100).parse(req.query.search || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const search = escapeRegex(z.string().max(100).parse(req.query.search || ''));
   const page = Math.max(1, Math.min(10000, Number.parseInt(req.query.page, 10) || 1));
   const query = search ? { $or: [{ name: new RegExp(search, 'i') }, { id: new RegExp(search, 'i') }] } : {};
   const [data, total] = await Promise.all([

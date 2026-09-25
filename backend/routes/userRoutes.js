@@ -10,6 +10,7 @@ import AuditLog from '../models/AuditLog.js';
 import { authRequired, adminOnly } from '../middleware/auth.js';
 import { THAI_PHONE_RE, POSTAL_CODE_RE } from '../utils/contactFormat.js';
 import { MAX_BYTES, storeImage, deleteImage } from '../services/mediaStorage.js';
+import { escapeRegex } from '../utils/regex.js';
 
 const router = express.Router();
 const fields = '_id name email role tier createdAt';
@@ -484,7 +485,7 @@ router.get('/', adminOnly, checkDbReady, async (req, res) => {
 
     const filter = {};
     if (req.query.search && typeof req.query.search === 'string' && req.query.search.trim()) {
-      const term = req.query.search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const term = escapeRegex(req.query.search.trim());
       const regex = new RegExp(term, 'i');
       filter.$or = [
         { name: regex },
