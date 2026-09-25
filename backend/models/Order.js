@@ -122,9 +122,13 @@ const orderSchema = new Schema(
       enum: PAYMENT_STATES,
       default: 'unpaid'
     },
+    /* Absent — not null — until a PaymentIntent exists. The unique sparse
+       index below skips documents without the field but does index an
+       explicit null, so a null default made every second order that never
+       reached Stripe (cash on delivery, an abandoned card checkout) fail with
+       a duplicate key. Every reader tests it for truthiness. */
     stripePaymentIntentId: {
-      type: String,
-      default: null
+      type: String
     },
     paymentAmount: {
       type: Number,
