@@ -4,7 +4,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import couponRoutes from '../routes/couponRoutes.js';
 import { extractAuthUser } from '../middleware/auth.js';
-import { ownsOrder } from '../routes/orderRoutes.js';
+import { ownsOrder } from '../services/orderAccess.js';
 import { getJwtSecret } from '../middleware/auth.js';
 
 let server;

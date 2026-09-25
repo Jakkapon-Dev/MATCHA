@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 
-import { ownsOrder } from '../routes/orderRoutes.js';
+import { ownsOrder } from '../services/orderAccess.js';
 import { getJwtSecret } from '../middleware/auth.js';
 import { allLooks, findLinkedProducts } from '../routes/lookbookRoutes.js';
 import { assertActiveUrls, usage } from '../routes/mediaRoutes.js';
