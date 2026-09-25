@@ -13,6 +13,8 @@
 
 export const THAI_PHONE_RE = /^0[0-9]{8,9}$/;
 export const POSTAL_CODE_RE = /^[0-9]{5}$/;
+// The same shape routes/auth.js has always required at registration.
+export const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 /** Digits only, so spacing and dashes a person typed do not change the answer. */
 export function normalizePhone(value) {
@@ -25,4 +27,12 @@ export function isValidThaiPhone(value) {
 
 export function isValidPostalCode(value) {
   return POSTAL_CODE_RE.test(String(value ?? '').trim());
+}
+
+/* Checkout took any string as the order's email, so the confirmation went
+   nowhere and the guest had no way back to the order. Only the frontend
+   checked it. */
+export function isValidEmail(value) {
+  const text = String(value ?? '').trim();
+  return text.length <= 254 && EMAIL_RE.test(text);
 }

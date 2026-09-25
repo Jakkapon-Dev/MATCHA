@@ -40,8 +40,15 @@ const forgetSession = () => {
    not tied to an account. Left behind at sign-out, the next person to sign in
    here saw them as their own. A guest's lists still carry into the account
    they sign in to; it is signing out that ends them. The bag is emptied by
-   CartProvider, which also knows the account's cart stays on the server. */
-const BROWSER_LIST_KEYS = ['matcha_wishlist', 'matcha_saved_looks'];
+   CartProvider, which also knows the account's cart stays on the server.
+   The Personal Color reading is the same kind of thing: kept only here, under
+   no account, and read back by /personal-color and Mix & Match. */
+const BROWSER_LIST_KEYS = [
+  'matcha_wishlist',
+  'matcha_saved_looks',
+  'matcha_personal_color',
+  'matcha_personal_color_reading',
+];
 
 const forgetBrowserLists = () => {
   try {

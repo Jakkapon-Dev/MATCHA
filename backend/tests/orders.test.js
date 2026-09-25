@@ -1,9 +1,10 @@
 process.env.NODE_ENV = 'test';
 
-import { test, before, after } from 'node:test';
+import { test, before, after, mock } from 'node:test';
 import assert from 'node:assert/strict';
 import express from 'express';
-import orderRoutes, { stockKeyFor } from '../routes/orderRoutes.js';
+import orderRoutes, { stockKeyFor, reserveStock } from '../routes/orderRoutes.js';
+import Product from '../models/Product.js';
 
 let server;
 let baseUrl;
@@ -200,7 +201,7 @@ test('GET /api/orders/:id refuses a caller who does not own the order', async ()
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      items: [{ productId: 'p1', name: 'Item', price: 20, quantity: 1 }],
+      items: [{ productId: 'AUT-ACC-001', name: 'Item', price: 20, quantity: 1, size: 'OS' }],
       customer: {
         firstName: 'Owner', lastName: 'Person', email: 'owner@example.com',
         phone: '081-000-0000', address: '1 Road', city: 'Bangkok',
@@ -239,7 +240,7 @@ const placeGuestOrder = async (guestId, email) => {
     method: 'POST',
     headers,
     body: JSON.stringify({
-      items: [{ productId: 'p1', name: 'Item', price: 20, quantity: 1 }],
+      items: [{ productId: 'AUT-ACC-001', name: 'Item', price: 20, quantity: 1, size: 'OS' }],
       customer: {
         firstName: 'Guest', lastName: 'Tester', email,
         phone: '081-000-0000', address: '1 Road', city: 'Bangkok',
@@ -297,7 +298,7 @@ test('a guest cannot open an order placed from another browser', async () => {
  * production: that form advanced straight to the payment step.
  */
 const orderWith = (customerOverrides) => ({
-  items: [{ productId: 'p1', name: 'Item', price: 20, quantity: 1 }],
+  items: [{ productId: 'AUT-ACC-001', name: 'Item', price: 20, quantity: 1, size: 'OS' }],
   customer: {
     firstName: 'QA', lastName: 'Tester', email: 'qa@example.com',
     phone: '0812345678', address: '1 Road', city: 'Bangkok',
@@ -338,6 +339,30 @@ test('a phone number written with dashes is the same number', async () => {
     '0810000000',
     'and it is stored in one form, digits only'
   );
+});
+
+test('C1. an order cannot carry an email nobody can write to', async () => {
+  for (const email of ['not-an-email', 'a@b', '@example.com', 'two words@example.com', 'x@y.', { $ne: null }]) {
+    const res = await post(orderWith({ email }));
+    assert.equal(res.status, 400, `refused: ${JSON.stringify(email)}`);
+    const body = await res.json();
+    assert.equal(body.success, false);
+    assert.equal(body.field, 'email');
+  }
+});
+
+test('C1. a blank email falls back to the server default, never an empty one', async () => {
+  const res = await post(orderWith({ email: '   ' }));
+  assert.equal(res.status, 201);
+  const { data } = await res.json();
+  assert.equal(data.customer.email, 'guest@matcha-archive.com');
+});
+
+test('C1. a valid email is kept, lower-cased and trimmed', async () => {
+  const res = await post(orderWith({ email: '  Buyer.One@Example.COM ' }));
+  assert.equal(res.status, 201);
+  const { data } = await res.json();
+  assert.equal(data.customer.email, 'buyer.one@example.com');
 });
 
 test('a postal code of the wrong length is refused', async () => {
@@ -467,4 +492,73 @@ test('E. client spoofing price, category, and isBundleItem does not fool server 
   // AUT-ACC-001 real price is 43.99, not 1.00. Real category is Accessories, not Tops. Single item is not a bundle.
   assert.equal(data.subtotal, 43.99, 'price must come from catalog');
   assert.equal(data.discount, 0, 'must not give bundle discount based on fake category/flag');
+});
+
+/* C2 — the price is the server's or there is no order.
+
+   An id the catalogue does not know used to be priced at whatever the browser
+   sent, or $45, and only the stock reservation happened to stop it, and only
+   with MongoDB connected. Without MongoDB the order was written at that price. */
+const c2Customer = {
+  firstName: 'Test', lastName: 'Price', email: 'price.check@matcha.test',
+  phone: '0899999999', address: '100 Road', city: 'Bangkok', zipCode: '10110'
+};
+
+test('C2. an unknown product is refused, whatever price the browser puts on it', async () => {
+  for (const item of [
+    { productId: 'NOT-A-REAL-SKU', price: 0.01, quantity: 1, size: 'M' },
+    { productId: 'NOT-A-REAL-SKU', quantity: 1, size: 'M' },
+    { productId: { $ne: null }, price: 1, quantity: 1, size: 'M' },
+  ]) {
+    const res = await post({ customer: c2Customer, items: [item], paymentMethod: 'demo', shippingOption: 'standard' });
+    assert.equal(res.status, 400, `refused: ${JSON.stringify(item.productId)}`);
+    const body = await res.json();
+    assert.equal(body.success, false);
+    assert.equal(body.data, undefined, 'no order was written');
+  }
+});
+
+test('C2. one unknown line refuses the whole order, not just that line', async () => {
+  const res = await post({
+    customer: c2Customer,
+    items: [
+      { productId: 'AUT-ACC-001', quantity: 1, size: 'OS' },
+      { productId: 'GHOST-001', price: 999, quantity: 1, size: 'M' },
+    ],
+    paymentMethod: 'demo',
+    shippingOption: 'standard'
+  });
+  assert.equal(res.status, 400);
+});
+
+test('C2. a tampered price on a real product is replaced by the catalogue price', async () => {
+  const res = await post({
+    customer: c2Customer,
+    items: [{ productId: 'AUT-ACC-001', price: 0.01, priceAtPurchase: 0.01, quantity: 2, size: 'OS' }],
+    subtotal: 0.02,
+    total: 0.02,
+    paymentMethod: 'demo',
+    shippingOption: 'standard'
+  });
+  assert.equal(res.status, 201);
+  const { data } = await res.json();
+  assert.equal(data.items[0].priceAtPurchase, 43.99);
+  assert.equal(data.subtotal, 87.98);
+  assert.ok(data.total >= 87.98 - data.discount, 'total is built from the server subtotal');
+  assert.notEqual(data.total, 0.02);
+});
+
+test('C2. stock reservation refuses a bucket that cannot cover the line', async () => {
+  const product = { id: 'AUT-TOP-009', price: 50, sizes: ['S', 'M'], sizeStock: [{ size: 'S', stock: 1 }, { size: 'M', stock: 1 }] };
+  let filterUsed = null;
+  mock.method(Product, 'updateOne', async (filter) => { filterUsed = filter; return { modifiedCount: 0 }; });
+  try {
+    await assert.rejects(
+      reserveStock([{ productId: 'AUT-TOP-009', size: 'M', quantity: 5, name: 'Hoodie' }], new Map([['AUT-TOP-009', product]]), null),
+      (err) => err.shortfall?.productId === 'AUT-TOP-009' && err.shortfall.requested === 5
+    );
+    assert.deepEqual(filterUsed.sizeStock, { $elemMatch: { size: 'M', stock: { $gte: 5 } } });
+  } finally {
+    mock.restoreAll();
+  }
 });

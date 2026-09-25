@@ -1825,8 +1825,8 @@ export const productsData = [
         "image": "/images/products/autumn/bottoms/skirts/color_1_brown.jpeg"
       },
       {
-        "color": "Brown",
-        "colorHex": "#5C4033",
+        "color": "Dark Brown",
+        "colorHex": "#3E2723",
         "image": "/images/products/autumn/bottoms/skirts/color_2_dark_brown.jpeg"
       },
       {
@@ -2076,8 +2076,8 @@ export const productsData = [
         "image": "/images/products/autumn/tops/hoodies/color_3_white.jpeg"
       },
       {
-        "color": "Mustard",
-        "colorHex": "#D4A338",
+        "color": "Yellow",
+        "colorHex": "#E6B422",
         "image": "/images/products/autumn/tops/hoodies/color_4_yellow.jpeg"
       }
     ],
@@ -2182,8 +2182,8 @@ export const productsData = [
         "image": "/images/products/autumn/tops/shirts/color_1_brown.jpeg"
       },
       {
-        "color": "Brown",
-        "colorHex": "#5C4033",
+        "color": "Dark Brown",
+        "colorHex": "#3E2723",
         "image": "/images/products/autumn/tops/shirts/color_2_dark_brown.jpeg"
       },
       {
@@ -3690,8 +3690,8 @@ export const productsData = [
         "image": "/images/products/spring/tops/band-collar-shirts/color_3_cream.jpeg"
       },
       {
-        "color": "Cream",
-        "colorHex": "#FFFDD0",
+        "color": "Warm Cream",
+        "colorHex": "#F3E5C0",
         "image": "/images/products/spring/tops/band-collar-shirts/color_4_warm_cream.jpeg"
       }
     ],
