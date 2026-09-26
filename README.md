@@ -129,7 +129,7 @@ MATCHA/
 │   │   ├── components/           # UI Components แยกตามส่วนงาน (Cart, Home, Product, ฯลฯ)
 │   │   ├── context/              # React Context (Auth, Cart, Toast, StoreMode, Language)
 │   │   ├── hooks/                # Custom React Hooks
-│   │   ├── pages/                # หน้าหลักของแอปพลิเคชัน (17 เส้นทาง)
+│   │   ├── pages/                # หน้าหลักของแอปพลิเคชัน (16 หน้า)
 │   │   ├── services/             # Client API Service Configuration
 │   │   └── styles/               # CSS Tokens & Animations (Tailwind CSS v4)
 │   ├── package.json
@@ -143,14 +143,15 @@ MATCHA/
 │   ├── routes/                   # API Route Handlers (Modular Endpoints)
 │   ├── services/                 # Core Services (UserStore, MediaStorage, Notification, Sweeper)
 │   ├── storage/                  # โฟลเดอร์เก็บไฟล์รูปภาพที่ผ่านการประมวลผลด้วย Sharp
-│   ├── tests/                    # ชุดทดสอบ Unit & Integration Tests (336 Tests ผ่านทั้งหมด)
+│   ├── tests/                    # ชุดทดสอบ Unit & Integration (node:test)
 │   ├── package.json
 │   └── server.js                 # จุดเริ่มต้นของ Backend Server
 │
-├── e2e/                          # ชุดทดสอบ End-to-End ด้วย Playwright (5 specs / 25 tests)
+├── e2e/                          # ชุดทดสอบ End-to-End ด้วย Playwright (6 specs)
 │   ├── fixtures/                 # Global Setup/Teardown พร้อม Safety Guard
 │   ├── address-book.spec.js      # ทดสอบการจัดการที่อยู่จัดส่ง
 │   ├── auth.spec.js              # ทดสอบ Email/Password และ Google OAuth Flow
+│   ├── lookbook-responsive.spec.js # ทดสอบจุด Hotspot บน Lookbook ทุกขนาดจอ
 │   ├── profile-avatar.spec.js    # ทดสอบการอัปโหลดและลบ Avatar
 │   ├── responsive-a11y.spec.js   # ทดสอบ Responsive Viewports และ WCAG Accessibility
 │   └── unauthorized-access.spec.js # ทดสอบ Role Guards และการป้องกันเส้นทาง
@@ -192,10 +193,10 @@ npm run install:all
 PORT=5001
 
 # ฐานข้อมูล MongoDB Atlas หลัก
-MONGODB_URI="mongodb+srv://<username>:<password>@cluster0.hak50ja.mongodb.net/MatchA?appName=Cluster0"
+MONGODB_URI="mongodb+srv://<username>:<password>@<cluster-host>/MatchA"
 
 # ฐานข้อมูลทดสอบแยกต่างหาก (จำเป็นสำหรับการรัน E2E tests และ script restore เพื่อป้องกันข้อมูล Production)
-TEST_MONGODB_URI="mongodb+srv://<username>:<password>@cluster0.hak50ja.mongodb.net/MatchA_test?appName=Cluster0"
+TEST_MONGODB_URI="mongodb+srv://<username>:<password>@<cluster-host>/MatchA_test"
 
 # JWT Authentication Secret Key & Expiry
 JWT_SECRET="your-super-secret-jwt-key"
@@ -220,6 +221,15 @@ CLOUDINARY_URL="cloudinary://<api_key>:<api_secret>@<cloud_name>"
 # ระบบชำระเงิน Stripe Test Mode (Backend เท่านั้น — ห้ามนำ Webhook Secret ไปไว้ที่ Frontend)
 STRIPE_SECRET_KEY="sk_test_..."
 STRIPE_WEBHOOK_SECRET="whsec_..."
+
+# (ไม่บังคับ) โหมดร้าน: ไม่ตั้ง = demo (ไม่ตัดเงินจริง) · live = เปิดรับเงินจริง
+SHOP_MODE="demo"
+
+# (ไม่บังคับ) รายชื่อ origin ที่อนุญาตสำหรับ CORS คั่นด้วยจุลภาค (ถ้าไม่ตั้งจะใช้ FRONTEND_URL)
+CORS_ORIGINS=""
+
+# (ไม่บังคับ) เวลาจองสต็อกระหว่างรอชำระเงิน หน่วยนาที (ค่าเริ่มต้น 30)
+ORDER_RESERVATION_MINUTES="30"
 ```
 
 ### 2. ฝั่งหน้าบ้าน (`frontend/.env`)
@@ -273,20 +283,20 @@ npm run build
 cd backend
 npm test
 ```
-*(ผ่าน 336 รายการใน 3 suites ครอบคลุม Auth, Payment Lifecycle, Reservation Sweeper, Media Upload, Cart Mutation, Admin Aggregates)*
+*(ประมาณ 349 tests ใน 42 ไฟล์ ด้วย node:test ครอบคลุม Auth, Orders/IDOR, Payment Lifecycle, Reservation Sweeper, Coupons, Media Upload, Cart — ต้องตั้ง `TEST_MONGODB_URI` ให้ชี้ฐานข้อมูลทดสอบก่อน)*
 
 ### 5. รันชุดทดสอบ Frontend (Automated Tests)
 ```bash
 cd frontend
 npm test
 ```
-*(ผ่าน 67 รายการใน 12 files ด้วย Vitest ครอบคลุม CartContext Race Condition, Tap Targets, Coupon Validation, Address Deduplication, Admin Hooks)*
+*(ผ่าน 318 tests ใน 49 ไฟล์ ด้วย Vitest ครอบคลุม CartContext, Components, Tap Targets, Coupon Validation, Address Deduplication, Admin Hooks)*
 
 ### 6. รันการทดสอบ End-to-End จาก Root (E2E Tests)
 ```bash
 npm run test:e2e
 ```
-*(ผ่าน 25 รายการใน 5 specs ด้วย Playwright ครอบคลุม Address Book CRUD, Auth Lifecycle, Avatar Management, Responsive Viewports 390px/768px/1440px, WCAG Accessibility และ Unauthorized Access Protection)*
+*(6 specs ด้วย Playwright ครอบคลุม Address Book CRUD, Auth Lifecycle, Avatar Management, Lookbook Hotspots, Responsive Viewports 390px/768px/1440px, WCAG Accessibility และ Unauthorized Access Protection)*
 
 ---
 
@@ -323,8 +333,17 @@ npm run test:e2e
 | `GET` | `/api/auth/me` | ตรวจสอบข้อมูลผู้ใช้ปัจจุบันจาก JWT Token | Member / Admin |
 | `GET` | `/api/lookbooks` | ดึงรายการ Lookbook สำหรับแสดงผล | Public |
 | `GET` | `/api/media/files/:filename` | ดึงไฟล์รูปภาพ WebP | Public |
-| `POST` | `/api/admin/media/upload` | อัปโหลดและแปลงรูปภาพด้วย Sharp Pipeline | Admin Only |
-| `POST` | `/api/admin/lookbooks` | สร้างหรือแก้ไข Editorial Lookbook และ Hotspots | Admin Only |
+| `GET` | `/api/cart` | ดึงตะกร้าของสมาชิก หรือ guest (ผ่าน header `X-Guest-Id`) | Public / Member |
+| `POST` | `/api/cart/merge` | รวมตะกร้า guest เข้าบัญชีหลัง login | Member |
+| `POST` | `/api/orders` | สร้างคำสั่งซื้อ — server คิดราคาใหม่และจองสต็อกใน Transaction | Public / Member |
+| `GET` | `/api/orders` | ดูคำสั่งซื้อของตัวเอง (Admin เห็นทั้งหมด) | Owner / Admin |
+| `POST` | `/api/coupons/quote` | ตรวจคูปองและคำนวณส่วนลด | Public |
+| `POST` | `/api/payments/create-intent` | สร้าง Stripe PaymentIntent ให้ order ของตัวเอง | Owner |
+| `POST` | `/api/payments/webhook` | รับผลการจ่ายเงินจาก Stripe (ตรวจลายเซ็น) | Stripe |
+| `POST` | `/api/admin/media` | อัปโหลดและแปลงรูปภาพด้วย Sharp Pipeline | Admin Only |
+| `PUT` | `/api/admin/lookbooks/:id` | แก้ไข Editorial Lookbook และ Hotspots | Admin Only |
+
+> รวมทั้งหมดประมาณ 70 endpoints ใน 13 ไฟล์ route (`backend/routes/`)
 
 ---
 
