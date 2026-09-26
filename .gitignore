@@ -8,11 +8,6 @@
 docs/*
 !docs/runbooks/
 !docs/runbooks/*
-!docs/plans/
-!docs/plans/*
-!docs/design/
-!docs/design/*
-!docs/PRODUCT.md
 *.visual-check.*
 Requirement/
 Requirement/*
@@ -226,4 +221,11 @@ backend/scripts/*
 
 # Local & AI Assistant Configurations
 CLAUDE.md
+AGENTS.md
+
+# Internal team notes (security audits, handoffs, archives) — keep local
+CODE_AUDIT.md
+AUDIT_FIX_ROADMAP.md
+ADMIN_HANDOFF.md
+frontend/ARCHIVED_COMPONENTS.md
 frontend/.impeccable/
