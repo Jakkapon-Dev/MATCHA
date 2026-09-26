@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Plus, Sparkles, Calendar, AlertCircle, Tag as TagIcon, Image as ImageIcon } from 'lucide-react';
 import { webpSrc } from '../../utils/imageFallback';
 import { useLanguage } from '../../context/LanguageContext.jsx';
+import { categoryLongText } from './adminI18n';
 
 export default function AddProductModal({ isOpen, onClose, onAddProduct, saving, saveError }) {
   const { t } = useLanguage();
@@ -56,36 +57,36 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
 
     // 1. Name validation
     if (!formData.name.trim()) {
-      errs.name = 'Garment name is required';
+      errs.name = t('admin.product.errNameRequired');
     } else if (formData.name.trim().length < 3) {
-      errs.name = 'Garment name must be at least 3 characters';
+      errs.name = t('admin.product.errNameShort');
     }
 
     // 2. Description validation
     if (!formData.description.trim()) {
-      errs.description = 'Product description is required';
+      errs.description = t('admin.product.errDescriptionRequired');
     } else if (formData.description.trim().length < 10) {
-      errs.description = 'Description must be at least 10 characters';
+      errs.description = t('admin.product.errDescriptionShort');
     }
 
     // 3. Price validation
     if (!formData.price || isNaN(parseFloat(formData.price)) || parseFloat(formData.price) <= 0) {
-      errs.price = 'Valid price greater than $0 is required';
+      errs.price = t('admin.product.errPrice');
     }
 
     // 4. Quantity / Stock validation
     if (formData.stock === '' || isNaN(parseInt(formData.stock, 10)) || parseInt(formData.stock, 10) < 0) {
-      errs.stock = 'Stock must be a positive number (0 or more)';
+      errs.stock = t('admin.product.errStock');
     }
 
     // 5. Date validation
     if (!formData.date || !formData.date.trim()) {
-      errs.date = 'Release date is required';
+      errs.date = t('admin.product.errDate');
     }
 
     // 6. Tag validation
     if (!formData.tag || !formData.tag.trim()) {
-      errs.tag = 'Product tag / badge is required';
+      errs.tag = t('admin.product.errTag');
     }
 
     setErrors(errs);
@@ -119,11 +120,11 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
 
   // Preset sample image options for quick testing
   const sampleImages = [
-    { label: 'Heavy Shirt', url: '/images/products/autumn/tops/shirts/color_1_brown.jpeg' },
-    { label: 'Fleece Hoodie', url: '/images/products/autumn/tops/hoodies/color_1_burnt_orange.jpeg' },
-    { label: 'Chino Pants', url: '/images/products/autumn/bottoms/chinos/color_1_olive.jpeg' },
-    { label: 'Utility Bag', url: '/images/products/autumn/accessories/bags/color_1_burnt_orange.jpeg' },
-    { label: 'Silk Scarf', url: '/images/products/autumn/accessories/scarves/color_1_burnt_orange.jpeg' },
+    { label: t('admin.product.presetShirt'), url: '/images/products/autumn/tops/shirts/color_1_brown.jpeg' },
+    { label: t('admin.product.presetHoodie'), url: '/images/products/autumn/tops/hoodies/color_1_burnt_orange.jpeg' },
+    { label: t('admin.product.presetChino'), url: '/images/products/autumn/bottoms/chinos/color_1_olive.jpeg' },
+    { label: t('admin.product.presetBag'), url: '/images/products/autumn/accessories/bags/color_1_burnt_orange.jpeg' },
+    { label: t('admin.product.presetScarf'), url: '/images/products/autumn/accessories/scarves/color_1_burnt_orange.jpeg' },
   ];
 
   return (
@@ -135,16 +136,16 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
           <div>
             <div className="flex items-center gap-2 text-xs font-mono font-bold text-matcha-primary uppercase tracking-wider">
               <Sparkles size={14} />
-              <span>Admin Inventory Control</span>
+              <span>{t('admin.product.eyebrow')}</span>
             </div>
             <h2 id="add-garment-title" className="text-xl sm:text-2xl font-black uppercase text-matcha-text tracking-tight">
-              Add New Garment Release
+              {t('admin.product.title')}
             </h2>
           </div>
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close"
+            aria-label={t('admin.common.close')}
             className="p-2 rounded-xl text-matcha-muted hover:text-matcha-text hover:bg-matcha-border/40 transition-colors cursor-pointer"
           >
             <X size={20} />
@@ -157,16 +158,16 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
           {/* 1. Garment Name & SKU */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-2 space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-matcha-text uppercase flex items-center justify-between">
-                <span>Garment Name <span className="text-matcha-accent">*</span></span>
-                <span className="text-[10px] font-normal text-matcha-muted">Min 3 chars</span>
+              <label className="font-bold text-matcha-text uppercase flex items-center justify-between gap-2">
+                <span>{t('admin.product.nameLabel')} <span className="text-matcha-accent">*</span></span>
+                <span className="text-[10px] font-normal text-matcha-muted">{t('admin.product.nameHint')}</span>
               </label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                placeholder="e.g. MatchA Heavyweight Boxy Tee"
+                placeholder={t('admin.product.namePlaceholder')}
                 className={`w-full px-4 py-3 bg-white border ${errors.name ? 'border-matcha-accent focus:ring-1 focus:ring-matcha-accent' : 'border-matcha-border focus:ring-1 focus:ring-matcha-primary'} rounded-xl text-matcha-text outline-none transition-all`}
               />
               {errors.name && (
@@ -178,7 +179,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
             </div>
 
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-matcha-text uppercase">SKU Identifier</label>
+              <label className="font-bold text-matcha-text uppercase">{t('admin.product.skuLabel')}</label>
               <input
                 type="text"
                 name="id"
@@ -192,24 +193,24 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
           {/* 2. Category, Price, Quantity (Stock) */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-matcha-text uppercase">Category</label>
+              <label className="font-bold text-matcha-text uppercase">{t('admin.product.categoryLabel')}</label>
               <select
                 name="category"
                 value={formData.category}
                 onChange={handleChange}
                 className="w-full px-4 py-3 bg-white border border-matcha-border rounded-xl text-matcha-text font-bold outline-none focus:ring-1 focus:ring-matcha-primary cursor-pointer"
               >
-                <option value="Tops">Tops & Knitwear</option>
-                <option value="Bottoms">Bottoms & Denim</option>
-                <option value="Outerwear">Outerwear & Coats</option>
-                <option value="Shoes">Shoes & Footwear</option>
-                <option value="Accessories">Accessories & Bags</option>
+                <option value="Tops">{categoryLongText(t, 'Tops')}</option>
+                <option value="Bottoms">{categoryLongText(t, 'Bottoms')}</option>
+                <option value="Outerwear">{categoryLongText(t, 'Outerwear')}</option>
+                <option value="Shoes">{categoryLongText(t, 'Shoes')}</option>
+                <option value="Accessories">{categoryLongText(t, 'Accessories')}</option>
               </select>
             </div>
 
             <div className="space-y-1.5 font-mono text-xs">
               <label className="font-bold text-matcha-text uppercase">
-                Price (USD) <span className="text-matcha-accent">*</span>
+                {t('admin.product.priceLabel')} <span className="text-matcha-accent">*</span>
               </label>
               <div className="relative">
                 <span className="absolute left-3.5 inset-y-0 my-auto h-fit text-matcha-muted font-bold">$</span>
@@ -233,7 +234,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
 
             <div className="space-y-1.5 font-mono text-xs">
               <label className="font-bold text-matcha-text uppercase">
-                Quantity (Stock) <span className="text-matcha-accent">*</span>
+                {t('admin.product.stockLabel')} <span className="text-matcha-accent">*</span>
               </label>
               <input
                 type="number"
@@ -259,7 +260,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
             <div className="space-y-1.5 font-mono text-xs">
               <label className="font-bold text-matcha-text uppercase flex items-center gap-1.5">
                 <Calendar size={13} className="text-matcha-primary" />
-                <span>Release Date <span className="text-matcha-accent">*</span></span>
+                <span>{t('admin.product.dateLabel')} <span className="text-matcha-accent">*</span></span>
               </label>
               <input
                 type="date"
@@ -280,7 +281,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
             <div className="space-y-1.5 font-mono text-xs">
               <label className="font-bold text-matcha-text uppercase flex items-center gap-1.5">
                 <TagIcon size={13} className="text-matcha-accent" />
-                <span>Product Tag <span className="text-matcha-accent">*</span></span>
+                <span>{t('admin.product.tagLabel')} <span className="text-matcha-accent">*</span></span>
               </label>
               <select
                 name="tag"
@@ -305,17 +306,17 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
 
             {/* Field: Season */}
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-matcha-text uppercase">Season</label>
+              <label className="font-bold text-matcha-text uppercase">{t('admin.product.seasonLabel')}</label>
               <select
                 name="season"
                 value={formData.season}
                 onChange={handleChange}
                 className="w-full px-4 py-3 bg-white border border-matcha-border rounded-xl text-matcha-text outline-none focus:ring-1 focus:ring-matcha-primary cursor-pointer"
               >
-                <option value="SS26">SS26 (Spring/Summer)</option>
-                <option value="FW26">FW26 (Fall/Winter)</option>
-                <option value="Core">Core Collection</option>
-                <option value="Archive">Limited Capsule</option>
+                <option value="SS26">{t('admin.product.seasonSS26')}</option>
+                <option value="FW26">{t('admin.product.seasonFW26')}</option>
+                <option value="Core">{t('admin.product.seasonCore')}</option>
+                <option value="Archive">{t('admin.product.seasonArchive')}</option>
               </select>
             </div>
 
@@ -324,19 +325,19 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
           {/* 4. Color & Silhouette / Fit */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-matcha-text uppercase">Color Shade</label>
+              <label className="font-bold text-matcha-text uppercase">{t('admin.product.colorLabel')}</label>
               <input
                 type="text"
                 name="color"
                 value={formData.color}
                 onChange={handleChange}
-                placeholder="e.g. Matcha Green"
+                placeholder={t('admin.product.colorPlaceholder')}
                 className="w-full px-4 py-3 bg-white border border-matcha-border rounded-xl text-matcha-text outline-none focus:ring-1 focus:ring-matcha-primary"
               />
             </div>
 
             <div className="sm:col-span-2 space-y-1.5 font-mono text-xs">
-              <label className="font-bold text-matcha-text uppercase">Silhouette / Fit</label>
+              <label className="font-bold text-matcha-text uppercase">{t('admin.product.fitLabel')}</label>
               <select
                 name="fit"
                 value={formData.fit}
@@ -354,7 +355,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
 
           {/* 5. Image URL & Live Preview */}
           <div className="space-y-3 font-mono text-xs">
-            <label className="font-bold text-matcha-text uppercase">Garment Photo / Artwork URL</label>
+            <label className="font-bold text-matcha-text uppercase">{t('admin.product.imageLabel')}</label>
             <div className="flex gap-3">
               <div className="relative flex-1">
                 <input
@@ -362,14 +363,14 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
                   name="image"
                   value={formData.image}
                   onChange={handleChange}
-                  placeholder="Paste direct HTTPS image URL"
+                  placeholder={t('admin.product.imagePlaceholder')}
                   className="w-full px-4 py-3 bg-white border border-matcha-border rounded-xl text-matcha-text outline-none focus:ring-1 focus:ring-matcha-primary"
                 />
               </div>
               <div className="w-12 h-12 rounded-xl bg-[#EFECE6] border border-matcha-border overflow-hidden flex items-center justify-center shrink-0">
                 {/* Hide a broken thumbnail while retaining the typed URL for correction. */}
                 {imagePreview ? (
-                  <img src={webpSrc(imagePreview)} data-original-src={imagePreview} alt="Preview" className="w-full h-full object-cover" onError={() => setImagePreview('')} />
+                  <img src={webpSrc(imagePreview)} data-original-src={imagePreview} alt={t('admin.product.previewAlt')} className="w-full h-full object-cover" onError={() => setImagePreview('')} />
                 ) : (
                   <ImageIcon size={18} className="text-matcha-muted" />
                 )}
@@ -378,11 +379,11 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
 
             {/* Quick Sample Image Presets */}
             <div className="flex flex-wrap items-center gap-2 pt-1">
-              <span className="text-[11px] text-matcha-muted">Presets:</span>
+              <span className="text-[11px] text-matcha-muted">{t('admin.product.presets')}</span>
               {sampleImages.map((s) => (
                 <button
                   type="button"
-                  key={s.label}
+                  key={s.url}
                   onClick={() => {
                     // Presets update both values because the form payload and preview
                     // are intentionally maintained as separate pieces of state.
@@ -399,18 +400,18 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
 
           {/* 6. Description & Material Notes (Validated Field) */}
           <div className="space-y-1.5 font-mono text-xs">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <label className="font-bold text-matcha-text uppercase">
-                Description & Material Notes <span className="text-matcha-accent">*</span>
+                {t('admin.product.descriptionLabel')} <span className="text-matcha-accent">*</span>
               </label>
-              <span className="text-[10px] text-matcha-muted">Min 10 characters</span>
+              <span className="text-[10px] text-matcha-muted">{t('admin.product.descriptionHint')}</span>
             </div>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
               rows={3}
-              placeholder="e.g. Crafted from 320gsm organic Japanese cotton. Bio-washed with natural matcha pigments for a tactile drape."
+              placeholder={t('admin.product.descriptionPlaceholder')}
               className={`w-full px-4 py-3 bg-white border ${errors.description ? 'border-matcha-accent focus:ring-1 focus:ring-matcha-accent' : 'border-matcha-border focus:ring-1 focus:ring-matcha-primary'} rounded-xl text-matcha-text outline-none transition-all resize-none`}
             />
             {errors.description && (
@@ -429,7 +430,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
               onClick={onClose}
               className="px-5 py-3 border border-matcha-border text-xs font-bold font-mono uppercase text-matcha-muted hover:text-matcha-text hover:bg-white rounded-xl transition-all cursor-pointer"
             >
-              Cancel
+              {t('admin.common.cancel')}
             </button>
             <button
               type="submit"
@@ -437,7 +438,7 @@ export default function AddProductModal({ isOpen, onClose, onAddProduct, saving,
               className="inline-flex items-center gap-2 px-6 py-3 bg-matcha-primary hover:bg-matcha-primary-dark text-white text-xs font-bold font-mono uppercase tracking-wider rounded-xl shadow-md transition-all active:scale-98 cursor-pointer"
             >
               <Plus size={16} />
-              <span>Publish to Inventory</span>
+              <span>{t('admin.product.publish')}</span>
             </button>
           </div>
 

@@ -3,7 +3,15 @@ import React from 'react';
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, cleanup, within } from '@testing-library/react';
 
-vi.mock('../../context/LanguageContext.jsx', () => ({ useLanguage: () => ({ t: (k) => k }) }));
+vi.mock('../../context/LanguageContext.jsx', async () => {
+  const { translations } = await import('../../i18n/translations');
+  const resolve = (obj, key) => key.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
+  const t = (key, vars) => {
+    const v = resolve(translations.en, key) ?? key;
+    return typeof v === 'string' && vars ? v.replace(/\{(\w+)\}/g, (m, n) => (vars[n] ?? m)) : v;
+  };
+  return { useLanguage: () => ({ lang: 'en', t }) };
+});
 
 const { default: DashboardTab } = await import('./DashboardTab');
 const { default: BreakdownChart } = await import('./BreakdownChart');
@@ -51,7 +59,7 @@ describe('Order Status chart', () => {
     const status = panel('Order Status');
     expect(status.querySelectorAll('svg[viewBox="0 0 200 200"] path').length).toBe(3); // the empty group draws no slice
     const chart = within(status).getByRole('img');
-    expect(chart.getAttribute('aria-label')).toBe('Order status: Paid 15 (58%), Awaiting payment 8 (31%), Cancelled 3 (12%), Refunded / expired 0 (0%)');
+    expect(chart.getAttribute('aria-label')).toBe('Order Status: Paid 15 (58%), Awaiting payment 8 (31%), Cancelled 3 (12%), Refunded / expired 0 (0%)');
   });
 
   test('switches to bars and to order value', () => {

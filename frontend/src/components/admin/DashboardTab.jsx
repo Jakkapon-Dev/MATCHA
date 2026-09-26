@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Package, ShoppingBag, DollarSign, Users, ChevronRight, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import AdminDataState from './AdminDataState';
 import BreakdownChart, { ChartModeToggle } from './BreakdownChart';
+import { useLanguage } from '../../context/LanguageContext.jsx';
+import { statusText } from './adminI18n';
 import { formatCurrency } from '../../utils/currency.js';
 
 /* One shape for every headline figure, so the four cards read as a row
@@ -46,10 +48,10 @@ function Panel({ title, subtitle, aside, children, className = '' }) {
 }
 
 const ORDER_GROUPS = [
-  { key: 'paid', label: 'Paid', color: '#042509' },
-  { key: 'awaiting', label: 'Awaiting payment', color: '#518F5C' },
-  { key: 'cancelled', label: 'Cancelled', color: '#C91D1D' },
-  { key: 'other', label: 'Refunded / expired', color: '#D4A338' }
+  { key: 'paid', labelKey: 'admin.dashboard.groupPaid', color: '#042509' },
+  { key: 'awaiting', labelKey: 'admin.dashboard.groupAwaiting', color: '#518F5C' },
+  { key: 'cancelled', labelKey: 'admin.dashboard.groupCancelled', color: '#C91D1D' },
+  { key: 'other', labelKey: 'admin.dashboard.groupOther', color: '#D4A338' }
 ];
 const money = value => `$${Number(value).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
@@ -69,6 +71,7 @@ const STATUS_TONE = {
    falling back to per-page arithmetic — is a KPI that is quietly wrong, and
    nothing on this screen is worth more than being right. */
 export default function DashboardTab({ status, errors, totalRevenue, orders, totalOrdersCount, paidOrdersCount = 0, orderStatus = null, totalStockUnits, totalProductsCount, vipMembersCount, lowStockCount, monthlyData, categoryDistribution, setActiveTab }) {
+  const { t } = useLanguage();
   const [statusMode, setStatusMode] = useState('pie');
   const [statusMetric, setStatusMetric] = useState('count');
   const [categoryMode, setCategoryMode] = useState('bar');
@@ -84,7 +87,7 @@ export default function DashboardTab({ status, errors, totalRevenue, orders, tot
   const cancelledCount = orderStatus?.cancelled?.count ?? null;
   const activeOrdersCount = cancelledCount === null ? totalOrdersCount : Math.max(0, totalOrdersCount - cancelledCount);
   const statusItems = orderStatus
-    ? ORDER_GROUPS.map(group => ({ label: group.label, color: group.color, value: orderStatus[group.key]?.[statusMetric] || 0 }))
+    ? ORDER_GROUPS.map(group => ({ label: t(group.labelKey), color: group.color, value: orderStatus[group.key]?.[statusMetric] || 0 }))
     : [];
   const categoryItems = categoryDistribution.map(cat => ({ label: cat.label, color: cat.color, value: cat.count }));
   const maxRevenue = Math.max(1, ...monthlyData.map(month => month.revenue));
@@ -94,34 +97,34 @@ export default function DashboardTab({ status, errors, totalRevenue, orders, tot
 
       <div className="grid grid-cols-1 min-[480px]:grid-cols-2 xl:grid-cols-4 gap-4">
         <KpiCard
-          label="Paid Revenue"
+          label={t('admin.dashboard.paidRevenue')}
           icon={DollarSign}
           value={`$${totalRevenue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`}
-          footnote="Confirmed paid orders"
+          footnote={t('admin.dashboard.confirmedPaid')}
           footnoteTone="good"
           footnoteIcon={CheckCircle2}
         />
         <KpiCard
-          label="Customer Orders"
+          label={t('admin.dashboard.customerOrders')}
           icon={ShoppingBag}
           value={activeOrdersCount}
-          unit="orders"
-          footnote={`Avg. Paid Order: ${formatCurrency(avgPaidOrderValue)}`}
-          note={cancelledCount ? `${cancelledCount} cancelled not counted` : null}
+          unit={t('admin.dashboard.ordersUnit')}
+          footnote={t('admin.dashboard.avgPaidOrder', { amount: formatCurrency(avgPaidOrderValue) })}
+          note={cancelledCount ? t('admin.dashboard.cancelledNotCounted', { count: cancelledCount }) : null}
         />
         <KpiCard
-          label="Active Stock Units"
+          label={t('admin.dashboard.activeStock')}
           icon={Package}
           value={totalStockUnits}
-          unit="units"
-          footnote={`Across ${totalProductsCount} garment lines`}
+          unit={t('admin.dashboard.unitsUnit')}
+          footnote={t('admin.dashboard.acrossLines', { count: totalProductsCount })}
         />
         <KpiCard
-          label="VIP Members"
+          label={t('admin.dashboard.vipMembers')}
           icon={Users}
           value={vipMembersCount}
-          unit="VIPs"
-          footnote={`${lowStockCount} Low stock alerts`}
+          unit={t('admin.dashboard.vipUnit')}
+          footnote={t('admin.dashboard.lowStockAlerts', { count: lowStockCount })}
           footnoteTone={lowStockCount > 0 ? 'alert' : 'muted'}
           footnoteIcon={AlertTriangle}
         />
@@ -130,12 +133,12 @@ export default function DashboardTab({ status, errors, totalRevenue, orders, tot
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <Panel
           className="lg:col-span-12"
-          title="Monthly Revenue"
-          subtitle="Confirmed payments by month (USD)"
-          aside={<span className="px-2.5 py-1 rounded-lg bg-matcha-bg text-matcha-primary font-mono text-xs font-bold tabular-nums">Total ${totalRevenue.toLocaleString()}</span>}
+          title={t('admin.dashboard.monthlyRevenue')}
+          subtitle={t('admin.dashboard.monthlySubtitle')}
+          aside={<span className="px-2.5 py-1 rounded-lg bg-matcha-bg text-matcha-primary font-mono text-xs font-bold tabular-nums">{t('admin.dashboard.total', { amount: `$${totalRevenue.toLocaleString()}` })}</span>}
         >
           {monthlyData.length === 0 ? (
-            <p className="h-56 flex items-center justify-center text-xs font-mono text-matcha-muted border border-dashed border-matcha-border rounded-xl">No revenue data yet.</p>
+            <p className="h-56 flex items-center justify-center text-xs font-mono text-matcha-muted border border-dashed border-matcha-border rounded-xl">{t('admin.dashboard.noRevenue')}</p>
           ) : (
             <div className="h-56 flex items-end justify-between gap-2 sm:gap-3 overflow-x-auto">
               {monthlyData.map((item) => {
@@ -163,49 +166,49 @@ export default function DashboardTab({ status, errors, totalRevenue, orders, tot
         {orderStatus && (
           <Panel
             className="lg:col-span-6"
-            title="Order Status"
-            subtitle={statusMetric === 'count' ? 'Every order, by where it stands' : 'Order value, by where it stands'}
+            title={t('admin.dashboard.orderStatus')}
+            subtitle={statusMetric === 'count' ? t('admin.dashboard.orderStatusByCount') : t('admin.dashboard.orderStatusByValue')}
             aside={
               <div className="flex flex-wrap gap-2">
-                <div role="group" aria-label="Measure" className="inline-flex p-0.5 rounded-lg bg-matcha-bg border border-matcha-border">
-                  {[['count', 'Orders'], ['amount', 'Value']].map(([id, text]) => (
+                <div role="group" aria-label={t('admin.dashboard.measureLabel')} className="inline-flex p-0.5 rounded-lg bg-matcha-bg border border-matcha-border">
+                  {[['count', t('admin.dashboard.measureOrders')], ['amount', t('admin.dashboard.measureValue')]].map(([id, text]) => (
                     <button key={id} type="button" aria-pressed={statusMetric === id} onClick={() => setStatusMetric(id)} className={`h-7 px-2.5 rounded-md text-[11px] font-mono font-bold cursor-pointer transition-colors ${statusMetric === id ? 'bg-white text-matcha-primary shadow-xs' : 'text-matcha-muted hover:text-matcha-text'}`}>{text}</button>
                   ))}
                 </div>
-                <ChartModeToggle mode={statusMode} onChange={setStatusMode} label="Order status chart type" />
+                <ChartModeToggle mode={statusMode} onChange={setStatusMode} label={t('admin.dashboard.statusChartType')} />
               </div>
             }
           >
-            <BreakdownChart items={statusItems} mode={statusMode} format={statusMetric === 'amount' ? money : String} emptyText="No orders yet." summaryLabel="Order status" />
+            <BreakdownChart items={statusItems} mode={statusMode} format={statusMetric === 'amount' ? money : String} emptyText={t('admin.dashboard.noOrdersYet')} summaryLabel={t('admin.dashboard.orderStatus')} />
           </Panel>
         )}
 
         <Panel
           className={`${orderStatus ? 'lg:col-span-6' : 'lg:col-span-12'} flex flex-col`}
-          title="Category Share"
-          subtitle="Garment lines by category"
-          aside={<ChartModeToggle mode={categoryMode} onChange={setCategoryMode} label="Category chart type" />}
+          title={t('admin.dashboard.categoryShare')}
+          subtitle={t('admin.dashboard.categorySubtitle')}
+          aside={<ChartModeToggle mode={categoryMode} onChange={setCategoryMode} label={t('admin.dashboard.categoryChartType')} />}
         >
           <div className="flex-1">
-            <BreakdownChart items={categoryItems} mode={categoryMode} format={value => `${value} items`} emptyText="No garments yet." summaryLabel="Category share" />
+            <BreakdownChart items={categoryItems} mode={categoryMode} format={value => t('admin.dashboard.itemsCount', { count: value })} emptyText={t('admin.dashboard.noGarments')} summaryLabel={t('admin.dashboard.categoryShare')} />
           </div>
           <div className="mt-6 pt-4 border-t border-matcha-border text-xs font-mono flex items-center justify-between">
-            <span className="text-matcha-muted">Total Catalog</span>
-            <strong className="text-matcha-primary tabular-nums">{totalProductsCount} Models</strong>
+            <span className="text-matcha-muted">{t('admin.dashboard.totalCatalog')}</span>
+            <strong className="text-matcha-primary tabular-nums">{t('admin.dashboard.models', { count: totalProductsCount })}</strong>
           </div>
         </Panel>
       </div>
 
       <Panel
-        title="Recent Customer Orders"
-        subtitle="Latest four from the orders pipeline"
+        title={t('admin.dashboard.recentOrders')}
+        subtitle={t('admin.dashboard.recentSubtitle')}
         aside={
           <button
             type="button"
             onClick={() => setActiveTab('orders')}
             className="text-xs font-mono font-bold text-matcha-primary hover:underline underline-offset-4 flex items-center gap-1 cursor-pointer"
           >
-            <span>View all orders</span>
+            <span>{t('admin.dashboard.viewAllOrders')}</span>
             <ChevronRight size={12} />
           </button>
         }
@@ -214,15 +217,15 @@ export default function DashboardTab({ status, errors, totalRevenue, orders, tot
           <table className="w-full min-w-[520px] text-left font-mono text-xs">
             <thead>
               <tr className="border-b border-matcha-border text-[10px] uppercase tracking-[0.12em] text-matcha-muted">
-                <th className="pb-3 font-bold">Order ID</th>
-                <th className="pb-3 font-bold">Customer</th>
-                <th className="pb-3 font-bold">Date</th>
-                <th className="pb-3 font-bold text-right">Total ($)</th>
-                <th className="pb-3 font-bold text-right">Status</th>
+                <th className="pb-3 font-bold">{t('admin.dashboard.colOrderId')}</th>
+                <th className="pb-3 font-bold">{t('admin.dashboard.colCustomer')}</th>
+                <th className="pb-3 font-bold">{t('admin.dashboard.colDate')}</th>
+                <th className="pb-3 font-bold text-right">{t('admin.dashboard.colTotal')}</th>
+                <th className="pb-3 font-bold text-right">{t('admin.dashboard.colStatus')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-matcha-border/60">
-              {orders.length === 0 && <tr><td colSpan={5} className="py-8 text-center text-matcha-muted">No orders yet.</td></tr>}
+              {orders.length === 0 && <tr><td colSpan={5} className="py-8 text-center text-matcha-muted">{t('admin.dashboard.noOrdersYet')}</td></tr>}
               {orders.slice(0, 4).map(ord => (
                 <tr key={ord.id} className="hover:bg-matcha-bg/60">
                   <td className="py-3 font-bold text-matcha-primary">{ord.id}</td>
@@ -231,7 +234,7 @@ export default function DashboardTab({ status, errors, totalRevenue, orders, tot
                   <td className="py-3 font-bold text-matcha-text text-right tabular-nums">{formatCurrency(ord.total)}</td>
                   <td className="py-3 text-right">
                     <span className={`inline-block px-2 py-0.5 rounded-md border text-[10px] font-bold ${STATUS_TONE[ord.status] || 'bg-orange-50 text-matcha-accent border-orange-200'}`}>
-                      {ord.status}
+                      {statusText(t, ord.status)}
                     </span>
                   </td>
                 </tr>

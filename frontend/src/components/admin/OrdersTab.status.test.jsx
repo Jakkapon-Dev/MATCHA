@@ -1,6 +1,13 @@
 import { describe, test, expect, vi, afterEach } from 'vitest';
 import { render, cleanup } from '@testing-library/react';
-vi.mock('../../context/LanguageContext.jsx', () => ({ useLanguage: () => ({ t: (k) => k }) }));
+vi.mock('../../context/LanguageContext.jsx', async () => {
+  const { translations } = await import('../../i18n/translations');
+  const resolve = (obj, key) => key.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
+  return { useLanguage: () => ({ lang: 'th', t: (key, vars) => {
+    const v = resolve(translations.th, key) ?? resolve(translations.en, key) ?? key;
+    return typeof v === 'string' && vars ? v.replace(/\{(\w+)\}/g, (m, n) => (vars[n] ?? m)) : v;
+  } }) };
+});
 
 const OrdersTab = (await import('./OrdersTab')).default;
 import { normalizeOrder } from './adminData';

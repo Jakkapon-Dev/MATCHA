@@ -2,9 +2,12 @@ import React from 'react';
 import AdminDataState from './AdminDataState';
 import AdminPagination from './AdminPagination';
 import { ORDER_STATUSES, isKnownOrderStatus } from './adminData';
+import { useLanguage } from '../../context/LanguageContext.jsx';
+import { statusText, paymentText } from './adminI18n';
 import { formatCurrency } from '../../utils/currency.js';
 
 export default function OrdersTab({ status, errors, setOrderStatusFilter, orderStatusFilter, filteredOrders, setSelectedOrderForModal, saving, isDemo, handleUpdateOrderStatus, pagination, onPageChange }) {
+  const { t } = useLanguage();
   return (<AdminDataState resources={["orders"]} status={status} errors={errors}>
             <div className="space-y-6 animate-fade-in">
               
@@ -14,13 +17,13 @@ export default function OrdersTab({ status, errors, setOrderStatusFilter, orderS
                   <button
                     key={st}
                     onClick={() => setOrderStatusFilter(st)}
-                    className={`px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border ${
+                    className={`shrink-0 whitespace-nowrap px-4 py-2 rounded-xl font-mono text-xs font-bold transition-all cursor-pointer border ${
                       orderStatusFilter === st
                         ? 'bg-matcha-primary text-white border-matcha-primary shadow-xs'
                         : 'bg-white text-matcha-muted border-matcha-border hover:border-matcha-primary'
                     }`}
                   >
-                    {st === 'ALL' ? 'All Orders' : st}
+                    {st === 'ALL' ? t('admin.ordersTab.allOrders') : statusText(t, st)}
                   </button>
                 ))}
               </div>
@@ -31,17 +34,17 @@ export default function OrdersTab({ status, errors, setOrderStatusFilter, orderS
                   <table className="w-full text-left font-mono text-xs">
                     <thead className="bg-matcha-bg border-b border-matcha-border text-matcha-muted">
                       <tr>
-                        <th className="p-4 font-bold">Order Ref</th>
-                        <th className="p-4 font-bold">Customer</th>
-                        <th className="p-4 font-bold">Date</th>
-                        <th className="p-4 font-bold">Items</th>
-                        <th className="p-4 font-bold">Total</th>
-                        <th className="p-4 font-bold">Payment</th>
-                        <th className="p-4 font-bold text-right">Fulfillment Status</th>
+                        <th className="p-4 font-bold">{t('admin.ordersTab.colOrderRef')}</th>
+                        <th className="p-4 font-bold">{t('admin.ordersTab.colCustomer')}</th>
+                        <th className="p-4 font-bold">{t('admin.ordersTab.colDate')}</th>
+                        <th className="p-4 font-bold">{t('admin.ordersTab.colItems')}</th>
+                        <th className="p-4 font-bold">{t('admin.ordersTab.colTotal')}</th>
+                        <th className="p-4 font-bold">{t('admin.ordersTab.colPayment')}</th>
+                        <th className="p-4 font-bold text-right">{t('admin.ordersTab.colFulfillment')}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-matcha-border/40">
-                      {filteredOrders.length === 0 && <tr><td colSpan={7} className="p-6 text-center">No orders match the current filters.</td></tr>}
+                      {filteredOrders.length === 0 && <tr><td colSpan={7} className="p-6 text-center">{t('admin.ordersTab.noOrders')}</td></tr>}
                       {filteredOrders.map(order => (
                         <tr 
                           key={order.id}
@@ -62,7 +65,7 @@ export default function OrdersTab({ status, errors, setOrderStatusFilter, orderS
                                 ? 'bg-green-100 text-green-800' 
                                 : 'bg-amber-100 text-amber-800'
                             }`}>
-                              {order.paymentStatus}
+                              {paymentText(t, order.paymentStatus)}
                             </span>
                           </td>
                           <td className="p-4 text-right" onClick={(e) => e.stopPropagation()}>
@@ -79,10 +82,10 @@ export default function OrdersTab({ status, errors, setOrderStatusFilter, orderS
                             >
                               {!isKnownOrderStatus(order.status) && (
                                 // A stored status outside the list is shown, not replaced by Pending.
-                                <option value={order.status} disabled>{order.status}</option>
+                                <option value={order.status} disabled>{statusText(t, order.status)}</option>
                               )}
                               {ORDER_STATUSES.map((status) => (
-                                <option key={status} value={status}>{status}</option>
+                                <option key={status} value={status}>{statusText(t, status)}</option>
                               ))}
                             </select>
                           </td>

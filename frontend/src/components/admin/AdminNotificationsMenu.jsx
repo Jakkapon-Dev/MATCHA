@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Bell, CheckCheck } from 'lucide-react';
 import { formatCurrency } from '../../utils/currency.js';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 export default function AdminNotificationsMenu({
   notifications = [],
@@ -11,21 +12,31 @@ export default function AdminNotificationsMenu({
   onMarkNotificationRead,
   onMarkAllNotificationsRead,
 }) {
+  const langCtx = useLanguage();
+  const t = langCtx?.t || ((key, fallback) => (typeof fallback === 'object' ? key : (fallback || key)));
+  const lang = langCtx?.lang || 'en';
+  const dateLocale = lang === 'th' ? 'th-TH' : undefined;
+
   const [uncontrolledIsOpen, setUncontrolledIsOpen] = useState(false);
   const isOpen = controlledIsOpen !== undefined ? controlledIsOpen : uncontrolledIsOpen;
   const toggle = onToggle || (() => setUncontrolledIsOpen(prev => !prev));
   const close = onClose || (() => setUncontrolledIsOpen(false));
+
+  const notifLabel = langCtx?.t ? t('admin.shell.notifications') : 'Order Notifications';
+  const newOrdersLabel = langCtx?.t ? t('admin.shell.newOrders') : 'New Orders';
+  const markAllReadLabel = langCtx?.t ? t('admin.shell.markAllRead') : 'Mark all read';
+  const noNotifsLabel = langCtx?.t ? t('admin.shell.noNotifications') : 'No new order notifications yet.';
 
   return (
     <div className="relative">
       <button
         type="button"
         onClick={toggle}
-        aria-label="Order Notifications"
+        aria-label={notifLabel}
         aria-haspopup="true"
         aria-expanded={isOpen}
         className="relative h-9 w-9 rounded-xl bg-white border border-matcha-border hover:border-matcha-primary text-matcha-text transition-all cursor-pointer flex items-center justify-center outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary"
-        title="Order Notifications"
+        title={notifLabel}
       >
         <Bell size={16} />
         {unreadCount > 0 && (
@@ -41,10 +52,10 @@ export default function AdminNotificationsMenu({
           <div className="absolute right-0 mt-2 w-[min(24rem,calc(100vw-2rem))] bg-white rounded-2xl border border-matcha-border shadow-2xl p-3 z-30 font-mono text-xs animate-fade-in max-h-96 flex flex-col">
             <div className="flex items-center justify-between pb-2 border-b border-matcha-border px-1">
               <div className="flex items-center gap-2">
-                <span className="font-bold text-matcha-text uppercase font-sans">New Orders</span>
+                <span className="font-bold text-matcha-text uppercase font-sans">{newOrdersLabel}</span>
                 {unreadCount > 0 && (
                   <span className="px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 text-[10px] font-bold">
-                    {unreadCount} unread
+                    {langCtx?.t ? t('admin.shell.unread', { count: unreadCount }) : `${unreadCount} unread`}
                   </span>
                 )}
               </div>
@@ -55,7 +66,7 @@ export default function AdminNotificationsMenu({
                   className="text-[11px] text-matcha-primary hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   <CheckCheck size={12} />
-                  <span>Mark all read</span>
+                  <span>{markAllReadLabel}</span>
                 </button>
               )}
             </div>
@@ -63,7 +74,7 @@ export default function AdminNotificationsMenu({
             <div className="overflow-y-auto divide-y divide-matcha-border/40 my-1 flex-1 max-h-72">
               {notifications.length === 0 ? (
                 <div className="p-6 text-center text-matcha-muted text-xs">
-                  No new order notifications yet.
+                  {noNotifsLabel}
                 </div>
               ) : (
                 notifications.map(n => (
@@ -78,9 +89,11 @@ export default function AdminNotificationsMenu({
                         <span className="font-bold text-matcha-text truncate">{n.orderNumber}</span>
                         <span className="font-bold text-matcha-primary shrink-0">{formatCurrency(n.total)}</span>
                       </div>
-                      <div className="text-[11px] text-matcha-muted truncate">Customer: {n.customerName}</div>
+                      <div className="text-[11px] text-matcha-muted truncate">
+                        {langCtx?.t ? t('admin.shell.notificationCustomer', { name: n.customerName }) : `Customer: ${n.customerName}`}
+                      </div>
                       <div className="text-[10px] text-matcha-muted/70 mt-0.5">
-                        {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} • {new Date(n.createdAt).toLocaleDateString()}
+                        {new Date(n.createdAt).toLocaleTimeString(dateLocale, { hour: '2-digit', minute: '2-digit' })} • {new Date(n.createdAt).toLocaleDateString(dateLocale)}
                       </div>
                     </div>
                   </div>

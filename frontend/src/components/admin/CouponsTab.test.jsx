@@ -12,7 +12,16 @@ const api = {
   getAdminProducts: vi.fn(async () => ({ success: true, data: [] }))
 };
 vi.mock('../../services/api', () => ({ api, apiErrorText: (e) => e?.message || 'failed' }));
-vi.mock('../../context/LanguageContext.jsx', () => ({ useLanguage: () => ({ t: (k) => k }) }));
+// A real resolver over the English copy, so the assertions read the screen's actual English.
+vi.mock('../../context/LanguageContext.jsx', async () => {
+  const { translations } = await import('../../i18n/translations');
+  const resolve = (obj, key) => key.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
+  const t = (key, vars) => {
+    const v = resolve(translations.en, key) ?? key;
+    return typeof v === 'string' && vars ? v.replace(/\{(\w+)\}/g, (m, n) => (vars[n] ?? m)) : v;
+  };
+  return { useLanguage: () => ({ lang: 'en', t }) };
+});
 
 const { default: CouponsTab } = await import('./CouponsTab');
 

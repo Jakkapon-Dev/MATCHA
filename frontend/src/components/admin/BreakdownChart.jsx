@@ -1,16 +1,18 @@
 import React from 'react';
 import { PieChart, BarChart3 } from 'lucide-react';
+import { useLanguage } from '../../context/LanguageContext.jsx';
 
 const MODES = [
-  { id: 'pie', label: 'Pie', icon: PieChart },
-  { id: 'bar', label: 'Bars', icon: BarChart3 }
+  { id: 'pie', labelKey: 'admin.charts.pie', icon: PieChart },
+  { id: 'bar', labelKey: 'admin.charts.bars', icon: BarChart3 }
 ];
 
 /* Pie / bars switch for a panel header. */
-export function ChartModeToggle({ mode, onChange, label = 'Chart type' }) {
+export function ChartModeToggle({ mode, onChange, label }) {
+  const { t } = useLanguage();
   return (
-    <div role="group" aria-label={label} className="inline-flex p-0.5 rounded-lg bg-matcha-bg border border-matcha-border">
-      {MODES.map(({ id, label: text, icon: Icon }) => (
+    <div role="group" aria-label={label || t('admin.charts.chartType')} className="inline-flex p-0.5 rounded-lg bg-matcha-bg border border-matcha-border">
+      {MODES.map(({ id, labelKey, icon: Icon }) => (
         <button
           key={id}
           type="button"
@@ -18,7 +20,7 @@ export function ChartModeToggle({ mode, onChange, label = 'Chart type' }) {
           onClick={() => onChange(id)}
           className={`h-7 px-2.5 rounded-md text-[11px] font-mono font-bold flex items-center gap-1 cursor-pointer transition-colors ${mode === id ? 'bg-white text-matcha-primary shadow-xs' : 'text-matcha-muted hover:text-matcha-text'}`}
         >
-          <Icon size={12} aria-hidden="true" />{text}
+          <Icon size={12} aria-hidden="true" />{t(labelKey)}
         </button>
       ))}
     </div>
@@ -65,11 +67,12 @@ function Pie({ items, total, format }) {
  * so the figures are readable (and announced) whichever form is chosen.
  * items: [{ label, value, color }]
  */
-export default function BreakdownChart({ items, mode, format = String, emptyText = 'Nothing to show yet.', summaryLabel }) {
+export default function BreakdownChart({ items, mode, format = String, emptyText, summaryLabel }) {
+  const { t } = useLanguage();
   const total = items.reduce((sum, item) => sum + (item.value > 0 ? item.value : 0), 0);
   const percent = value => (total > 0 ? Math.round((value / total) * 100) : 0);
   if (total <= 0) {
-    return <p className="h-48 flex items-center justify-center text-xs font-mono text-matcha-muted border border-dashed border-matcha-border rounded-xl">{emptyText}</p>;
+    return <p className="h-48 flex items-center justify-center text-xs font-mono text-matcha-muted border border-dashed border-matcha-border rounded-xl">{emptyText || t('admin.charts.empty')}</p>;
   }
   const summary = `${summaryLabel ? `${summaryLabel}: ` : ''}${items.map(item => `${item.label} ${format(item.value)} (${percent(item.value)}%)`).join(', ')}`;
 

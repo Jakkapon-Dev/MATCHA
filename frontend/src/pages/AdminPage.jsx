@@ -24,10 +24,13 @@ import useChangeMotion from '../hooks/useChangeMotion';
 import useAdminData from '../components/admin/useAdminData';
 
 import { normalizeProduct } from '../components/admin/adminData';
+import { categoryLongText } from '../components/admin/adminI18n';
 import { formatCurrency } from '../utils/currency.js';
 
 export default function AdminPage() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  // English keeps the browser's own date format, as before.
+  const dateLocale = lang === 'th' ? 'th-TH' : undefined;
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
   const { showToast } = useToast();
@@ -199,37 +202,37 @@ export default function AdminPage() {
 
     return [
       {
-        label: 'Tops & Knitwear',
+        label: categoryLongText(t, 'Tops'),
         count: counts.Tops,
         percent: total > 0 ? Math.round((counts.Tops / total) * 100) : 0,
         color: '#042509'
       },
       {
-        label: 'Bottoms & Denim',
+        label: categoryLongText(t, 'Bottoms'),
         count: counts.Bottoms,
         percent: total > 0 ? Math.round((counts.Bottoms / total) * 100) : 0,
         color: '#C91D1D'
       },
       {
-        label: 'Outerwear & Coats',
+        label: categoryLongText(t, 'Outerwear'),
         count: counts.Outerwear,
         percent: total > 0 ? Math.round((counts.Outerwear / total) * 100) : 0,
         color: '#1A365D'
       },
       {
-        label: 'Shoes & Footwear',
+        label: categoryLongText(t, 'Shoes'),
         count: counts.Shoes,
         percent: total > 0 ? Math.round((counts.Shoes / total) * 100) : 0,
         color: '#666666'
       },
       {
-        label: 'Accessories & Bags',
+        label: categoryLongText(t, 'Accessories'),
         count: counts.Accessories,
         percent: total > 0 ? Math.round((counts.Accessories / total) * 100) : 0,
         color: '#D4A338'
       }
     ];
-  }, [stats]);
+  }, [stats, t]);
 
   // Server-side filtered datasets (server filters and paginates directly)
   const filteredInventory = inventory;
@@ -238,11 +241,11 @@ export default function AdminPage() {
 
   // Change the screen only after persistence succeeds.
   const handleAddProduct = newProduct => runMutation(async () => {
-    if (isDemo) throw new Error('Demo session: changes are disabled');
+    if (isDemo) throw new Error(t('admin.actionErrors.demoDisabled'));
     const result = await api.createProduct({ ...newProduct, quantity: Number(newProduct.stock), price: Number(newProduct.price) });
-    if (!result?.success || !result.data) throw new Error('Product was not saved');
+    if (!result?.success || !result.data) throw new Error(t('admin.actionErrors.productNotSaved'));
     setInventory(previous => [normalizeProduct(result.data), ...previous]);
-    showToast('Product saved', 'success');
+    showToast(t('admin.toast.productSaved'), 'success');
   });
 
   /* Restocking sends the change, not a new total, and names a size when the
@@ -254,13 +257,13 @@ export default function AdminPage() {
      with it, orders kept drawing on the old per-size figures and the next full
      save recomputed the total straight back down. */
   const handleRestock = (id, amount, size) => runMutation(async () => {
-    if (isDemo) throw new Error('Demo session: changes are disabled');
+    if (isDemo) throw new Error(t('admin.actionErrors.demoDisabled'));
     const item = inventory.find(product => product.id === id);
     if (!item) return;
     const result = await api.restockProduct(id, { delta: amount, size: size || undefined });
-    if (!result?.success || !result.data) throw new Error(result?.message || 'Stock was not saved');
+    if (!result?.success || !result.data) throw new Error(result?.message || t('admin.actionErrors.stockNotSaved'));
     setInventory(previous => previous.map(product => product.id === id ? normalizeProduct(result.data) : product));
-    showToast(size ? `Stock saved (size ${size})` : 'Stock saved', 'success');
+    showToast(size ? t('admin.toast.stockSavedSize', { size }) : t('admin.toast.stockSaved'), 'success');
   });
 
   /* A leading minus survives, so stock can still be taken away. The buttons
@@ -287,42 +290,42 @@ export default function AdminPage() {
     const needsSize = Boolean(item?.needsSizeChoice);
     const size = needsSize ? restockSizes[id] : '';
     if (needsSize && !size) {
-      showToast('Choose which size to restock', 'error');
+      showToast(t('admin.toast.chooseRestockSize'), 'error');
       return;
     }
     if (await handleRestock(id, amount, size)) setRestockAmounts(prev => ({ ...prev, [id]: '' }));
   };
 
   const handleDeleteProduct = id => runMutation(async () => {
-    if (isDemo) throw new Error('Demo session: changes are disabled');
+    if (isDemo) throw new Error(t('admin.actionErrors.demoDisabled'));
     const result = await api.deleteProduct(id);
-    if (!result?.success) throw new Error('Product was not deleted');
+    if (!result?.success) throw new Error(t('admin.actionErrors.productNotDeleted'));
     setInventory(previous => previous.filter(product => product.id !== id));
-    showToast('Product deleted', 'success');
+    showToast(t('admin.toast.productDeleted'), 'success');
   });
 
   const handleUpdateOrderStatus = (orderId, newStatus) => runMutation(async () => {
-    if (isDemo) throw new Error('Demo session: changes are disabled');
+    if (isDemo) throw new Error(t('admin.actionErrors.demoDisabled'));
     const result = await api.updateOrderStatus(orderId, { status: newStatus.toLowerCase() });
-    if (!result?.success) throw new Error('Order status was not saved');
+    if (!result?.success) throw new Error(t('admin.actionErrors.orderStatusNotSaved'));
     setOrders(previous => previous.map(order => order.id === orderId ? { ...order, status: newStatus } : order));
     setSelectedOrderForModal(previous => previous?.id === orderId ? { ...previous, status: newStatus } : previous);
-    showToast('Order status saved', 'success');
+    showToast(t('admin.toast.orderStatusSaved'), 'success');
   });
 
   const handleToggleVIPTier = memberId => runMutation(async () => {
-    if (isDemo) throw new Error('Demo session: changes are disabled');
+    if (isDemo) throw new Error(t('admin.actionErrors.demoDisabled'));
     const member = members.find(item => item.id === memberId);
     const tier = member.tier.includes('VIP') ? 'Regular Member' : 'VIP Connoisseur';
     const result = await api.updateUser(memberId, { tier });
-    if (!result?.success || !result.data) throw new Error('Membership tier was not saved');
+    if (!result?.success || !result.data) throw new Error(t('admin.actionErrors.tierNotSaved'));
     setMembers(previous => previous.map(item => item.id === memberId ? { ...item, tier: result.data.tier } : item));
-    showToast('Membership tier saved', 'success');
+    showToast(t('admin.toast.tierSaved'), 'success');
   });
 
   // Export File Helper
   const downloadFile = (content, filename, type = 'text/csv;charset=utf-8;') => {
-    if (saving || Object.values(status).some(value => value !== 'ready')) { showToast('Load all data before exporting', 'warning'); return; }
+    if (saving || Object.values(status).some(value => value !== 'ready')) { showToast(t('admin.toast.loadBeforeExport'), 'warning'); return; }
     const bom = type.includes('csv') ? '\uFEFF' : '';
     const blob = new Blob([bom + content], { type });
     const url = URL.createObjectURL(blob);
@@ -333,7 +336,7 @@ export default function AdminPage() {
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
-    showToast(`Exported ${filename} successfully!`, 'success');
+    showToast(t('admin.toast.exported', { filename }), 'success');
     setIsExportMenuOpen(false);
   };
 
@@ -369,8 +372,8 @@ export default function AdminPage() {
   // Nav Items
   const navTabs = [
     { id: 'media', label: t('admin.tabMedia'), icon: Layers, badge: null },
-    { id: 'lookbook', label: 'Lookbook Hotspots', icon: MapPin, badge: null },
-    { id: 'dashboard', label: 'Overview', icon: LayoutDashboard, badge: null },
+    { id: 'lookbook', label: t('admin.nav.lookbook'), icon: MapPin, badge: null },
+    { id: 'dashboard', label: t('admin.nav.dashboard'), icon: LayoutDashboard, badge: null },
     /* Each badge counts what its label names, across the whole shop.
 
        They used to count the page: `inventory.length` is the 25 rows loaded,
@@ -379,12 +382,12 @@ export default function AdminPage() {
        table saying "page 1 of 3", and "Orders Pipeline 1" beside 20 orders —
        numbers that moved when an administrator turned a page. The totals come
        from GET /admin/stats, which describes the shop rather than the view. */
-    { id: 'inventory', label: 'Inventory & Stock', icon: Boxes, badge: totalProductsCount },
-    { id: 'orders', label: 'Orders Pipeline', icon: ClipboardList, badge: totalOrdersCount },
-    { id: 'analytics', label: 'Revenue Analytics', icon: BarChart3, badge: null },
-    { id: 'members', label: 'VIP Customer Registry', icon: UserCheck, badge: vipMembersCount },
-    { id: 'coupons', label: 'Coupons', icon: TicketPercent, badge: null },
-    { id: 'backup', label: 'Reports & Backups', icon: HardDrive, badge: null }
+    { id: 'inventory', label: t('admin.nav.inventory'), icon: Boxes, badge: totalProductsCount },
+    { id: 'orders', label: t('admin.nav.orders'), icon: ClipboardList, badge: totalOrdersCount },
+    { id: 'analytics', label: t('admin.nav.analytics'), icon: BarChart3, badge: null },
+    { id: 'members', label: t('admin.nav.members'), icon: UserCheck, badge: vipMembersCount },
+    { id: 'coupons', label: t('admin.nav.coupons'), icon: TicketPercent, badge: null },
+    { id: 'backup', label: t('admin.nav.backup'), icon: HardDrive, badge: null }
   ];
 
   return (
@@ -409,7 +412,7 @@ export default function AdminPage() {
             />
             <div className="min-w-0 leading-tight">
               <span className="block font-sans text-base font-extrabold uppercase tracking-[0.12em] text-white">MatchA</span>
-              <span className="block text-[11px] font-mono text-[#A89F91]">Admin Console</span>
+              <span className="block text-[11px] font-mono text-[#A89F91]">{t('admin.shell.brandSubtitle')}</span>
             </div>
           </div>
         </div>
@@ -417,8 +420,8 @@ export default function AdminPage() {
         {/* Current Admin Identity Card */}
         <div className="hidden md:flex p-4 mx-4 mt-4 rounded-xl bg-[#3A2E28] border border-[#4D3E35] items-center justify-between gap-2 text-xs font-mono">
           <div className="truncate">
-            <div className="text-[10px] text-matcha-secondary uppercase">Active Operator</div>
-            <div className="font-bold text-white truncate">{currentUser?.name || 'Administrator'}</div>
+            <div className="text-[10px] text-matcha-secondary uppercase">{t('admin.shell.activeOperator')}</div>
+            <div className="font-bold text-white truncate">{currentUser?.name || t('admin.shell.administrator')}</div>
           </div>
           <span className="px-2 py-0.5 rounded bg-matcha-accent text-white text-[10px] font-bold">
             {currentUser?.role || 'Admin'}
@@ -426,9 +429,9 @@ export default function AdminPage() {
         </div>
 
         {/* Navigation Tab Links */}
-        <nav aria-label="Admin sections" className="md:flex-1 p-3 md:p-4 flex md:block gap-1 md:space-y-1 overflow-x-auto [scrollbar-width:thin] md:overflow-x-visible md:overflow-y-auto">
+        <nav aria-label={t('admin.nav.sectionsLabel')} className="md:flex-1 p-3 md:p-4 flex md:block gap-1 md:space-y-1 overflow-x-auto [scrollbar-width:thin] md:overflow-x-visible md:overflow-y-auto">
           <div className="hidden md:block text-[10px] font-mono font-bold uppercase text-[#A89F91] px-3 py-2 tracking-wider">
-            Management Modules
+            {t('admin.nav.modules')}
           </div>
 
           {navTabs.map((tab) => {
@@ -471,18 +474,18 @@ export default function AdminPage() {
             className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl whitespace-nowrap bg-[#3A2E28] hover:bg-[#4D3E35] text-matcha-secondary transition-colors cursor-pointer"
           >
             <ExternalLink size={13} />
-            <span>Visit Live Storefront</span>
+            <span>{t('admin.shell.visitStorefront')}</span>
           </button>
           <button
             onClick={() => {
               logout();
               navigate('/login');
-              showToast('Logged out of Admin Session', 'info');
+              showToast(t('admin.shell.loggedOut'), 'info');
             }}
             className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-xl text-matcha-accent hover:bg-matcha-accent/10 transition-colors cursor-pointer font-bold"
           >
             <LogOut size={13} />
-            <span>End Session</span>
+            <span>{t('admin.shell.endSession')}</span>
           </button>
         </div>
       </aside>
@@ -498,7 +501,7 @@ export default function AdminPage() {
               <span>{t('admin.demoNotice')}</span>
             </div>
             <span className="text-[10px] uppercase tracking-wider bg-amber-200 text-amber-900 px-2 py-0.5 rounded border border-amber-400 font-extrabold w-fit">
-              READ-ONLY DEMO
+              {t('admin.shell.readOnlyDemo')}
             </span>
           </div>
         )}
@@ -508,9 +511,9 @@ export default function AdminPage() {
           
           {/* Breadcrumb & Tab Title */}
           <div>
-            <h1 className="sr-only">Admin Control Center</h1>
+            <h1 className="sr-only">{t('admin.shell.heading')}</h1>
             <div className="flex items-center gap-1.5 text-[11px] font-mono text-matcha-muted">
-              <span>Admin</span>
+              <span>{t('admin.shell.breadcrumb')}</span>
               <ChevronRight size={11} aria-hidden="true" />
               <span className="text-matcha-primary font-bold">{navTabs.find(tab => tab.id === activeTab)?.label}</span>
             </div>
@@ -529,14 +532,14 @@ export default function AdminPage() {
                 type="text"
                 value={globalSearch}
                 onChange={(e) => setGlobalSearch(e.target.value)}
-                placeholder="Search metrics, SKU, orders, members..."
-                aria-label="Search metrics, SKU, orders, members"
+                placeholder={t('admin.shell.searchPlaceholder')}
+                aria-label={t('admin.shell.searchLabel')}
                 className="w-full h-9 pl-9 pr-8 rounded-xl border border-matcha-border bg-white font-mono text-xs text-matcha-text outline-none focus:ring-2 focus:ring-matcha-primary/40"
               />
               {globalSearch && (
                 <button
                   type="button"
-                  aria-label="Clear search"
+                  aria-label={t('admin.shell.clearSearch')}
                   onClick={() => setGlobalSearch('')}
                   className="absolute right-2.5 inset-y-0 my-auto h-fit text-xs text-matcha-accent hover:font-bold cursor-pointer"
                 >
@@ -553,7 +556,7 @@ export default function AdminPage() {
               className="h-9 px-3 rounded-xl bg-white border border-matcha-border hover:border-matcha-primary text-matcha-text font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary"
             >
               <RefreshCw size={13} className={Object.values(status).includes('loading') ? 'animate-spin' : ''} aria-hidden="true" />
-              <span>Refresh data</span>
+              <span>{t('admin.shell.refresh')}</span>
             </button>
 
             {/* Notifications Bell */}
@@ -584,7 +587,7 @@ export default function AdminPage() {
               className="h-9 px-4 bg-matcha-primary hover:bg-matcha-primary-dark text-white rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-matcha-primary"
             >
               <Plus size={14} />
-              <span>Add Garment</span>
+              <span>{t('admin.shell.addGarment')}</span>
             </button>
           </div>
         </header>
@@ -597,7 +600,7 @@ export default function AdminPage() {
           {/* ========================================================================= */}
           {(saving || mutationNotice) && (
             <div className="flex flex-wrap items-center gap-3 text-xs font-mono">
-              {saving && <span role="status">Saving changes…</span>}
+              {saving && <span role="status">{t('admin.shell.savingChanges')}</span>}
               {mutationNotice && <p role={mutationNotice.error ? 'alert' : 'status'} className={mutationNotice.error ? 'text-red-800' : 'text-green-900'}>{mutationNotice.error && `${t('errors.saveFailed')}: `}{mutationNotice.text}</p>}
             </div>
           )}

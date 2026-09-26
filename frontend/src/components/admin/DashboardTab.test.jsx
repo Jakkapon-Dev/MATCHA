@@ -25,10 +25,15 @@ vi.mock('../../services/api', () => ({
   apiErrorText: (error) => error?.message || 'failed'
 }));
 
-const language = { t: (key) => key };
-vi.mock('../../context/LanguageContext.jsx', () => ({
-  useLanguage: () => language
-}));
+vi.mock('../../context/LanguageContext.jsx', async () => {
+  const { translations } = await import('../../i18n/translations');
+  const resolve = (obj, key) => key.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
+  const t = (key, vars) => {
+    const v = resolve(translations.en, key) ?? key;
+    return typeof v === 'string' && vars ? v.replace(/\{(\w+)\}/g, (m, n) => (vars[n] ?? m)) : v;
+  };
+  return { useLanguage: () => ({ lang: 'en', t }) };
+});
 
 const { api } = await import('../../services/api');
 
