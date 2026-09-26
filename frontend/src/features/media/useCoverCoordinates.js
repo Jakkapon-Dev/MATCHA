@@ -1,5 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 
+export function coverPointPosition(point, frame, focusX = 0.5, focusY = 0.5) {
+  if (!frame) return { left: point.x, top: point.y };
+  const scale = Math.max(frame.width / frame.naturalWidth, frame.height / frame.naturalHeight);
+  const width = frame.naturalWidth * scale, height = frame.naturalHeight * scale;
+  return {
+    left: `${(parseFloat(point.x) / 100 * width - (width - frame.width) * focusX) / frame.width * 100}%`,
+    top: `${(parseFloat(point.y) / 100 * height - (height - frame.height) * focusY) / frame.height * 100}%`,
+  };
+}
+
 /* Pins are authored against the full photograph, so they have to be moved by
    whatever `object-fit: cover` threw away.
 
@@ -25,15 +35,7 @@ export default function useCoverCoordinates(imageUrl, focus = {}) {
     return () => { observer.disconnect(); image.removeEventListener('load', measure); };
   }, [imageUrl]);
 
-  const position = point => {
-    if (!frame) return { left: point.x, top: point.y };
-    const scale = Math.max(frame.width / frame.naturalWidth, frame.height / frame.naturalHeight);
-    const width = frame.naturalWidth * scale, height = frame.naturalHeight * scale;
-    return {
-      left: `${(parseFloat(point.x) / 100 * width - (width - frame.width) * focusX) / frame.width * 100}%`,
-      top: `${(parseFloat(point.y) / 100 * height - (height - frame.height) * focusY) / frame.height * 100}%`,
-    };
-  };
+  const position = point => coverPointPosition(point, frame, focusX, focusY);
 
   return { imageRef, position };
 }

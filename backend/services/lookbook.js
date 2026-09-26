@@ -33,38 +33,69 @@ export function resolveLookbooks(looks, products) {
   const productMap = new Map(products.flatMap(p => [[String(p._id), p], [p.id, p]]));
   const fallbackMap = new Map(defaults.flatMap(s => s.shoppableItems.map(i => [i.id, i])));
   return looks.filter(l => l.published).map(look => {
-    // A look saved before hotspots existed has no `items` at all, and .lean()
-    // does not apply schema defaults, so treat it as a look with no pins.
-    const items = (look.items ?? []).map(link => {
+    const resolveItem = (link, detailFallback = {}) => {
       const product = productMap.get(link.productId);
       const variant = product?.variants?.find(v => v.color === link.color);
       const colorMatches = !link.color || product?.color === link.color || Boolean(variant);
-      const fallback = fallbackMap.get(link.productId);
-      const source = product || fallback || {};
+      const source = product || fallbackMap.get(link.productId) || detailFallback;
       const sizes = (product?.sizes || []).filter(Boolean);
       const stock = availableStock(product);
       return {
         id: source.id || link.productId, productId: source.id || link.productId,
-        name: source.name || 'สินค้ายังไม่พร้อม', title: source.name || 'สินค้ายังไม่พร้อม',
-        price: source.price || 0, category: source.category || '',
+        name: source.name || source.title || 'สินค้ายังไม่พร้อม', title: source.name || source.title || 'สินค้ายังไม่พร้อม',
+        price: source.price ?? null, category: source.category || '',
         color: link.color || source.color || '', image: variant?.image || source.image || '',
         initialVariant: variant || { color: link.color || source.color || '', image: source.image || '', colorHex: source.colorHex },
         specs: product?.specs,
         isDemo: product?.isDemo || false,
         sizes, variants: product?.variants || [], gallery: product?.gallery || [], quantity: stock,
         inStock: Boolean(product && colorMatches && stock > 0 && sizes.length),
-        linked: Boolean(product), x: `${link.x}%`, y: `${link.y}%`
+        linked: Boolean(product), x: `${parseFloat(link.x)}%`, y: `${parseFloat(link.y)}%`
       };
-    });
+    };
+    // A look saved before hotspots existed has no `items` at all, and .lean()
+    // does not apply schema defaults, so treat it as a look with no pins.
+    const items = (look.items ?? []).map(link => resolveItem(link));
+    const itemByProductId = new Map(items.map(item => [item.productId, item]));
+    const detailHotspots = (look.editorial?.detailHotspots ?? []).map(photo => ({
+      ...photo,
+      hotspots: (photo.hotspots ?? []).map(hotspot => {
+        const item = itemByProductId.get(hotspot.productId) || resolveItem(hotspot, hotspot);
+        return { ...hotspot, ...item, id: hotspot.id, title: item.name,
+          imageQuadrant: item.linked ? undefined : hotspot.imageQuadrant,
+          x: hotspot.x, y: hotspot.y };
+      })
+    }));
     return { ...look.editorial, id: look.id, title: look.title, heroImage: look.heroImage,
-      hotspots: items.map((i, index) => ({ ...i, id: `HS-${look.id}-${index}` })), shoppableItems: items };
+      hotspots: items.map((i, index) => ({ ...i, id: `HS-${look.id}-${index}` })), detailHotspots, shoppableItems: items };
   });
+}
+
+export function mergeDefaultLook(existing, look) {
+  if (!existing) return look;
+  const sameCover = existing.heroImage === look.heroImage;
+  const items = existing.items ?? [];
+  const missingFootwear = sameCover ? look.items.filter(item =>
+    item.productId.endsWith('-SHOES') && !items.some(savedItem => savedItem.productId === item.productId)
+  ) : [];
+  const savedEditorial = existing.editorial ?? {};
+  const savedPhotos = savedEditorial.detailHotspots ?? [];
+  const defaultPhotos = look.editorial.detailHotspots ?? [];
+  const detailHotspots = defaultPhotos.map(photo =>
+    savedPhotos.find(saved => saved.image === photo.image) ?? photo
+  ).concat(savedPhotos.filter(photo => !defaultPhotos.some(defaultPhoto => defaultPhoto.image === photo.image)));
+  return {
+    ...existing,
+    items: [...items, ...missingFootwear],
+    editorial: { ...look.editorial, ...savedEditorial, detailHotspots }
+  };
 }
 
 export async function allLooks() {
   const saved = await Lookbook.find().sort({ id: 1 }).lean();
   const byId = new Map(saved.map(l => [l.id, l]));
-  return defaultLookbooks().map(l => byId.get(l.id) || l).concat(saved.filter(l => !defaults.some(d => d.id === l.id)));
+  return defaultLookbooks().map(look => mergeDefaultLook(byId.get(look.id), look))
+    .concat(saved.filter(l => !defaults.some(d => d.id === l.id)));
 }
 
 export async function findLinkedProducts(items) {

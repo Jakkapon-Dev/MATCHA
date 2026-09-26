@@ -18,7 +18,7 @@ import jwt from 'jsonwebtoken';
 import { v2 as cloudinary } from 'cloudinary';
 
 import { prepareImage, isManagedUrl, storeImage, deleteImage } from '../services/mediaStorage.js';
-import { defaultLookbooks, resolveLookbooks } from '../services/lookbook.js';
+import { defaultLookbooks, resolveLookbooks, mergeDefaultLook } from '../services/lookbook.js';
 import { findLinkedProducts } from '../routes/lookbookRoutes.js';
 import router from '../routes/mediaLookbook.js';
 import { setAuthGuards } from '../routes/mediaRoutes.js';
@@ -90,8 +90,45 @@ test('an image is recognised as ours whichever backend stored it', async (t) => 
 test('missing products remain visible as editorial but never become sellable', () => {
   const result = resolveLookbooks(defaultLookbooks(), []);
   assert.equal(result.length, 6);
-  assert.equal(result.flatMap(l => l.shoppableItems).length, 16);
+  assert.equal(result.flatMap(l => l.shoppableItems).length, 21);
   assert.ok(result.every(l => l.shoppableItems.every(i => !i.inStock && !i.linked)));
+});
+
+test('cover footwear stays unavailable until a real catalog product exists', () => {
+  const looks = resolveLookbooks(defaultLookbooks(), []);
+  assert.equal(looks.filter(l => l.shoppableItems.some(i => i.category === 'Shoes')).length, 5);
+  assert.equal(looks.find(l => l.id === 'SPREAD-03').shoppableItems.some(i => i.category === 'Shoes'), false);
+  for (const shoe of looks.flatMap(l => l.shoppableItems).filter(i => i.category === 'Shoes')) {
+    assert.equal(shoe.price, null);
+    assert.equal(shoe.inStock, false);
+    assert.equal(shoe.linked, false);
+  }
+});
+
+test('saved looks gain missing editorial photos and shoes only for the same cover', () => {
+  const base = defaultLookbooks()[0];
+  const saved = { ...base, revision: 3, editorial: { season: 'Autumn' }, items: base.items.slice(0, 3) };
+  const merged = mergeDefaultLook(saved, base);
+  assert.equal(merged.revision, 3);
+  assert.equal(merged.items.length, 4);
+  assert.equal(merged.editorial.detailHotspots.length, 2);
+  assert.equal(mergeDefaultLook({ ...saved, heroImage: '/images/another-cover.jpg' }, base).items.length, 3);
+});
+
+test('detail products resolve from the catalog while unmatched garments remain unavailable', () => {
+  const look = defaultLookbooks()[0];
+  const detail = look.editorial.detailHotspots[0].hotspots[0];
+  const product = {
+    _id: new mongoose.Types.ObjectId(), id: detail.productId, name: 'Catalog Jacket',
+    price: 77, category: 'Outerwear', color: detail.color, image: '/images/catalog-jacket.png',
+    sizes: ['M'], stock: 2
+  };
+  const resolved = resolveLookbooks([look], [product])[0].detailHotspots[0].hotspots;
+  assert.equal(resolved[0].name, 'Catalog Jacket');
+  assert.equal(resolved[0].inStock, true);
+  assert.equal(resolved[0].imageQuadrant, undefined);
+  assert.equal(resolved[1].inStock, false);
+  assert.equal(resolved[1].linked, false);
 });
 
 test('fresh host serves every bundled demo image without runtime uploads', async () => {
@@ -110,6 +147,12 @@ test('Lookbook resolves live price, image, stock and sizes; invalid colors are u
   const product = { id: 'LOOK-01-JACKET', name: 'Live jacket', image: '/api/media/files/new.webp', price: 137, color: 'Iridescent Lilac', quantity: 3, sizes: ['S', 'M'] };
   const item = resolveLookbooks(looks, [product])[0].shoppableItems[0];
   assert.equal(item.price, 137); assert.equal(item.name, 'Live jacket'); assert.equal(item.image, product.image); assert.equal(item.inStock, true);
+  const detailProduct = { id: 'LOOK-02-BLAZER', name: 'Live detail jacket', image: '/api/media/files/detail.webp', price: 119, color: 'Ivory', quantity: 3, sizes: ['S', 'M'] };
+  const detailPhoto = resolveLookbooks(looks, [detailProduct])[1].detailHotspots[0];
+  assert.equal(detailPhoto.hotspots.length, 4);
+  assert.equal(detailPhoto.hotspots[0].title, 'Navy Technical Hooded Parka');
+  assert.equal(detailPhoto.hotspots[0].price, null);
+  assert.equal(detailPhoto.hotspots[0].inStock, false);
   product.color = 'Different'; assert.equal(resolveLookbooks(looks, [product])[0].shoppableItems[0].inStock, false);
   looks[0].published = false; assert.equal(resolveLookbooks(looks, []).length, 5);
 });

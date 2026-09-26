@@ -40,6 +40,7 @@ const item = (id, extra = {}) => ({
 });
 const look = (id, detailImages, items, extra = {}) => ({
   id, title: `Look ${id}`, season: 'Autumn', heroImage: `/images/${id}-cover.jpg`, detailImages,
+  detailHotspots: detailImages.map((image, index) => ({ image, hotspots: items.map((i, n) => ({ ...i, id: `HS-${id}-${index}-${n}`, title: `Detail ${index + 1} ${i.title}`, x: '50%', y: '50%' })) })),
   photographer: 'Studio', location: 'Tokyo', palette: [], leadQuote: 'A quote', theme: 'Theme',
   hotspots: items.map((i, n) => ({ ...i, id: `HS-${id}-${n}` })), shoppableItems: items, ...extra
 });
@@ -49,7 +50,7 @@ vi.mock('../features/media/useLookbooks', () => ({
   default: () => ({ looks: mockLooks, loading: false, error: '', retry: vi.fn() })
 }));
 
-const { default: EditorialLookbookPage, lookGallery } = await import('./EditorialLookbookPage');
+const { default: EditorialLookbookPage, lookGallery, galleryHotspots } = await import('./EditorialLookbookPage');
 
 function Where() { return <div data-testid="where">{useLocation().pathname}</div>; }
 const renderPage = () => render(
@@ -84,6 +85,11 @@ describe('gallery list', () => {
     expect(lookGallery(mockLooks[3])).toEqual(['/images/D-cover.jpg', '/images/D-1.jpg']);
     expect(lookGallery({ heroImage: '/x.jpg' })).toEqual(['/x.jpg']);
     expect(lookGallery(null)).toEqual([]);
+  });
+  test('each detail photograph resolves its own hotspots and falls back for legacy looks', () => {
+    expect(galleryHotspots(mockLooks[0], 0).map(h => h.title)).toEqual(['Garment A1', 'Garment A2']);
+    expect(galleryHotspots(mockLooks[0], 1).map(h => h.title)).toEqual(['Detail 1 Garment A1', 'Detail 1 Garment A2']);
+    expect(galleryHotspots({ ...mockLooks[0], detailHotspots: undefined }, 1)).toEqual(mockLooks[0].hotspots);
   });
 });
 
@@ -167,13 +173,30 @@ describe('look detail gallery', () => {
     expect(within(spreadDialog()).getByRole('button', { name: /Add the whole look/i }).disabled).toBe(true);
   });
 
-  test('the close-ups carry no garment pins; the cover pins on the page are untouched', () => {
+  test('changing photographs updates both pins and the pieces list', () => {
+    mockLooks[0].detailHotspots[0] = {
+      image: mockLooks[0].detailImages[0],
+      title: 'Glasshouse Technical Uniform',
+      narrativeEn: 'A navy parka with black cargo trousers and boots.',
+      hotspots: [
+        item('DETAIL-PARKA', { id: 'HS-parka', name: 'Navy Parka', title: 'Navy Parka', price: null, inStock: false, linked: false }),
+        item('DETAIL-CARGO', { id: 'HS-cargo', name: 'Black Cargo Trousers', title: 'Black Cargo Trousers', price: null, inStock: false, linked: false }),
+        item('DETAIL-BOOTS', { id: 'HS-boots', name: 'Combat Boots', title: 'Combat Boots', price: null, inStock: false, linked: false })
+      ]
+    };
     renderPage();
     const pinsBefore = screen.getAllByRole('button', { name: /Garment A1/ }).filter(b => b.getAttribute('aria-pressed') !== null).length;
     expect(pinsBefore).toBe(1);
     openCover();
     fireEvent.click(thumbs()[1]);
-    expect(within(spreadDialog()).queryAllByRole('button', { pressed: false }).filter(b => /Highlight/i.test(b.getAttribute('aria-label') || ''))).toHaveLength(0);
+    expect(within(spreadDialog()).getByRole('heading', { name: 'Glasshouse Technical Uniform' })).toBeTruthy();
+    expect(within(spreadDialog()).getAllByRole('button', { name: /Highlight Navy Parka/ })).toHaveLength(1);
+    expect(within(spreadDialog()).queryByText('Garment A1', { exact: true })).toBeNull();
+    expect(within(spreadDialog()).getByText('Navy Parka')).toBeTruthy();
+    expect(within(spreadDialog()).getByText('Combat Boots')).toBeTruthy();
+    expect(within(spreadDialog()).queryByText('$0.00')).toBeNull();
+    fireEvent.click(thumbs()[2]);
+    expect(within(spreadDialog()).getByText('Detail 2 Garment A1')).toBeTruthy();
     fireEvent.click(within(spreadDialog()).getByRole('button', { name: 'Close' }));
     expect(screen.getAllByRole('button', { name: /Garment A1/ }).filter(b => b.getAttribute('aria-pressed') !== null)).toHaveLength(pinsBefore);
   });
@@ -200,6 +223,7 @@ describe('pieces and actions in the detail view', () => {
 
   test('Add the whole look still adds the pieces', () => {
     mockLooks[0].shoppableItems = [item('A1'), item('A3')];
+    mockLooks[0].hotspots = [item('A1'), item('A3')];
     renderPage();
     openCover();
     fireEvent.click(within(spreadDialog()).getByRole('button', { name: /Add the whole look/i }));

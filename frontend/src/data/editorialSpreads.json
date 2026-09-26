@@ -70,6 +70,19 @@
         "color": "Black",
         "productId": "LOOK-01-CARGO",
         "image": "/images/lookbook_flatlay/01-cargo.png"
+      },
+      {
+        "id": "HS-LOOK-01-SHOES",
+        "x": "62%",
+        "y": "89%",
+        "title": "Black Buckled Combat Boots",
+        "category": "Shoes",
+        "price": null,
+        "color": "Black",
+        "productId": "LOOK-01-SHOES",
+        "image": "/images/lookbook_flatlay/01-cover-boots-v1.png",
+        "linked": false,
+        "inStock": false
       }
     ],
     "shoppableItems": [
@@ -96,6 +109,134 @@
         "category": "Bottoms",
         "color": "Black",
         "image": "/images/lookbook_flatlay/01-cargo.png"
+      },
+      {
+        "id": "LOOK-01-SHOES",
+        "name": "Black Buckled Combat Boots",
+        "price": null,
+        "category": "Shoes",
+        "color": "Black",
+        "image": "/images/lookbook_flatlay/01-cover-boots-v1.png",
+        "linked": false,
+        "inStock": false
+      }
+    ],
+    "detailHotspots": [
+      {
+        "image": "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_standing_in_jacket_001.jpeg",
+        "title": "Concrete Olive Bomber",
+        "theme": "URBAN UTILITY",
+        "location": "",
+        "leadQuote": "",
+        "narrative": "เสื้อบอมเบอร์สีโอลีฟ กางเกงทรงกว้างสีชาร์โคล และรองเท้าสวมพื้นหนาในฉากคอนกรีต",
+        "narrativeEn": "An olive bomber, wide charcoal trousers and sturdy slip-on shoes against concrete.",
+        "hotspots": [
+          {
+            "id": "HS-SPREAD-01-detail1-1",
+            "productId": "SPREAD-01-DETAIL1-1",
+            "name": "Olive Zip Bomber Jacket",
+            "title": "Olive Zip Bomber Jacket",
+            "category": "Outerwear",
+            "color": "Olive",
+            "image": "/images/lookbook_flatlay/01-detail1-sheet-v1.png",
+            "imageQuadrant": 0,
+            "x": "51%",
+            "y": "43%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-01-detail1-2",
+            "productId": "SPREAD-01-DETAIL1-2",
+            "name": "Charcoal Wide Tailored Trousers",
+            "title": "Charcoal Wide Tailored Trousers",
+            "category": "Bottoms",
+            "color": "Charcoal",
+            "image": "/images/lookbook_flatlay/01-detail1-sheet-v1.png",
+            "imageQuadrant": 1,
+            "x": "53%",
+            "y": "70%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-01-detail1-3",
+            "productId": "SPREAD-01-DETAIL1-3",
+            "name": "Olive Chunky Slip-On Shoes",
+            "title": "Olive Chunky Slip-On Shoes",
+            "category": "Shoes",
+            "color": "Olive / Black",
+            "image": "/images/lookbook_flatlay/01-detail1-sheet-v1.png",
+            "imageQuadrant": 2,
+            "x": "44%",
+            "y": "94%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          }
+        ],
+        "season": "",
+        "seasonThai": ""
+      },
+      {
+        "image": "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_standing_on_concrete_stair_001.jpeg",
+        "title": "Cable Knit on Concrete",
+        "theme": "TEXTURED MINIMAL",
+        "location": "",
+        "leadQuote": "",
+        "narrative": "เสื้อถักลายเคเบิลสีครีมตัดกับกางเกงหนังและบูตสีดำบนบันไดคอนกรีต",
+        "narrativeEn": "Cream cable knit meets black leather trousers and chunky boots on the concrete steps.",
+        "hotspots": [
+          {
+            "id": "HS-SPREAD-01-detail2-1",
+            "productId": "SPREAD-01-DETAIL2-1",
+            "name": "Ivory Cable-Knit Turtleneck",
+            "title": "Ivory Cable-Knit Turtleneck",
+            "category": "Tops",
+            "color": "Ivory",
+            "image": "/images/lookbook_flatlay/01-detail2-sheet-v1.png",
+            "imageQuadrant": 0,
+            "x": "52%",
+            "y": "43%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-01-detail2-2",
+            "productId": "SPREAD-01-DETAIL2-2",
+            "name": "Black Straight Leather Trousers",
+            "title": "Black Straight Leather Trousers",
+            "category": "Bottoms",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/01-detail2-sheet-v1.png",
+            "imageQuadrant": 1,
+            "x": "53%",
+            "y": "67%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-01-detail2-3",
+            "productId": "SPREAD-01-DETAIL2-3",
+            "name": "Black Chunky Chelsea Boots",
+            "title": "Black Chunky Chelsea Boots",
+            "category": "Shoes",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/01-detail2-sheet-v1.png",
+            "imageQuadrant": 2,
+            "x": "55%",
+            "y": "86%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          }
+        ],
+        "season": "",
+        "seasonThai": ""
       }
     ]
   },
@@ -170,6 +311,19 @@
         "color": "Ivory",
         "productId": "LOOK-02-TROUSERS",
         "image": "/images/lookbook_flatlay/02-trousers.png"
+      },
+      {
+        "id": "HS-LOOK-02-SHOES",
+        "x": "60%",
+        "y": "93%",
+        "title": "Brown Leather Sandals",
+        "category": "Shoes",
+        "price": null,
+        "color": "Brown",
+        "productId": "LOOK-02-SHOES",
+        "image": "/images/lookbook_flatlay/02-cover-sandals-v1.png",
+        "linked": false,
+        "inStock": false
       }
     ],
     "shoppableItems": [
@@ -196,6 +350,158 @@
         "category": "Bottoms",
         "color": "Ivory",
         "image": "/images/lookbook_flatlay/02-trousers.png"
+      },
+      {
+        "id": "LOOK-02-SHOES",
+        "name": "Brown Leather Sandals",
+        "price": null,
+        "category": "Shoes",
+        "color": "Brown",
+        "image": "/images/lookbook_flatlay/02-cover-sandals-v1.png",
+        "linked": false,
+        "inStock": false
+      }
+    ],
+    "detailHotspots": [
+      {
+        "image": "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_adjusting_sunglasses_001.jpeg",
+        "title": "Glasshouse Technical Uniform",
+        "theme": "URBAN TECHWEAR",
+        "location": "Shinjuku Glass Pavilion • Tokyo, Japan",
+        "leadQuote": "“Shelter and structure in one silhouette.”",
+        "narrative": "เสื้อคลุมเทคนิคสีน้ำเงินเข้มจับคู่กางเกงคาร์โก้สีดำ รองเท้าบูต และแว่นทรงเหลี่ยม ให้ลุคที่พร้อมเคลื่อนไหวในเมือง",
+        "narrativeEn": "A midnight navy technical parka meets black cargo trousers, combat boots and narrow sunglasses. The silhouette is built for movement under the glass canopy.",
+        "hotspots": [
+          {
+            "id": "HS-02-detail-parka",
+            "productId": "LOOK-02-DETAIL-PARKA",
+            "name": "Navy Technical Hooded Parka",
+            "title": "Navy Technical Hooded Parka",
+            "category": "Outerwear",
+            "color": "Midnight Navy",
+            "image": "/images/lookbook_flatlay/02-navy-parka-v1.png",
+            "x": "56%",
+            "y": "39%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-02-detail-cargo",
+            "productId": "LOOK-02-DETAIL-CARGO",
+            "name": "Black Technical Cargo Trousers",
+            "title": "Black Technical Cargo Trousers",
+            "category": "Bottoms",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/02-black-cargo-v1.png",
+            "x": "57%",
+            "y": "71%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-02-detail-boots",
+            "productId": "LOOK-02-DETAIL-BOOTS",
+            "name": "Black Combat Boots",
+            "title": "Black Combat Boots",
+            "category": "Shoes",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/02-black-combat-boots-v1.png",
+            "x": "61%",
+            "y": "89%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-02-detail-sunglasses",
+            "productId": "LOOK-02-DETAIL-SUNGLASSES",
+            "name": "Black Rectangular Sunglasses",
+            "title": "Black Rectangular Sunglasses",
+            "category": "Accessories",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/02-black-sunglasses-v1.png",
+            "x": "51%",
+            "y": "16%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          }
+        ]
+      },
+      {
+        "image": "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_wearing_oversized_denim_ja_001.jpeg",
+        "title": "Denim Geometry",
+        "theme": "MODERN DENIM",
+        "location": "",
+        "leadQuote": "",
+        "narrative": "แจ็กเก็ตยีนส์โอเวอร์ไซซ์สวมทับเสื้อยืดขาว จับคู่ยีนส์ทรงกว้างและสนีกเกอร์หลายสี",
+        "narrativeEn": "An oversized denim jacket layers over a white tee, wide jeans and multicolour sneakers.",
+        "hotspots": [
+          {
+            "id": "HS-SPREAD-02-detail2-1",
+            "productId": "SPREAD-02-DETAIL2-1",
+            "name": "Oversized Washed Denim Jacket",
+            "title": "Oversized Washed Denim Jacket",
+            "category": "Outerwear",
+            "color": "Faded Blue",
+            "image": "/images/lookbook_flatlay/02-detail2-sheet-v1.png",
+            "imageQuadrant": 0,
+            "x": "40%",
+            "y": "39%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-02-detail2-2",
+            "productId": "SPREAD-02-DETAIL2-2",
+            "name": "White Crewneck T-Shirt",
+            "title": "White Crewneck T-Shirt",
+            "category": "Tops",
+            "color": "White",
+            "image": "/images/lookbook_flatlay/02-detail2-sheet-v1.png",
+            "imageQuadrant": 1,
+            "x": "51%",
+            "y": "35%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-02-detail2-3",
+            "productId": "SPREAD-02-DETAIL2-3",
+            "name": "Wide-Leg Blue Jeans",
+            "title": "Wide-Leg Blue Jeans",
+            "category": "Bottoms",
+            "color": "Blue",
+            "image": "/images/lookbook_flatlay/02-detail2-sheet-v1.png",
+            "imageQuadrant": 2,
+            "x": "52%",
+            "y": "70%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-02-detail2-4",
+            "productId": "SPREAD-02-DETAIL2-4",
+            "name": "Retro Multicolour Sneakers",
+            "title": "Retro Multicolour Sneakers",
+            "category": "Shoes",
+            "color": "Navy / Cream",
+            "image": "/images/lookbook_flatlay/02-detail2-sheet-v1.png",
+            "imageQuadrant": 3,
+            "x": "53%",
+            "y": "90%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          }
+        ],
+        "season": "",
+        "seasonThai": ""
       }
     ]
   },
@@ -297,6 +603,154 @@
         "color": "Ivory",
         "image": "/images/lookbook_flatlay/03-trousers.png"
       }
+    ],
+    "detailHotspots": [
+      {
+        "image": "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_walking_across_glass_bridge_001.jpeg",
+        "title": "After Dark on the Bridge",
+        "theme": "NIGHT UTILITY",
+        "location": "",
+        "leadQuote": "",
+        "narrative": "แจ็กเก็ตเทคนิคสีดำ กางเกงพลีตสีเงิน สนีกเกอร์ และกระเป๋าสะพายบนสะพานที่ส่องแสง",
+        "narrativeEn": "A black utility jacket, silver pleated trousers, sneakers and crossbody bag on the illuminated bridge.",
+        "hotspots": [
+          {
+            "id": "HS-SPREAD-03-detail1-1",
+            "productId": "SPREAD-03-DETAIL1-1",
+            "name": "Black Utility Jacket",
+            "title": "Black Utility Jacket",
+            "category": "Outerwear",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/03-detail1-sheet-v1.png",
+            "imageQuadrant": 0,
+            "x": "44%",
+            "y": "41%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-03-detail1-2",
+            "productId": "SPREAD-03-DETAIL1-2",
+            "name": "Metallic Silver Pleated Trousers",
+            "title": "Metallic Silver Pleated Trousers",
+            "category": "Bottoms",
+            "color": "Silver",
+            "image": "/images/lookbook_flatlay/03-detail1-sheet-v1.png",
+            "imageQuadrant": 1,
+            "x": "52%",
+            "y": "66%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-03-detail1-3",
+            "productId": "SPREAD-03-DETAIL1-3",
+            "name": "Black Silver Chunky Sneakers",
+            "title": "Black Silver Chunky Sneakers",
+            "category": "Shoes",
+            "color": "Black / Silver",
+            "image": "/images/lookbook_flatlay/03-detail1-sheet-v1.png",
+            "imageQuadrant": 2,
+            "x": "61%",
+            "y": "87%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-03-detail1-4",
+            "productId": "SPREAD-03-DETAIL1-4",
+            "name": "Black Crossbody Bag",
+            "title": "Black Crossbody Bag",
+            "category": "Accessories",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/03-detail1-sheet-v1.png",
+            "imageQuadrant": 3,
+            "x": "59%",
+            "y": "44%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          }
+        ],
+        "season": "",
+        "seasonThai": ""
+      },
+      {
+        "image": "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_looking_at_horizon_001.jpeg",
+        "title": "Basalt Coast Layers",
+        "theme": "COASTAL MONOCHROME",
+        "location": "",
+        "leadQuote": "",
+        "narrative": "เสื้อกั๊กผ้าทิ้งตัวและเสื้อคอเต่าสีดำ จับคู่กางเกงทรงกว้างและบูตบนโขดหินริมทะเล",
+        "narrativeEn": "A draped vest and turtleneck pair with wide black trousers and lace-up boots on the basalt coast.",
+        "hotspots": [
+          {
+            "id": "HS-SPREAD-03-detail2-1",
+            "productId": "SPREAD-03-DETAIL2-1",
+            "name": "Black Draped Sleeveless Vest",
+            "title": "Black Draped Sleeveless Vest",
+            "category": "Outerwear",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/03-detail2-sheet-v1.png",
+            "imageQuadrant": 0,
+            "x": "51%",
+            "y": "42%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-03-detail2-2",
+            "productId": "SPREAD-03-DETAIL2-2",
+            "name": "Black Ribbed Turtleneck",
+            "title": "Black Ribbed Turtleneck",
+            "category": "Tops",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/03-detail2-sheet-v1.png",
+            "imageQuadrant": 1,
+            "x": "47%",
+            "y": "29%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-03-detail2-3",
+            "productId": "SPREAD-03-DETAIL2-3",
+            "name": "Black Flowing Wide Trousers",
+            "title": "Black Flowing Wide Trousers",
+            "category": "Bottoms",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/03-detail2-sheet-v1.png",
+            "imageQuadrant": 2,
+            "x": "53%",
+            "y": "72%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-03-detail2-4",
+            "productId": "SPREAD-03-DETAIL2-4",
+            "name": "Black Lace-Up Ankle Boots",
+            "title": "Black Lace-Up Ankle Boots",
+            "category": "Shoes",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/03-detail2-sheet-v1.png",
+            "imageQuadrant": 3,
+            "x": "56%",
+            "y": "88%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          }
+        ],
+        "season": "",
+        "seasonThai": ""
+      }
     ]
   },
   {
@@ -359,6 +813,19 @@
         "color": "Copper",
         "productId": "LOOK-04-TROUSERS",
         "image": "/images/lookbook_flatlay/04-trousers.png"
+      },
+      {
+        "id": "HS-LOOK-04-SHOES",
+        "x": "67%",
+        "y": "91%",
+        "title": "Gold Pointed Heels",
+        "category": "Shoes",
+        "price": null,
+        "color": "Gold",
+        "productId": "LOOK-04-SHOES",
+        "image": "/images/lookbook_flatlay/04-cover-heels-v1.png",
+        "linked": false,
+        "inStock": false
       }
     ],
     "shoppableItems": [
@@ -377,6 +844,164 @@
         "category": "Bottoms",
         "color": "Copper",
         "image": "/images/lookbook_flatlay/04-trousers.png"
+      },
+      {
+        "id": "LOOK-04-SHOES",
+        "name": "Gold Pointed Heels",
+        "price": null,
+        "category": "Shoes",
+        "color": "Gold",
+        "image": "/images/lookbook_flatlay/04-cover-heels-v1.png",
+        "linked": false,
+        "inStock": false
+      }
+    ],
+    "detailHotspots": [
+      {
+        "image": "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_standing_between_concrete_001.jpeg",
+        "title": "Concrete Grey Uniform",
+        "theme": "ARCHITECTURAL GREY",
+        "location": "",
+        "leadQuote": "",
+        "narrative": "แจ็กเก็ตสีเทา เสื้อถักชาร์โคล กางเกงเทาทรงเรียว และบูตดำท่ามกลางเสาคอนกรีต",
+        "narrativeEn": "A slate jacket, charcoal knit, tapered grey trousers and black boots between concrete pillars.",
+        "hotspots": [
+          {
+            "id": "HS-SPREAD-04-detail1-1",
+            "productId": "SPREAD-04-DETAIL1-1",
+            "name": "Slate Technical Zip Jacket",
+            "title": "Slate Technical Zip Jacket",
+            "category": "Outerwear",
+            "color": "Slate Grey",
+            "image": "/images/lookbook_flatlay/04-detail1-sheet-v1.png",
+            "imageQuadrant": 0,
+            "x": "60%",
+            "y": "52%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-04-detail1-2",
+            "productId": "SPREAD-04-DETAIL1-2",
+            "name": "Charcoal Crewneck Knit",
+            "title": "Charcoal Crewneck Knit",
+            "category": "Tops",
+            "color": "Charcoal",
+            "image": "/images/lookbook_flatlay/04-detail1-sheet-v1.png",
+            "imageQuadrant": 1,
+            "x": "48%",
+            "y": "47%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-04-detail1-3",
+            "productId": "SPREAD-04-DETAIL1-3",
+            "name": "Grey Tapered Trousers",
+            "title": "Grey Tapered Trousers",
+            "category": "Bottoms",
+            "color": "Grey",
+            "image": "/images/lookbook_flatlay/04-detail1-sheet-v1.png",
+            "imageQuadrant": 2,
+            "x": "52%",
+            "y": "72%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-04-detail1-4",
+            "productId": "SPREAD-04-DETAIL1-4",
+            "name": "Black Leather Ankle Boots",
+            "title": "Black Leather Ankle Boots",
+            "category": "Shoes",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/04-detail1-sheet-v1.png",
+            "imageQuadrant": 3,
+            "x": "58%",
+            "y": "88%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          }
+        ],
+        "season": "",
+        "seasonThai": ""
+      },
+      {
+        "image": "/images/location_lifestyle/cyber_techwear/spring/location_cyber_techwear_spring_sitting_against_mirror_001.jpeg",
+        "title": "Silver Reflection",
+        "theme": "REFLECTIVE WINTER",
+        "location": "",
+        "leadQuote": "",
+        "narrative": "เสื้อพัฟเฟอร์สีเงินทับเสื้อคอเต่าสีเข้ม กางเกงดำและบูตหนาบนพื้นเกลือ",
+        "narrativeEn": "A reflective silver puffer over a dark ribbed knit, black trousers and chunky boots.",
+        "hotspots": [
+          {
+            "id": "HS-SPREAD-04-detail2-1",
+            "productId": "SPREAD-04-DETAIL2-1",
+            "name": "Silver Cropped Puffer Jacket",
+            "title": "Silver Cropped Puffer Jacket",
+            "category": "Outerwear",
+            "color": "Silver",
+            "image": "/images/lookbook_flatlay/04-detail2-sheet-v1.png",
+            "imageQuadrant": 0,
+            "x": "39%",
+            "y": "63%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-04-detail2-2",
+            "productId": "SPREAD-04-DETAIL2-2",
+            "name": "Charcoal Ribbed Turtleneck",
+            "title": "Charcoal Ribbed Turtleneck",
+            "category": "Tops",
+            "color": "Charcoal",
+            "image": "/images/lookbook_flatlay/04-detail2-sheet-v1.png",
+            "imageQuadrant": 1,
+            "x": "52%",
+            "y": "61%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-04-detail2-3",
+            "productId": "SPREAD-04-DETAIL2-3",
+            "name": "Black Straight Trousers",
+            "title": "Black Straight Trousers",
+            "category": "Bottoms",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/04-detail2-sheet-v1.png",
+            "imageQuadrant": 2,
+            "x": "59%",
+            "y": "76%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-04-detail2-4",
+            "productId": "SPREAD-04-DETAIL2-4",
+            "name": "Black Chunky Lace-Up Boots",
+            "title": "Black Chunky Lace-Up Boots",
+            "category": "Shoes",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/04-detail2-sheet-v1.png",
+            "imageQuadrant": 3,
+            "x": "55%",
+            "y": "88%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          }
+        ],
+        "season": "",
+        "seasonThai": ""
       }
     ]
   },
@@ -440,6 +1065,19 @@
         "color": "Charcoal",
         "productId": "LOOK-05-CARGO",
         "image": "/images/lookbook_flatlay/05-cargo.png"
+      },
+      {
+        "id": "HS-LOOK-05-SHOES",
+        "x": "67%",
+        "y": "87%",
+        "title": "Black Lace-Up Combat Boots",
+        "category": "Shoes",
+        "price": null,
+        "color": "Black",
+        "productId": "LOOK-05-SHOES",
+        "image": "/images/lookbook_flatlay/05-cover-boots-v1.png",
+        "linked": false,
+        "inStock": false
       }
     ],
     "shoppableItems": [
@@ -458,6 +1096,149 @@
         "category": "Bottoms",
         "color": "Charcoal",
         "image": "/images/lookbook_flatlay/05-cargo.png"
+      },
+      {
+        "id": "LOOK-05-SHOES",
+        "name": "Black Lace-Up Combat Boots",
+        "price": null,
+        "category": "Shoes",
+        "color": "Black",
+        "image": "/images/lookbook_flatlay/05-cover-boots-v1.png",
+        "linked": false,
+        "inStock": false
+      }
+    ],
+    "detailHotspots": [
+      {
+        "image": "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_standing_near_rusted_gears_001.jpeg",
+        "title": "Silver Against Rust",
+        "theme": "INDUSTRIAL METALLIC",
+        "location": "",
+        "leadQuote": "",
+        "narrative": "เสื้อเกาะอกและกางเกงสีเงินซ้อนกับเสื้อตาข่ายสีดำ ปิดลุคด้วยบูตหัวเข็มขัด",
+        "narrativeEn": "A silver bustier and trousers layer with black mesh and buckle boots against rusted gears.",
+        "hotspots": [
+          {
+            "id": "HS-SPREAD-05-detail1-1",
+            "productId": "SPREAD-05-DETAIL1-1",
+            "name": "Metallic Silver Bustier",
+            "title": "Metallic Silver Bustier",
+            "category": "Tops",
+            "color": "Silver",
+            "image": "/images/lookbook_flatlay/05-detail1-sheet-v1.png",
+            "imageQuadrant": 0,
+            "x": "51%",
+            "y": "41%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-05-detail1-2",
+            "productId": "SPREAD-05-DETAIL1-2",
+            "name": "Black Sheer Mesh Top",
+            "title": "Black Sheer Mesh Top",
+            "category": "Tops",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/05-detail1-sheet-v1.png",
+            "imageQuadrant": 1,
+            "x": "61%",
+            "y": "39%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-05-detail1-3",
+            "productId": "SPREAD-05-DETAIL1-3",
+            "name": "Silver Straight Trousers",
+            "title": "Silver Straight Trousers",
+            "category": "Bottoms",
+            "color": "Silver",
+            "image": "/images/lookbook_flatlay/05-detail1-sheet-v1.png",
+            "imageQuadrant": 2,
+            "x": "52%",
+            "y": "68%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-05-detail1-4",
+            "productId": "SPREAD-05-DETAIL1-4",
+            "name": "Black Buckle Combat Boots",
+            "title": "Black Buckle Combat Boots",
+            "category": "Shoes",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/05-detail1-sheet-v1.png",
+            "imageQuadrant": 3,
+            "x": "54%",
+            "y": "88%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          }
+        ],
+        "season": "",
+        "seasonThai": ""
+      },
+      {
+        "image": "/images/location_lifestyle/urban_street/autumn/location_urban_street_autumn_sitting_on_rattan_chair_001.jpeg",
+        "title": "Warm Coastal Linen",
+        "theme": "RELAXED LINEN",
+        "location": "",
+        "leadQuote": "",
+        "narrative": "เชิ้ตลินินสีเบจ กางเกงสีงาช้าง และรองเท้าแตะหนังสีน้ำตาลในห้องริมทะเล",
+        "narrativeEn": "A relaxed beige linen shirt, ivory trousers and brown leather sandals by the sea.",
+        "hotspots": [
+          {
+            "id": "HS-SPREAD-05-detail2-1",
+            "productId": "SPREAD-05-DETAIL2-1",
+            "name": "Relaxed Beige Linen Shirt",
+            "title": "Relaxed Beige Linen Shirt",
+            "category": "Tops",
+            "color": "Beige",
+            "image": "/images/lookbook_flatlay/05-detail2-sheet-v1.png",
+            "imageQuadrant": 0,
+            "x": "36%",
+            "y": "54%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-05-detail2-2",
+            "productId": "SPREAD-05-DETAIL2-2",
+            "name": "Ivory Relaxed Linen Trousers",
+            "title": "Ivory Relaxed Linen Trousers",
+            "category": "Bottoms",
+            "color": "Ivory",
+            "image": "/images/lookbook_flatlay/05-detail2-sheet-v1.png",
+            "imageQuadrant": 1,
+            "x": "59%",
+            "y": "72%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-05-detail2-3",
+            "productId": "SPREAD-05-DETAIL2-3",
+            "name": "Brown Leather Sandals",
+            "title": "Brown Leather Sandals",
+            "category": "Shoes",
+            "color": "Brown",
+            "image": "/images/lookbook_flatlay/05-detail2-sheet-v1.png",
+            "imageQuadrant": 2,
+            "x": "67%",
+            "y": "93%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          }
+        ],
+        "season": "",
+        "seasonThai": ""
       }
     ]
   },
@@ -532,6 +1313,19 @@
         "color": "Black",
         "productId": "LOOK-06-SHORTS",
         "image": "/images/lookbook_flatlay/06-shorts.png"
+      },
+      {
+        "id": "HS-LOOK-06-SHOES",
+        "x": "64%",
+        "y": "87%",
+        "title": "Black Chunky Technical Sneakers",
+        "category": "Shoes",
+        "price": null,
+        "color": "Black",
+        "productId": "LOOK-06-SHOES",
+        "image": "/images/lookbook_flatlay/06-cover-sneakers-v1.png",
+        "linked": false,
+        "inStock": false
       }
     ],
     "shoppableItems": [
@@ -558,6 +1352,164 @@
         "category": "Bottoms",
         "color": "Black",
         "image": "/images/lookbook_flatlay/06-shorts.png"
+      },
+      {
+        "id": "LOOK-06-SHOES",
+        "name": "Black Chunky Technical Sneakers",
+        "price": null,
+        "category": "Shoes",
+        "color": "Black",
+        "image": "/images/lookbook_flatlay/06-cover-sneakers-v1.png",
+        "linked": false,
+        "inStock": false
+      }
+    ],
+    "detailHotspots": [
+      {
+        "image": "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_leaning_against_glass_railing_001.jpeg",
+        "title": "Nightline Tailoring",
+        "theme": "NIGHT CITY",
+        "location": "",
+        "leadQuote": "",
+        "narrative": "โค้ตสีเทาเดินเส้นสะท้อนแสง ทับเสื้อซิปสีดำและกางเกงเข้ารูป ปิดด้วยบูตหนัง",
+        "narrativeEn": "A reflective-trim charcoal coat over a black zip top, tapered trousers and leather boots.",
+        "hotspots": [
+          {
+            "id": "HS-SPREAD-06-detail1-1",
+            "productId": "SPREAD-06-DETAIL1-1",
+            "name": "Reflective-Trim Charcoal Coat",
+            "title": "Reflective-Trim Charcoal Coat",
+            "category": "Outerwear",
+            "color": "Charcoal",
+            "image": "/images/lookbook_flatlay/06-detail1-sheet-v1.png",
+            "imageQuadrant": 0,
+            "x": "56%",
+            "y": "43%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-06-detail1-2",
+            "productId": "SPREAD-06-DETAIL1-2",
+            "name": "Black High-Neck Zip Top",
+            "title": "Black High-Neck Zip Top",
+            "category": "Tops",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/06-detail1-sheet-v1.png",
+            "imageQuadrant": 1,
+            "x": "50%",
+            "y": "38%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-06-detail1-3",
+            "productId": "SPREAD-06-DETAIL1-3",
+            "name": "Black Tapered Trousers",
+            "title": "Black Tapered Trousers",
+            "category": "Bottoms",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/06-detail1-sheet-v1.png",
+            "imageQuadrant": 2,
+            "x": "53%",
+            "y": "68%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-06-detail1-4",
+            "productId": "SPREAD-06-DETAIL1-4",
+            "name": "Black Leather Lace-Up Boots",
+            "title": "Black Leather Lace-Up Boots",
+            "category": "Shoes",
+            "color": "Black",
+            "image": "/images/lookbook_flatlay/06-detail1-sheet-v1.png",
+            "imageQuadrant": 3,
+            "x": "61%",
+            "y": "89%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          }
+        ],
+        "season": "",
+        "seasonThai": ""
+      },
+      {
+        "image": "/images/location_lifestyle/urban_street/spring/location_urban_street_spring_stepping_down_concrete_stair_001.jpeg",
+        "title": "Navy Cape on Concrete",
+        "theme": "UTILITY LAYERING",
+        "location": "",
+        "leadQuote": "",
+        "narrative": "เคปสีน้ำเงินเข้มทับเสื้อถักชาร์โคล กางเกงคาร์โก้และบูตหนังสีน้ำตาลบนบันไดคอนกรีต",
+        "narrativeEn": "A navy cape over charcoal knit, cargo trousers and brown leather boots on concrete stairs.",
+        "hotspots": [
+          {
+            "id": "HS-SPREAD-06-detail2-1",
+            "productId": "SPREAD-06-DETAIL2-1",
+            "name": "Navy Buckled Cape Coat",
+            "title": "Navy Buckled Cape Coat",
+            "category": "Outerwear",
+            "color": "Midnight Navy",
+            "image": "/images/lookbook_flatlay/06-detail2-sheet-v1.png",
+            "imageQuadrant": 0,
+            "x": "54%",
+            "y": "41%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-06-detail2-2",
+            "productId": "SPREAD-06-DETAIL2-2",
+            "name": "Charcoal Ribbed Sweater",
+            "title": "Charcoal Ribbed Sweater",
+            "category": "Tops",
+            "color": "Charcoal",
+            "image": "/images/lookbook_flatlay/06-detail2-sheet-v1.png",
+            "imageQuadrant": 1,
+            "x": "50%",
+            "y": "45%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-06-detail2-3",
+            "productId": "SPREAD-06-DETAIL2-3",
+            "name": "Grey Utility Cargo Trousers",
+            "title": "Grey Utility Cargo Trousers",
+            "category": "Bottoms",
+            "color": "Grey",
+            "image": "/images/lookbook_flatlay/06-detail2-sheet-v1.png",
+            "imageQuadrant": 2,
+            "x": "53%",
+            "y": "68%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          },
+          {
+            "id": "HS-SPREAD-06-detail2-4",
+            "productId": "SPREAD-06-DETAIL2-4",
+            "name": "Brown Leather Combat Boots",
+            "title": "Brown Leather Combat Boots",
+            "category": "Shoes",
+            "color": "Brown",
+            "image": "/images/lookbook_flatlay/06-detail2-sheet-v1.png",
+            "imageQuadrant": 3,
+            "x": "58%",
+            "y": "87%",
+            "linked": false,
+            "inStock": false,
+            "price": null
+          }
+        ],
+        "season": "",
+        "seasonThai": ""
       }
     ]
   }
