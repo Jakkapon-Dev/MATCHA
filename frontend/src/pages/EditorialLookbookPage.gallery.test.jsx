@@ -200,6 +200,20 @@ describe('look detail gallery', () => {
     fireEvent.click(within(spreadDialog()).getByRole('button', { name: 'Close' }));
     expect(screen.getAllByRole('button', { name: /Garment A1/ }).filter(b => b.getAttribute('aria-pressed') !== null)).toHaveLength(pinsBefore);
   });
+
+  test('a catalog-linked piece in the second photograph can be added to the cart', () => {
+    mockLooks[0].detailHotspots[0].hotspots = [item('DETAIL-READY', {
+      id: 'HS-detail-ready', name: 'Olive Zip Bomber Jacket', title: 'Olive Zip Bomber Jacket',
+      category: 'Outerwear', color: 'Olive', sizes: ['M'], price: 119, inStock: true, linked: true
+    })];
+    renderPage();
+    openCover();
+    fireEvent.click(thumbs()[1]);
+    fireEvent.click(within(spreadDialog()).getByRole('button', { name: 'Add — Olive Zip Bomber Jacket' }));
+    expect(mockAddToCart).toHaveBeenCalledWith(expect.objectContaining({
+      id: 'DETAIL-READY', price: 119, size: 'M', color: 'Olive'
+    }));
+  });
 });
 
 describe('pieces and actions in the detail view', () => {
