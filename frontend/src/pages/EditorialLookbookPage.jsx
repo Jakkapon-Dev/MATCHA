@@ -85,6 +85,33 @@ export function lookGallery(spread) {
   return [...new Set(images)];
 }
 
+/* Keep each detail photograph paired with the products placed on it. Older
+   or admin-created looks without per-photo metadata inherit the look's pins. */
+export function galleryHotspots(spread, index) {
+  if (index === 0) return spread?.hotspots ?? [];
+  const photo = spread?.detailHotspots?.find((entry) => entry.image === lookGallery(spread)[index]);
+  if (Array.isArray(spread?.detailHotspots)) return photo?.hotspots ?? [];
+  return spread?.hotspots ?? [];
+}
+
+function LookbookPieceImage({ item, alt, className }) {
+  if (Number.isInteger(item.imageQuadrant)) {
+    return (
+      <span
+        role="img"
+        aria-label={alt}
+        className={`${className} block bg-no-repeat`}
+        style={{
+          backgroundImage: `url("${item.image}")`,
+          backgroundSize: '200% 200%',
+          backgroundPosition: `${item.imageQuadrant % 2 ? '100%' : '0%'} ${item.imageQuadrant > 1 ? '100%' : '0%'}`
+        }}
+      />
+    );
+  }
+  return <img src={webpSrc(item.image)} data-original-src={item.image} alt={alt} loading="lazy" onError={handleImageError} className={className} />;
+}
+
 /* One garment pin on a photograph, and the card it opens.
 
    The cover used to be the only photograph that drew its pins; every other
@@ -126,14 +153,7 @@ function HotspotPin({ hs, style, active, pinned, added, disabled, onHover, onFoc
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center gap-3">
-            <img
-              src={webpSrc(hs.image)} data-original-src={hs.image}
-              loading="lazy"
-              decoding="async"
-              alt={title}
-              onError={handleImageError}
-              className="w-12 h-14 object-contain bg-[#FAF9F5] rounded-md shrink-0 border border-[#E5E2D8]"
-            />
+            <LookbookPieceImage item={hs} alt={title} className="w-12 h-12 object-contain bg-[#FAF9F5] rounded-md shrink-0 border border-[#E5E2D8]" />
             <div className="min-w-0 flex-1">
               <span className="text-[9px] font-mono uppercase tracking-wider text-matcha-muted block">
                 {hs.category || 'Garment'}
@@ -142,7 +162,7 @@ function HotspotPin({ hs, style, active, pinned, added, disabled, onHover, onFoc
                 {title}
               </div>
               <div className="text-xs font-mono text-[#0A0A0A] mt-0.5 font-bold">
-                {formatCurrency(hs.price)}
+                {hs.price == null ? t('lookbookUi.unavailable') : formatCurrency(hs.price)}
               </div>
             </div>
           </div>
@@ -232,6 +252,24 @@ export default function EditorialLookbookPage() {
   const imageIndex = selectedSpread && galleryPick.spreadId === selectedSpread.id
     ? Math.min(Math.max(galleryPick.index, 0), Math.max(gallery.length - 1, 0))
     : 0;
+  // Use the same measured image coordinates as the cover cards. This also
+  // keeps pins aligned if a future gallery photograph has another aspect ratio.
+  const { imageRef: galleryImageRef, position: galleryPosition } = useCoverCoordinates(gallery[imageIndex]);
+  const selectedPhotoStory = imageIndex === 0 ? selectedSpread : {
+    ...selectedSpread,
+    ...(selectedSpread?.detailHotspots?.find((entry) => entry.image === gallery[imageIndex]) ?? {})
+  };
+  const selectedPhotoHotspots = useMemo(
+    () => galleryHotspots(selectedSpread, imageIndex),
+    [selectedSpread, imageIndex]
+  );
+  const selectedPhotoItems = useMemo(() => {
+    const itemsById = new Map((selectedSpread?.shoppableItems ?? []).map((item) => [item.productId || item.id, item]));
+    return selectedPhotoHotspots.map((hotspot) => {
+      const item = itemsById.get(hotspot.productId || hotspot.id);
+      return item ? { ...hotspot, ...item, id: item.id, name: hotspot.title || item.name, image: item.image || hotspot.image, x: hotspot.x, y: hotspot.y } : hotspot;
+    });
+  }, [selectedSpread, selectedPhotoHotspots]);
   // Closing the lightbox forgets the photograph, so reopening starts on the cover.
   useEffect(() => {
     if (!selectedSpread) setGalleryPick({ spreadId: null, index: 0 });
@@ -774,7 +812,7 @@ export default function EditorialLookbookPage() {
                         <div className="min-w-0 flex-1">
                           <div className="text-xs font-bold text-[#0A0A0A] truncate">{item.name}</div>
                           <div className="text-[11px] font-mono text-matcha-muted">
-                            {item.color} · {formatCurrency(item.price)}
+                            {item.color}{item.price != null ? ` · ${formatCurrency(item.price)}` : ''}
                           </div>
                         </div>
                         <button
@@ -951,7 +989,7 @@ export default function EditorialLookbookPage() {
                             />
                             <div className="min-w-0 flex-1">
                               <span className="text-xs font-bold text-[#0A0A0A] block truncate">{item.name}</span>
-                              <span className="text-[11px] font-mono text-matcha-muted">{formatCurrency(item.price)}</span>
+                              {item.price != null && <span className="text-[11px] font-mono text-matcha-muted">{formatCurrency(item.price)}</span>}
                             </div>
                             <button
                               type="button"
@@ -1037,18 +1075,25 @@ export default function EditorialLookbookPage() {
               <div className="md:w-3/5 bg-[#0A0A0A] flex flex-col shrink-0 md:self-stretch">
                 <div className="relative flex-1 flex items-center justify-center overflow-hidden px-4 pt-12 pb-4 min-h-[48vh] md:min-h-[60vh]">
                   <div
-                    className={`w-full flex items-center justify-center transition-transform duration-500 ${
+                    className={`relative w-full max-w-[32.85vh] sm:max-w-[41.81vh] aspect-[896/1200] transition-transform duration-500 ${
                       isZoomed ? 'scale-150 cursor-zoom-out' : 'scale-100 cursor-zoom-in'
                     }`}
                     onClick={() => setIsZoomed(!isZoomed)}
                   >
                     <img
+                      ref={galleryImageRef}
                       key={gallery[imageIndex]}
                       src={webpSrc(gallery[imageIndex])} data-original-src={gallery[imageIndex]}
                       alt={imageIndex === 0 ? selectedSpread.title : `${selectedSpread.title} — ${t('lookbookUi.detailAlt')} ${imageIndex}`}
                       onError={handleImageError}
-                      className="h-[44vh] sm:h-[56vh] w-full object-contain select-none animate-fade-in"
+                      className="absolute inset-0 h-full w-full object-cover select-none animate-fade-in"
                     />
+                    <div className="absolute inset-0 pointer-events-none">
+                      {selectedPhotoHotspots.map((hs) => {
+                        const key = `${selectedSpread.id}:${gallery[imageIndex]}:${hsKey(hs)}`;
+                        return renderPin(hs, galleryPosition(hs), key);
+                      })}
+                    </div>
                   </div>
 
                   {gallery.length > 1 && (
@@ -1115,74 +1160,68 @@ export default function EditorialLookbookPage() {
                 <div className="space-y-6">
 
                   <header className="space-y-2">
-                    {(selectedSpread.theme || selectedSpread.season) && (
+                    {(selectedPhotoStory.theme || selectedPhotoStory.season) && (
                       <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-matcha-accent block">
-                        {[selectedSpread.theme, seasonCaption(selectedSpread, lang)].filter(Boolean).join(' — ')}
+                        {[selectedPhotoStory.theme, seasonCaption(selectedPhotoStory, lang)].filter(Boolean).join(' — ')}
                       </span>
                     )}
                     <h2 className="text-2xl sm:text-[2rem] font-black uppercase tracking-[-0.02em] leading-[0.95] text-[#0A0A0A]">
-                      {selectedSpread.title}
+                      {selectedPhotoStory.title}
                     </h2>
-                    {selectedSpread.location && (
+                    {selectedPhotoStory.location && (
                       <p className="font-mono text-[11px] text-matcha-muted flex items-center gap-1.5">
                         <MapPin size={11} aria-hidden="true" />
-                        {selectedSpread.location}
+                        {selectedPhotoStory.location}
                       </p>
                     )}
                   </header>
 
-                  {selectedSpread.leadQuote && (
+                  {selectedPhotoStory.leadQuote && (
                     <blockquote className="font-serif italic text-lg text-[#0A0A0A] border-l-2 border-matcha-accent pl-4 leading-snug">
-                      {selectedSpread.leadQuote}
+                      {selectedPhotoStory.leadQuote}
                     </blockquote>
                   )}
 
-                  {narrativeFor(selectedSpread, lang) && (
+                  {narrativeFor(selectedPhotoStory, lang) && (
                     <p className="text-[13px] text-matcha-muted leading-relaxed">
-                      {narrativeFor(selectedSpread, lang)}
+                      {narrativeFor(selectedPhotoStory, lang)}
                     </p>
                   )}
 
                   <section>
                     <h3 className="flex items-baseline justify-between pb-2 border-b border-[#0A0A0A] font-mono text-[10px] uppercase tracking-[0.18em] font-bold text-[#0A0A0A]">
                       <span>{t('lookbookUi.piecesInSpread')}</span>
-                      <span className="font-normal text-matcha-muted tabular-nums">{(selectedSpread.shoppableItems || []).length}</span>
+                      <span className="font-normal text-matcha-muted tabular-nums">{selectedPhotoItems.length}</span>
                     </h3>
                     {/* The list scrolls only when it outgrows its space, with a
                         thin scrollbar that still works for mouse, touch and
                         keyboard. */}
                     <ul className="divide-y divide-matcha-border max-h-64 overflow-y-auto overscroll-contain pr-1 [scrollbar-width:thin] [scrollbar-color:#DCDCDC_transparent] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-matcha-border">
-                      {(selectedSpread.shoppableItems || []).length === 0 && (
+                      {selectedPhotoItems.length === 0 && (
                         <li className="py-6 text-center text-xs font-mono text-matcha-muted">{t('lookbookUi.noPieces')}</li>
                       )}
-                      {(selectedSpread.shoppableItems || []).map((item) => {
+                      {selectedPhotoItems.map((item) => {
                         const isAdded = addedItems[item.id];
                         const sizes = (item.sizes || []).filter(Boolean);
                         return (
                           <li key={item.id} className="flex items-center gap-3 py-3">
-                            <img
-                              src={webpSrc(item.image)} data-original-src={item.image}
-                              alt=""
-                              loading="lazy"
-                              onError={handleImageError}
-                              className="w-12 h-14 object-contain bg-white shrink-0"
-                            />
+                            <LookbookPieceImage item={item} alt="" className="w-12 h-12 object-contain bg-white shrink-0" />
                             <div className="min-w-0 flex-1">
                               <div className="text-xs font-bold text-[#0A0A0A] leading-snug line-clamp-2">{item.name}</div>
                               <div className="mt-0.5 flex items-center gap-2 text-[11px] font-mono">
-                                <span className="text-[#0A0A0A] tabular-nums">{formatCurrency(item.price)}</span>
+                                {item.price != null && <span className="text-[#0A0A0A] tabular-nums">{formatCurrency(item.price)}</span>}
                                 {item.inStock
                                   ? sizes.length > 0 && <span className="text-matcha-muted truncate">{sizes.join(' · ')}</span>
-                                  : <span className="text-matcha-accent">{t('lookbookUi.soldOut')}</span>}
+                                  : <span className="text-matcha-accent">{t(item.linked === false ? 'lookbookUi.unavailable' : 'lookbookUi.soldOut')}</span>}
                               </div>
                             </div>
                             <button
                               type="button"
                               disabled={loading || !item.inStock} onClick={(e) => handleQuickAdd(e, item)}
-                              aria-label={`${isAdded ? t('lookbookUi.added') : !item.inStock ? t('lookbookUi.soldOut') : t('lookbookUi.add')} — ${item.name}`}
+                              aria-label={`${isAdded ? t('lookbookUi.added') : !item.inStock ? t(item.linked === false ? 'lookbookUi.unavailable' : 'lookbookUi.soldOut') : t('lookbookUi.add')} — ${item.name}`}
                               className="shrink-0 min-h-9 px-3.5 bg-[#0A0A0A] hover:bg-matcha-accent disabled:bg-transparent disabled:text-[#999999] disabled:border disabled:border-matcha-border text-matcha-bg font-mono text-[10px] uppercase tracking-wider transition-colors cursor-pointer disabled:cursor-not-allowed"
                             >
-                              {isAdded ? t('lookbookUi.added') : !item.inStock ? t('lookbookUi.soldOut') : t('lookbookUi.add')}
+                              {isAdded ? t('lookbookUi.added') : !item.inStock ? t(item.linked === false ? 'lookbookUi.unavailable' : 'lookbookUi.soldOut') : t('lookbookUi.add')}
                             </button>
                           </li>
                         );
@@ -1195,8 +1234,8 @@ export default function EditorialLookbookPage() {
                 <div className="mt-auto space-y-2 pt-5 border-t border-matcha-border">
                   <button
                     type="button"
-                    disabled={loading || wholeLookActive || !(selectedSpread.shoppableItems || []).some(i => i.inStock)}
-                    onClick={() => handleAddEntireLook(selectedSpread)}
+                    disabled={loading || wholeLookActive || !selectedPhotoItems.some(i => i.inStock)}
+                    onClick={() => handleAddEntireLook({ ...selectedSpread, shoppableItems: selectedPhotoItems })}
                     className="w-full min-h-12 py-3.5 bg-matcha-accent hover:bg-matcha-accent-hover disabled:bg-matcha-border disabled:text-matcha-muted text-white font-mono text-xs uppercase tracking-[0.15em] transition-colors cursor-pointer disabled:cursor-not-allowed"
                   >
                     {t('lookbookUi.addWhole')}

@@ -11,6 +11,7 @@
     "dev:frontend": "npm run dev --prefix frontend",
     "install:all": "npm install && npm install --prefix backend && npm install --prefix frontend",
     "test:e2e": "playwright test",
+    "test:e2e:lookbook": "playwright test --config playwright.lookbook.config.js",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:report": "playwright show-report"
   },

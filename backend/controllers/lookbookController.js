@@ -25,7 +25,10 @@ const lookInput = z.object({
 // GET /api/lookbooks — Public Lookbooks API
 export async function getLookbooks(req, res) {
   const looks = await allLooks();
-  const products = await findLinkedProducts(looks.flatMap(l => l.items ?? []));
+  const products = await findLinkedProducts(looks.flatMap(l => [
+    ...(l.items ?? []),
+    ...(l.editorial?.detailHotspots ?? []).flatMap(photo => photo.hotspots ?? [])
+  ]));
   res.json({ success: true, data: resolveLookbooks(looks, isDemo ? products.map(demoProduct) : products) });
 }
 
