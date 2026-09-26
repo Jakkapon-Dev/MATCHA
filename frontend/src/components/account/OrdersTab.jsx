@@ -3,6 +3,7 @@ import { useLanguage } from '../../context/LanguageContext.jsx';
 import { Package, ShoppingBag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
+import { formatCurrency } from '../../utils/currency.js';
 
 export default function OrdersTab({ orders = [], isLoaded = true }) {
   const { t } = useLanguage();
@@ -135,7 +136,7 @@ export default function OrdersTab({ orders = [], isLoaded = true }) {
                   <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${getPaymentStatusBadge(order.paymentStatus)}`}>
                     Payment: {paymentStatusLabel(order.paymentStatus || 'unpaid')}
                   </span>
-                  <span className="font-bold text-[#0A0A0A] ml-1">${order.total.toFixed(2)}</span>
+                  <span className="font-bold text-[#0A0A0A] ml-1">{formatCurrency(order.total)}</span>
                 </div>
               </div>
 

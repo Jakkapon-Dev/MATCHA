@@ -4,6 +4,7 @@ import AdminDataState from './AdminDataState';
 import BreakdownChart, { ChartModeToggle } from './BreakdownChart';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { statusText } from './adminI18n';
+import { formatCurrency } from '../../utils/currency.js';
 
 /* One shape for every headline figure, so the four cards read as a row
    rather than four differently-dressed boxes. */
@@ -108,7 +109,7 @@ export default function DashboardTab({ status, errors, totalRevenue, orders, tot
           icon={ShoppingBag}
           value={activeOrdersCount}
           unit={t('admin.dashboard.ordersUnit')}
-          footnote={t('admin.dashboard.avgPaidOrder', { amount: `$${avgPaidOrderValue.toFixed(2)}` })}
+          footnote={t('admin.dashboard.avgPaidOrder', { amount: formatCurrency(avgPaidOrderValue) })}
           note={cancelledCount ? t('admin.dashboard.cancelledNotCounted', { count: cancelledCount }) : null}
         />
         <KpiCard
@@ -230,7 +231,7 @@ export default function DashboardTab({ status, errors, totalRevenue, orders, tot
                   <td className="py-3 font-bold text-matcha-primary">{ord.id}</td>
                   <td className="py-3 text-matcha-text">{ord.customer}</td>
                   <td className="py-3 text-matcha-muted">{ord.date}</td>
-                  <td className="py-3 font-bold text-matcha-text text-right tabular-nums">${ord.total.toFixed(2)}</td>
+                  <td className="py-3 font-bold text-matcha-text text-right tabular-nums">{formatCurrency(ord.total)}</td>
                   <td className="py-3 text-right">
                     <span className={`inline-block px-2 py-0.5 rounded-md border text-[10px] font-bold ${STATUS_TONE[ord.status] || 'bg-orange-50 text-matcha-accent border-orange-200'}`}>
                       {statusText(t, ord.status)}

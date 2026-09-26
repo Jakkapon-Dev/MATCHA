@@ -3,6 +3,7 @@ import AdminDataState from './AdminDataState';
 import AdminPagination from './AdminPagination';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { tr } from './adminI18n';
+import { formatCurrency } from '../../utils/currency.js';
 
 const TIER_FILTER_KEYS = { VIP: 'admin.members.vipTier', Regular: 'admin.members.regularTier' };
 // Tier names come from the API ('VIP Connoisseur'); an unknown one is shown as stored.
@@ -49,7 +50,7 @@ export default function MembersTab({ status, errors, setMemberTierFilter, member
                           <td className="p-4 font-bold text-matcha-primary">{mem.id}</td>
                           <td className="p-4 font-bold text-matcha-text">{mem.name}</td>
                           <td className="p-4 text-matcha-muted">{mem.email}</td>
-                          <td className="p-4 font-bold text-matcha-primary">${mem.totalSpent.toFixed(2)}</td>
+                          <td className="p-4 font-bold text-matcha-primary">{formatCurrency(mem.totalSpent)}</td>
                           <td className="p-4">
                             <span className={`px-2.5 py-1 rounded-md text-[10px] font-bold ${
                               mem.tier.includes('VIP')

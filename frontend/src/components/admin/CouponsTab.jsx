@@ -4,6 +4,7 @@ import { api, apiErrorText } from '../../services/api';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import CouponFormModal from './CouponFormModal';
 import { categoryText } from './adminI18n';
+import { formatCurrency } from '../../utils/currency.js';
 
 // Status ids are what the API filters on; only the labels are translated.
 const STATUSES = [
@@ -24,7 +25,6 @@ const STATUS_TONE = {
 const STATUS_LABEL_KEY = Object.fromEntries(STATUSES.map(s => [s.id, s.labelKey]));
 
 const formatDate = (value, lang) => (value ? new Date(value).toLocaleString(lang === 'th' ? 'th-TH' : 'en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—');
-const money = (n) => `$${Number(n).toFixed(2)}`;
 
 /* Built from type/value on the client (same wording as the server's English
    `label`) so the discount reads in the admin's language. */
@@ -37,8 +37,8 @@ function discountLabel(c, t) {
 
 function discountDetail(c, t) {
   const parts = [];
-  if (c.type === 'percentage' && c.maxDiscountAmount != null) parts.push(t('admin.coupons.detailMax', { amount: money(c.maxDiscountAmount) }));
-  if (c.minOrderAmount > 0) parts.push(t('admin.coupons.detailMin', { amount: money(c.minOrderAmount) }));
+  if (c.type === 'percentage' && c.maxDiscountAmount != null) parts.push(t('admin.coupons.detailMax', { amount: formatCurrency(c.maxDiscountAmount) }));
+  if (c.minOrderAmount > 0) parts.push(t('admin.coupons.detailMin', { amount: formatCurrency(c.minOrderAmount) }));
   const count = c.applicableProducts?.length || 0;
   const scope = [...(c.applicableCategories || []).map(cat => categoryText(t, cat)), ...(count ? [t(count > 1 ? 'admin.coupons.productMany' : 'admin.coupons.productOne', { count })] : [])];
   if (scope.length) parts.push(scope.join(', '));

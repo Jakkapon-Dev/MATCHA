@@ -111,6 +111,27 @@ export function requireVerifiedEmail(req, res, next) {
   next();
 }
 
+// Safe helper to extract auth payload from Bearer token if provided
+export const extractAuthUser = (req) => {
+  const header = req?.headers?.authorization || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  if (!token || token === 'demo-offline-token') return null;
+  try {
+    return jwt.verify(token, getJwtSecret());
+  } catch {
+    return null;
+  }
+};
+
+let customAuthGuards = null;
+export function setAuthGuards(g) {
+  customAuthGuards = g;
+}
+export function getAuthGuards() {
+  if (customAuthGuards) return customAuthGuards;
+  return { authRequired, adminOnly };
+}
+
 export default { 
   requireAuth, 
   requireRole, 
@@ -118,4 +139,7 @@ export default {
   authRequired,
   adminOnly,
   requireVerifiedEmail,
+  extractAuthUser,
+  setAuthGuards,
+  getAuthGuards,
 };

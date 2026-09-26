@@ -1,6 +1,8 @@
 import mongoose from 'mongoose';
 import productsData from '../data/products.js';
 import Product, { ONE_SIZE } from '../models/Product.js';
+import { escapeRegex } from '../utils/regex.js';
+import { filterInMemoryProducts } from '../utils/productFilters.js';
 
 // Standard Display Names for Categories
 export const CATEGORY_NAMES = {
@@ -127,7 +129,7 @@ export async function getProducts(req, res) {
       }
 
       if (search && search.trim()) {
-        const escaped = search.trim().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const escaped = escapeRegex(search.trim());
         const searchRegex = new RegExp(escaped, 'i');
         filter.$or = [
           { name: searchRegex },
@@ -217,89 +219,24 @@ export async function getProducts(req, res) {
     }
 
     // Fallback: Local array filtering when MongoDB is offline
-    let filtered = [...productsData];
-
-    // 1. Category Filter
-    if (category && category !== 'ALL') {
-      filtered = filtered.filter(p => p.category.toLowerCase() === category.toLowerCase());
-    }
-
-    // 2. Season Filter
-    if (season && season !== 'ALL') {
-      filtered = filtered.filter(p => p.season && p.season.toLowerCase() === season.toLowerCase());
-    }
-
-    // 3. Search Query
-    if (search && search.trim()) {
-      const q = search.trim().toLowerCase();
-      filtered = filtered.filter(p =>
-        p.name.toLowerCase().includes(q) ||
-        p.id.toLowerCase().includes(q) ||
-        p.description.toLowerCase().includes(q) ||
-        p.color.toLowerCase().includes(q) ||
-        (p.tag && p.tag.toLowerCase().includes(q))
-      );
-    }
-
-    // 4. Color Filter
-    if (color && color !== 'ALL') {
-      filtered = filtered.filter(p => p.color.toLowerCase() === color.toLowerCase());
-    }
-
-    // 5. Fit Filter
-    if (fit && fit !== 'ALL') {
-      filtered = filtered.filter(p => p.fit && p.fit.toLowerCase() === fit.toLowerCase());
-    }
-
-    // 6. In-Stock Only Filter
-    if (inStockOnly === 'true' || inStockOnly === true) {
-      filtered = filtered.filter(p => p.inStock);
-    }
-
-    // 7. Price Range Filter
-    const minP = parseFloat(minPrice) || 0;
-    const maxP = parseFloat(maxPrice) || 1000;
-    filtered = filtered.filter(p => p.price >= minP && p.price <= maxP);
-
-    // 8. Sorting
-    switch (sort) {
-      case 'price-asc':
-        filtered.sort((a, b) => a.price - b.price);
-        break;
-      case 'price-desc':
-        filtered.sort((a, b) => b.price - a.price);
-        break;
-      case 'newest':
-        filtered.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-        break;
-      case 'rating':
-        filtered.sort((a, b) => b.rating - a.rating);
-        break;
-      case 'featured':
-      default:
-        filtered.sort((a, b) => (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0));
-        break;
-    }
-
-    // 9. Pagination
-    const pageNum = parseInt(page, 10) || 1;
-    const limitNum = parseInt(limit, 10) || 12;
-    const totalItems = filtered.length;
-    const totalPages = Math.ceil(totalItems / limitNum) || 1;
-    const startIndex = (pageNum - 1) * limitNum;
-    const paginatedProducts = filtered.slice(startIndex, startIndex + limitNum);
+    const result = filterInMemoryProducts(productsData, {
+      category,
+      season,
+      search,
+      sort,
+      color,
+      fit,
+      inStockOnly,
+      minPrice,
+      maxPrice,
+      page,
+      limit
+    });
 
     res.json({
       success: true,
-      data: paginatedProducts.map(presentProduct),
-      pagination: {
-        total: totalItems,
-        page: pageNum,
-        totalPages,
-        limit: limitNum,
-        hasNextPage: pageNum < totalPages,
-        hasPrevPage: pageNum > 1
-      },
+      data: result.products.map(presentProduct),
+      pagination: result.pagination,
       availableFilters: {
         totalAll: productsData.length,
         priceMin: Math.min(...productsData.map(p => p.price)),

@@ -2,6 +2,7 @@ import React from 'react';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { Tag, CheckCircle2, ShieldCheck, Sparkles } from 'lucide-react';
 import { handleImageError, webpSrc } from '../../utils/imageFallback';
+import { formatCurrency } from '../../utils/currency.js';
 
 export default function OrderSummarySidebar({
   cartItems = [],
@@ -56,7 +57,7 @@ export default function OrderSummarySidebar({
               </div>
             </div>
             <div className="font-bold text-matcha-primary">
-              ${((item.price || 0) * (item.quantity || 1)).toFixed(2)}
+              {formatCurrency((item.price || 0) * (item.quantity || 1))}
             </div>
           </div>
         ))}
@@ -117,7 +118,7 @@ export default function OrderSummarySidebar({
       <div className="space-y-2.5 pt-4 border-t border-matcha-border text-xs font-mono">
         <div className="flex justify-between text-matcha-muted">
           <span>{t('checkout.subtotal')}</span>
-          <span className="font-bold text-[#0A0A0A]">${subtotal.toFixed(2)}</span>
+          <span className="font-bold text-[#0A0A0A]">{formatCurrency(subtotal)}</span>
         </div>
 
         <div className="flex justify-between text-matcha-muted">
@@ -126,7 +127,7 @@ export default function OrderSummarySidebar({
             {shippingCost === 0 ? (
               <span className="text-matcha-secondary">Free</span>
             ) : (
-              `$${shippingCost.toFixed(2)}`
+              formatCurrency(shippingCost)
             )}
           </span>
         </div>
@@ -146,7 +147,7 @@ export default function OrderSummarySidebar({
             <span className="text-xs font-mono font-bold text-[#0A0A0A] block">{t('checkout.total')}</span>
             <span className="text-[10px] font-mono text-matcha-muted">{t('checkout.taxes')}</span>
           </div>
-          <span className="text-2xl font-bold font-mono text-matcha-primary">${total.toFixed(2)}</span>
+          <span className="text-2xl font-bold font-mono text-matcha-primary">{formatCurrency(total)}</span>
         </div>
       </div>
 

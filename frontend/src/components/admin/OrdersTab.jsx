@@ -4,6 +4,7 @@ import AdminPagination from './AdminPagination';
 import { ORDER_STATUSES, isKnownOrderStatus } from './adminData';
 import { useLanguage } from '../../context/LanguageContext.jsx';
 import { statusText, paymentText } from './adminI18n';
+import { formatCurrency } from '../../utils/currency.js';
 
 export default function OrdersTab({ status, errors, setOrderStatusFilter, orderStatusFilter, filteredOrders, setSelectedOrderForModal, saving, isDemo, handleUpdateOrderStatus, pagination, onPageChange }) {
   const { t } = useLanguage();
@@ -57,7 +58,7 @@ export default function OrdersTab({ status, errors, setOrderStatusFilter, orderS
                           </td>
                           <td className="p-4 text-matcha-muted">{order.date}</td>
                           <td className="p-4">{order.items}</td>
-                          <td className="p-4 font-bold text-matcha-text">${order.total.toFixed(2)}</td>
+                          <td className="p-4 font-bold text-matcha-text">{formatCurrency(order.total)}</td>
                           <td className="p-4">
                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                               order.paymentStatus === 'Paid' 

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 
 import { expectedPayment } from '../routes/paymentRoutes.js';
 import { matchesPersistedPayment } from '../routes/stripeWebhook.js';
-import { ownsOrder } from '../routes/orderRoutes.js';
+import { ownsOrder } from '../services/orderAccess.js';
 
 test('card and PromptPay amounts are computed in Stripe minor units', () => {
   assert.deepEqual(expectedPayment({ paymentMethod: 'visa', total: 12.34 }), {

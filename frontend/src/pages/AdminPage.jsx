@@ -5,11 +5,13 @@ import OrdersTab from '../components/admin/OrdersTab';
 import InventoryTab from '../components/admin/InventoryTab';
 import DashboardTab from '../components/admin/DashboardTab';
 import CouponsTab from '../components/admin/CouponsTab';
+import AdminNotificationsMenu from '../components/admin/AdminNotificationsMenu';
+import AdminExportMenu from '../components/admin/AdminExportMenu';
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../context/LanguageContext.jsx';
 import { apiErrorText } from '../services/api';
-import { Plus, BarChart3, Layers, Search, ExternalLink, ChevronRight, Download, FileSpreadsheet, FileJson, ChevronDown, LayoutDashboard, Boxes, ClipboardList, UserCheck, HardDrive, LogOut, Bell, CheckCheck, RefreshCw, MapPin, TicketPercent } from 'lucide-react';
+import { Plus, BarChart3, Layers, Search, ExternalLink, ChevronRight, LayoutDashboard, Boxes, ClipboardList, UserCheck, HardDrive, LogOut, RefreshCw, MapPin, TicketPercent } from 'lucide-react';
 import { webpSrc } from '../utils/imageFallback';
 import { useAuth } from '../context/AuthContext.jsx';
 import { useToast } from '../context/ToastContext.jsx';
@@ -23,6 +25,7 @@ import useAdminData from '../components/admin/useAdminData';
 
 import { normalizeProduct } from '../components/admin/adminData';
 import { categoryLongText } from '../components/admin/adminI18n';
+import { formatCurrency } from '../utils/currency.js';
 
 export default function AdminPage() {
   const { t, lang } = useLanguage();
@@ -557,128 +560,25 @@ export default function AdminPage() {
             </button>
 
             {/* Notifications Bell */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setIsNotifMenuOpen(!isNotifMenuOpen)}
-                aria-label={t('admin.shell.notifications')}
-                aria-haspopup="true"
-                aria-expanded={isNotifMenuOpen}
-                className="relative h-9 w-9 rounded-xl bg-white border border-matcha-border hover:border-matcha-primary text-matcha-text transition-all cursor-pointer flex items-center justify-center outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary"
-                title={t('admin.shell.notifications')}
-              >
-                <Bell size={16} />
-                {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white font-mono text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center animate-pulse">
-                    {unreadCount > 9 ? '9+' : unreadCount}
-                  </span>
-                )}
-              </button>
-
-              {isNotifMenuOpen && (
-                <>
-                  <div className="fixed inset-0 z-20 cursor-default" onClick={() => setIsNotifMenuOpen(false)} />
-                  <div className="absolute right-0 mt-2 w-[min(24rem,calc(100vw-2rem))] bg-white rounded-2xl border border-matcha-border shadow-2xl p-3 z-30 font-mono text-xs animate-fade-in max-h-96 flex flex-col">
-                    <div className="flex items-center justify-between pb-2 border-b border-matcha-border px-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-matcha-text uppercase font-sans">{t('admin.shell.newOrders')}</span>
-                        {unreadCount > 0 && (
-                          <span className="px-1.5 py-0.5 rounded-full bg-red-100 text-red-700 text-[10px] font-bold">
-                            {t('admin.shell.unread', { count: unreadCount })}
-                          </span>
-                        )}
-                      </div>
-                      {unreadCount > 0 && (
-                        <button
-                          onClick={handleMarkAllNotificationsRead}
-                          className="text-[11px] text-matcha-primary hover:underline flex items-center gap-1 cursor-pointer"
-                        >
-                          <CheckCheck size={12} />
-                          <span>{t('admin.shell.markAllRead')}</span>
-                        </button>
-                      )}
-                    </div>
-
-                    <div className="overflow-y-auto divide-y divide-matcha-border/40 my-1 flex-1 max-h-72">
-                      {notifications.length === 0 ? (
-                        <div className="p-6 text-center text-matcha-muted text-xs">
-                          {t('admin.shell.noNotifications')}
-                        </div>
-                      ) : (
-                        notifications.map(n => (
-                          <div
-                            key={n.id || n._id}
-                            onClick={() => handleMarkNotificationRead(n)}
-                            className={`p-2.5 hover:bg-matcha-bg/80 transition-colors cursor-pointer rounded-lg flex items-start gap-2.5 ${!n.read ? 'bg-amber-50/60' : ''}`}
-                          >
-                            <div className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${!n.read ? 'bg-red-500' : 'bg-transparent'}`} />
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center justify-between gap-1">
-                                <span className="font-bold text-matcha-text truncate">{n.orderNumber}</span>
-                                <span className="font-bold text-matcha-primary shrink-0">${Number(n.total || 0).toFixed(2)}</span>
-                              </div>
-                              <div className="text-[11px] text-matcha-muted truncate">{t('admin.shell.notificationCustomer', { name: n.customerName })}</div>
-                              <div className="text-[10px] text-matcha-muted/70 mt-0.5">
-                                {new Date(n.createdAt).toLocaleTimeString(dateLocale, { hour: '2-digit', minute: '2-digit' })} • {new Date(n.createdAt).toLocaleDateString(dateLocale)}
-                              </div>
-                            </div>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
+            <AdminNotificationsMenu
+              notifications={notifications}
+              unreadCount={unreadCount}
+              isOpen={isNotifMenuOpen}
+              onToggle={() => setIsNotifMenuOpen(!isNotifMenuOpen)}
+              onClose={() => setIsNotifMenuOpen(false)}
+              onMarkNotificationRead={handleMarkNotificationRead}
+              onMarkAllNotificationsRead={handleMarkAllNotificationsRead}
+            />
 
             {/* Export Dropdown */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setIsExportMenuOpen(!isExportMenuOpen)}
-                aria-label={t('admin.shell.exportData')}
-                aria-haspopup="true"
-                aria-expanded={isExportMenuOpen}
-                className="h-9 px-3 bg-white border border-matcha-border hover:border-matcha-primary text-matcha-text rounded-xl font-mono text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer outline-hidden focus-visible:ring-2 focus-visible:ring-matcha-primary"
-              >
-                <Download size={13} className="text-matcha-primary" />
-                <span>{t('admin.shell.exportData')}</span>
-                <ChevronDown size={12} />
-              </button>
-
-              {isExportMenuOpen && (
-                <>
-                  <div className="fixed inset-0 z-20 cursor-default" onClick={() => setIsExportMenuOpen(false)} />
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl border border-matcha-border shadow-2xl p-2 z-30 font-mono text-xs animate-fade-in">
-                    <div className="p-1.5 space-y-1 border-b border-matcha-border/40">
-                      <button
-                        onClick={handleExportInventory}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-matcha-bg text-left transition-colors cursor-pointer"
-                      >
-                        <FileSpreadsheet size={14} className="text-matcha-primary" />
-                        <span>{t('admin.shell.exportInventory')}</span>
-                      </button>
-                      <button
-                        onClick={handleExportOrders}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-matcha-bg text-left transition-colors cursor-pointer"
-                      >
-                        <FileSpreadsheet size={14} className="text-matcha-primary" />
-                        <span>{t('admin.shell.exportOrders')}</span>
-                      </button>
-                    </div>
-                    <div className="p-1.5">
-                      <button
-                        onClick={handleExportFullJSON}
-                        className="w-full flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-matcha-accent/10 text-matcha-accent font-bold text-left transition-colors cursor-pointer"
-                      >
-                        <FileJson size={14} />
-                        <span>{t('admin.shell.exportJson')}</span>
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
+            <AdminExportMenu
+              isOpen={isExportMenuOpen}
+              onToggle={() => setIsExportMenuOpen(!isExportMenuOpen)}
+              onClose={() => setIsExportMenuOpen(false)}
+              onExportInventory={handleExportInventory}
+              onExportOrders={handleExportOrders}
+              onExportFullJSON={handleExportFullJSON}
+            />
 
 
             {/* Quick Add Product Button */}

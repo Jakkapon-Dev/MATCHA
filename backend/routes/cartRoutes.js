@@ -1,9 +1,8 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import jwt from 'jsonwebtoken';
 
 import Cart, { cartExpiryFor } from '../models/Cart.js';
-import { getJwtSecret } from '../middleware/auth.js';
+import { extractAuthUser } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -11,23 +10,14 @@ const router = express.Router();
 // ผูกกับ guestId ที่เบราว์เซอร์สร้างเองและส่งมาในเฮดเดอร์ X-Guest-Id
 // (โมเดลบังคับว่าต้องมีอย่างใดอย่างหนึ่ง ห้ามมีทั้งคู่)
 function resolveOwner(req) {
-  const header = req.headers.authorization || '';
-  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
-
-  if (token && token !== 'demo-offline-token') {
-    try {
-      const payload = jwt.verify(token, getJwtSecret());
-      const id = payload?.id || payload?.userId || payload?._id;
-      /* Any non-empty id the token carries identifies the account. This used to
-         demand a Mongo ObjectId, which the `u_…` ids accounts actually carry
-         are not, so a signed-in visitor silently became a guest again on every
-         cart call. */
-      if (id && String(id).trim()) {
-        return { userId: String(id).trim(), guestId: null };
-      }
-    } catch {
-      // โทเคนหมดอายุหรือไม่ถูกต้อง — ถือว่ายังไม่ได้ล็อกอิน แล้วไปใช้ guestId แทน
-    }
+  const payload = extractAuthUser(req);
+  const id = payload?.id || payload?.userId || payload?._id;
+  /* Any non-empty id the token carries identifies the account. This used to
+     demand a Mongo ObjectId, which the `u_…` ids accounts actually carry
+     are not, so a signed-in visitor silently became a guest again on every
+     cart call. */
+  if (id && String(id).trim()) {
+    return { userId: String(id).trim(), guestId: null };
   }
 
   const guestId = String(req.headers['x-guest-id'] || '').trim();
