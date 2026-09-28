@@ -33,6 +33,13 @@ vercel.json
 .github-actions/
 *.runner.log
 
+# This one workflow is production uptime plumbing and must be versioned.
+!.github/
+.github/*
+!.github/workflows/
+.github/workflows/*
+!.github/workflows/keep-render-awake.yml
+
 # 3. Dependencies & Package Managers
 node_modules/
 .pnp
